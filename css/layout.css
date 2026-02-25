@@ -64,7 +64,8 @@
   color: var(--accent);
 }
 
-.nav-logo svg {
+.nav-logo svg,
+.nav-logo img {
   width: 32px;
   height: 32px;
   flex-shrink: 0;
