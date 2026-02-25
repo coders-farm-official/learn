@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Lessons.init();
     Quiz.initAll();
     Editor.initAll();
-    Narrator.init();
+    if (typeof Narrator !== 'undefined') Narrator.init();
     initInstallTabs();
   }
 
