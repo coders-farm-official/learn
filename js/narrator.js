@@ -35,6 +35,7 @@ const Narrator = (() => {
   let keepAliveTimer = null;
   let chunkWatchdog = null;
   let restarting = false; // guards against double-speak on cancel()
+  let wakeLock = null;
 
   // Mobile detection — keepAlive pause/resume kills speech on mobile
   var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
@@ -184,6 +185,26 @@ const Narrator = (() => {
     currentWordMap = null;
     currentOriginalHTML = null;
     currentBlockElement = null;
+  }
+
+  // --- Screen Wake Lock: keep the screen on while narrating ---
+
+  async function acquireWakeLock() {
+    if (!('wakeLock' in navigator)) return;
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (e) {
+      // Wake lock request can fail (e.g. low battery, background tab)
+      wakeLock = null;
+    }
+  }
+
+  function releaseWakeLock() {
+    if (wakeLock) {
+      wakeLock.release();
+      wakeLock = null;
+    }
   }
 
   // --- Desktop Chrome workaround: speech synthesis stops after ~15s ---
@@ -364,6 +385,7 @@ const Narrator = (() => {
     currentBlockIndex = 0;
 
     startKeepAlive();
+    acquireWakeLock();
     showFloating();
     updatePlayButton();
     speakBlock(0);
@@ -374,6 +396,7 @@ const Narrator = (() => {
     speechSynthesis.pause();
     paused = true;
     stopKeepAlive();
+    releaseWakeLock();
     clearChunkWatchdog();
     updateFloatingUI();
     updatePlayButton();
@@ -390,6 +413,7 @@ const Narrator = (() => {
     speechSynthesis.cancel();
     unwrapCurrentBlock();
     startKeepAlive();
+    acquireWakeLock();
     updateFloatingUI();
     updatePlayButton();
     setTimeout(function () {
@@ -405,6 +429,7 @@ const Narrator = (() => {
     currentBlockIndex = -1;
     unwrapCurrentBlock();
     stopKeepAlive();
+    releaseWakeLock();
     clearChunkWatchdog();
     hideFloating();
     updatePlayButton();
@@ -583,6 +608,14 @@ const Narrator = (() => {
     // Stop narration if the user navigates away
     window.addEventListener('beforeunload', () => {
       if (playing) stopPlayback();
+    });
+
+    // Re-acquire wake lock when tab becomes visible again
+    // (browsers release it automatically when the tab is hidden)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible' && playing && !paused) {
+        acquireWakeLock();
+      }
     });
   }
 
