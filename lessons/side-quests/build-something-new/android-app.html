@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Android App from Your API — Coders Farm</title>
+  <meta name="description" content="Turn your Spring Boot backend into a real Android app with Kotlin">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-android-app">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Android App</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Android App from Your API</p>
+      <h1>Android App from Your API</h1>
+      <p style="color: var(--text-muted);">Estimated time: 6&ndash;8 hours | Difficulty: Advanced</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Set up Android Studio and create a new Android project from scratch</li>
+          <li>Learn the basics of Kotlin by comparing it side-by-side with Java</li>
+          <li>Build a job search screen with a list that displays results from your API</li>
+          <li>Connect an Android app to your existing Spring Boot backend using Retrofit</li>
+          <li>Implement a favorites feature with bottom navigation, saving, and swipe-to-delete</li>
+          <li>Polish the app with pull-to-refresh, loading indicators, error handling, and Material Design</li>
+          <li>Understand why building proper APIs enables multiple clients to share one backend</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHAT IS ANDROID DEVELOPMENT? ==================== -->
+      <h2>1. What is Android Development?</h2>
+
+      <p>You have built a Spring Boot backend. You have built a web frontend that talks to it. Now you are going to build something that most beginners never attempt: a real Android app that connects to the exact same API. Your backend does not change. Not a single line. The server that powers your website is about to power a mobile app too.</p>
+
+      <p>Android apps are written in <strong>Kotlin</strong>. If you have been following this course, you already know Java. The good news is that Kotlin was designed by JetBrains (the same company that makes IntelliJ) to be a better Java. It runs on the same JVM. It uses the same libraries. It interoperates with Java code seamlessly. If you know Java, Kotlin is going to feel like Java with less boilerplate and more convenience. You will not be starting from zero &mdash; you will be building on everything you already know.</p>
+
+      <p>Before Kotlin became the standard, Android apps were written entirely in Java. Google officially adopted Kotlin as the preferred language for Android development in 2019, and today the vast majority of new Android projects use it. But because Kotlin is so close to Java, and because you already understand object-oriented programming, classes, interfaces, and all the fundamentals &mdash; learning Kotlin is more like learning a dialect than learning a new language.</p>
+
+      <p>Android apps are built using <strong>Android Studio</strong>, which is free and based on IntelliJ IDEA &mdash; the same IDE family as the tools you have been using. If you have used IntelliJ for your Spring Boot projects, Android Studio will feel instantly familiar. The menus, the project structure panel, the code editor, the keyboard shortcuts &mdash; it is all the same foundation with Android-specific tools layered on top.</p>
+
+      <div class="key-concept">
+        <h4>Why This Matters</h4>
+        <p>The entire point of building a proper REST API is that <strong>any client</strong> can consume it. Your web frontend sends HTTP requests and gets JSON back. An Android app can send the exact same HTTP requests and get the exact same JSON back. An iOS app could do it too. A desktop app. A command-line tool. The backend does not care who is asking &mdash; it just responds to well-formed requests. This is why we spent so much time building clean API endpoints in the Resumator track. This side quest is the payoff.</p>
+      </div>
+
+      <p>Think about how real companies work. A company like Spotify has a website, an Android app, an iOS app, a desktop app, and embedded apps in cars and smart speakers. They do not have five completely separate backends. They have APIs that all of these clients connect to. The data is the same. The business logic is the same. Only the user interface changes. That is exactly what you are about to experience on a smaller scale: same API, same database, brand new interface.</p>
+
+      <p>By the end of this side quest, you will have a working Android application running on an emulator (or your own phone) that searches for jobs and manages favorites &mdash; all powered by the Spring Boot backend you already built. Let us get started.</p>
+
+      <!-- ==================== PART 2 — SETTING UP ANDROID STUDIO ==================== -->
+      <h2>2. Setting Up Android Studio</h2>
+
+      <p>First, you need to download and install Android Studio. Go to <a href="https://developer.android.com/studio" target="_blank" rel="noopener">developer.android.com/studio</a> and download the latest stable version. The installer is straightforward &mdash; accept the defaults on every screen. It will download the Android SDK, build tools, and an emulator image. This takes a while, so be patient. On a typical internet connection, expect 10&ndash;15 minutes for the initial setup.</p>
+
+      <p>Once Android Studio is installed and open, create a new project:</p>
+
+      <ol>
+        <li>Click <strong>New Project</strong></li>
+        <li>Select <strong>Empty Activity</strong> as the template (not "Empty Compose Activity" &mdash; we are using the traditional View system for this project)</li>
+        <li>Set the project name to <strong>Resumator Mobile</strong></li>
+        <li>Set the package name to <code>com.example.resumatormobile</code></li>
+        <li>Set the language to <strong>Kotlin</strong></li>
+        <li>Set the minimum SDK to <strong>API 26 (Android 8.0 Oreo)</strong></li>
+        <li>Click <strong>Finish</strong></li>
+      </ol>
+
+      <p>API 26 is a good minimum because it covers over 95% of active Android devices while still giving you access to modern APIs. Setting the minimum too low forces you to write compatibility code for ancient devices. Setting it too high means your app will not run on older phones. API 26 hits the sweet spot.</p>
+
+      <p>After the project is created, Android Studio will spend a minute or two downloading dependencies and indexing files. Wait until the progress bar at the bottom disappears before doing anything else. Once it finishes, let us take a tour of the project structure.</p>
+
+      <div class="key-concept">
+        <h4>Project Structure</h4>
+        <p>Android projects look different from Spring Boot projects, but the concepts are similar. Here is what matters:</p>
+        <ul>
+          <li><code>app/src/main/java/com/example/resumatormobile/</code> &mdash; Your Kotlin source code lives here. This is like your <code>src/main/java</code> in Spring Boot.</li>
+          <li><code>app/src/main/res/layout/</code> &mdash; XML files that define your user interface. Think of these as Android's version of HTML &mdash; they describe what the screen looks like.</li>
+          <li><code>app/src/main/AndroidManifest.xml</code> &mdash; The app's configuration file. It declares permissions (like internet access), activities (screens), and other app-level settings.</li>
+          <li><code>app/build.gradle</code> &mdash; The dependency file, similar to Maven's <code>pom.xml</code>. This is where you add libraries like Retrofit (for HTTP requests).</li>
+          <li><code>MainActivity.kt</code> &mdash; The entry point of your app. This is the first screen the user sees when they open the app.</li>
+        </ul>
+      </div>
+
+      <p>Now you need to decide how to run the app. You have two options:</p>
+
+      <p><strong>Option 1: The Android Emulator.</strong> Android Studio includes a built-in emulator that simulates a phone on your computer. Go to <strong>Tools &rarr; Device Manager</strong> and create a new virtual device. Choose a Pixel 6 (or any recent phone), select an API 34 system image, and finish the wizard. The emulator takes significant RAM (at least 4 GB), so if your computer is low on memory, consider option 2.</p>
+
+      <p><strong>Option 2: Your Physical Phone.</strong> If you have an Android phone, you can run your app directly on it. Enable <strong>Developer Options</strong> on your phone (Settings &rarr; About Phone &rarr; tap "Build Number" seven times), then enable <strong>USB Debugging</strong> under Developer Options. Connect your phone via USB, and Android Studio will detect it automatically. This is faster than the emulator and lets you test on a real device.</p>
+
+      <p>Either option works. For this side quest, we will write instructions assuming the emulator, but everything applies to a physical device as well.</p>
+
+      <p>Before writing any code, let us make sure the project compiles. Click the green <strong>Run</strong> button (or press Shift+F10). The app should build, the emulator should start, and you should see a screen that says "Hello Android!" or similar. If you see that, your environment is ready. If you get errors, check that your SDK is installed correctly and that your emulator image matches your target API level.</p>
+
+      <!-- ==================== PART 3 — KOTLIN CRASH COURSE ==================== -->
+      <h2>3. Kotlin Crash Course</h2>
+
+      <p>Before we start building the app, you need to understand Kotlin. The good news is that you already know the hard parts. Object-oriented programming, classes, interfaces, inheritance, loops, conditionals, collections &mdash; all of these concepts are identical in Kotlin. What changes is the <em>syntax</em>. Kotlin is more concise, more expressive, and has several features that eliminate common Java pain points.</p>
+
+      <p>Let us look at the key differences side by side. In Java, you might write:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Java
+String name = "Coders Farm";
+final int maxResults = 10;
+List&lt;String&gt; items = new ArrayList&lt;&gt;();</code></pre>
+      </div>
+
+      <p>In Kotlin, the same code looks like this:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Kotlin
+var name: String = "Coders Farm"   // var = mutable (can change)
+val maxResults: Int = 10            // val = immutable (like final)
+val items: List&lt;String&gt; = listOf()  // no 'new' keyword needed</code></pre>
+      </div>
+
+      <p>Notice the differences: <code>val</code> replaces <code>final</code>, <code>var</code> replaces a regular variable declaration, the type comes <em>after</em> the name (separated by a colon), and you do not need the <code>new</code> keyword. Kotlin also has type inference, so you can often omit the type entirely:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Kotlin with type inference
+var name = "Coders Farm"       // compiler knows this is a String
+val maxResults = 10             // compiler knows this is an Int
+val items = listOf&lt;String&gt;()   // compiler knows the list type</code></pre>
+      </div>
+
+      <p>One of Kotlin's most important features is <strong>null safety</strong>. In Java, any variable can be <code>null</code>, and if you forget to check, you get a <code>NullPointerException</code> at runtime. Kotlin fixes this at the language level:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Null safety in Kotlin
+var name: String = "Coders Farm"   // cannot be null
+var nickname: String? = null        // the '?' means it CAN be null
+
+// Safe call operator — only calls .length if nickname is not null
+val length = nickname?.length       // returns null instead of crashing
+
+// Elvis operator — provide a default if the value is null
+val displayName = nickname ?: "Anonymous"  // "Anonymous" if nickname is null
+
+// Non-null assertion — crashes if null (use sparingly!)
+val riskyLength = nickname!!.length  // throws exception if null</code></pre>
+      </div>
+
+      <div class="key-concept">
+        <h4>Null Safety</h4>
+        <p>In Java, <code>NullPointerException</code> is the single most common runtime error. Kotlin eliminates most of these errors at compile time. If a variable's type does not have a <code>?</code>, the compiler guarantees it can never be null. If it does have a <code>?</code>, the compiler forces you to handle the null case before using it. This is one of the biggest productivity improvements Kotlin offers over Java.</p>
+      </div>
+
+      <p>Kotlin also has <strong>data classes</strong>, which eliminate the massive boilerplate of Java POJOs. In Java, a simple class with three fields requires a constructor, getters, setters, <code>equals()</code>, <code>hashCode()</code>, and <code>toString()</code> &mdash; easily 50+ lines. In Kotlin:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// A complete data class in Kotlin — one line
+data class Job(
+    val title: String,
+    val company: String,
+    val salary: Double?
+)
+
+// That single declaration gives you:
+// - A constructor
+// - Getters for all properties
+// - equals() and hashCode() based on all properties
+// - toString() that prints all properties
+// - copy() for creating modified copies
+
+val job = Job("Android Developer", "Google", 150000.0)
+println(job)  // prints: Job(title=Android Developer, company=Google, salary=150000.0)
+
+val remote = job.copy(company = "Remote Inc")  // copy with one field changed</code></pre>
+      </div>
+
+      <p>Finally, <strong>lambdas</strong> in Kotlin are cleaner than in Java. You will use them constantly in Android development, especially for click listeners and API callbacks:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Java lambda
+button.setOnClickListener(view -&gt; {
+    System.out.println("Clicked!");
+});
+
+// Kotlin lambda — shorter, cleaner
+button.setOnClickListener {
+    println("Clicked!")
+}
+
+// Kotlin lambda with collections
+val names = listOf("Alice", "Bob", "Charlie")
+val upper = names.map { it.uppercase() }  // ["ALICE", "BOB", "CHARLIE"]
+val long = names.filter { it.length &gt; 3 }  // ["Alice", "Charlie"]</code></pre>
+      </div>
+
+      <p>In Kotlin, if a lambda is the last parameter of a function, you can move it outside the parentheses. If it is the <em>only</em> parameter, you can omit the parentheses entirely. The implicit parameter <code>it</code> refers to the single argument of a lambda. These conventions make Kotlin code dramatically more concise than the equivalent Java.</p>
+
+      <p>You do not need to memorize every detail right now. As you build the app, you will use these features repeatedly, and they will become second nature. The key takeaway: <strong>if you know Java, you already know 80% of Kotlin</strong>. The remaining 20% is syntactic sugar that makes your code shorter and safer.</p>
+
+      <!-- ==================== PART 4 — BUILDING THE JOB SEARCH SCREEN ==================== -->
+      <h2>4. Building the Job Search Screen</h2>
+
+      <p>Now let us build the main screen of the app: a job search interface. The user types a keyword and a location, taps a search button, and sees a scrollable list of job results. This is the Android equivalent of the search page you built for the web frontend &mdash; same data, different platform.</p>
+
+      <p>Android user interfaces are defined in XML layout files. Think of XML layouts as Android's version of HTML. Instead of <code>&lt;div&gt;</code> and <code>&lt;span&gt;</code>, you use <code>&lt;LinearLayout&gt;</code>, <code>&lt;EditText&gt;</code>, and <code>&lt;RecyclerView&gt;</code>. The concepts are the same: you describe a hierarchy of elements that the system renders on screen.</p>
+
+      <p>Create a layout file at <code>app/src/main/res/layout/fragment_search.xml</code>. This defines the search screen:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="true" data-runnable="false">
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"&gt;
+
+    &lt;!-- Search keyword input --&gt;
+    &lt;com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Job title or keyword"&gt;
+
+        &lt;com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editKeyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" /&gt;
+    &lt;/com.google.android.material.textfield.TextInputLayout&gt;
+
+    &lt;!-- Location input --&gt;
+    &lt;com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:hint="City or state"&gt;
+
+        &lt;com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text" /&gt;
+    &lt;/com.google.android.material.textfield.TextInputLayout&gt;
+
+    &lt;!-- Search button --&gt;
+    &lt;com.google.android.material.button.MaterialButton
+        android:id="@+id/btnSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Search Jobs" /&gt;
+
+    &lt;!-- Loading indicator --&gt;
+    &lt;ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:visibility="gone" /&gt;
+
+    &lt;!-- Results list --&gt;
+    &lt;androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerJobs"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp" /&gt;
+
+&lt;/LinearLayout&gt;</code></pre>
+      </div>
+
+      <p>Let us break down what each piece does. The root <code>&lt;LinearLayout&gt;</code> arranges all children vertically (one below the other), similar to a <code>&lt;div&gt;</code> with <code>display: flex; flex-direction: column</code> in CSS. The <code>TextInputLayout</code> and <code>TextInputEditText</code> are Material Design components that provide text fields with floating hint labels &mdash; the hint text floats above the field when the user starts typing, which is the standard Android pattern. The <code>MaterialButton</code> is a styled button that follows Material Design guidelines. The <code>ProgressBar</code> is a spinning loading indicator that starts hidden (<code>visibility="gone"</code>) and becomes visible while a network request is in progress. The <code>RecyclerView</code> is Android's high-performance scrollable list component, similar to rendering a <code>&lt;ul&gt;</code> full of job cards in HTML.</p>
+
+      <p>Now you need a layout for each individual job item in the list. Create <code>app/src/main/res/layout/item_job.xml</code>:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="true" data-runnable="false">
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardElevation="2dp"
+    app:cardCornerRadius="8dp"&gt;
+
+    &lt;LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"&gt;
+
+        &lt;TextView
+            android:id="@+id/textJobTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnSurface" /&gt;
+
+        &lt;TextView
+            android:id="@+id/textCompany"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="?attr/colorOnSurfaceVariant" /&gt;
+
+        &lt;TextView
+            android:id="@+id/textLocation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:textSize="13sp"
+            android:textColor="?attr/colorOnSurfaceVariant" /&gt;
+
+        &lt;TextView
+            android:id="@+id/textSalary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorPrimary" /&gt;
+
+    &lt;/LinearLayout&gt;
+
+&lt;/com.google.android.material.card.MaterialCardView&gt;</code></pre>
+      </div>
+
+      <p>Each job in the search results will be displayed as a Material Design card with the title, company, location, and salary. Now you need the Kotlin code that connects data to this layout. This is called an <strong>Adapter</strong> &mdash; it adapts your data (a list of jobs) into views (visual cards on screen).</p>
+
+      <p>Create a new Kotlin file called <code>JobAdapter.kt</code> in your main package:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumatormobile
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+
+class JobAdapter(
+    private var jobs: List&lt;Job&gt; = emptyList(),
+    private val onFavoriteClick: (Job) -&gt; Unit
+) : RecyclerView.Adapter&lt;JobAdapter.JobViewHolder&gt;() {
+
+    // ViewHolder holds references to the views in each list item
+    class JobViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val textTitle: TextView = view.findViewById(R.id.textJobTitle)
+        val textCompany: TextView = view.findViewById(R.id.textCompany)
+        val textLocation: TextView = view.findViewById(R.id.textLocation)
+        val textSalary: TextView = view.findViewById(R.id.textSalary)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): JobViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_job, parent, false)
+        return JobViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: JobViewHolder, position: Int) {
+        val job = jobs[position]
+        holder.textTitle.text = job.jobTitle
+        holder.textCompany.text = job.employerName
+        holder.textLocation.text = buildString {
+            if (!job.jobCity.isNullOrBlank()) append(job.jobCity)
+            if (!job.jobState.isNullOrBlank()) {
+                if (isNotEmpty()) append(", ")
+                append(job.jobState)
+            }
+        }.ifEmpty { "Location not specified" }
+        holder.textSalary.text = formatSalary(job.jobMinSalary, job.jobMaxSalary)
+
+        // Long press to favorite
+        holder.itemView.setOnLongClickListener {
+            onFavoriteClick(job)
+            true
+        }
+    }
+
+    override fun getItemCount(): Int = jobs.size
+
+    fun updateJobs(newJobs: List&lt;Job&gt;) {
+        jobs = newJobs
+        notifyDataSetChanged()
+    }
+
+    private fun formatSalary(min: Double?, max: Double?): String {
+        if (min == null &amp;&amp; max == null) return "Salary not listed"
+        if (min != null &amp;&amp; max != null) return "$${"%,.0f".format(min)} – $${"%,.0f".format(max)}"
+        if (min != null) return "From $${"%,.0f".format(min)}"
+        return "Up to $${"%,.0f".format(max)}"
+    }
+}</code></pre>
+      </div>
+
+      <p>This adapter follows the same pattern you would use in any Android app. The <code>RecyclerView</code> calls <code>onCreateViewHolder</code> to create a new card and <code>onBindViewHolder</code> to fill it with data. The <code>ViewHolder</code> pattern caches references to views so Android does not have to look them up every time the list scrolls. The <code>onFavoriteClick</code> lambda is a callback &mdash; when the user long-presses a job card, the adapter calls this function, and the activity or fragment decides what to do (save it as a favorite).</p>
+
+      <p>You also need the <code>Job</code> data class that represents a job from the API. Create <code>Job.kt</code>:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumatormobile
+
+import com.google.gson.annotations.SerializedName
+
+data class Job(
+    @SerializedName("job_id") val jobId: String,
+    @SerializedName("job_title") val jobTitle: String,
+    @SerializedName("employer_name") val employerName: String,
+    @SerializedName("employer_logo") val employerLogo: String?,
+    @SerializedName("job_city") val jobCity: String?,
+    @SerializedName("job_state") val jobState: String?,
+    @SerializedName("job_description") val jobDescription: String?,
+    @SerializedName("job_apply_link") val jobApplyLink: String?,
+    @SerializedName("job_min_salary") val jobMinSalary: Double?,
+    @SerializedName("job_max_salary") val jobMaxSalary: Double?
+)</code></pre>
+      </div>
+
+      <p>The <code>@SerializedName</code> annotations tell the Gson JSON library how to map JSON field names (snake_case from the API) to Kotlin property names (camelCase). This is the Kotlin equivalent of what Jackson does automatically in Spring Boot. Notice how the nullable types (<code>String?</code>, <code>Double?</code>) perfectly express which fields might be missing from the API response &mdash; this is Kotlin's null safety in action.</p>
+
+      <!-- ==================== PART 5 — CONNECTING TO YOUR API ==================== -->
+      <h2>5. Connecting to Your API</h2>
+
+      <p>This is where it gets exciting. Your Android app is about to talk to the Spring Boot backend you already built. The tool that makes this easy is called <strong>Retrofit</strong> &mdash; the most popular HTTP client library for Android. Retrofit lets you define API endpoints as a Kotlin interface, and it generates all the networking code for you. If you liked how Spring Data JPA generates repository implementations from interface method names, you will love Retrofit.</p>
+
+      <p>First, add the required dependencies to your <code>app/build.gradle</code> file. In the <code>dependencies</code> block, add:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="false" data-runnable="false">
+        <pre><code>// Retrofit for HTTP requests
+implementation("com.squareup.retrofit2:retrofit:2.9.0")
+implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+// Gson for JSON parsing
+implementation("com.google.code.gson:gson:2.10.1")
+
+// Material Design components
+implementation("com.google.android.material:material:1.11.0")
+
+// RecyclerView and SwipeRefreshLayout
+implementation("androidx.recyclerview:recyclerview:1.3.2")
+implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")</code></pre>
+      </div>
+
+      <p>After adding these lines, click <strong>Sync Now</strong> in the bar that appears at the top of the editor. Gradle will download the libraries. You also need to add internet permission to your <code>AndroidManifest.xml</code> file, just before the <code>&lt;application&gt;</code> tag:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;uses-permission android:name="android.permission.INTERNET" /&gt;</code></pre>
+      </div>
+
+      <p>Now define the API interface. Create <code>ResumeApiService.kt</code>:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumatormobile
+
+import retrofit2.Call
+import retrofit2.http.*
+
+data class SearchResponse(val data: List&lt;Job&gt;)
+
+data class FavoriteJob(
+    val id: Long? = null,
+    val jobId: String,
+    val jobTitle: String,
+    val employerName: String,
+    val employerLogo: String?,
+    val jobCity: String?,
+    val jobState: String?,
+    val jobDescription: String?,
+    val jobApplyLink: String?,
+    val jobMinSalary: Double?,
+    val jobMaxSalary: Double?,
+    val notes: String? = null
+)
+
+interface ResumeApiService {
+
+    @GET("/api/jobs/search")
+    fun searchJobs(
+        @Query("query") query: String,
+        @Query("location") location: String
+    ): Call&lt;SearchResponse&gt;
+
+    @GET("/api/favorites")
+    fun getFavorites(): Call&lt;List&lt;FavoriteJob&gt;&gt;
+
+    @POST("/api/favorites")
+    fun saveFavorite(@Body favorite: FavoriteJob): Call&lt;FavoriteJob&gt;
+
+    @DELETE("/api/favorites/{id}")
+    fun deleteFavorite(@Path("id") id: Long): Call&lt;Void&gt;
+}</code></pre>
+      </div>
+
+      <p>Look at how clean this is. Each method in the interface corresponds to an endpoint on your Spring Boot server. The annotations (<code>@GET</code>, <code>@POST</code>, <code>@DELETE</code>) specify the HTTP method. The <code>@Query</code> annotation adds query parameters to the URL. The <code>@Body</code> annotation sends a JSON object in the request body. The <code>@Path</code> annotation fills in URL path variables. Retrofit reads these annotations and generates all the HTTP code at runtime.</p>
+
+      <p>Now create a singleton object that configures Retrofit and provides the API service. Create <code>ApiClient.kt</code>:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumatormobile
+
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
+object ApiClient {
+
+    // IMPORTANT: 10.0.2.2 is how the Android emulator reaches
+    // your computer's localhost. Your Spring Boot server runs
+    // on localhost:8080, but the emulator is a separate virtual
+    // device — "localhost" inside the emulator means the emulator
+    // itself, not your computer. 10.0.2.2 is the special alias
+    // that routes to your computer's loopback address.
+    private const val BASE_URL = "http://10.0.2.2:8080/"
+
+    private val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(BASE_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val service: ResumeApiService = retrofit.create(ResumeApiService::class.java)
+}</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>10.0.2.2 is not a random address</strong>
+        When your Android app runs on the emulator, the emulator is a virtual device with its own network stack. If you write <code>localhost</code> or <code>127.0.0.1</code> in your app, it refers to the emulator itself, not your computer. Your Spring Boot server is running on your computer, not inside the emulator. The address <code>10.0.2.2</code> is a special alias built into the Android emulator that routes network traffic to your computer's loopback address. This is a common "gotcha" that trips up every Android developer at least once. If you are running on a physical device instead, you need to use your computer's local IP address (like <code>192.168.1.x</code>) and make sure both devices are on the same Wi-Fi network.
+      </div>
+
+      <p>Now let us wire everything together. In your search fragment or activity, make the API call when the user taps the search button:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Inside your SearchFragment or MainActivity
+btnSearch.setOnClickListener {
+    val keyword = editKeyword.text.toString().trim()
+    val location = editLocation.text.toString().trim()
+
+    if (keyword.isEmpty()) {
+        editKeyword.error = "Enter a keyword"
+        return@setOnClickListener
+    }
+
+    // Show loading, hide results
+    progressBar.visibility = View.VISIBLE
+    recyclerJobs.visibility = View.GONE
+
+    ApiClient.service.searchJobs(keyword, location)
+        .enqueue(object : retrofit2.Callback&lt;SearchResponse&gt; {
+
+            override fun onResponse(
+                call: retrofit2.Call&lt;SearchResponse&gt;,
+                response: retrofit2.Response&lt;SearchResponse&gt;
+            ) {
+                progressBar.visibility = View.GONE
+                recyclerJobs.visibility = View.VISIBLE
+
+                if (response.isSuccessful) {
+                    val jobs = response.body()?.data ?: emptyList()
+                    jobAdapter.updateJobs(jobs)
+                    if (jobs.isEmpty()) {
+                        showMessage("No jobs found. Try different keywords.")
+                    }
+                } else {
+                    showMessage("Search failed: ${response.code()}")
+                }
+            }
+
+            override fun onFailure(
+                call: retrofit2.Call&lt;SearchResponse&gt;,
+                t: Throwable
+            ) {
+                progressBar.visibility = View.GONE
+                recyclerJobs.visibility = View.VISIBLE
+                showMessage("Network error: ${t.message}")
+            }
+        })
+}</code></pre>
+      </div>
+
+      <p>This is the Retrofit callback pattern. The <code>enqueue</code> method sends the HTTP request on a background thread (Android does not allow network calls on the main thread &mdash; it would freeze the UI). When the response arrives, Retrofit calls either <code>onResponse</code> (the server responded) or <code>onFailure</code> (the request could not be completed &mdash; no network, server down, timeout, etc.). Inside <code>onResponse</code>, we check <code>response.isSuccessful</code> to confirm the HTTP status code was in the 200 range, then extract the list of jobs from the response body.</p>
+
+      <p>Before testing, make sure your Spring Boot backend is running. Start it up the same way you always do. Then run your Android app on the emulator. Type a search query, tap the button, and watch the results appear. You are now looking at data from your MySQL database, served by your Spring Boot API, displayed in an Android app on a virtual phone. That is a full-stack mobile experience.</p>
+
+      <div class="callout callout-info">
+        <strong>Troubleshooting connection issues</strong>
+        If you get a "Network error" message, check three things: (1) Your Spring Boot server is running and accessible at <code>http://localhost:8080</code> on your computer. (2) You are using <code>10.0.2.2</code> as the base URL, not <code>localhost</code>. (3) You added the <code>INTERNET</code> permission to your AndroidManifest.xml. If you are on Android 9 (API 28) or higher and using HTTP instead of HTTPS, you may also need to add <code>android:usesCleartextTraffic="true"</code> to the <code>&lt;application&gt;</code> tag in your manifest. This allows unencrypted HTTP traffic, which is fine for local development but should not be used in a production app.
+      </div>
+
+      <!-- ==================== PART 6 — FAVORITES ==================== -->
+      <h2>6. Favorites</h2>
+
+      <p>Now let us add the ability to save and manage favorite jobs. You will add a bottom navigation bar with two tabs &mdash; <strong>Search</strong> and <strong>Favorites</strong> &mdash; so the user can switch between searching for jobs and viewing their saved list. This is the same favorites feature you built on the web, but now on Android.</p>
+
+      <p>First, set up bottom navigation. Add this to your main activity layout (<code>activity_main.xml</code>), below the fragment container:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;com.google.android.material.bottomnavigation.BottomNavigationView
+    android:id="@+id/bottomNav"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    app:menu="@menu/bottom_nav_menu" /&gt;</code></pre>
+      </div>
+
+      <p>Create the menu file at <code>app/src/main/res/menu/bottom_nav_menu.xml</code>:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;menu xmlns:android="http://schemas.android.com/apk/res/android"&gt;
+    &lt;item
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_search"
+        android:title="Search" /&gt;
+    &lt;item
+        android:id="@+id/nav_favorites"
+        android:icon="@drawable/ic_favorite"
+        android:title="Favorites" /&gt;
+&lt;/menu&gt;</code></pre>
+      </div>
+
+      <p>Now build the favorites functionality. Create <code>FavoritesFragment.kt</code> (or add it to your existing activity). This screen fetches favorites from your API and displays them in a list:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumatormobile
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+
+class FavoritesFragment : Fragment() {
+
+    private lateinit var recyclerFavorites: RecyclerView
+    private lateinit var progressBar: View
+    private lateinit var emptyView: View
+    private val favorites = mutableListOf&lt;FavoriteJob&gt;()
+    private lateinit var adapter: FavoriteAdapter
+
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_favorites, container, false)
+        recyclerFavorites = view.findViewById(R.id.recyclerFavorites)
+        progressBar = view.findViewById(R.id.progressBar)
+        emptyView = view.findViewById(R.id.emptyView)
+
+        adapter = FavoriteAdapter(favorites)
+        recyclerFavorites.layoutManager = LinearLayoutManager(requireContext())
+        recyclerFavorites.adapter = adapter
+
+        // Swipe to delete
+        val swipeHandler = object : ItemTouchHelper.SimpleCallback(
+            0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                rv: RecyclerView, vh: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ) = false
+
+            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {
+                val position = vh.adapterPosition
+                val favorite = favorites[position]
+                deleteFavorite(favorite.id!!, position)
+            }
+        }
+        ItemTouchHelper(swipeHandler).attachToRecyclerView(recyclerFavorites)
+
+        loadFavorites()
+        return view
+    }
+
+    private fun loadFavorites() {
+        progressBar.visibility = View.VISIBLE
+        recyclerFavorites.visibility = View.GONE
+        emptyView.visibility = View.GONE
+
+        ApiClient.service.getFavorites()
+            .enqueue(object : retrofit2.Callback&lt;List&lt;FavoriteJob&gt;&gt; {
+
+                override fun onResponse(
+                    call: retrofit2.Call&lt;List&lt;FavoriteJob&gt;&gt;,
+                    response: retrofit2.Response&lt;List&lt;FavoriteJob&gt;&gt;
+                ) {
+                    progressBar.visibility = View.GONE
+                    if (response.isSuccessful) {
+                        favorites.clear()
+                        favorites.addAll(response.body() ?: emptyList())
+                        adapter.notifyDataSetChanged()
+
+                        if (favorites.isEmpty()) {
+                            emptyView.visibility = View.VISIBLE
+                        } else {
+                            recyclerFavorites.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                override fun onFailure(
+                    call: retrofit2.Call&lt;List&lt;FavoriteJob&gt;&gt;,
+                    t: Throwable
+                ) {
+                    progressBar.visibility = View.GONE
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to load favorites: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+    }
+
+    private fun deleteFavorite(id: Long, position: Int) {
+        ApiClient.service.deleteFavorite(id)
+            .enqueue(object : retrofit2.Callback&lt;Void&gt; {
+
+                override fun onResponse(
+                    call: retrofit2.Call&lt;Void&gt;,
+                    response: retrofit2.Response&lt;Void&gt;
+                ) {
+                    if (response.isSuccessful) {
+                        favorites.removeAt(position)
+                        adapter.notifyItemRemoved(position)
+                        Toast.makeText(
+                            requireContext(),
+                            "Favorite removed",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        if (favorites.isEmpty()) {
+                            recyclerFavorites.visibility = View.GONE
+                            emptyView.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                override fun onFailure(
+                    call: retrofit2.Call&lt;Void&gt;,
+                    t: Throwable
+                ) {
+                    // Undo the swipe by re-inserting the item
+                    adapter.notifyItemChanged(position)
+                    Toast.makeText(
+                        requireContext(),
+                        "Failed to delete: ${t.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            })
+    }
+}</code></pre>
+      </div>
+
+      <p>The swipe-to-delete feature uses <code>ItemTouchHelper</code>, which is Android's built-in way to add swipe and drag gestures to a <code>RecyclerView</code>. When the user swipes a favorite left or right, <code>onSwiped</code> fires, and we call the DELETE endpoint on our API. If the delete succeeds, we remove the item from the local list and animate it out. If it fails, we undo the swipe so the item reappears.</p>
+
+      <p>Now add the favorite button to the search results. When the user long-presses a job card in the search results, the app saves it as a favorite:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="true" data-runnable="false">
+        <pre><code>// Saving a job as a favorite (called from the adapter's onFavoriteClick)
+private fun saveAsFavorite(job: Job) {
+    val favorite = FavoriteJob(
+        jobId = job.jobId,
+        jobTitle = job.jobTitle,
+        employerName = job.employerName,
+        employerLogo = job.employerLogo,
+        jobCity = job.jobCity,
+        jobState = job.jobState,
+        jobDescription = job.jobDescription,
+        jobApplyLink = job.jobApplyLink,
+        jobMinSalary = job.jobMinSalary,
+        jobMaxSalary = job.jobMaxSalary
+    )
+
+    ApiClient.service.saveFavorite(favorite)
+        .enqueue(object : retrofit2.Callback&lt;FavoriteJob&gt; {
+
+            override fun onResponse(
+                call: retrofit2.Call&lt;FavoriteJob&gt;,
+                response: retrofit2.Response&lt;FavoriteJob&gt;
+            ) {
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        requireContext(),
+                        "${job.jobTitle} saved to favorites!",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else if (response.code() == 409) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Already in favorites",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+
+            override fun onFailure(
+                call: retrofit2.Call&lt;FavoriteJob&gt;,
+                t: Throwable
+            ) {
+                Toast.makeText(
+                    requireContext(),
+                    "Failed to save: ${t.message}",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        })
+}</code></pre>
+      </div>
+
+      <p>Notice how the 409 (Conflict) status code is handled. Remember back in the Resumator web lessons, you built the <code>FavoriteController</code> to return a 409 when a user tries to save a job they have already favorited. That same logic applies here. The backend does not care whether the request came from a browser or an Android app &mdash; the rules are the same.</p>
+
+      <!-- ==================== PART 7 — POLISH ==================== -->
+      <h2>7. Polish</h2>
+
+      <p>Your app works, but it does not <em>feel</em> professional yet. Professional Android apps have polish: smooth loading states, pull-to-refresh, graceful error handling, consistent theming, and a proper app icon. Let us add these finishing touches.</p>
+
+      <p><strong>Pull-to-refresh.</strong> Users expect to be able to pull down on a list to refresh its contents. Android provides the <code>SwipeRefreshLayout</code> component for exactly this. Wrap your <code>RecyclerView</code> in a <code>SwipeRefreshLayout</code> in your layout XML:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+    android:id="@+id/swipeRefresh"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1"&gt;
+
+    &lt;androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerFavorites"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" /&gt;
+
+&lt;/androidx.swiperefreshlayout.widget.SwipeRefreshLayout&gt;</code></pre>
+      </div>
+
+      <p>Then in your Kotlin code, set up the refresh listener:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="false" data-runnable="false">
+        <pre><code>swipeRefresh.setOnRefreshListener {
+    loadFavorites()
+}
+
+// In your loadFavorites() onResponse/onFailure callbacks, add:
+swipeRefresh.isRefreshing = false</code></pre>
+      </div>
+
+      <p><strong>Loading indicators.</strong> You already have a <code>ProgressBar</code> that shows while data loads. Make sure it appears at the right times: visible when a request starts, hidden when it finishes (whether success or failure). Never leave the user staring at a blank screen with no indication that something is happening.</p>
+
+      <p><strong>Error handling.</strong> Network requests can fail for many reasons: the server might be down, the phone might lose Wi-Fi, the request might time out. Always handle the <code>onFailure</code> callback and show a user-friendly message. Never show raw exception messages to the user &mdash; translate them into something helpful:</p>
+
+      <div class="code-editor" data-language="kotlin" data-editable="false" data-runnable="false">
+        <pre><code>private fun showError(throwable: Throwable) {
+    val message = when (throwable) {
+        is java.net.ConnectException -&gt;
+            "Cannot connect to server. Make sure your backend is running."
+        is java.net.SocketTimeoutException -&gt;
+            "Request timed out. Check your connection and try again."
+        is java.net.UnknownHostException -&gt;
+            "No internet connection."
+        else -&gt;
+            "Something went wrong. Please try again."
+    }
+    Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show()
+}</code></pre>
+      </div>
+
+      <p><strong>Material Design theming.</strong> Android's Material Design system provides a consistent, professional look. Update your <code>app/src/main/res/values/themes.xml</code> to customize the color scheme:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;resources&gt;
+    &lt;style name="Theme.ResumatorMobile"
+        parent="Theme.Material3.DayNight.DarkActionBar"&gt;
+        &lt;item name="colorPrimary"&gt;@color/primary&lt;/item&gt;
+        &lt;item name="colorPrimaryVariant"&gt;@color/primary_dark&lt;/item&gt;
+        &lt;item name="colorOnPrimary"&gt;@color/white&lt;/item&gt;
+        &lt;item name="colorSecondary"&gt;@color/accent&lt;/item&gt;
+    &lt;/style&gt;
+&lt;/resources&gt;</code></pre>
+      </div>
+
+      <p>Define your colors in <code>app/src/main/res/values/colors.xml</code>:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;resources&gt;
+    &lt;color name="primary"&gt;#1565C0&lt;/color&gt;
+    &lt;color name="primary_dark"&gt;#0D47A1&lt;/color&gt;
+    &lt;color name="accent"&gt;#FF6F00&lt;/color&gt;
+    &lt;color name="white"&gt;#FFFFFF&lt;/color&gt;
+&lt;/resources&gt;</code></pre>
+      </div>
+
+      <p><strong>App icon.</strong> The default Android app icon is the green robot. To make your app look real, you need a custom icon. In Android Studio, right-click the <code>res</code> folder, choose <strong>New &rarr; Image Asset</strong>, and use the wizard to create an adaptive icon. You can use a simple text-based icon with your app's initials ("RM" for Resumator Mobile) or any image you like. The wizard generates all the required sizes automatically &mdash; Android needs icons in multiple resolutions for different screen densities.</p>
+
+      <p>These polish details might seem minor, but they are the difference between a demo and a product. Professional apps handle errors gracefully, provide visual feedback during loading, and look consistent throughout. Take the time to get these right.</p>
+
+      <!-- ==================== PART 8 — THE BIG PICTURE ==================== -->
+      <h2>8. The Big Picture</h2>
+
+      <p>Step back and look at what you have built. You now have a Spring Boot server with a REST API, a MySQL database, a web frontend, and an Android app. <strong>The server does not know or care who is asking.</strong> When the web frontend sends <code>GET /api/jobs/search?query=java&amp;location=texas</code>, the server responds with JSON. When the Android app sends the exact same request, the server responds with the exact same JSON. Two completely different clients, one backend, one database, one source of truth.</p>
+
+      <div class="key-concept">
+        <h4>This is Why Separation Matters</h4>
+        <p>In the early lessons, we talked about separation of concerns &mdash; keeping the API layer separate from the frontend. At the time, it might have felt academic. Now you can see exactly why it matters. Because the backend is a clean API that speaks HTTP and JSON, you were able to build an entirely new client without changing a single line of server code. If you had built the web frontend with server-side rendering (where the HTML is generated on the server), you could not have reused any of it for Android. The separation is what made this possible.</p>
+      </div>
+
+      <p>In a real company, this architecture scales to entire teams. Imagine a company building a job search platform. There is a <strong>backend team</strong> that maintains the API, the database, the business logic, and the infrastructure. There is a <strong>web frontend team</strong> that builds the browser experience using React or Angular or plain HTML and JavaScript. There is an <strong>Android team</strong> that builds the Android app in Kotlin. There is an <strong>iOS team</strong> that builds the iPhone app in Swift. All four teams work independently, on their own schedules, using their own tools and languages. The only thing they share is the API contract &mdash; the agreed-upon set of endpoints, request formats, and response formats.</p>
+
+      <p>When the backend team adds a new endpoint, all three frontend teams can start using it. When the Android team redesigns the search screen, the backend does not need to change. When the iOS team adds a new feature, the Android and web teams are unaffected. This independence is what makes large-scale software development possible. It is why companies can have hundreds of developers working on the same product without stepping on each other's toes.</p>
+
+      <div class="callout callout-info">
+        <strong>You now understand API-driven architecture</strong>
+        Many developers go through entire bootcamps without building a mobile client for their API. They build a backend and a web frontend and never experience the "aha" moment of seeing the same data appear on a completely different platform. You have that experience now. When someone at a job interview asks you why REST APIs matter, or why you separate the frontend from the backend, you do not need to recite a textbook definition. You can say: "I built a Spring Boot API and then built an Android app that consumed it without changing the backend. That is why separation matters."
+      </div>
+
+      <p>Think about what you could build next. The same API could power an iOS app written in Swift. It could power a command-line tool written in Python. It could power a Slack bot, a Chrome extension, or a smart TV app. The API is the foundation, and every new client you build on top of it reinforces why you built it right in the first place.</p>
+
+      <p>You started this course learning what a variable is. Now you have a multi-platform system: a Java backend, a SQL database, a web frontend, and a Kotlin Android app, all working together. That is not a tutorial project. That is real software engineering.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="sq-android-1">
+        <p class="quiz-question">1. When running an Android app on the emulator, why do you use <code>10.0.2.2</code> instead of <code>localhost</code> to reach your Spring Boot server?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-android-1" value="a"> <code>localhost</code> is blocked on Android for security reasons</label>
+          <label><input type="radio" name="sq-android-1" value="b"> The emulator is a virtual device with its own network &mdash; <code>localhost</code> inside the emulator refers to the emulator itself, not your computer, so <code>10.0.2.2</code> is the special alias that routes to the host machine</label>
+          <label><input type="radio" name="sq-android-1" value="c"> <code>10.0.2.2</code> is the default IP address assigned to all Android devices</label>
+          <label><input type="radio" name="sq-android-1" value="d"> Retrofit requires a numeric IP address and does not support hostnames</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! The Android emulator runs as a separate virtual device with its own network stack. When code inside the emulator references <code>localhost</code> or <code>127.0.0.1</code>, it points to the emulator itself &mdash; not the computer running Android Studio. The address <code>10.0.2.2</code> is a special alias built into the emulator that routes traffic to the host machine's loopback interface, allowing the app to reach your Spring Boot server running on <code>localhost:8080</code>.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-android-2">
+        <p class="quiz-question">2. What is the main advantage of Kotlin's null safety system compared to Java?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-android-2" value="a"> Kotlin automatically converts null values to empty strings</label>
+          <label><input type="radio" name="sq-android-2" value="b"> Kotlin prevents all runtime errors related to null values</label>
+          <label><input type="radio" name="sq-android-2" value="c"> The compiler forces you to handle null cases at compile time &mdash; if a type does not have <code>?</code>, it can never be null, and if it does, you must handle the null case before using it</label>
+          <label><input type="radio" name="sq-android-2" value="d"> Kotlin does not allow null values at all</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! Kotlin's null safety distinguishes between nullable types (<code>String?</code>) and non-nullable types (<code>String</code>) at the language level. The compiler will refuse to compile code that uses a nullable value without first handling the null case, whether through safe calls (<code>?.</code>), elvis operators (<code>?:</code>), or explicit checks. This catches most <code>NullPointerException</code> bugs at compile time rather than at runtime, which is one of the biggest productivity improvements Kotlin offers over Java.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-android-3">
+        <p class="quiz-question">3. Why can both the web frontend and the Android app use the same Spring Boot backend without any changes to the server code?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-android-3" value="a"> Spring Boot automatically detects whether the request comes from a browser or an app and adjusts its response format</label>
+          <label><input type="radio" name="sq-android-3" value="b"> Because the backend is a REST API that communicates via HTTP and JSON &mdash; any client that can send HTTP requests and parse JSON can consume the same endpoints, regardless of platform or language</label>
+          <label><input type="radio" name="sq-android-3" value="c"> The Android app embeds a web browser component that loads the web frontend</label>
+          <label><input type="radio" name="sq-android-3" value="d"> Both clients share the same programming language (Java/Kotlin), so they can share code directly</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! A REST API communicates through a universal protocol (HTTP) using a universal data format (JSON). The server does not know or care what kind of client is making the request &mdash; it simply receives HTTP requests and returns JSON responses. A web browser, an Android app, an iOS app, a Python script, or any other HTTP-capable client can all consume the same API. This is the fundamental reason why building a clean REST API is so valuable: it decouples the backend from any specific frontend, enabling multiple clients to share one backend.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>Your completed side quest should produce a working Android application running on the emulator (or a physical device) that does the following:</p>
+
+      <ul>
+        <li>Connects to your existing Resumator Spring Boot API &mdash; no changes to the backend</li>
+        <li>Has a search screen where users can enter a keyword and location to find jobs</li>
+        <li>Displays search results in a scrollable list with job title, company, location, and salary</li>
+        <li>Allows long-pressing a search result to save it as a favorite</li>
+        <li>Has a favorites screen accessible via bottom navigation that shows all saved jobs</li>
+        <li>Supports swipe-to-delete for removing favorites</li>
+        <li>Handles loading states, empty states, and error states gracefully</li>
+        <li>Uses Material Design theming for a professional look and feel</li>
+      </ul>
+
+      <p>When you can search for jobs on your phone (or emulator), save favorites, switch to the favorites tab, see them listed there, and swipe to delete &mdash; all powered by the same backend that serves your web app &mdash; this side quest is complete. You have built a multi-platform system. That is real software engineering.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="android-app">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

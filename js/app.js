@@ -110,14 +110,6 @@ function initSideQuests() {
     'resumator': 8
   };
   const TOTAL_CORE = 30;
-  const SQ_STORAGE_KEY = 'cf-sq-progress';
-
-  function getSQProgress() {
-    try {
-      return JSON.parse(localStorage.getItem(SQ_STORAGE_KEY)) || {};
-    } catch { return {}; }
-  }
-
   function countCompletedCoreLessons() {
     const progress = Progress.getAll();
     let count = 0;
@@ -139,15 +131,14 @@ function initSideQuests() {
   }
 
   const unlocked = areAllCoreLessonsComplete();
-  const sqProgress = getSQProgress();
   const cards = document.querySelectorAll('.side-quest-card');
   let sqCompleted = 0;
 
   cards.forEach(card => {
     const questId = card.getAttribute('data-quest-id');
 
-    // Check if completed
-    if (sqProgress[questId] && sqProgress[questId].completed) {
+    // Check if completed (uses same Progress module as core lessons)
+    if (Progress.isCompleted('side-quests', questId)) {
       sqCompleted++;
       const badge = document.createElement('div');
       badge.className = 'sq-completed-badge';

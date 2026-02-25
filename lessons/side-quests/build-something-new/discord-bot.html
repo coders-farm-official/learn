@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Build a Discord Bot — Coders Farm</title>
+  <meta name="description" content="Build a Java-powered Discord bot that responds to commands, uses embeds, and connects to databases and APIs">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-discord-bot">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Discord Bot</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Build a Discord Bot</p>
+      <h1>Build a Discord Bot</h1>
+      <p style="color: var(--text-muted);">Estimated time: 4&ndash;5 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand what Discord bots are and how they use Discord's API</li>
+          <li>Set up a Discord application and bot user at discord.com/developers</li>
+          <li>Build a Java bot using JDA (Java Discord API)</li>
+          <li>Listen for messages and respond to commands</li>
+          <li>Create slash commands with formatted embed responses</li>
+          <li>Build useful bot features: <code>/help</code>, <code>/remind</code>, <code>/poll</code></li>
+          <li>Connect your bot to a MySQL database and external APIs</li>
+          <li>Understand deployment considerations for always-on bots</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHAT IS A DISCORD BOT? ==================== -->
+      <h2>1. What Is a Discord Bot?</h2>
+
+      <p>If you have spent any time on Discord, you have seen bots. They are the users with the little "BOT" tag next to their name. They greet new members, play music, moderate chat, run polls, look up information, and do a thousand other things. They feel like magic. But they are not magic. They are just programs &mdash; programs that connect to Discord's servers, listen for events, and respond.</p>
+
+      <p>Here is the part that should excite you: <strong>you already know how to build one.</strong></p>
+
+      <p>Think about what you built with Resumator. You wrote a Spring Boot application that listens for HTTP requests, processes them, and sends back responses. A Discord bot does exactly the same thing, except instead of listening for HTTP requests from a browser, it listens for <em>events</em> from Discord &mdash; messages sent in a channel, a user joining a server, someone typing a slash command. Instead of sending back HTML or JSON, it sends back messages, embeds, and reactions.</p>
+
+      <p>The mental model is the same:</p>
+
+      <ul>
+        <li><strong>REST API:</strong> Browser sends HTTP request &rarr; Your controller handles it &rarr; You send back a response</li>
+        <li><strong>Discord Bot:</strong> User sends a message or command &rarr; Your listener handles it &rarr; You send back a reply</li>
+      </ul>
+
+      <p>Same pattern. Different interface. If you can build one, you can build the other.</p>
+
+      <p>We will use a library called <strong>JDA</strong> &mdash; Java Discord API. JDA is to Discord what Spring Boot is to web development: it handles all the messy low-level details (WebSocket connections, rate limiting, authentication) and gives you clean, simple Java methods to work with. You register listeners, and JDA calls your code when things happen. You have seen this pattern before. It is event-driven programming, and it is everywhere in software.</p>
+
+      <p>By the end of this side quest, you will have a real bot running in a real Discord server that your friends can actually use. Let us get started.</p>
+
+      <!-- ==================== PART 2 — SETTING UP ==================== -->
+      <h2>2. Setting Up Your Bot</h2>
+
+      <p>Before you write a single line of Java, you need to do some setup on Discord's side. You are going to create a <strong>Discord Application</strong>, attach a <strong>Bot user</strong> to it, get your <strong>bot token</strong>, and invite it to a test server. This is the equivalent of setting up your database and API keys before building Resumator.</p>
+
+      <h3>Step 1: Create a Discord Application</h3>
+
+      <p>Go to <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">discord.com/developers/applications</a> and sign in with your Discord account. Click <strong>"New Application"</strong> in the top-right corner. Give it a name &mdash; something like "Coders Farm Bot" or whatever you want to call it. Click <strong>Create</strong>.</p>
+
+      <p>You are now looking at your application's dashboard. This is where Discord keeps all the settings for your bot. Think of the "Application" as the container, and the "Bot" as the actual user that will appear in servers.</p>
+
+      <h3>Step 2: Create the Bot User</h3>
+
+      <p>In the left sidebar, click <strong>"Bot"</strong>. Then click <strong>"Add Bot"</strong> and confirm. Discord will create a bot user attached to your application. You will see options for its username and profile picture &mdash; you can customize these later.</p>
+
+      <p>Now find the <strong>Token</strong> section and click <strong>"Reset Token"</strong> (or "Copy" if it is visible). Copy this token and save it somewhere safe.</p>
+
+      <div class="key-concept">
+        <h4>Security: Your Bot Token Is a Password</h4>
+        <p>Your bot token is exactly like an API key or a database password. Anyone who has it can control your bot &mdash; send messages as it, read channels it has access to, anything. <strong>Never commit your token to Git. Never paste it in a public channel. Never hardcode it in your Java files.</strong></p>
+        <p>You will store it in <code>application.properties</code> (which should be in your <code>.gitignore</code>), just like you stored your JSearch API key for Resumator. Same principle, same solution. If your token ever leaks, go back to the Developer Portal and reset it immediately.</p>
+      </div>
+
+      <h3>Step 3: Set Permissions and Invite the Bot</h3>
+
+      <p>In the left sidebar, click <strong>"OAuth2"</strong>. Scroll down to <strong>"OAuth2 URL Generator"</strong>. Under <strong>Scopes</strong>, check <code>bot</code> and <code>applications.commands</code>. Under <strong>Bot Permissions</strong>, check:</p>
+
+      <ul>
+        <li>Send Messages</li>
+        <li>Read Message History</li>
+        <li>Use Slash Commands</li>
+        <li>Embed Links</li>
+        <li>Add Reactions</li>
+        <li>Manage Messages (for the poll feature later)</li>
+      </ul>
+
+      <p>Discord will generate an invite URL at the bottom. Copy it, paste it into your browser, and select the test server you want to invite the bot to. If you do not have a test server yet, create one &mdash; it takes five seconds. Click <strong>Authorize</strong>, and your bot will appear in the server's member list (it will be offline until you run your code).</p>
+
+      <h3>Step 4: Create Your Java Project</h3>
+
+      <p>Create a new Java project with Maven, just like you have done before. You can use IntelliJ's "New Project" wizard or Spring Initializr. For this project, you do not need Spring Boot &mdash; JDA is a standalone library. But if you want to add database or API features later (we will), starting with Spring Boot makes that easier.</p>
+
+      <p>The critical step is adding JDA to your <code>pom.xml</code>. Add this dependency:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- In your pom.xml, inside the &lt;dependencies&gt; section --&gt;
+&lt;dependency&gt;
+    &lt;groupId&gt;net.dv8tion&lt;/groupId&gt;
+    &lt;artifactId&gt;JDA&lt;/artifactId&gt;
+    &lt;version&gt;5.1.2&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>If Maven does not find JDA in Maven Central, you may need to add the JDA repository. Check the <a href="https://github.com/discord-jda/JDA" target="_blank" rel="noopener">JDA GitHub page</a> for the latest version and instructions. Once Maven downloads the dependency, you are ready to write code.</p>
+
+      <p>Now set up your token. In <code>src/main/resources/application.properties</code>:</p>
+
+      <div class="code-editor" data-language="properties" data-editable="false" data-runnable="false">
+        <pre><code># Discord bot token - NEVER commit this file to Git
+discord.bot.token=YOUR_TOKEN_HERE</code></pre>
+      </div>
+
+      <p>And make sure your <code>.gitignore</code> includes <code>application.properties</code> (or at least the line with your token). You have done this before with API keys. Same discipline applies here.</p>
+
+      <!-- ==================== PART 3 — YOUR FIRST BOT ==================== -->
+      <h2>3. Your First Bot</h2>
+
+      <p>This is the moment. You are going to write a few lines of Java, run the program, and watch your bot come to life in Discord. This is the "Hello World" of bot development, and it is one of the most satisfying moments you will have as a programmer &mdash; because you will see your code appear as a real user in a real application that other people use.</p>
+
+      <p>Create a class called <code>DiscordBot.java</code>. This is your main class &mdash; the entry point for your bot:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class DiscordBot {
+
+    public static void main(String[] args) throws Exception {
+        // Load the token from application.properties
+        Properties props = new Properties();
+        InputStream input = DiscordBot.class.getClassLoader()
+                .getResourceAsStream("application.properties");
+        props.load(input);
+        String token = props.getProperty("discord.bot.token");
+
+        // Build the JDA instance and connect to Discord
+        JDA jda = JDABuilder.createDefault(token)
+                .setActivity(Activity.playing("with Java code"))
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .addEventListeners(new MessageListener())
+                .build();
+
+        // Wait until the bot is fully connected
+        jda.awaitReady();
+        System.out.println("Bot is online! Connected as: "
+                + jda.getSelfUser().getName());
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us break this down piece by piece, because every line matters:</p>
+
+      <ul>
+        <li><strong><code>JDABuilder.createDefault(token)</code></strong> &mdash; This creates a builder for your bot connection, using your token to authenticate. Think of it like <code>DriverManager.getConnection()</code> for databases, but for Discord.</li>
+        <li><strong><code>.setActivity(Activity.playing("with Java code"))</code></strong> &mdash; This sets the "Playing..." status you see under a user's name in the member list. It is cosmetic but fun.</li>
+        <li><strong><code>.enableIntents(GatewayIntent.MESSAGE_CONTENT)</code></strong> &mdash; Discord requires you to explicitly opt in to receiving message content. This is a privacy feature. Without it, your bot can see that a message was sent, but not what it says.</li>
+        <li><strong><code>.addEventListeners(new MessageListener())</code></strong> &mdash; This registers a listener class that will handle events. We will write this next.</li>
+        <li><strong><code>.build()</code></strong> &mdash; This actually connects to Discord. Behind the scenes, JDA opens a WebSocket connection to Discord's gateway server.</li>
+        <li><strong><code>jda.awaitReady()</code></strong> &mdash; This blocks until the bot is fully connected and has received all the initial data (server list, channel list, member lists, etc.).</li>
+      </ul>
+
+      <p>Now create the <code>MessageListener</code> class. This is where you handle events:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.session.ReadyEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+public class MessageListener extends ListenerAdapter {
+
+    @Override
+    public void onReady(ReadyEvent event) {
+        System.out.println("Bot is ready and listening for events!");
+    }
+
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event) {
+        // Ignore messages from bots (including ourselves!)
+        if (event.getAuthor().isBot()) return;
+
+        String message = event.getMessage().getContentRaw();
+
+        if (message.equalsIgnoreCase("!hello")) {
+            event.getChannel().sendMessage(
+                "Hello, " + event.getAuthor().getName()
+                + "! I am a bot built with Java and JDA."
+            ).queue();
+        }
+
+        if (message.equalsIgnoreCase("!ping")) {
+            long time = System.currentTimeMillis();
+            event.getChannel().sendMessage("Pong!")
+                .queue(response -> {
+                    response.editMessageFormat("Pong! Latency: %dms",
+                        System.currentTimeMillis() - time).queue();
+                });
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p>Look at this class carefully. <code>ListenerAdapter</code> is a JDA class that provides empty default implementations for every possible Discord event. You override only the ones you care about. When Discord sends an event, JDA routes it to the appropriate method. You do not need to parse raw WebSocket frames or deal with JSON &mdash; JDA gives you clean Java objects like <code>MessageReceivedEvent</code> that have methods like <code>getAuthor()</code> and <code>getChannel()</code>.</p>
+
+      <p>Notice the <code>.queue()</code> call at the end of <code>sendMessage()</code>. This is important. JDA sends messages <em>asynchronously</em> by default. <code>.queue()</code> means "send this in the background and do not block." You could use <code>.complete()</code> to send synchronously, but <code>.queue()</code> is the right choice for almost everything because it keeps your bot responsive. The <code>!ping</code> command even uses the callback version of <code>.queue()</code> to measure round-trip latency.</p>
+
+      <p>Also notice the first line of <code>onMessageReceived</code>: we check if the message author is a bot and return early if so. <strong>This is critical.</strong> Without this check, your bot could respond to its own messages, which could trigger it to respond again, creating an infinite loop. Always ignore bot messages.</p>
+
+      <p><strong>Run the program.</strong> Open IntelliJ, click Run, and watch the console. You should see "Bot is online!" and "Bot is ready and listening for events!" Switch to Discord, find your test server, and type <code>!hello</code> in any channel. Your bot will respond. It is alive.</p>
+
+      <p>Take a moment to appreciate this. You wrote Java code on your machine, and it is controlling a user in a real, live application. This is what programming feels like when it gets fun.</p>
+
+      <div class="key-concept">
+        <h4>Event-Driven Programming</h4>
+        <p>What you just built uses the <strong>event-driven</strong> programming model. Your bot does not constantly check "did anyone send a message? how about now? now?" Instead, it registers listeners and <em>waits</em>. When something happens, the system calls your code. This is the same model used by JavaScript in the browser (click handlers, event listeners), by Android apps (button tap handlers), and by most real-time systems. The code you wrote for <code>MessageListener</code> is no different from a Spring <code>@Controller</code> method &mdash; both sit idle until they are called by the framework when a relevant event occurs.</p>
+      </div>
+
+      <!-- ==================== PART 4 — SLASH COMMANDS ==================== -->
+      <h2>4. Slash Commands</h2>
+
+      <p>The <code>!hello</code> command you just built is called a <strong>prefix command</strong> &mdash; it uses a prefix character (<code>!</code>) to indicate that a message is a command. Prefix commands work, but Discord has a much better system now: <strong>slash commands</strong>.</p>
+
+      <p>When a user types <code>/</code> in Discord, a menu pops up showing all available commands from all bots in the server. Each command has a description, and Discord handles argument parsing, validation, and even autocomplete. It is a dramatically better user experience, and it is the standard that Discord expects bots to use.</p>
+
+      <p>To use slash commands, you need to do two things: <strong>register</strong> the commands with Discord (tell Discord what commands your bot supports) and <strong>handle</strong> them when users invoke them.</p>
+
+      <p>Let us update your <code>DiscordBot.java</code> main class to register commands on startup:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+
+import java.io.InputStream;
+import java.util.Properties;
+
+public class DiscordBot {
+
+    public static void main(String[] args) throws Exception {
+        Properties props = new Properties();
+        InputStream input = DiscordBot.class.getClassLoader()
+                .getResourceAsStream("application.properties");
+        props.load(input);
+        String token = props.getProperty("discord.bot.token");
+
+        JDA jda = JDABuilder.createDefault(token)
+                .setActivity(Activity.playing("with Java code"))
+                .enableIntents(GatewayIntent.MESSAGE_CONTENT)
+                .addEventListeners(new MessageListener())
+                .addEventListeners(new SlashCommandListener())
+                .build();
+
+        jda.awaitReady();
+
+        // Register slash commands with Discord
+        jda.updateCommands().addCommands(
+            Commands.slash("greet", "Get a friendly greeting from the bot"),
+            Commands.slash("roll", "Roll a dice")
+                .addOption(OptionType.INTEGER, "sides",
+                    "Number of sides on the dice (default: 6)", false),
+            Commands.slash("quote", "Get a random inspirational quote")
+        ).queue();
+
+        System.out.println("Bot is online with slash commands!");
+    }
+}</code></pre>
+      </div>
+
+      <p>The <code>updateCommands()</code> method tells Discord about the commands your bot supports. Each command has a name and a description. The <code>/roll</code> command also has an <strong>option</strong> &mdash; an optional integer parameter for the number of sides. Discord will show all of this in its slash command menu, and it will validate types for you. If a user tries to pass text where you expect a number, Discord will stop them before your code even runs.</p>
+
+      <p>Now create the <code>SlashCommandListener</code> class to handle these commands:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
+import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.awt.Color;
+import java.util.List;
+import java.util.Random;
+
+public class SlashCommandListener extends ListenerAdapter {
+
+    private final Random random = new Random();
+
+    private final List&lt;String&gt; quotes = List.of(
+        "The best way to predict the future is to create it. — Peter Drucker",
+        "Code is like humor. When you have to explain it, it is bad. — Cory House",
+        "First, solve the problem. Then, write the code. — John Johnson",
+        "The only way to learn a new programming language is by writing programs in it. — Dennis Ritchie",
+        "Simplicity is the soul of efficiency. — Austin Freeman",
+        "Any fool can write code that a computer can understand. Good programmers write code that humans can understand. — Martin Fowler"
+    );
+
+    @Override
+    public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+        switch (event.getName()) {
+            case "greet" -&gt; handleGreet(event);
+            case "roll"  -&gt; handleRoll(event);
+            case "quote" -&gt; handleQuote(event);
+        }
+    }
+
+    private void handleGreet(SlashCommandInteractionEvent event) {
+        EmbedBuilder embed = new EmbedBuilder()
+            .setTitle("Hello, " + event.getUser().getName() + "!")
+            .setDescription("Welcome! I am a bot built with Java and JDA "
+                + "as part of the Coders Farm curriculum.")
+            .setColor(Color.decode("#5865F2"))
+            .setThumbnail(event.getUser().getAvatarUrl())
+            .addField("Your ID", event.getUser().getId(), true)
+            .addField("Server", event.getGuild().getName(), true)
+            .setFooter("Built with JDA and Java");
+
+        event.replyEmbeds(embed.build()).queue();
+    }
+
+    private void handleRoll(SlashCommandInteractionEvent event) {
+        int sides = event.getOption("sides") != null
+            ? event.getOption("sides").getAsInt()
+            : 6;
+
+        if (sides &lt; 2) {
+            event.reply("A dice needs at least 2 sides!").setEphemeral(true).queue();
+            return;
+        }
+
+        int result = random.nextInt(sides) + 1;
+
+        EmbedBuilder embed = new EmbedBuilder()
+            .setTitle("Dice Roll")
+            .setDescription("Rolling a **d" + sides + "**...")
+            .addField("Result", "**" + result + "**", false)
+            .setColor(result == sides ? Color.YELLOW : Color.BLUE)
+            .setFooter("Rolled by " + event.getUser().getName());
+
+        event.replyEmbeds(embed.build()).queue();
+    }
+
+    private void handleQuote(SlashCommandInteractionEvent event) {
+        String quote = quotes.get(random.nextInt(quotes.size()));
+
+        EmbedBuilder embed = new EmbedBuilder()
+            .setTitle("Inspirational Quote")
+            .setDescription("*" + quote + "*")
+            .setColor(Color.decode("#2ECC71"))
+            .setFooter("Requested by " + event.getUser().getName());
+
+        event.replyEmbeds(embed.build()).queue();
+    }
+}</code></pre>
+      </div>
+
+      <p>There is a lot to unpack here, so let us go through it.</p>
+
+      <p><strong>The <code>onSlashCommandInteraction</code> method</strong> is called by JDA whenever a user invokes a slash command. It receives a <code>SlashCommandInteractionEvent</code> that contains everything you need: which command was used, who used it, what options they provided, and methods to reply. We use a <code>switch</code> expression (the modern Java syntax with arrows) to route to the correct handler method.</p>
+
+      <p><strong>Embeds</strong> are rich formatted messages. Instead of plain text, embeds have titles, descriptions, fields, colors, thumbnails, and footers. They look professional and are much easier to read than plain text for structured information. The <code>EmbedBuilder</code> class uses the builder pattern you have seen before &mdash; chain method calls to construct the object, then call <code>.build()</code> at the end.</p>
+
+      <p><strong>The <code>/roll</code> command demonstrates option handling.</strong> We check if the user provided the "sides" option. If they did, we use their value. If not, we default to 6. We also validate the input &mdash; a dice with fewer than 2 sides does not make sense, so we send an <strong>ephemeral</strong> error message (one that only the user who ran the command can see).</p>
+
+      <p><strong>Notice the difference from HTTP request-response.</strong> With a Spring controller, you return an object and Spring sends it. With Discord, you call <code>event.reply()</code> or <code>event.replyEmbeds()</code> and then <code>.queue()</code>. The interaction model is slightly different, but the concept is the same: receive a request, process it, send a response. The fact that your "response" is a colorful embed in a chat channel instead of JSON in a browser does not change the underlying pattern.</p>
+
+      <p>Run your bot again. In Discord, type <code>/</code> and you should see your three commands appear in the menu. Try each one. <code>/greet</code> will show a beautiful embed with the user's avatar. <code>/roll</code> will roll a dice (try <code>/roll sides:20</code> for a d20). <code>/quote</code> will display a random inspirational quote. Your bot is starting to feel real.</p>
+
+      <!-- ==================== PART 5 — BUILDING SOMETHING USEFUL ==================== -->
+      <h2>5. Building Something Useful</h2>
+
+      <p>A greeting command and a dice roller are fun, but they are toys. Let us build commands that are genuinely useful &mdash; the kind of features that make people actually want to add your bot to their server. We will build three: <code>/help</code>, <code>/remind</code>, and <code>/poll</code>.</p>
+
+      <h3>The /help Command</h3>
+
+      <p>Every bot needs a help command. It should list every available command with a short description. This is your bot's documentation, and it should be clean and easy to read.</p>
+
+      <p>First, register the command in your main class (add it to the <code>updateCommands()</code> call):</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Add this to your updateCommands() call alongside the others
+Commands.slash("help", "Show all available bot commands")</code></pre>
+      </div>
+
+      <p>Then add the handler in your <code>SlashCommandListener</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>private void handleHelp(SlashCommandInteractionEvent event) {
+    EmbedBuilder embed = new EmbedBuilder()
+        .setTitle("Bot Commands")
+        .setDescription("Here is everything I can do:")
+        .setColor(Color.decode("#5865F2"))
+        .addField("/help", "Show this help message", false)
+        .addField("/greet", "Get a friendly greeting with your info", false)
+        .addField("/roll [sides]", "Roll a dice (default: 6 sides)", false)
+        .addField("/quote", "Get a random inspirational quote", false)
+        .addField("/remind &lt;minutes&gt; &lt;message&gt;",
+            "Set a reminder. I will ping you when the time is up.", false)
+        .addField("/poll &lt;question&gt; &lt;option1&gt; &lt;option2&gt; [option3] [option4]",
+            "Create a poll that members can vote on with reactions", false)
+        .setFooter("Built with Java and JDA at Coders Farm");
+
+    event.replyEmbeds(embed.build()).queue();
+}</code></pre>
+      </div>
+
+      <p>Simple. Clean. Every embed field has the command syntax and a description. When you add new commands later, you update this help embed. Notice that we list all commands including the ones we have not built yet &mdash; <code>/remind</code> and <code>/poll</code>. That is intentional. We are working toward something, and this help command is our roadmap.</p>
+
+      <h3>The /remind Command</h3>
+
+      <p>This is where things get interesting. A reminder command needs to <em>wait</em> for a specified amount of time and then send a message. This is a perfect use case for <code>ScheduledExecutorService</code>, a Java concurrency tool that lets you schedule tasks to run after a delay.</p>
+
+      <p>First, register the command:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Add to updateCommands()
+Commands.slash("remind", "Set a reminder")
+    .addOption(OptionType.INTEGER, "minutes",
+        "How many minutes from now", true)
+    .addOption(OptionType.STRING, "message",
+        "What to remind you about", true)</code></pre>
+      </div>
+
+      <p>Note the <code>true</code> at the end of each <code>addOption</code> call. That makes these options <strong>required</strong>. Discord will not let a user run <code>/remind</code> without providing both values. The framework does your input validation for you.</p>
+
+      <p>Now the handler. Add a <code>ScheduledExecutorService</code> field to your <code>SlashCommandListener</code> class and the handler method:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+public class SlashCommandListener extends ListenerAdapter {
+
+    private final Random random = new Random();
+    private final ScheduledExecutorService scheduler =
+        Executors.newScheduledThreadPool(2);
+
+    // ... existing code ...
+
+    private void handleRemind(SlashCommandInteractionEvent event) {
+        int minutes = event.getOption("minutes").getAsInt();
+        String message = event.getOption("message").getAsString();
+        String userId = event.getUser().getId();
+        long channelId = event.getChannel().getIdLong();
+
+        if (minutes &lt; 1 || minutes &gt; 1440) {
+            event.reply("Please set a reminder between 1 and 1440 minutes (24 hours).")
+                .setEphemeral(true).queue();
+            return;
+        }
+
+        // Acknowledge the command immediately
+        event.reply("Got it! I will remind you in **" + minutes
+            + " minute" + (minutes == 1 ? "" : "s")
+            + "** about: " + message).queue();
+
+        // Schedule the reminder
+        scheduler.schedule(() -&gt; {
+            event.getJDA().getTextChannelById(channelId)
+                .sendMessage("&lt;@" + userId + "&gt; **Reminder:** " + message)
+                .queue();
+        }, minutes, TimeUnit.MINUTES);
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us study what is happening here:</p>
+
+      <ul>
+        <li>We validate that the time is between 1 minute and 24 hours. Always validate user input, even when Discord handles type checking for you.</li>
+        <li>We <strong>reply immediately</strong> to acknowledge the command. Discord requires a response within 3 seconds or the interaction fails. You cannot wait 30 minutes to respond.</li>
+        <li>We use <code>scheduler.schedule()</code> to run a lambda function after the specified delay. The lambda captures the user ID and channel ID so it can send a message later.</li>
+        <li>The <code>&lt;@userId&gt;</code> syntax creates a <strong>mention</strong> &mdash; it will ping the user with a notification. That is the whole point of a reminder.</li>
+      </ul>
+
+      <p><code>ScheduledExecutorService</code> is a tool from <code>java.util.concurrent</code> that manages a pool of threads for scheduled tasks. <code>newScheduledThreadPool(2)</code> creates a pool with 2 threads, meaning your bot can handle multiple pending reminders simultaneously. This is the same concurrency model that powers things like cache expiration, periodic health checks, and session timeouts in professional Java applications.</p>
+
+      <h3>The /poll Command</h3>
+
+      <p>A poll command lets users create a question with options, and other users vote by clicking emoji reactions. This is one of the most popular features in real Discord bots, and it ties together several concepts: slash command options, embeds, and reactions.</p>
+
+      <p>Register the command:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Add to updateCommands()
+Commands.slash("poll", "Create a poll")
+    .addOption(OptionType.STRING, "question", "The poll question", true)
+    .addOption(OptionType.STRING, "option1", "First option", true)
+    .addOption(OptionType.STRING, "option2", "Second option", true)
+    .addOption(OptionType.STRING, "option3", "Third option (optional)", false)
+    .addOption(OptionType.STRING, "option4", "Fourth option (optional)", false)</code></pre>
+      </div>
+
+      <p>And the handler:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>private void handlePoll(SlashCommandInteractionEvent event) {
+    String question = event.getOption("question").getAsString();
+
+    // Collect all provided options
+    String[] emojis = {"1\u20E3", "2\u20E3", "3\u20E3", "4\u20E3"};
+    List&lt;String&gt; options = new java.util.ArrayList&lt;&gt;();
+    for (int i = 1; i &lt;= 4; i++) {
+        var opt = event.getOption("option" + i);
+        if (opt != null) {
+            options.add(opt.getAsString());
+        }
+    }
+
+    // Build the poll description
+    StringBuilder description = new StringBuilder();
+    for (int i = 0; i &lt; options.size(); i++) {
+        description.append(emojis[i])
+                   .append("  ")
+                   .append(options.get(i))
+                   .append("\n\n");
+    }
+
+    EmbedBuilder embed = new EmbedBuilder()
+        .setTitle("Poll: " + question)
+        .setDescription(description.toString())
+        .setColor(Color.decode("#E67E22"))
+        .setFooter("Poll by " + event.getUser().getName()
+            + " — React to vote!");
+
+    // Send the embed, then add reaction emojis
+    event.replyEmbeds(embed.build()).queue(hook -&gt; {
+        hook.retrieveOriginal().queue(msg -&gt; {
+            for (int i = 0; i &lt; options.size(); i++) {
+                msg.addReaction(net.dv8tion.jda.api.entities.emoji
+                    .Emoji.fromUnicode(emojis[i])).queue();
+            }
+        });
+    });
+}</code></pre>
+      </div>
+
+      <p>This is the most complex command so far, so let us walk through it carefully:</p>
+
+      <ul>
+        <li>We gather 2 to 4 options from the command arguments. The first two are required; the last two are optional.</li>
+        <li>We build a description string with numbered emoji next to each option. The <code>\u20E3</code> is the Unicode "combining enclosing keycap" character &mdash; when combined with a digit, it creates the keycap emoji (1, 2, 3, 4).</li>
+        <li>We send the embed as a reply, and then in the callback, we retrieve the actual message object and add reaction emojis to it. Users vote by clicking these reactions.</li>
+        <li>The callback chain (<code>.queue(hook -> hook.retrieveOriginal().queue(msg -> ...))</code>) is necessary because we need the message object to add reactions, and we do not have it until after the reply is sent. This is asynchronous programming in action.</li>
+      </ul>
+
+      <p>Do not forget to add cases for your new commands in the <code>switch</code> block of <code>onSlashCommandInteraction</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@Override
+public void onSlashCommandInteraction(SlashCommandInteractionEvent event) {
+    switch (event.getName()) {
+        case "greet"  -&gt; handleGreet(event);
+        case "roll"   -&gt; handleRoll(event);
+        case "quote"  -&gt; handleQuote(event);
+        case "help"   -&gt; handleHelp(event);
+        case "remind" -&gt; handleRemind(event);
+        case "poll"   -&gt; handlePoll(event);
+    }
+}</code></pre>
+      </div>
+
+      <p>Run the bot. Try <code>/poll question:What should we code next? option1:Discord bot option2:Android app option3:CLI tool</code>. You will see a beautiful orange embed with the question and three numbered options, each with a reaction emoji already attached. Click one to vote. That is your poll system, and you built it.</p>
+
+      <!-- ==================== PART 6 — CONNECTING TO EXISTING SKILLS ==================== -->
+      <h2>6. Connecting to Existing Skills</h2>
+
+      <p>Here is where this side quest comes full circle. Everything you learned in the Resumator lessons &mdash; databases, APIs, REST calls &mdash; works just as well inside a Discord bot. A bot is just another <em>interface</em> to your backend skills. Let us prove it.</p>
+
+      <h3>Database Integration: Saving Poll Results</h3>
+
+      <p>You already know how to work with MySQL. You built entities, repositories, and service classes. Let us save poll results to a database so they persist even if the bot restarts.</p>
+
+      <p>If you are using Spring Boot for your bot project (recommended), add the Spring Data JPA and MySQL dependencies to your <code>pom.xml</code> just like you did for Resumator. Then create an entity:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "polls")
+public class Poll {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "question", nullable = false)
+    private String question;
+
+    @Column(name = "options", nullable = false, length = 1000)
+    private String options;  // Stored as comma-separated values
+
+    @Column(name = "message_id", nullable = false)
+    private String messageId;  // Discord message ID for tracking votes
+
+    @Column(name = "channel_id", nullable = false)
+    private String channelId;
+
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    // Default constructor required by JPA
+    public Poll() {}
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getQuestion() { return question; }
+    public void setQuestion(String question) { this.question = question; }
+
+    public String getOptions() { return options; }
+    public void setOptions(String options) { this.options = options; }
+
+    public String getMessageId() { return messageId; }
+    public void setMessageId(String messageId) { this.messageId = messageId; }
+
+    public String getChannelId() { return channelId; }
+    public void setChannelId(String channelId) { this.channelId = channelId; }
+
+    public String getCreatedBy() { return createdBy; }
+    public void setCreatedBy(String createdBy) { this.createdBy = createdBy; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+}</code></pre>
+      </div>
+
+      <p>And a repository:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.Optional;
+
+public interface PollRepository extends JpaRepository&lt;Poll, Long&gt; {
+    Optional&lt;Poll&gt; findByMessageId(String messageId);
+}</code></pre>
+      </div>
+
+      <p>This is <em>exactly</em> the same pattern from Resumator. Entity with <code>@Entity</code> and <code>@Table</code>, repository extending <code>JpaRepository</code>, custom finder method that Spring generates from the method name. The database does not care whether the data comes from a web form or a Discord command. Data is data.</p>
+
+      <p>Now update your poll handler to save to the database after creating a poll. Inject the <code>PollRepository</code> into your listener and save the poll data in the callback after the message is sent. You know how to do this &mdash; it is the same <code>repository.save()</code> call you have written dozens of times.</p>
+
+      <h3>API Integration: A /weather Command</h3>
+
+      <p>In Resumator, you used <code>RestTemplate</code> to call the JSearch API and get job listings. The exact same approach works for any external API. Let us add a <code>/weather</code> command that calls a weather API.</p>
+
+      <p>Register the command:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Add to updateCommands()
+Commands.slash("weather", "Get the current weather for a city")
+    .addOption(OptionType.STRING, "city", "City name", true)</code></pre>
+      </div>
+
+      <p>And the handler (using a free weather API like wttr.in or OpenWeatherMap):</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+private void handleWeather(SlashCommandInteractionEvent event) {
+    String city = event.getOption("city").getAsString();
+
+    // Defer the reply because the API call might take a moment
+    event.deferReply().queue();
+
+    try {
+        RestTemplate restTemplate = new RestTemplate();
+        String url = "https://wttr.in/" + city + "?format=j1";
+        String response = restTemplate.getForObject(url, String.class);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode root = mapper.readTree(response);
+        JsonNode current = root.get("current_condition").get(0);
+
+        String temp = current.get("temp_F").asText();
+        String feelsLike = current.get("FeelsLikeF").asText();
+        String description = current.get("weatherDesc").get(0)
+                .get("value").asText();
+        String humidity = current.get("humidity").asText();
+        String wind = current.get("windspeedMiles").asText();
+
+        EmbedBuilder embed = new EmbedBuilder()
+            .setTitle("Weather in " + city)
+            .setDescription("**" + description + "**")
+            .addField("Temperature", temp + "\u00B0F", true)
+            .addField("Feels Like", feelsLike + "\u00B0F", true)
+            .addField("Humidity", humidity + "%", true)
+            .addField("Wind", wind + " mph", true)
+            .setColor(Color.decode("#3498DB"))
+            .setFooter("Requested by " + event.getUser().getName());
+
+        event.getHook().sendMessageEmbeds(embed.build()).queue();
+
+    } catch (Exception e) {
+        event.getHook().sendMessage(
+            "Could not get weather for **" + city
+            + "**. Check the city name and try again.").queue();
+    }
+}</code></pre>
+      </div>
+
+      <p>There is one new concept here: <strong><code>deferReply()</code></strong>. Discord requires a response within 3 seconds. API calls to external services might take longer than that. <code>deferReply()</code> tells Discord "I received the command, I am working on it" &mdash; the user sees a "Bot is thinking..." message. You then have up to 15 minutes to send the actual response using <code>event.getHook().sendMessage()</code> instead of <code>event.reply()</code>.</p>
+
+      <p>Look at the <code>RestTemplate</code> call. It is the exact same class you used in Resumator to call the JSearch API. The <code>ObjectMapper</code> to parse JSON? Same as Resumator. The try-catch to handle errors gracefully? Same pattern. You are using your existing skills in a completely new context. <strong>That is the whole point.</strong></p>
+
+      <div class="key-concept">
+        <h4>A Bot Is Just Another Interface</h4>
+        <p>This is worth saying explicitly: a Discord bot is not some exotic, specialized thing. It is a Java application that receives input and produces output. The input comes from Discord events instead of HTTP requests. The output goes to Discord channels instead of web browsers. But everything in between &mdash; the business logic, the database calls, the API integrations, the data processing &mdash; is identical to what you already know. When you learn to build a REST API, you are also learning to build a Discord bot, a CLI tool, a Slack app, or anything else. The interface changes. The skills do not.</p>
+      </div>
+
+      <!-- ==================== PART 7 — DEPLOYMENT ==================== -->
+      <h2>7. Deployment Considerations</h2>
+
+      <p>There is one fundamental difference between a Discord bot and a web application you access through a browser: <strong>a bot needs to run all the time.</strong></p>
+
+      <p>When you built Resumator, you ran it on your laptop. You started the Spring Boot application, used it, and when you closed IntelliJ, the server stopped. That was fine because you were the only user and you only needed it while you were actively developing. A Discord bot is different. If your bot is in a server with other people, they expect it to respond at 3am on a Saturday. If your Java process is not running, the bot appears offline and commands fail.</p>
+
+      <p>So where does the bot actually run? You have several options:</p>
+
+      <h3>Option 1: Your Own Machine</h3>
+
+      <p>The simplest approach during development. You run the bot on your computer. The downside is obvious: when you close your laptop or restart, the bot goes down. This is fine for testing, but not for a bot other people rely on.</p>
+
+      <h3>Option 2: A Virtual Private Server (VPS)</h3>
+
+      <p>Services like DigitalOcean, Linode, or Vultr give you a small Linux server for $4-6 per month. You SSH into it, upload your compiled JAR file, and run it. The server runs 24/7, so your bot does too. This is the most common choice for hobby bots.</p>
+
+      <h3>Option 3: Cloud Free Tiers</h3>
+
+      <p>Oracle Cloud offers an "always free" tier that includes a small Linux VM. AWS, Google Cloud, and Azure also have free tiers with some limitations. These can run a small Java bot comfortably at no cost, though setup can be more complex.</p>
+
+      <h3>Keeping It Running</h3>
+
+      <p>Once your bot is on a server, you need to make sure it stays running even if you disconnect your SSH session, and restarts automatically if it crashes. There are several approaches:</p>
+
+      <ul>
+        <li><strong><code>screen</code> or <code>tmux</code>:</strong> Terminal multiplexers that let you start a process, detach from it, and reconnect later. Simple but no auto-restart on crash.</li>
+        <li><strong><code>systemd</code>:</strong> The Linux service manager. You create a service file that tells Linux to run your JAR, restart it if it crashes, and start it on boot. This is the professional approach for Linux servers.</li>
+        <li><strong>Docker:</strong> Package your bot as a container with <code>--restart=always</code>. Docker handles restarts and makes deployment reproducible. If you learn Docker (another great side quest), this is the cleanest option.</li>
+      </ul>
+
+      <p>For now, running the bot on your local machine is perfectly fine. The important thing is that you understand the <em>why</em> behind deployment: a bot is a long-running process, not a request-response cycle. That shapes how you think about error handling (catch exceptions so the whole process does not die), resource management (close database connections, limit thread pools), and logging (you need to know what happened at 3am when you were asleep).</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="sq-discord-bot-1">
+        <p class="quiz-question">1. Why do we check <code>event.getAuthor().isBot()</code> at the beginning of the <code>onMessageReceived</code> method and return early if true?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-discord-bot-1" value="a"> Bot messages are always empty and cause null pointer exceptions</label>
+          <label><input type="radio" name="sq-discord-bot-1" value="b"> Without this check, the bot could respond to its own messages and create an infinite loop</label>
+          <label><input type="radio" name="sq-discord-bot-1" value="c"> Discord's API does not allow bots to read messages from other bots</label>
+          <label><input type="radio" name="sq-discord-bot-1" value="d"> It improves performance by reducing the number of events processed</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! If a bot sends a message that matches its own trigger (like a message containing "!hello"), it would see that message, respond to it, see its response, respond again, and so on forever. This infinite loop would flood the channel with messages and could get your bot rate-limited or banned. Checking <code>isBot()</code> and returning early prevents this. It is a fundamental safety check that every Discord bot should have.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-discord-bot-2">
+        <p class="quiz-question">2. What is the purpose of calling <code>event.deferReply()</code> before making an external API call in a slash command handler?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-discord-bot-2" value="a"> It caches the API response for faster future calls</label>
+          <label><input type="radio" name="sq-discord-bot-2" value="b"> It tells Discord "I received the command and I am working on it," because Discord requires a response within 3 seconds or the interaction fails</label>
+          <label><input type="radio" name="sq-discord-bot-2" value="c"> It prevents other users from using commands while the API call is in progress</label>
+          <label><input type="radio" name="sq-discord-bot-2" value="d"> It encrypts the API request for security</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That's right! Discord enforces a 3-second timeout on slash command interactions. If your bot does not respond within that window, Discord marks the interaction as failed and the user sees an error. Since external API calls can easily take longer than 3 seconds, <code>deferReply()</code> sends an immediate acknowledgment ("Bot is thinking...") and gives you up to 15 minutes to send the actual response via <code>event.getHook()</code>. This is a common pattern whenever your command involves network calls, database queries, or any operation that might be slow.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-discord-bot-3">
+        <p class="quiz-question">3. How does building a Discord bot connect to the REST API skills you learned in Resumator?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-discord-bot-3" value="a"> Discord bots are a type of REST API and use HTTP GET and POST for everything</label>
+          <label><input type="radio" name="sq-discord-bot-3" value="b"> They do not connect at all &mdash; Discord bot development uses completely different skills and tools</label>
+          <label><input type="radio" name="sq-discord-bot-3" value="c"> The underlying skills are the same: receiving input, processing it, calling databases and APIs, and returning output &mdash; only the interface changes from HTTP to Discord events</label>
+          <label><input type="radio" name="sq-discord-bot-3" value="d"> Discord bots must be built with Spring Boot, so the code is identical</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Exactly! A Discord bot and a REST API are two different interfaces to the same set of programming skills. Both receive input (HTTP requests vs. Discord events), process it with business logic, interact with databases and external APIs, and produce output (JSON responses vs. Discord messages and embeds). The tools like <code>RestTemplate</code>, JPA repositories, and <code>ObjectMapper</code> work identically in both contexts. Learning to build one type of application gives you the skills to build many others &mdash; only the interface layer changes.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <div class="key-concept">
+        <h4>Deliverable</h4>
+        <p>A working Discord bot running in a real Discord server with at least 4 slash commands. Your bot should use JDA, respond with formatted embeds, and demonstrate at least one of: database integration, external API calls, or scheduled tasks. Invite your Coders Farm friends to your test server and let them try your commands. There is nothing like watching other people use something you built.</p>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="discord-bot">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

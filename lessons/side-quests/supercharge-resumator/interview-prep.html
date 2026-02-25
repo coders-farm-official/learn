@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Interview Prep Mode — Coders Farm</title>
+  <meta name="description" content="Build an AI-powered interview prep feature that generates targeted practice questions from saved job descriptions">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-interview-prep">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Interview Prep</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Interview Prep Mode</p>
+      <h1>Interview Prep Mode</h1>
+      <p style="color: var(--text-muted);">Estimated time: 3&ndash;4 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>An LLM-powered service that generates targeted interview questions from any job description</li>
+          <li>A practice UI that presents questions one at a time, simulating a real interview flow</li>
+          <li>A self-assessment system with star ratings and session summaries</li>
+          <li>A persistent question bank with filtering and search across all practiced jobs</li>
+          <li>An optional mock interview mode with timers and audio recording</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHY TARGETED PRACTICE ==================== -->
+      <h2>1. Why Targeted Practice?</h2>
+
+      <p>You have probably heard the advice before: "practice interview questions." And it is good advice. But here is the problem &mdash; when you practice with generic questions, you are preparing for an interview that does not exist. No company asks you generic questions. They ask you questions about <em>their</em> stack, <em>their</em> domain, <em>their</em> challenges. The difference between generic prep and targeted prep is the difference between studying "math" and studying the exact chapters that will be on the exam.</p>
+
+      <p>Think about it this way. If you are interviewing for a role that says "build and maintain RESTful microservices in Java using Spring Boot," the interviewer is not going to ask you about Python data science. They are going to ask you about dependency injection, REST endpoint design, service layers, error handling, and Spring Boot configuration. The job description tells you exactly what they care about. It is a roadmap to the interview.</p>
+
+      <p>Generic prep helps. But job-specific questions are far more effective. The job description contains everything you need: the required skills, the day-to-day responsibilities, and the context of the team you would be joining. An LLM can read that description and generate realistic, targeted interview questions that mirror what you would actually face in that room. That is what you are going to build.</p>
+
+      <div class="callout callout-info">
+        <strong>Why this matters for Resumator</strong>
+        Your Resumator already saves jobs with their full descriptions. That means you are sitting on a goldmine of interview prep data. Every saved job is an opportunity to practice before you apply. By the end of this side quest, clicking any saved job will give you a personalized interview prep session &mdash; questions tailored to that exact role, that exact company, that exact tech stack.
+      </div>
+
+      <p>This is not a hypothetical exercise. This is exactly how professional career coaches work. They read the job posting, identify what the company is looking for, and generate practice questions around those themes. You are automating that process with an LLM.</p>
+
+      <!-- ==================== PART 2 — THE LLM INTEGRATION ==================== -->
+      <h2>2. The LLM Integration</h2>
+
+      <p>The core of this feature is a service that takes a job description and returns a set of structured interview questions. You already know how to call an LLM from Java &mdash; you did it when building the resume tailor features. This follows the same pattern, but with a prompt specifically designed to generate interview questions.</p>
+
+      <p>The key insight is in the prompt engineering. You do not just ask the LLM to "generate some interview questions." You give it a specific structure: three technical questions that test the skills listed in the description, three behavioral questions that probe the candidate's experience with the responsibilities mentioned, and two company-and-role questions that test whether the candidate has thought about why this particular job at this particular company is the right fit.</p>
+
+      <p>Create the <code>InterviewPrepService</code> class:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.service;
+
+import com.example.resumator.model.InterviewQuestion;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.*;
+
+@Service
+public class InterviewPrepService {
+
+    @Value("${openai.api.key}")
+    private String apiKey;
+
+    @Value("${openai.api.url:https://api.openai.com/v1/chat/completions}")
+    private String apiUrl;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public List&lt;InterviewQuestion&gt; generateQuestions(String jobTitle,
+                                                       String company,
+                                                       String jobDescription) {
+
+        String prompt = buildPrompt(jobTitle, company, jobDescription);
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.setBearerAuth(apiKey);
+
+        Map&lt;String, Object&gt; message = Map.of(
+            "role", "user",
+            "content", prompt
+        );
+
+        Map&lt;String, Object&gt; body = Map.of(
+            "model", "gpt-4o-mini",
+            "messages", List.of(message),
+            "temperature", 0.7
+        );
+
+        HttpEntity&lt;Map&lt;String, Object&gt;&gt; request =
+            new HttpEntity&lt;&gt;(body, headers);
+
+        ResponseEntity&lt;Map&gt; response =
+            restTemplate.exchange(apiUrl, HttpMethod.POST, request, Map.class);
+
+        String content = extractContent(response.getBody());
+        return parseQuestions(content);
+    }
+
+    private String buildPrompt(String jobTitle, String company,
+                                String jobDescription) {
+        return """
+            You are an expert technical interviewer. Based on the following
+            job posting, generate exactly 8 interview questions.
+
+            Job Title: %s
+            Company: %s
+            Description: %s
+
+            Generate:
+            - 3 TECHNICAL questions testing specific skills from the description
+            - 3 BEHAVIORAL questions about responsibilities and teamwork
+            - 2 COMPANY/ROLE questions about culture fit and motivation
+
+            For each question, respond in this exact JSON format:
+            [
+              {
+                "category": "TECHNICAL" | "BEHAVIORAL" | "COMPANY_ROLE",
+                "question": "the interview question",
+                "tip": "what the interviewer is really looking for",
+                "keyPoints": ["point 1", "point 2", "point 3"]
+              }
+            ]
+
+            Return ONLY the JSON array. No other text.
+            """.formatted(jobTitle, company, jobDescription);
+    }
+
+    @SuppressWarnings("unchecked")
+    private String extractContent(Map&lt;String, Object&gt; responseBody) {
+        List&lt;Map&lt;String, Object&gt;&gt; choices =
+            (List&lt;Map&lt;String, Object&gt;&gt;) responseBody.get("choices");
+        Map&lt;String, Object&gt; firstChoice = choices.get(0);
+        Map&lt;String, Object&gt; message =
+            (Map&lt;String, Object&gt;) firstChoice.get("message");
+        return (String) message.get("content");
+    }
+}</code></pre>
+      </div>
+
+      <p>Notice the prompt structure. You are being <em>extremely</em> specific about what you want: exactly eight questions, broken into three categories, with a defined JSON format that includes not just the question but also a tip explaining what the interviewer is looking for and key points for a strong answer. The more structured your prompt, the more structured &mdash; and useful &mdash; the response will be.</p>
+
+      <p>The <code>temperature</code> parameter is set to <code>0.7</code>. This controls how creative or random the LLM's output is. A value of <code>0</code> would make it completely deterministic (always the same output for the same input). A value of <code>1.0</code> would make it very creative. <code>0.7</code> gives you variety between sessions while keeping responses focused and professional.</p>
+
+      <p>Now you need to parse the LLM's JSON response into structured Java objects. Create the <code>InterviewQuestion</code> model and the parsing logic:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+import java.util.List;
+
+public class InterviewQuestion {
+
+    public enum Category {
+        TECHNICAL, BEHAVIORAL, COMPANY_ROLE
+    }
+
+    private Category category;
+    private String question;
+    private String tip;
+    private List&lt;String&gt; keyPoints;
+
+    // Default constructor for JSON parsing
+    public InterviewQuestion() {}
+
+    public InterviewQuestion(Category category, String question,
+                              String tip, List&lt;String&gt; keyPoints) {
+        this.category = category;
+        this.question = question;
+        this.tip = tip;
+        this.keyPoints = keyPoints;
+    }
+
+    public Category getCategory() { return category; }
+    public void setCategory(Category category) { this.category = category; }
+
+    public String getQuestion() { return question; }
+    public void setQuestion(String question) { this.question = question; }
+
+    public String getTip() { return tip; }
+    public void setTip(String tip) { this.tip = tip; }
+
+    public List&lt;String&gt; getKeyPoints() { return keyPoints; }
+    public void setKeyPoints(List&lt;String&gt; keyPoints) {
+        this.keyPoints = keyPoints;
+    }
+}
+
+// --- Add this method to InterviewPrepService ---
+
+private List&lt;InterviewQuestion&gt; parseQuestions(String jsonContent) {
+    try {
+        ObjectMapper mapper = new ObjectMapper();
+        // Clean the response — LLMs sometimes wrap JSON in markdown
+        String cleaned = jsonContent.trim();
+        if (cleaned.startsWith("```")) {
+            cleaned = cleaned.replaceAll("```json?\\s*", "")
+                             .replaceAll("```\\s*$", "")
+                             .trim();
+        }
+
+        List&lt;Map&lt;String, Object&gt;&gt; rawList =
+            mapper.readValue(cleaned, new TypeReference&lt;&gt;() {});
+
+        List&lt;InterviewQuestion&gt; questions = new ArrayList&lt;&gt;();
+        for (Map&lt;String, Object&gt; raw : rawList) {
+            InterviewQuestion q = new InterviewQuestion();
+            q.setCategory(
+                InterviewQuestion.Category.valueOf(
+                    (String) raw.get("category")
+                )
+            );
+            q.setQuestion((String) raw.get("question"));
+            q.setTip((String) raw.get("tip"));
+
+            @SuppressWarnings("unchecked")
+            List&lt;String&gt; points = (List&lt;String&gt;) raw.get("keyPoints");
+            q.setKeyPoints(points != null ? points : List.of());
+
+            questions.add(q);
+        }
+        return questions;
+
+    } catch (Exception e) {
+        throw new RuntimeException(
+            "Failed to parse interview questions from LLM response", e
+        );
+    }
+}</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Always clean LLM output</strong>
+        Notice the code that strips markdown formatting from the response. Even when you ask an LLM to return "ONLY the JSON array," it will sometimes wrap the response in <code>```json</code> code blocks. Defensive parsing like this is not optional &mdash; it is a requirement when working with LLM output. Never assume the format will be perfect. Always sanitize.
+      </div>
+
+      <p>This pattern &mdash; structured prompt, JSON response, defensive parsing &mdash; is the foundation of every LLM integration you will build in your career. The specific use case changes, but the approach stays the same: tell the model exactly what you want, specify the output format, and handle the response carefully.</p>
+
+      <!-- ==================== PART 3 — THE PRACTICE UI ==================== -->
+      <h2>3. The Practice UI</h2>
+
+      <p>Now comes the part the user actually sees. The practice interface needs to feel like a real interview, not like a quiz. That means presenting one question at a time, giving the user space to think and outline their answer, and revealing tips only after they have attempted a response. The goal is to build muscle memory for the real thing.</p>
+
+      <p>You will add a "Practice Interview" button to each saved job card. When clicked, it opens a dedicated practice view. Here is the HTML and CSS for that view:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- Interview Practice View --&gt;
+&lt;div id="interview-practice" class="practice-container" style="display:none;"&gt;
+
+  &lt;!-- Header with job context --&gt;
+  &lt;div class="practice-header"&gt;
+    &lt;button id="exit-practice" class="btn btn-outline"&gt;&amp;larr; Back to Job&lt;/button&gt;
+    &lt;div class="practice-job-info"&gt;
+      &lt;h2 id="practice-job-title"&gt;&lt;/h2&gt;
+      &lt;p id="practice-company" class="text-muted"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="practice-progress"&gt;
+      &lt;span id="question-counter"&gt;Question 1 of 8&lt;/span&gt;
+      &lt;div class="progress-bar"&gt;
+        &lt;div id="progress-fill" class="progress-fill" style="width:12.5%"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Question card --&gt;
+  &lt;div class="question-card"&gt;
+    &lt;div class="question-category"&gt;
+      &lt;span id="category-badge" class="category-badge"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;p id="question-text" class="question-text"&gt;&lt;/p&gt;
+
+    &lt;!-- Answer area --&gt;
+    &lt;label for="answer-area" class="answer-label"&gt;
+      Outline your answer:
+    &lt;/label&gt;
+    &lt;textarea id="answer-area" class="answer-textarea"
+              rows="8"
+              placeholder="Think out loud. Jot down key points you would mention. This is your scratch pad &amp;mdash; no one grades this but you."&gt;&lt;/textarea&gt;
+
+    &lt;!-- Tip reveal --&gt;
+    &lt;div class="tip-section"&gt;
+      &lt;button id="show-tip-btn" class="btn btn-secondary"&gt;
+        Show Tip &amp;mdash; What the Interviewer Looks For
+      &lt;/button&gt;
+      &lt;div id="tip-content" class="tip-content" style="display:none;"&gt;
+        &lt;p id="tip-text"&gt;&lt;/p&gt;
+        &lt;h4&gt;Key points for a strong answer:&lt;/h4&gt;
+        &lt;ul id="key-points-list"&gt;&lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Self-rating --&gt;
+    &lt;div class="rating-section"&gt;
+      &lt;p&gt;How confident are you in your answer?&lt;/p&gt;
+      &lt;div id="star-rating" class="star-rating"&gt;
+        &lt;button class="star" data-value="1" aria-label="1 star"&gt;&amp;#9734;&lt;/button&gt;
+        &lt;button class="star" data-value="2" aria-label="2 stars"&gt;&amp;#9734;&lt;/button&gt;
+        &lt;button class="star" data-value="3" aria-label="3 stars"&gt;&amp;#9734;&lt;/button&gt;
+        &lt;button class="star" data-value="4" aria-label="4 stars"&gt;&amp;#9734;&lt;/button&gt;
+        &lt;button class="star" data-value="5" aria-label="5 stars"&gt;&amp;#9734;&lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Navigation --&gt;
+  &lt;div class="practice-nav"&gt;
+    &lt;button id="prev-question" class="btn btn-outline" disabled&gt;
+      &amp;larr; Previous
+    &lt;/button&gt;
+    &lt;button id="next-question" class="btn btn-primary"&gt;
+      Next Question &amp;rarr;
+    &lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;!-- Session summary (shown after last question) --&gt;
+  &lt;div id="session-summary" class="session-summary" style="display:none;"&gt;
+    &lt;h2&gt;Session Complete!&lt;/h2&gt;
+    &lt;div class="summary-stats"&gt;
+      &lt;div class="stat-card"&gt;
+        &lt;span class="stat-number" id="avg-rating"&gt;0&lt;/span&gt;
+        &lt;span class="stat-label"&gt;Average Confidence&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="stat-card"&gt;
+        &lt;span class="stat-number" id="questions-answered"&gt;0&lt;/span&gt;
+        &lt;span class="stat-label"&gt;Questions Answered&lt;/span&gt;
+      &lt;/div&gt;
+      &lt;div class="stat-card"&gt;
+        &lt;span class="stat-number" id="tips-viewed"&gt;0&lt;/span&gt;
+        &lt;span class="stat-label"&gt;Tips Viewed&lt;/span&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div id="weak-areas" class="weak-areas"&gt;&lt;/div&gt;
+    &lt;div class="summary-actions"&gt;
+      &lt;button id="restart-session" class="btn btn-primary"&gt;
+        Practice Again
+      &lt;/button&gt;
+      &lt;button id="save-to-bank" class="btn btn-secondary"&gt;
+        Save Questions to Bank
+      &lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Interview Practice Styles */
+.practice-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.practice-header {
+  margin-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.practice-job-info h2 {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.5rem;
+}
+
+.practice-progress {
+  margin-top: 1rem;
+}
+
+.progress-bar {
+  height: 6px;
+  background: var(--bg-muted);
+  border-radius: 3px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.question-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.category-badge.technical { background: #dbeafe; color: #1e40af; }
+.category-badge.behavioral { background: #dcfce7; color: #166534; }
+.category-badge.company-role { background: #fef3c7; color: #92400e; }
+
+.question-text {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin: 1.25rem 0;
+}
+
+.answer-textarea {
+  width: 100%;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: vertical;
+}
+
+.answer-textarea:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.tip-section { margin-top: 1.5rem; }
+
+.tip-content {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-muted);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 0 8px 8px 0;
+}
+
+.star-rating {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.star {
+  font-size: 2rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: color 0.15s, transform 0.15s;
+  padding: 0;
+}
+
+.star:hover, .star.active {
+  color: #f59e0b;
+  transform: scale(1.15);
+}
+
+.practice-nav {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
+}
+
+.session-summary {
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.summary-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem 0;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem 2rem;
+  min-width: 140px;
+}
+
+.stat-number {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.stat-label {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+.weak-areas {
+  margin: 2rem 0;
+  text-align: left;
+}
+
+.summary-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}</code></pre>
+      </div>
+
+      <p>Look at how the interface is structured. The job title and company appear at the top so the user always knows what role they are preparing for. The progress bar shows how far they are through the session. The question card is the centerpiece &mdash; large, readable, with a category badge so the user knows what type of question they are facing. The text area is generous because you want people to actually write, not just skim. And the tip is hidden behind a button because the point is to <em>try first</em>, then check.</p>
+
+      <p>The star rating is a critical piece. Self-assessment is one of the most effective study techniques. When you rate yourself honestly, you are forced to confront what you actually know versus what you think you know. A question you rate as a 2 out of 5 tells you exactly where to focus your next study session.</p>
+
+      <p>Now for the JavaScript that drives the practice session. This handles navigation between questions, tracks answers and ratings, and generates the summary at the end:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>class InterviewPractice {
+  constructor(questions, jobTitle, company) {
+    this.questions = questions;
+    this.jobTitle = jobTitle;
+    this.company = company;
+    this.currentIndex = 0;
+    this.answers = new Array(questions.length).fill('');
+    this.ratings = new Array(questions.length).fill(0);
+    this.tipsViewed = new Set();
+    this.sessionId = Date.now().toString(36);
+
+    this.init();
+  }
+
+  init() {
+    document.getElementById('practice-job-title').textContent =
+      this.jobTitle;
+    document.getElementById('practice-company').textContent =
+      this.company;
+    document.getElementById('interview-practice').style.display = 'block';
+
+    // Star rating listeners
+    document.querySelectorAll('#star-rating .star').forEach(star =&gt; {
+      star.addEventListener('click', () =&gt; {
+        const value = parseInt(star.dataset.value);
+        this.ratings[this.currentIndex] = value;
+        this.updateStars(value);
+      });
+    });
+
+    // Tip button
+    document.getElementById('show-tip-btn')
+      .addEventListener('click', () =&gt; this.showTip());
+
+    // Navigation
+    document.getElementById('next-question')
+      .addEventListener('click', () =&gt; this.next());
+    document.getElementById('prev-question')
+      .addEventListener('click', () =&gt; this.prev());
+    document.getElementById('exit-practice')
+      .addEventListener('click', () =&gt; this.exit());
+
+    this.renderQuestion();
+  }
+
+  renderQuestion() {
+    const q = this.questions[this.currentIndex];
+    const total = this.questions.length;
+    const num = this.currentIndex + 1;
+
+    // Update counter and progress
+    document.getElementById('question-counter').textContent =
+      `Question ${num} of ${total}`;
+    document.getElementById('progress-fill').style.width =
+      `${(num / total) * 100}%`;
+
+    // Category badge
+    const badge = document.getElementById('category-badge');
+    badge.className = 'category-badge';
+    const categoryMap = {
+      'TECHNICAL':    { label: '\uD83D\uDCBB Technical',  css: 'technical' },
+      'BEHAVIORAL':   { label: '\uD83E\uDD1D Behavioral', css: 'behavioral' },
+      'COMPANY_ROLE': { label: '\uD83C\uDFE2 Role/Company', css: 'company-role' }
+    };
+    const cat = categoryMap[q.category] || categoryMap['TECHNICAL'];
+    badge.classList.add(cat.css);
+    badge.textContent = cat.label;
+
+    // Question text
+    document.getElementById('question-text').textContent = q.question;
+
+    // Restore saved answer for this question
+    const textarea = document.getElementById('answer-area');
+    textarea.value = this.answers[this.currentIndex];
+    textarea.addEventListener('input', () =&gt; {
+      this.answers[this.currentIndex] = textarea.value;
+    });
+
+    // Reset tip visibility
+    document.getElementById('tip-content').style.display = 'none';
+    document.getElementById('show-tip-btn').style.display = 'inline-block';
+
+    // Restore stars
+    this.updateStars(this.ratings[this.currentIndex]);
+
+    // Navigation buttons
+    document.getElementById('prev-question').disabled =
+      this.currentIndex === 0;
+    const nextBtn = document.getElementById('next-question');
+    nextBtn.textContent = (num === total)
+      ? 'Finish Session'
+      : 'Next Question \u2192';
+  }
+
+  showTip() {
+    const q = this.questions[this.currentIndex];
+    this.tipsViewed.add(this.currentIndex);
+
+    document.getElementById('tip-text').textContent = q.tip;
+    const pointsList = document.getElementById('key-points-list');
+    pointsList.innerHTML = '';
+    (q.keyPoints || []).forEach(point =&gt; {
+      const li = document.createElement('li');
+      li.textContent = point;
+      pointsList.appendChild(li);
+    });
+
+    document.getElementById('tip-content').style.display = 'block';
+    document.getElementById('show-tip-btn').style.display = 'none';
+  }
+
+  updateStars(value) {
+    document.querySelectorAll('#star-rating .star').forEach(star =&gt; {
+      const starVal = parseInt(star.dataset.value);
+      star.classList.toggle('active', starVal &lt;= value);
+      star.innerHTML = starVal &lt;= value ? '&amp;#9733;' : '&amp;#9734;';
+    });
+  }
+
+  next() {
+    if (this.currentIndex &lt; this.questions.length - 1) {
+      this.currentIndex++;
+      this.renderQuestion();
+    } else {
+      this.showSummary();
+    }
+  }
+
+  prev() {
+    if (this.currentIndex &gt; 0) {
+      this.currentIndex--;
+      this.renderQuestion();
+    }
+  }
+
+  showSummary() {
+    document.querySelector('.question-card').style.display = 'none';
+    document.querySelector('.practice-nav').style.display = 'none';
+
+    const answered = this.answers.filter(a =&gt; a.trim().length &gt; 0).length;
+    const rated = this.ratings.filter(r =&gt; r &gt; 0);
+    const avgRating = rated.length &gt; 0
+      ? (rated.reduce((a, b) =&gt; a + b, 0) / rated.length).toFixed(1)
+      : '0';
+
+    document.getElementById('avg-rating').textContent = avgRating;
+    document.getElementById('questions-answered').textContent = answered;
+    document.getElementById('tips-viewed').textContent =
+      this.tipsViewed.size;
+
+    // Identify weak areas (rated 1-2)
+    const weakAreas = document.getElementById('weak-areas');
+    const weakQuestions = this.questions.filter((q, i) =&gt;
+      this.ratings[i] &gt; 0 &amp;&amp; this.ratings[i] &lt;= 2
+    );
+
+    if (weakQuestions.length &gt; 0) {
+      weakAreas.innerHTML = '&lt;h3&gt;Focus Areas&lt;/h3&gt;&lt;p&gt;You rated ' +
+        'these questions lowest. Review them before your interview:&lt;/p&gt;' +
+        '&lt;ul&gt;' + weakQuestions.map(q =&gt;
+          `&lt;li&gt;&lt;strong&gt;${q.category}&lt;/strong&gt;: ${q.question}&lt;/li&gt;`
+        ).join('') + '&lt;/ul&gt;';
+    }
+
+    // Save session to LocalStorage
+    this.saveSession(avgRating, answered);
+
+    document.getElementById('session-summary').style.display = 'block';
+  }
+
+  saveSession(avgRating, answeredCount) {
+    const session = {
+      id: this.sessionId,
+      jobTitle: this.jobTitle,
+      company: this.company,
+      date: new Date().toISOString(),
+      questions: this.questions.map((q, i) =&gt; ({
+        ...q,
+        answer: this.answers[i],
+        rating: this.ratings[i],
+        tipViewed: this.tipsViewed.has(i)
+      })),
+      avgRating: parseFloat(avgRating),
+      answeredCount
+    };
+
+    const sessions = JSON.parse(
+      localStorage.getItem('interviewSessions') || '[]'
+    );
+    sessions.push(session);
+    localStorage.setItem('interviewSessions', JSON.stringify(sessions));
+  }
+
+  exit() {
+    document.getElementById('interview-practice').style.display = 'none';
+  }
+}
+
+// Launch from a saved job card
+function startInterviewPrep(jobId) {
+  const job = getSavedJobById(jobId); // from your existing code
+  fetch(`/api/interview-prep?jobId=${jobId}`)
+    .then(res =&gt; res.json())
+    .then(questions =&gt; {
+      new InterviewPractice(
+        questions,
+        job.jobTitle,
+        job.employerName
+      );
+    })
+    .catch(err =&gt; {
+      console.error('Failed to generate questions:', err);
+      alert('Could not generate interview questions. Please try again.');
+    });
+}</code></pre>
+      </div>
+
+      <p>There is a lot happening in this class, so let us walk through the design decisions. The <code>constructor</code> takes the questions array, the job title, and the company name. It initializes parallel arrays for answers and ratings &mdash; one slot per question &mdash; so the user can navigate back and forth without losing their work. The <code>sessionId</code> is generated from the current timestamp converted to base-36, which gives a compact, unique string for identifying this session later.</p>
+
+      <p>The <code>renderQuestion</code> method is the workhorse. Every time the user navigates to a new question, it updates the counter, the progress bar, the category badge, the question text, restores any previously typed answer, and resets the tip and star state. This is the classic "render from state" pattern &mdash; the data lives in the arrays, and the DOM is just a projection of that data.</p>
+
+      <div class="key-concept">
+        <h4>Saving Sessions to LocalStorage</h4>
+        <p>The <code>saveSession</code> method stores the entire practice session &mdash; questions, answers, ratings, and metadata &mdash; in the browser's LocalStorage. This means even without a database, users can review past sessions, track their progress over time, and see which areas they consistently struggle with. LocalStorage persists even after the browser is closed, so this data survives between visits. The <code>interviewSessions</code> key holds a JSON array of all past sessions.</p>
+      </div>
+
+      <p>The <code>showSummary</code> method calculates statistics from the session: how many questions were answered, the average confidence rating, how many tips were viewed. It also identifies "weak areas" &mdash; any question the user rated as a 1 or 2 out of 5. These are surfaced prominently because they represent the highest-value study targets. If you consistently rate behavioral questions low, that tells you something important about where to focus.</p>
+
+      <!-- ==================== PART 4 — QUESTION CATEGORIES ==================== -->
+      <h2>4. Question Categories</h2>
+
+      <p>Every question in the practice session belongs to one of three categories, each with a visual indicator that helps the user instantly recognize what type of thinking is required:</p>
+
+      <ul>
+        <li><strong>&#x1F4BB; Technical</strong> &mdash; tests your knowledge of specific technologies, languages, frameworks, and problem-solving approaches. These are the "can you actually do the work?" questions. Examples: "How would you design a REST API for this feature?" or "Explain how dependency injection works in Spring Boot."</li>
+        <li><strong>&#x1F91D; Behavioral</strong> &mdash; explores how you work with others, handle conflict, manage deadlines, and learn from mistakes. These follow the STAR format (Situation, Task, Action, Result). Examples: "Tell me about a time you disagreed with a teammate" or "Describe a project that did not go as planned."</li>
+        <li><strong>&#x1F3E2; Role/Company</strong> &mdash; tests whether you have actually researched the company and thought about why this specific role is a good fit. Examples: "Why do you want to work at [Company]?" or "How does this role fit into your career goals?"</li>
+      </ul>
+
+      <p>Many people make the mistake of preparing <em>only</em> for technical questions. They memorize data structure algorithms and system design patterns, walk into the interview, and freeze when the interviewer asks "Tell me about a time you handled a difficult stakeholder." Interviews are not just technical. Behavioral and cultural fit matter equally. Companies want to know that you can do the work <em>and</em> that you can work well with the existing team.</p>
+
+      <div class="callout callout-info">
+        <strong>The hidden evaluation</strong>
+        Here is something most candidates do not realize: behavioral questions are often weighted <em>more heavily</em> than technical questions, especially at larger companies. A candidate who scores 8 out of 10 on technical but 10 out of 10 on behavioral will often beat a candidate who scores 10 on technical but 5 on behavioral. The reasoning is simple &mdash; technical skills can be taught on the job, but communication habits and teamwork instincts are much harder to change. By practicing all three categories equally, you are giving yourself a significant advantage over candidates who only practice coding questions.
+      </div>
+
+      <p>The color-coded badges in the UI serve a psychological purpose as well. When a user sees the green "Behavioral" badge, their brain immediately shifts from "think about code" to "think about experiences." This mental context-switching is exactly what happens in a real interview, where the interviewer might jump from a technical question to a behavioral one without warning. Practicing that transition is part of the training.</p>
+
+      <!-- ==================== PART 5 — QUESTION BANK ==================== -->
+      <h2>5. Building a Question Bank</h2>
+
+      <p>After a few practice sessions, something interesting happens. The user starts to notice patterns. Certain questions keep coming up across different jobs: "Tell me about a time you worked under a tight deadline." "How would you design a REST API for this feature?" "Why are you interested in this role?" These recurring themes are not a coincidence &mdash; they represent the core competencies that the industry values.</p>
+
+      <p>A question bank captures every question generated across all practice sessions and makes them searchable, filterable, and reviewable. Instead of losing questions after a session ends, they accumulate into a personal study resource that grows with every job the user practices for.</p>
+
+      <p>On the backend, you need a table to persist these questions. Here is the schema:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE practice_questions (
+    id            BIGINT AUTO_INCREMENT PRIMARY KEY,
+    job_title     VARCHAR(255) NOT NULL,
+    company       VARCHAR(255) NOT NULL,
+    category      ENUM('TECHNICAL', 'BEHAVIORAL', 'COMPANY_ROLE') NOT NULL,
+    question      TEXT NOT NULL,
+    tip           TEXT,
+    key_points    JSON,
+    best_answer   TEXT,
+    best_rating   INT DEFAULT 0,
+    times_seen    INT DEFAULT 1,
+    last_practiced DATETIME,
+    created_at    DATETIME DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_category (category),
+    INDEX idx_company (company),
+    FULLTEXT INDEX idx_question_search (question, tip)
+);</code></pre>
+      </div>
+
+      <p>There are several thoughtful design choices in this schema. The <code>category</code> column uses MySQL's <code>ENUM</code> type, which restricts the value to one of the three valid categories. This is a database-level constraint &mdash; even if a bug in your code tries to insert an invalid category, the database will reject it. Defense in depth.</p>
+
+      <p>The <code>key_points</code> column uses the <code>JSON</code> type. MySQL natively supports JSON columns, which means you can store the list of key points as a JSON array without needing a separate table. For a small, bounded list like this, JSON is simpler and faster than a normalized design with a separate <code>key_points</code> table and a foreign key relationship.</p>
+
+      <p>The <code>best_answer</code> and <code>best_rating</code> columns track the user's top performance on each question. When the same question appears in a future session (because multiple jobs might generate similar questions), you update these fields if the user improves. This creates a personal record that motivates improvement.</p>
+
+      <p>The <code>times_seen</code> column counts how many times this question has appeared across practice sessions. A question that appears five times across different jobs is clearly a core competency question worth mastering. The <code>FULLTEXT</code> index on <code>question</code> and <code>tip</code> enables fast keyword search, so the user can type "REST APIs" and instantly find every question related to that topic.</p>
+
+      <div class="key-concept">
+        <h4>Why a Question Bank Changes Everything</h4>
+        <p>Without a question bank, each practice session exists in isolation. You practice, you feel prepared for a day, and then you forget. With a question bank, patterns emerge. You can see that across five different jobs, you were asked about REST API design four times. You can see that your average rating on behavioral questions is 2.5 while technical questions average 4.0. You can search for "microservices" and find every question that mentioned it. The question bank turns scattered practice into systematic preparation. It is the difference between studying randomly and studying strategically.</p>
+      </div>
+
+      <p>The filtering and search capabilities turn this from a simple list into a powerful study tool. Filter by category to focus a session entirely on behavioral questions if that is your weak area. Filter by company to review all the questions that were generated for a specific employer. Search by keyword when you realize "I keep getting asked about REST APIs &mdash; I need to practice more on that." The data is already there; you just need to surface it effectively.</p>
+
+      <!-- ==================== PART 6 — MOCK INTERVIEW MODE ==================== -->
+      <h2>6. Mock Interview Mode (Stretch)</h2>
+
+      <p>This section is a stretch goal. It is intentionally optional and brief. If you have completed everything above and want to push further, this will add two powerful features: timed responses and audio recording.</p>
+
+      <p>In a real interview, you do not get unlimited time to think. Most interviewers expect an answer to start within 10&ndash;15 seconds and wrap up within two minutes. Adding a timer to your practice sessions trains this discipline. Set a two-minute countdown per question. When the timer hits zero, do not cut the user off &mdash; just flash the timer red to signal that they are over time. The goal is awareness, not punishment.</p>
+
+      <p>The second feature is more powerful: recording your answers using the browser's <code>MediaRecorder</code> API. Hearing yourself answer interview questions is one of the best prep techniques available. Most people have no idea how they sound until they hear a recording. Do you trail off at the end of sentences? Do you use filler words? Do you actually answer the question that was asked, or do you wander? A recording reveals all of this.</p>
+
+      <div class="callout callout-warning">
+        <strong>Privacy first</strong>
+        Audio recordings should stay entirely on the user's device. Store the audio blobs in memory or offer a download &mdash; never send recordings to a server. The MediaRecorder API requests microphone permission through the browser's built-in permission dialog, and users can deny access at any time. Always check that <code>navigator.mediaDevices</code> is available before attempting to use it, as not all browsers or environments support it.
+      </div>
+
+      <p>The implementation is straightforward. Use <code>navigator.mediaDevices.getUserMedia({ audio: true })</code> to request microphone access. Create a <code>new MediaRecorder(stream)</code> from the resulting stream. Call <code>start()</code> when the user clicks a "Record" button. Collect audio chunks in the <code>ondataavailable</code> handler. Call <code>stop()</code> when they click "Stop" or the timer runs out. Create a <code>Blob</code> from the chunks and display it in an <code>&lt;audio&gt;</code> element so the user can play it back immediately.</p>
+
+      <p>These two features &mdash; timers and recording &mdash; transform practice from "thinking about answers" to "performing answers." That difference matters. Interview performance is a <em>skill</em>, not just knowledge, and skills are built through realistic practice.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="sq-interview-prep-q1">
+        <p class="quiz-question">1. Why does the <code>InterviewPrepService</code> prompt ask for exactly three categories of questions (Technical, Behavioral, Company/Role) instead of just generating generic interview questions?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-interview-prep-q1" value="a"> It is easier for the LLM to generate fewer question types</label>
+          <label><input type="radio" name="sq-interview-prep-q1" value="b"> The three categories ensure balanced preparation across skills, teamwork, and cultural fit &mdash; matching how real interviews are structured</label>
+          <label><input type="radio" name="sq-interview-prep-q1" value="c"> The JSON response format requires exactly three categories to parse correctly</label>
+          <label><input type="radio" name="sq-interview-prep-q1" value="d"> Technical questions are the only ones that matter, but behavioral and role questions are included as padding</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! Real interviews test candidates across multiple dimensions: technical competence, teamwork and communication (behavioral), and motivation and cultural fit (company/role). By generating questions in all three categories, the practice session mirrors the structure of an actual interview. This is especially important because many candidates only practice technical questions and are caught off guard by behavioral ones &mdash; which are often weighted equally or even more heavily in hiring decisions.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-interview-prep-q2">
+        <p class="quiz-question">2. What is the purpose of the <code>FULLTEXT</code> index on the <code>practice_questions</code> table?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-interview-prep-q2" value="a"> It prevents duplicate questions from being inserted into the table</label>
+          <label><input type="radio" name="sq-interview-prep-q2" value="b"> It encrypts the question text for security</label>
+          <label><input type="radio" name="sq-interview-prep-q2" value="c"> It enables fast keyword search across questions and tips, so users can find all questions about a specific topic like "REST APIs"</label>
+          <label><input type="radio" name="sq-interview-prep-q2" value="d"> It automatically categorizes questions based on their content</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! A <code>FULLTEXT</code> index tells MySQL to build a searchable word index on the specified columns. This allows efficient <code>MATCH ... AGAINST</code> queries that find rows containing specific keywords, even within long text. Without a fulltext index, keyword searches would require a <code>LIKE '%keyword%'</code> query, which scans every row in the table &mdash; extremely slow as the question bank grows. The fulltext index enables the "search by keyword" feature that lets users say "I keep getting asked about microservices" and instantly find every related question.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-interview-prep-q3">
+        <p class="quiz-question">3. Why does the JavaScript class save each session's answers and ratings to <code>localStorage</code> instead of only keeping them in memory?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-interview-prep-q3" value="a"> localStorage is faster than keeping data in JavaScript variables</label>
+          <label><input type="radio" name="sq-interview-prep-q3" value="b"> localStorage data persists across browser sessions, allowing users to review past practice sessions and track improvement over time</label>
+          <label><input type="radio" name="sq-interview-prep-q3" value="c"> The browser requires localStorage for any data larger than 1 KB</label>
+          <label><input type="radio" name="sq-interview-prep-q3" value="d"> localStorage automatically syncs data to the server</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! Data stored in JavaScript variables disappears as soon as the page is closed or refreshed. <code>localStorage</code> persists in the browser even after it is closed and reopened. This means a user can complete a practice session on Monday, close the browser, and come back on Wednesday to review their answers and ratings. Over time, the accumulated session data reveals patterns &mdash; which categories are consistently rated low, which types of questions keep appearing &mdash; turning isolated practice into strategic preparation. Note that localStorage does <em>not</em> sync to any server; it stays entirely in the user's browser.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>By the end of this side quest, you should have a working interview prep feature integrated into your Resumator application. Specifically:</p>
+
+      <ul>
+        <li><strong>LLM-powered question generation</strong> &mdash; An <code>InterviewPrepService</code> that takes a job description and returns eight structured interview questions across three categories, with tips and key points for each.</li>
+        <li><strong>One-at-a-time practice interface</strong> &mdash; A clean, focused UI that presents questions sequentially, provides a text area for outlining answers, hides tips until the user is ready, and collects self-ratings on a 1&ndash;5 star scale.</li>
+        <li><strong>Session summaries and self-assessment</strong> &mdash; A summary screen after each session showing average confidence, number of questions answered, tips viewed, and a list of weak areas to revisit.</li>
+        <li><strong>Persistent question bank</strong> &mdash; A database-backed collection of all generated questions, filterable by category and company, searchable by keyword, tracking how often each question appears and the user's best rating.</li>
+      </ul>
+
+      <p>If you completed the stretch goal, you also have timed responses and audio recording for the most realistic practice experience possible.</p>
+
+      <p>This feature turns your Resumator from a job search tool into a complete interview preparation system. Every saved job becomes a practice opportunity. Every practice session builds your question bank. And every time you sit down for a real interview, you will have already faced questions tailored to that exact role. That is a genuine competitive advantage.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="interview-prep">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

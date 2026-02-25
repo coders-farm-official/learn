@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Build a Multiplayer Quiz Game &mdash; Coders Farm</title>
+  <meta name="description" content="Build a real-time multiplayer quiz game with WebSockets, live scoreboards, and mobile play">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-multiplayer-quiz">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Multiplayer Quiz</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Multiplayer Quiz Game</p>
+      <h1>Build a Multiplayer Quiz Game</h1>
+      <p style="color: var(--text-muted);">Estimated time: 5&ndash;6 hours | Difficulty: Advanced</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>A real-time multiplayer quiz game powered by WebSockets</li>
+          <li>A Spring Boot backend that manages game state, players, and scores</li>
+          <li>A browser-based frontend where players join from their phones</li>
+          <li>A live scoreboard that updates instantly as answers come in</li>
+          <li>A library of programming trivia questions that double as a study tool</li>
+          <li>A polished experience with countdown timers, animations, and a winner podium</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHAT ARE WEBSOCKETS ==================== -->
+      <h2>1. What Are WebSockets?</h2>
+
+      <p>Every web application you have built so far uses <strong>HTTP</strong> &mdash; the protocol that powers the web. HTTP follows a simple pattern called <strong>request-response</strong>. The browser sends a request ("give me this page" or "save this data"), the server processes it, sends back a response, and the connection closes. Every interaction is a separate round trip. The browser asks, the server answers, and then they stop talking until the browser asks again.</p>
+
+      <p>This works perfectly for most things. Loading pages, submitting forms, fetching search results &mdash; all of these are natural request-response interactions. But think about what happens when you need something different. Think about a chat application. If Alice sends a message, Bob's browser needs to see it <em>immediately</em> &mdash; not the next time Bob's browser happens to ask the server "any new messages?" Think about live sports scores. You want the score to update the instant a goal is scored, not when you manually refresh the page.</p>
+
+      <p>This is where <strong>WebSockets</strong> come in.</p>
+
+      <div class="key-concept">
+        <h4>HTTP vs WebSockets</h4>
+        <p><strong>HTTP</strong> is like sending text messages. You send a message, you wait for a reply, and the conversation pauses until someone sends the next message. Each exchange is independent. <strong>WebSockets</strong> are like a phone call. Once the connection is established, both sides can talk whenever they want, as much as they want, without having to "dial" again each time. The line stays open. Data flows freely in both directions.</p>
+      </div>
+
+      <p>Think about it as the difference between <strong>texting</strong> and a <strong>phone call</strong>. With texting (HTTP), you compose a message, send it, and wait. The other person reads it, types a reply, and sends it back. There is a delay between each exchange. With a phone call (WebSockets), you pick up the phone once, and then you can speak freely in real time. There is no lag between "messages" because the connection is always open. Both people can talk at the same time. Information flows instantly.</p>
+
+      <p>WebSockets are perfect for situations where you need <strong>real-time, bidirectional communication</strong>:</p>
+
+      <ul>
+        <li><strong>Chat applications</strong> &mdash; messages need to appear instantly for all participants</li>
+        <li><strong>Live scores and dashboards</strong> &mdash; data needs to push to the browser the moment it changes</li>
+        <li><strong>Multiplayer games</strong> &mdash; player actions need to be shared with everyone in real time</li>
+        <li><strong>Collaborative editing</strong> &mdash; like Google Docs, where multiple people type in the same document</li>
+        <li><strong>Stock tickers</strong> &mdash; prices change rapidly and the display needs to keep up</li>
+      </ul>
+
+      <p>For your multiplayer quiz game, WebSockets are essential. When the host starts a question, every player's screen needs to show that question at the same time. When a player submits an answer, the host's scoreboard needs to update immediately. When the timer runs out, everyone needs to know. HTTP would require every player's browser to constantly ask "anything new? anything new? anything new?" &mdash; hundreds of requests per second, most of them returning nothing. WebSockets keep the line open so the server can push updates the instant they happen.</p>
+
+      <p>To add WebSocket support to a Spring Boot project, you need one dependency in your <code>pom.xml</code>:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-websocket&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>This single dependency brings in everything you need: the WebSocket protocol support, the STOMP messaging layer, and the message broker that routes messages between clients and the server. You do not need to install anything else. Spring Boot handles the wiring.</p>
+
+      <!-- ==================== PART 2 — WEBSOCKET SETUP ==================== -->
+      <h2>2. WebSocket Setup in Spring Boot</h2>
+
+      <p>Raw WebSockets give you a pipe for sending messages back and forth, but they do not provide any structure. It is like having a phone line but no language &mdash; you can make sounds, but there is no grammar or vocabulary to organize them. In practice, you want a <strong>messaging protocol</strong> on top of WebSockets that defines how messages are formatted, how they are routed, and how clients subscribe to different topics.</p>
+
+      <p>Spring Boot uses <strong>STOMP</strong> (Simple Text Oriented Messaging Protocol) for this. STOMP adds structure to your WebSocket messages. Instead of sending raw text, you send messages to <strong>destinations</strong> (like URLs), and clients <strong>subscribe</strong> to destinations they care about. Think of it like a radio station: the server broadcasts on specific channels, and clients tune in to the channels they want to hear.</p>
+
+      <div class="key-concept">
+        <h4>STOMP in Plain English</h4>
+        <p>STOMP gives your WebSocket messages an address system. The server can send a message to <code>/topic/game/ABC123/question</code>, and only clients subscribed to that destination will receive it. This means players in Game A do not see messages from Game B. It is organized, efficient, and exactly what you need for a multiplayer game where multiple games might be running at the same time.</p>
+      </div>
+
+      <p>To configure WebSockets in Spring Boot, you create a configuration class. This class tells Spring where to set up the WebSocket endpoint and how to route messages:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
+import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
+import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+
+@Configuration
+@EnableWebSocketMessageBroker
+public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
+
+    @Override
+    public void configureMessageBroker(MessageBrokerRegistry config) {
+        // Messages sent to /topic will be broadcast to subscribers
+        config.enableSimpleBroker(&quot;/topic&quot;);
+
+        // Messages sent from clients go to /app prefix
+        config.setApplicationDestinationPrefixes(&quot;/app&quot;);
+    }
+
+    @Override
+    public void registerStompEndpoints(StompEndpointRegistry registry) {
+        // This is the URL clients connect to
+        registry.addEndpoint(&quot;/ws&quot;)
+                .setAllowedOriginPatterns(&quot;*&quot;)
+                .withSockJS();
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us break down what each part does:</p>
+
+      <ul>
+        <li><strong><code>@EnableWebSocketMessageBroker</code></strong> &mdash; This annotation activates WebSocket message handling with STOMP support. Without it, Spring ignores your WebSocket configuration entirely.</li>
+        <li><strong><code>enableSimpleBroker("/topic")</code></strong> &mdash; This creates an in-memory message broker. Any message sent to a destination starting with <code>/topic</code> will be broadcast to all subscribed clients. For example, a message to <code>/topic/game/ABC123/scores</code> will reach every player subscribed to that destination.</li>
+        <li><strong><code>setApplicationDestinationPrefixes("/app")</code></strong> &mdash; When a client sends a message to the server (like submitting an answer), the destination starts with <code>/app</code>. Spring routes these to your <code>@MessageMapping</code> controller methods.</li>
+        <li><strong><code>addEndpoint("/ws")</code></strong> &mdash; This is the URL that clients use to establish the WebSocket connection. When a player opens the game in their browser, JavaScript connects to <code>/ws</code>.</li>
+        <li><strong><code>withSockJS()</code></strong> &mdash; SockJS is a fallback library. If a player's browser or network does not support WebSockets (rare, but possible), SockJS automatically falls back to other techniques like long-polling to simulate the same behavior.</li>
+      </ul>
+
+      <p>Before building the full game, let us verify the WebSocket connection works with a simple echo test. Create a controller that receives a message and sends it back:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.controller;
+
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+
+@Controller
+public class EchoController {
+
+    @MessageMapping(&quot;/echo&quot;)
+    @SendTo(&quot;/topic/echoes&quot;)
+    public String echo(String message) {
+        return &quot;Server received: &quot; + message;
+    }
+}</code></pre>
+      </div>
+
+      <p>When a client sends a message to <code>/app/echo</code>, Spring strips the <code>/app</code> prefix, matches it to the <code>@MessageMapping("/echo")</code> method, processes it, and broadcasts the return value to everyone subscribed to <code>/topic/echoes</code>. The message flows in, gets processed, and flows back out &mdash; all over the same persistent WebSocket connection. No HTTP round trips. No delays. Start your application and verify you see no errors in the console. You will test this with a real frontend in Part 5.</p>
+
+      <!-- ==================== PART 3 — GAME ARCHITECTURE ==================== -->
+      <h2>3. Game Architecture</h2>
+
+      <p>Before you write another line of code, you need a plan. A multiplayer quiz game has many moving parts: players joining, questions being asked, answers being submitted, scores being calculated, timers counting down. Without a clear architecture, the code will become a tangled mess. Let us design the data model and the game flow first.</p>
+
+      <h3>Data Model</h3>
+
+      <p>You need three core classes to represent the game state:</p>
+
+      <div class="key-concept">
+        <h4>Game</h4>
+        <p>Represents a single quiz session. Contains a unique <strong>join code</strong> (like "ABC123") that players use to enter the game, a reference to the <strong>host</strong> (the person who created the game), a list of <strong>questions</strong>, a list of <strong>players</strong>, the current <strong>game state</strong> (lobby, playing, or finished), and the index of the <strong>current question</strong>. Each game is independent &mdash; multiple games can run at the same time.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Player</h4>
+        <p>Represents someone playing the game. Contains the player's <strong>name</strong> (chosen when they join), their <strong>session ID</strong> (so the server knows which WebSocket connection belongs to which player), their <strong>score</strong>, and a flag for whether they have <strong>answered the current question</strong>. The session ID is critical &mdash; it is how the server routes messages to the right person.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Question</h4>
+        <p>Represents a single quiz question. Contains the <strong>question text</strong>, an array of four <strong>answer options</strong>, the index of the <strong>correct answer</strong>, and optionally a <strong>category</strong> tag (HTML, CSS, JavaScript, Java, SQL, etc.) and a <strong>difficulty</strong> level. Keeping categories lets you filter or mix questions for different audiences.</p>
+      </div>
+
+      <h3>Game Flow</h3>
+
+      <p>The game follows a clear sequence of steps. Understanding this flow is critical before you start coding:</p>
+
+      <ol>
+        <li><strong>Create</strong> &mdash; The host clicks "Create Game." The server generates a unique join code (like "XK7M") and creates a new Game object in the LOBBY state.</li>
+        <li><strong>Share Join Code</strong> &mdash; The host's screen displays the join code in large, readable text. Players pull out their phones, open the game URL, and enter the code.</li>
+        <li><strong>Lobby</strong> &mdash; As each player joins, their name appears on the host's screen in real time. The host sees the player list grow. Players see a "waiting for host" screen. This is the gathering phase.</li>
+        <li><strong>Start</strong> &mdash; When enough players have joined, the host clicks "Start Game." The server switches the game state to PLAYING and sends the first question to all players simultaneously.</li>
+        <li><strong>Questions</strong> &mdash; Each question has a countdown timer (15 or 20 seconds). Players see the question and four options on their phones. They tap their answer. Faster correct answers earn more points. When the timer expires or all players have answered, the server broadcasts the correct answer and updated scores.</li>
+        <li><strong>Scores</strong> &mdash; Between questions, a scoreboard appears showing rankings. Players see where they stand. Then the next question begins.</li>
+        <li><strong>Winner</strong> &mdash; After the last question, the server switches the game state to FINISHED and broadcasts the final scores. The top three players get a podium display.</li>
+      </ol>
+
+      <h3>State Machine</h3>
+
+      <p>The game's behavior at any moment depends on its <strong>state</strong>. This is a common pattern in software called a <strong>state machine</strong>. Your game has three states:</p>
+
+      <div class="callout callout-info">
+        <strong>Game States</strong>
+        <ul>
+          <li><strong>LOBBY</strong> &mdash; The game has been created but has not started. Players can join. The host sees the player list. No questions are active. The only valid action is "Start Game" (by the host) or "Join" (by a player).</li>
+          <li><strong>PLAYING</strong> &mdash; The game is active. Questions are being displayed. Players are submitting answers. The timer is running. No new players can join. The game cycles through questions until they are all done.</li>
+          <li><strong>FINISHED</strong> &mdash; All questions have been answered. Final scores are displayed. The winner is announced. The only valid action is "Play Again" (which creates a new game and returns to LOBBY).</li>
+        </ul>
+      </div>
+
+      <p>Every message the server receives should check the game state before processing. If someone tries to submit an answer while the game is in LOBBY, the server ignores it. If someone tries to join while the game is PLAYING, the server rejects it. The state machine keeps the game logic clean and predictable. Without it, you would have dozens of <code>if</code> statements scattered everywhere trying to figure out "is this action allowed right now?" With it, you check the state once and know exactly what to do.</p>
+
+      <!-- ==================== PART 4 — BUILDING THE BACKEND ==================== -->
+      <h2>4. Building the Backend</h2>
+
+      <p>Now let us build the server-side logic. The backend is responsible for everything: creating games, tracking players, managing the question timer, calculating scores, and broadcasting updates. You will not use a database for this project. The game state lives entirely in memory, which is perfect for a real-time game that does not need to persist data after it ends.</p>
+
+      <h3>In-Memory Game Storage</h3>
+
+      <p>Create a service class that stores all active games in a <code>HashMap</code>. The join code is the key, and the <code>Game</code> object is the value:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.service;
+
+import com.example.quizgame.model.Game;
+import com.example.quizgame.model.GameState;
+import com.example.quizgame.model.Player;
+import com.example.quizgame.model.Question;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+@Service
+public class GameService {
+
+    private final Map&lt;String, Game&gt; activeGames = new ConcurrentHashMap&lt;&gt;();
+    private final Random random = new Random();
+
+    public Game createGame(String hostName) {
+        String joinCode = generateJoinCode();
+
+        Game game = new Game();
+        game.setJoinCode(joinCode);
+        game.setHostName(hostName);
+        game.setState(GameState.LOBBY);
+        game.setPlayers(new ArrayList&lt;&gt;());
+        game.setQuestions(loadQuestions());
+        game.setCurrentQuestionIndex(-1);
+
+        activeGames.put(joinCode, game);
+        return game;
+    }
+
+    public Game getGame(String joinCode) {
+        return activeGames.get(joinCode.toUpperCase());
+    }
+
+    public Player addPlayer(String joinCode, String playerName, String sessionId) {
+        Game game = getGame(joinCode);
+        if (game == null || game.getState() != GameState.LOBBY) {
+            return null;
+        }
+
+        Player player = new Player();
+        player.setName(playerName);
+        player.setSessionId(sessionId);
+        player.setScore(0);
+        player.setAnswered(false);
+
+        game.getPlayers().add(player);
+        return player;
+    }
+
+    public void removeGame(String joinCode) {
+        activeGames.remove(joinCode.toUpperCase());
+    }
+
+    private String generateJoinCode() {
+        String chars = &quot;ABCDEFGHJKMNPQRSTUVWXYZ23456789&quot;;
+        StringBuilder code = new StringBuilder();
+        for (int i = 0; i &lt; 4; i++) {
+            code.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        String joinCode = code.toString();
+
+        // Make sure the code is unique
+        if (activeGames.containsKey(joinCode)) {
+            return generateJoinCode();
+        }
+        return joinCode;
+    }
+
+    private List&lt;Question&gt; loadQuestions() {
+        // Questions are loaded in Part 6
+        return new ArrayList&lt;&gt;();
+    }
+}</code></pre>
+      </div>
+
+      <p>Notice several important design decisions in this code:</p>
+
+      <ul>
+        <li><strong><code>ConcurrentHashMap</code></strong> instead of a regular <code>HashMap</code>. Because multiple WebSocket connections can access the game state simultaneously (players joining, submitting answers, the timer ticking), you need a thread-safe map. <code>ConcurrentHashMap</code> handles concurrent access without requiring you to write your own synchronization code.</li>
+        <li><strong>The join code excludes confusing characters.</strong> Look at the <code>chars</code> string: there is no <code>O</code> (looks like <code>0</code>), no <code>I</code> (looks like <code>1</code>), no <code>L</code> (looks like <code>1</code>). When players are squinting at a projector screen trying to type a code into their phones, the last thing you want is ambiguity. This tiny detail is the difference between a smooth experience and frustrated players asking "is that an O or a zero?"</li>
+        <li><strong>State checking on join.</strong> The <code>addPlayer</code> method checks that the game exists and is in the LOBBY state before allowing a player to join. This enforces the state machine from Part 3.</li>
+      </ul>
+
+      <h3>REST Endpoints</h3>
+
+      <p>You need two REST endpoints: one to create a game and one to join a game. These use regular HTTP because they are one-time actions (not real-time streams):</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.controller;
+
+import com.example.quizgame.model.Game;
+import com.example.quizgame.model.Player;
+import com.example.quizgame.service.GameService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/game&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class GameRestController {
+
+    private final GameService gameService;
+
+    public GameRestController(GameService gameService) {
+        this.gameService = gameService;
+    }
+
+    @PostMapping(&quot;/create&quot;)
+    public ResponseEntity&lt;?&gt; createGame(@RequestBody Map&lt;String, String&gt; request) {
+        String hostName = request.get(&quot;hostName&quot;);
+        if (hostName == null || hostName.isBlank()) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Host name is required&quot;));
+        }
+
+        Game game = gameService.createGame(hostName);
+        return ResponseEntity.ok(Map.of(
+            &quot;joinCode&quot;, game.getJoinCode(),
+            &quot;hostName&quot;, game.getHostName()
+        ));
+    }
+
+    @PostMapping(&quot;/join&quot;)
+    public ResponseEntity&lt;?&gt; joinGame(@RequestBody Map&lt;String, String&gt; request) {
+        String joinCode = request.get(&quot;joinCode&quot;);
+        String playerName = request.get(&quot;playerName&quot;);
+
+        if (joinCode == null || playerName == null || playerName.isBlank()) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Join code and player name are required&quot;));
+        }
+
+        Game game = gameService.getGame(joinCode);
+        if (game == null) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Game not found. Check the join code.&quot;));
+        }
+
+        return ResponseEntity.ok(Map.of(
+            &quot;joinCode&quot;, game.getJoinCode(),
+            &quot;playerName&quot;, playerName,
+            &quot;status&quot;, &quot;connected&quot;
+        ));
+    }
+}</code></pre>
+      </div>
+
+      <h3>WebSocket Message Handling</h3>
+
+      <p>The real-time game logic happens through WebSocket messages. Your game controller handles four types of messages that flow through the system:</p>
+
+      <div class="callout callout-info">
+        <strong>Message Types</strong>
+        <ul>
+          <li><strong>QUESTION_START</strong> &mdash; Server broadcasts the current question to all players. Includes the question text, four options, question number, and total count. Does <em>not</em> include the correct answer (that would let players cheat by reading the WebSocket messages).</li>
+          <li><strong>SUBMIT_ANSWER</strong> &mdash; A player sends their chosen answer to the server. The server validates it, calculates points based on speed, and marks the player as having answered.</li>
+          <li><strong>SCORES_UPDATE</strong> &mdash; Server broadcasts the current scoreboard to all players after each question. Includes player names, scores, and rankings sorted from highest to lowest.</li>
+          <li><strong>GAME_OVER</strong> &mdash; Server broadcasts the final results when all questions have been answered. Includes the winner's name and the complete final scoreboard.</li>
+        </ul>
+      </div>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.controller;
+
+import com.example.quizgame.model.*;
+import com.example.quizgame.service.GameService;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.stereotype.Controller;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
+@Controller
+public class GameWebSocketController {
+
+    private final GameService gameService;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public GameWebSocketController(GameService gameService,
+                                   SimpMessagingTemplate messagingTemplate) {
+        this.gameService = gameService;
+        this.messagingTemplate = messagingTemplate;
+    }
+
+    @MessageMapping(&quot;/game/{joinCode}/start&quot;)
+    public void startGame(@DestinationVariable String joinCode) {
+        Game game = gameService.getGame(joinCode);
+        if (game == null || game.getState() != GameState.LOBBY) return;
+
+        game.setState(GameState.PLAYING);
+        sendNextQuestion(game);
+    }
+
+    @MessageMapping(&quot;/game/{joinCode}/answer&quot;)
+    public void submitAnswer(@DestinationVariable String joinCode,
+                             AnswerSubmission submission) {
+        Game game = gameService.getGame(joinCode);
+        if (game == null || game.getState() != GameState.PLAYING) return;
+
+        Player player = game.getPlayerBySessionId(submission.getSessionId());
+        if (player == null || player.hasAnswered()) return;
+
+        player.setAnswered(true);
+
+        Question current = game.getCurrentQuestion();
+        if (submission.getAnswerIndex() == current.getCorrectIndex()) {
+            // Faster answers earn more points (max 1000, min 500)
+            long elapsed = submission.getTimeElapsed();
+            int points = Math.max(500, 1000 - (int)(elapsed * 50));
+            player.setScore(player.getScore() + points);
+        }
+
+        // Check if all players have answered
+        boolean allAnswered = game.getPlayers().stream()
+            .allMatch(Player::hasAnswered);
+
+        if (allAnswered) {
+            sendScoresUpdate(game);
+        }
+    }
+
+    private void sendNextQuestion(Game game) {
+        game.advanceQuestion();
+
+        if (game.getCurrentQuestionIndex() &gt;= game.getQuestions().size()) {
+            endGame(game);
+            return;
+        }
+
+        Question q = game.getCurrentQuestion();
+        game.getPlayers().forEach(p -&gt; p.setAnswered(false));
+
+        Map&lt;String, Object&gt; questionData = new LinkedHashMap&lt;&gt;();
+        questionData.put(&quot;type&quot;, &quot;QUESTION_START&quot;);
+        questionData.put(&quot;questionNumber&quot;, game.getCurrentQuestionIndex() + 1);
+        questionData.put(&quot;totalQuestions&quot;, game.getQuestions().size());
+        questionData.put(&quot;text&quot;, q.getText());
+        questionData.put(&quot;options&quot;, q.getOptions());
+        questionData.put(&quot;category&quot;, q.getCategory());
+        questionData.put(&quot;timeLimit&quot;, 15);
+
+        String destination = &quot;/topic/game/&quot; + game.getJoinCode();
+        messagingTemplate.convertAndSend(destination, questionData);
+    }
+
+    private void sendScoresUpdate(Game game) {
+        List&lt;Map&lt;String, Object&gt;&gt; scores = game.getPlayers().stream()
+            .sorted(Comparator.comparingInt(Player::getScore).reversed())
+            .map(p -&gt; {
+                Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+                entry.put(&quot;name&quot;, p.getName());
+                entry.put(&quot;score&quot;, p.getScore());
+                return entry;
+            })
+            .collect(Collectors.toList());
+
+        Map&lt;String, Object&gt; data = new LinkedHashMap&lt;&gt;();
+        data.put(&quot;type&quot;, &quot;SCORES_UPDATE&quot;);
+        data.put(&quot;scores&quot;, scores);
+
+        String destination = &quot;/topic/game/&quot; + game.getJoinCode();
+        messagingTemplate.convertAndSend(destination, data);
+    }
+
+    private void endGame(Game game) {
+        game.setState(GameState.FINISHED);
+
+        List&lt;Map&lt;String, Object&gt;&gt; finalScores = game.getPlayers().stream()
+            .sorted(Comparator.comparingInt(Player::getScore).reversed())
+            .map(p -&gt; {
+                Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+                entry.put(&quot;name&quot;, p.getName());
+                entry.put(&quot;score&quot;, p.getScore());
+                return entry;
+            })
+            .collect(Collectors.toList());
+
+        Map&lt;String, Object&gt; data = new LinkedHashMap&lt;&gt;();
+        data.put(&quot;type&quot;, &quot;GAME_OVER&quot;);
+        data.put(&quot;winner&quot;, finalScores.isEmpty() ? &quot;Nobody&quot; :
+            finalScores.get(0).get(&quot;name&quot;));
+        data.put(&quot;scores&quot;, finalScores);
+
+        String destination = &quot;/topic/game/&quot; + game.getJoinCode();
+        messagingTemplate.convertAndSend(destination, data);
+    }
+}</code></pre>
+      </div>
+
+      <p>The key class here is <code>SimpMessagingTemplate</code>. Spring injects this automatically, and it is your tool for sending messages to WebSocket subscribers. The <code>convertAndSend</code> method takes a destination (like <code>/topic/game/XK7M</code>) and an object, converts the object to JSON, and broadcasts it to every client subscribed to that destination. This is how the server pushes real-time updates without the client asking for them.</p>
+
+      <h3>Timer Logic</h3>
+
+      <p>Each question needs a countdown timer. When 15 seconds are up, the server should automatically end the question and show scores, even if some players have not answered. Java's <code>ScheduledExecutorService</code> is the right tool for this:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.quizgame.service;
+
+import org.springframework.stereotype.Component;
+
+import java.util.Map;
+import java.util.concurrent.*;
+
+@Component
+public class QuestionTimerService {
+
+    private final ScheduledExecutorService scheduler =
+        Executors.newScheduledThreadPool(4);
+
+    private final Map&lt;String, ScheduledFuture&lt;?&gt;&gt; activeTimers =
+        new ConcurrentHashMap&lt;&gt;();
+
+    /**
+     * Start a countdown for a specific game.
+     * When time runs out, the callback fires.
+     */
+    public void startTimer(String joinCode, int seconds, Runnable onTimeUp) {
+        // Cancel any existing timer for this game
+        cancelTimer(joinCode);
+
+        ScheduledFuture&lt;?&gt; future = scheduler.schedule(
+            onTimeUp,
+            seconds,
+            TimeUnit.SECONDS
+        );
+
+        activeTimers.put(joinCode, future);
+    }
+
+    /**
+     * Cancel the timer for a specific game.
+     * Called when all players answer before time runs out.
+     */
+    public void cancelTimer(String joinCode) {
+        ScheduledFuture&lt;?&gt; existing = activeTimers.remove(joinCode);
+        if (existing != null) {
+            existing.cancel(false);
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p>The <code>ScheduledExecutorService</code> lets you schedule a task to run after a delay. When you call <code>startTimer("XK7M", 15, callback)</code>, it waits 15 seconds and then runs the callback. The callback triggers score calculation and advances to the next question. If all players answer before the timer runs out, you cancel the timer and proceed immediately &mdash; no one wants to stare at a blank screen for 10 seconds when everyone has already answered.</p>
+
+      <p>The <code>activeTimers</code> map tracks one timer per game. Before starting a new timer, the code cancels any existing one for that game. This prevents timer leaks &mdash; leftover timers from previous questions firing at unexpected times.</p>
+
+      <!-- ==================== PART 5 — BUILDING THE FRONTEND ==================== -->
+      <h2>5. Building the Frontend</h2>
+
+      <p>The frontend is what players actually see and interact with. Your game needs three distinct views, each serving a different purpose:</p>
+
+      <div class="key-concept">
+        <h4>Three Views</h4>
+        <ul>
+          <li><strong>Host View</strong> &mdash; Displayed on a large screen or projector. Shows the join code prominently, the player lobby as people join, the current question during gameplay, and the live scoreboard between questions. The host controls the game flow (starting, advancing).</li>
+          <li><strong>Join View</strong> &mdash; The landing page players see on their phones. A simple form with two fields: join code and player name. Clean, fast, mobile-first. No distractions.</li>
+          <li><strong>Player View</strong> &mdash; What players see on their phones during the game. Shows the question text, four large tappable answer buttons, a countdown timer, and score updates. Must work perfectly on small screens because most players will be on phones.</li>
+        </ul>
+      </div>
+
+      <p>To connect to WebSockets from JavaScript, you use the <strong>STOMP.js</strong> library along with <strong>SockJS</strong>. These are the client-side counterparts to the server-side configuration you wrote in Part 2. Here is how to set up the WebSocket connection:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- Include STOMP and SockJS libraries --&gt;
+&lt;script src=&quot;https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;script&gt;
+  // Connect to the WebSocket endpoint
+  const socket = new SockJS('/ws');
+  const stompClient = Stomp.over(socket);
+
+  // Disable debug logging in production
+  stompClient.debug = null;
+
+  stompClient.connect({}, function(frame) {
+      console.log('Connected to game server');
+
+      // Subscribe to game updates for this specific game
+      const joinCode = 'XK7M'; // From the join process
+      stompClient.subscribe('/topic/game/' + joinCode, function(message) {
+          const data = JSON.parse(message.body);
+
+          switch (data.type) {
+              case 'QUESTION_START':
+                  showQuestion(data);
+                  break;
+              case 'SCORES_UPDATE':
+                  showScores(data.scores);
+                  break;
+              case 'GAME_OVER':
+                  showWinner(data);
+                  break;
+              case 'PLAYER_JOINED':
+                  updatePlayerList(data);
+                  break;
+          }
+      });
+  });
+
+  // Send an answer to the server
+  function submitAnswer(answerIndex) {
+      stompClient.send('/app/game/' + joinCode + '/answer', {}, JSON.stringify({
+          sessionId: mySessionId,
+          answerIndex: answerIndex,
+          timeElapsed: getElapsedSeconds()
+      }));
+  }
+
+  function showQuestion(data) {
+      document.getElementById('question-text').textContent = data.text;
+      document.getElementById('question-counter').textContent =
+          'Question ' + data.questionNumber + ' of ' + data.totalQuestions;
+      document.getElementById('category-tag').textContent = data.category;
+
+      const optionsContainer = document.getElementById('answer-options');
+      optionsContainer.innerHTML = '';
+
+      const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12'];
+      data.options.forEach(function(option, index) {
+          const button = document.createElement('button');
+          button.className = 'answer-btn';
+          button.style.backgroundColor = colors[index];
+          button.textContent = option;
+          button.addEventListener('click', function() {
+              submitAnswer(index);
+              disableAllButtons();
+          });
+          optionsContainer.appendChild(button);
+      });
+
+      startCountdown(data.timeLimit);
+  }
+
+  function startCountdown(seconds) {
+      let remaining = seconds;
+      const timerEl = document.getElementById('countdown-timer');
+
+      const interval = setInterval(function() {
+          remaining--;
+          timerEl.textContent = remaining;
+          timerEl.style.transform = 'scale(1.2)';
+          setTimeout(() =&gt; timerEl.style.transform = 'scale(1)', 200);
+
+          if (remaining &lt;= 5) {
+              timerEl.classList.add('timer-urgent');
+          }
+          if (remaining &lt;= 0) {
+              clearInterval(interval);
+          }
+      }, 1000);
+  }
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <p>Let us break down the key parts of this code:</p>
+
+      <ul>
+        <li><strong><code>new SockJS('/ws')</code></strong> &mdash; Creates a connection to the WebSocket endpoint you configured in the Spring Boot <code>WebSocketConfig</code> class. SockJS handles the initial handshake and any fallback protocols automatically.</li>
+        <li><strong><code>Stomp.over(socket)</code></strong> &mdash; Wraps the SockJS connection with the STOMP protocol, giving you the subscribe/send messaging API.</li>
+        <li><strong><code>stompClient.subscribe('/topic/game/' + joinCode, ...)</code></strong> &mdash; This subscribes to messages for a specific game. The join code makes each game's message channel unique. Players in game XK7M do not receive messages from game AB3Q.</li>
+        <li><strong><code>stompClient.send('/app/game/...')</code></strong> &mdash; Sends a message to the server. The <code>/app</code> prefix routes it to a <code>@MessageMapping</code> method in your controller.</li>
+        <li><strong>The <code>switch</code> statement</strong> &mdash; Handles different message types by routing each to the appropriate display function. This is the core of the client-side game logic.</li>
+      </ul>
+
+      <h3>CSS Animations</h3>
+
+      <p>Animations make the game feel alive. Two critical animations are the countdown timer pulse and score change effects. Use CSS transitions for smooth, performant animations:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Countdown timer pulse */
+.countdown-timer {
+    font-size: 3rem;
+    font-weight: bold;
+    text-align: center;
+    transition: transform 0.2s ease, color 0.3s ease;
+}
+
+.countdown-timer.timer-urgent {
+    color: #e74c3c;
+    animation: pulse 0.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+}
+
+/* Answer buttons */
+.answer-btn {
+    width: 100%;
+    padding: 1rem;
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.answer-btn:active {
+    transform: scale(0.95);
+}
+
+.answer-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Score change animation */
+.score-value {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.score-value.score-bump {
+    animation: scoreBump 0.4s ease;
+}
+
+@keyframes scoreBump {
+    0% { transform: scale(1); color: inherit; }
+    50% { transform: scale(1.4); color: #2ecc71; }
+    100% { transform: scale(1); color: inherit; }
+}</code></pre>
+      </div>
+
+      <h3>Mobile Responsive Design</h3>
+
+      <p>Most players will be on their phones. The answer buttons need to be large enough to tap easily. The text needs to be readable. The layout needs to work on screens as small as 320px wide. Design for mobile first, then let larger screens benefit naturally:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Mobile-first: designed for phones */
+.game-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+.answer-btn {
+    min-height: 60px;       /* Easy to tap */
+    font-size: 1rem;
+    touch-action: manipulation;  /* Prevents double-tap zoom */
+}
+
+.join-code-display {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 0.5rem;
+    text-align: center;
+    font-family: monospace;
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+}
+
+/* Scoreboard layout */
+.scoreboard-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.scoreboard-rank {
+    font-weight: 700;
+    width: 2rem;
+}
+
+.scoreboard-name {
+    flex: 1;
+    margin-left: 0.75rem;
+}
+
+/* Large screens: host view */
+@media (min-width: 768px) {
+    .join-code-display {
+        font-size: 6rem;
+    }
+
+    .host-scoreboard {
+        font-size: 1.2rem;
+    }
+}</code></pre>
+      </div>
+
+      <p>The <code>touch-action: manipulation</code> CSS property is a subtle but important detail. On mobile browsers, tapping twice quickly triggers a zoom. In a quiz game where players are frantically tapping answers, the last thing you want is the screen zooming in accidentally. This property disables that behavior specifically on the answer buttons.</p>
+
+      <!-- ==================== PART 6 — ADDING QUESTIONS ==================== -->
+      <h2>6. Adding Questions</h2>
+
+      <p>A quiz game is only as good as its questions. You are going to build a question bank of 20 to 30 programming trivia questions drawn from everything you have learned in the Coders Farm curriculum. This is clever for two reasons: first, the questions are relevant and interesting for the people who will play this game (your classmates). Second, it turns the game into a sneaky study tool. Players are reviewing HTML, CSS, JavaScript, Java, SQL, and security concepts while competing for points.</p>
+
+      <p>Store the questions as a list of <code>Question</code> objects. Each question has the question text, four options, the index of the correct answer, and a category tag. Here is a sample of the question bank:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>private List&lt;Question&gt; loadQuestions() {
+    List&lt;Question&gt; questions = new ArrayList&lt;&gt;();
+
+    // HTML Questions
+    questions.add(new Question(
+        &quot;What does HTML stand for?&quot;,
+        new String[]{&quot;Hyper Text Markup Language&quot;, &quot;High Tech Modern Language&quot;,
+                     &quot;Home Tool Markup Language&quot;, &quot;Hyperlinks and Text Markup Language&quot;},
+        0, &quot;HTML&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which HTML tag is used to create a hyperlink?&quot;,
+        new String[]{&quot;&lt;link&gt;&quot;, &quot;&lt;a&gt;&quot;, &quot;&lt;href&gt;&quot;, &quot;&lt;url&gt;&quot;},
+        1, &quot;HTML&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which HTML element is used to define the largest heading?&quot;,
+        new String[]{&quot;&lt;heading&gt;&quot;, &quot;&lt;h6&gt;&quot;, &quot;&lt;head&gt;&quot;, &quot;&lt;h1&gt;&quot;},
+        3, &quot;HTML&quot;
+    ));
+
+    // CSS Questions
+    questions.add(new Question(
+        &quot;Which CSS property controls the text size?&quot;,
+        new String[]{&quot;text-size&quot;, &quot;font-size&quot;, &quot;text-style&quot;, &quot;font-weight&quot;},
+        1, &quot;CSS&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does the CSS box model consist of?&quot;,
+        new String[]{&quot;Header, body, footer, sidebar&quot;, &quot;Content, padding, border, margin&quot;,
+                     &quot;Width, height, color, font&quot;, &quot;Display, position, float, clear&quot;},
+        1, &quot;CSS&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which CSS property is used to make a flex container?&quot;,
+        new String[]{&quot;flex: 1&quot;, &quot;display: flexbox&quot;, &quot;display: flex&quot;, &quot;flex-direction: row&quot;},
+        2, &quot;CSS&quot;
+    ));
+
+    // JavaScript Questions
+    questions.add(new Question(
+        &quot;Which keyword declares a variable that cannot be reassigned?&quot;,
+        new String[]{&quot;var&quot;, &quot;let&quot;, &quot;const&quot;, &quot;final&quot;},
+        2, &quot;JavaScript&quot;
+    ));
+    questions.add(new Question(
+        &quot;What is the output of typeof null in JavaScript?&quot;,
+        new String[]{&quot;null&quot;, &quot;undefined&quot;, &quot;object&quot;, &quot;NullType&quot;},
+        2, &quot;JavaScript&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which method converts a JSON string into a JavaScript object?&quot;,
+        new String[]{&quot;JSON.stringify()&quot;, &quot;JSON.parse()&quot;, &quot;JSON.toObject()&quot;, &quot;JSON.convert()&quot;},
+        1, &quot;JavaScript&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does the === operator check in JavaScript?&quot;,
+        new String[]{&quot;Value only&quot;, &quot;Type only&quot;, &quot;Value and type&quot;, &quot;Reference equality&quot;},
+        2, &quot;JavaScript&quot;
+    ));
+
+    // Java Questions
+    questions.add(new Question(
+        &quot;Which Java keyword is used to create a subclass?&quot;,
+        new String[]{&quot;implements&quot;, &quot;inherits&quot;, &quot;extends&quot;, &quot;super&quot;},
+        2, &quot;Java&quot;
+    ));
+    questions.add(new Question(
+        &quot;What is the default value of an int variable in Java?&quot;,
+        new String[]{&quot;null&quot;, &quot;0&quot;, &quot;undefined&quot;, &quot;-1&quot;},
+        1, &quot;Java&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which annotation marks a class as a Spring Boot REST controller?&quot;,
+        new String[]{&quot;@Controller&quot;, &quot;@RestController&quot;, &quot;@Service&quot;, &quot;@Component&quot;},
+        1, &quot;Java&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does JPA stand for?&quot;,
+        new String[]{&quot;Java Persistence API&quot;, &quot;Java Programming Architecture&quot;,
+                     &quot;Jakarta Page Assembly&quot;, &quot;Java Platform Application&quot;},
+        0, &quot;Java&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which Spring annotation maps a method to handle HTTP POST requests?&quot;,
+        new String[]{&quot;@GetMapping&quot;, &quot;@RequestMapping&quot;, &quot;@PostMapping&quot;, &quot;@PutMapping&quot;},
+        2, &quot;Java&quot;
+    ));
+
+    // SQL Questions
+    questions.add(new Question(
+        &quot;Which SQL keyword is used to retrieve data from a database?&quot;,
+        new String[]{&quot;GET&quot;, &quot;FETCH&quot;, &quot;SELECT&quot;, &quot;RETRIEVE&quot;},
+        2, &quot;SQL&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does the WHERE clause do in SQL?&quot;,
+        new String[]{&quot;Sorts the results&quot;, &quot;Filters which rows are returned&quot;,
+                     &quot;Groups rows together&quot;, &quot;Limits the number of results&quot;},
+        1, &quot;SQL&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which SQL statement is used to add a new row to a table?&quot;,
+        new String[]{&quot;ADD ROW&quot;, &quot;INSERT INTO&quot;, &quot;CREATE ROW&quot;, &quot;APPEND TO&quot;},
+        1, &quot;SQL&quot;
+    ));
+
+    // Database Questions
+    questions.add(new Question(
+        &quot;What is a primary key in a database?&quot;,
+        new String[]{&quot;The first column in every table&quot;, &quot;A unique identifier for each row&quot;,
+                     &quot;The most important data field&quot;, &quot;A password to access the table&quot;},
+        1, &quot;Databases&quot;
+    ));
+    questions.add(new Question(
+        &quot;What is the purpose of a foreign key?&quot;,
+        new String[]{&quot;To encrypt sensitive data&quot;, &quot;To link rows between two tables&quot;,
+                     &quot;To auto-increment IDs&quot;, &quot;To prevent duplicate entries&quot;},
+        1, &quot;Databases&quot;
+    ));
+    questions.add(new Question(
+        &quot;Which ddl-auto setting is safest for production?&quot;,
+        new String[]{&quot;update&quot;, &quot;create-drop&quot;, &quot;create&quot;, &quot;none or validate&quot;},
+        3, &quot;Databases&quot;
+    ));
+
+    // Security Questions
+    questions.add(new Question(
+        &quot;What is the purpose of hashing a password?&quot;,
+        new String[]{&quot;To make it shorter&quot;, &quot;To store it securely so the original cannot be recovered&quot;,
+                     &quot;To encrypt it for sending over the network&quot;, &quot;To check if it contains special characters&quot;},
+        1, &quot;Security&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does HTTPS add to HTTP?&quot;,
+        new String[]{&quot;Speed improvements&quot;, &quot;Encryption via TLS/SSL&quot;,
+                     &quot;Better error messages&quot;, &quot;Larger file upload limits&quot;},
+        1, &quot;Security&quot;
+    ));
+    questions.add(new Question(
+        &quot;What is SQL injection?&quot;,
+        new String[]{&quot;A way to speed up database queries&quot;,
+                     &quot;An attack where malicious SQL is inserted through user input&quot;,
+                     &quot;A tool for importing data into databases&quot;,
+                     &quot;A method for joining multiple tables&quot;},
+        1, &quot;Security&quot;
+    ));
+
+    // Bonus: General Programming
+    questions.add(new Question(
+        &quot;What is an API?&quot;,
+        new String[]{&quot;A programming language&quot;,
+                     &quot;An interface that allows software systems to communicate&quot;,
+                     &quot;A type of database&quot;, &quot;A web browser feature&quot;},
+        1, &quot;General&quot;
+    ));
+    questions.add(new Question(
+        &quot;What does JSON stand for?&quot;,
+        new String[]{&quot;JavaScript Object Notation&quot;, &quot;Java Standard Object Names&quot;,
+                     &quot;JavaScript Online Network&quot;, &quot;Java Serialized Object Notation&quot;},
+        0, &quot;General&quot;
+    ));
+
+    // Shuffle the questions for variety each game
+    Collections.shuffle(questions);
+    return questions;
+}</code></pre>
+      </div>
+
+      <p>The question bank covers every major topic from the curriculum:</p>
+
+      <ul>
+        <li><strong>HTML</strong> &mdash; elements, tags, structure</li>
+        <li><strong>CSS</strong> &mdash; properties, box model, flexbox</li>
+        <li><strong>JavaScript</strong> &mdash; variables, types, operators, JSON</li>
+        <li><strong>Java</strong> &mdash; inheritance, default values, Spring annotations, JPA</li>
+        <li><strong>SQL</strong> &mdash; SELECT, WHERE, INSERT</li>
+        <li><strong>Databases</strong> &mdash; primary keys, foreign keys, ddl-auto</li>
+        <li><strong>Security</strong> &mdash; hashing, HTTPS, SQL injection</li>
+        <li><strong>General</strong> &mdash; APIs, JSON</li>
+      </ul>
+
+      <p>Notice the <code>Collections.shuffle(questions)</code> at the end. Every game gets the questions in a different random order, so even if people play multiple times, it feels fresh. You can also easily add more questions over time &mdash; the more questions in the bank, the more variety in each game.</p>
+
+      <div class="callout callout-info">
+        <strong>Double Duty</strong>
+        These questions are not just for fun &mdash; they are a review tool in disguise. Playing this game at a Coders Farm meetup means everyone is actively recalling and reinforcing what they have learned, but it feels like a game rather than a study session. This is called <strong>retrieval practice</strong>, and research shows it is one of the most effective ways to solidify knowledge. You built a study tool that people actually want to use.
+      </div>
+
+      <!-- ==================== PART 7 — POLISH AND PLAY ==================== -->
+      <h2>7. Polish &amp; Play</h2>
+
+      <p>A working game is a great accomplishment. A <em>polished</em> game is what makes people want to play again. This final section covers the details that separate a prototype from a product.</p>
+
+      <h3>Podium Animation</h3>
+
+      <p>When the game ends, do not just show a list of scores. Create a <strong>podium</strong> for the top three players. The podium is one of those small touches that makes the game feel complete and celebration-worthy:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Winner podium layout */
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 1rem;
+    margin: 2rem 0;
+    min-height: 300px;
+}
+
+.podium-place {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: podiumRise 0.8s ease-out forwards;
+    opacity: 0;
+}
+
+.podium-place:nth-child(1) { animation-delay: 0.6s; }  /* 2nd place */
+.podium-place:nth-child(2) { animation-delay: 1.0s; }  /* 1st place */
+.podium-place:nth-child(3) { animation-delay: 0.3s; }  /* 3rd place */
+
+.podium-bar {
+    width: 100px;
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: 900;
+    color: white;
+}
+
+.podium-place-1 .podium-bar {
+    height: 200px;
+    background: linear-gradient(to top, #f1c40f, #f39c12);
+}
+
+.podium-place-2 .podium-bar {
+    height: 150px;
+    background: linear-gradient(to top, #bdc3c7, #95a5a6);
+}
+
+.podium-place-3 .podium-bar {
+    height: 110px;
+    background: linear-gradient(to top, #e67e22, #d35400);
+}
+
+.podium-name {
+    font-weight: 700;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.podium-score {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+@keyframes podiumRise {
+    from {
+        opacity: 0;
+        transform: translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}</code></pre>
+      </div>
+
+      <p>The podium animates into view with a staggered delay. Third place rises first, then second, then first &mdash; building anticipation. The gold, silver, and bronze color scheme is instantly recognizable. The bars are different heights so the visual hierarchy is immediate. This is the kind of detail that makes people say "that is so cool" and want to play again.</p>
+
+      <h3>Play Again</h3>
+
+      <p>After the game ends, add a <strong>Play Again</strong> button on the host's screen. When clicked, it creates a new game with a fresh join code and returns to the lobby. The key implementation detail: do not try to reset the existing game object. Create a brand new one. This avoids subtle bugs from leftover state (old player lists, stale timers, partial scores). A fresh game object is clean and predictable.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>function playAgain() {
+    // Create a brand new game on the server
+    fetch('/api/game/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hostName: currentHostName })
+    })
+    .then(response =&gt; response.json())
+    .then(data =&gt; {
+        // Unsubscribe from the old game channel
+        if (currentSubscription) {
+            currentSubscription.unsubscribe();
+        }
+
+        // Update the join code display
+        currentJoinCode = data.joinCode;
+        document.getElementById('join-code-display').textContent = data.joinCode;
+
+        // Subscribe to the new game channel
+        currentSubscription = stompClient.subscribe(
+            '/topic/game/' + data.joinCode,
+            handleGameMessage
+        );
+
+        // Switch back to lobby view
+        showView('lobby');
+    });
+}</code></pre>
+      </div>
+
+      <h3>Testing with Multiple Browser Windows</h3>
+
+      <p>You do not need multiple physical devices to test your multiplayer game. Open your browser and create three or four tabs or windows:</p>
+
+      <ol>
+        <li><strong>Window 1</strong> &mdash; The host. Create a game and note the join code.</li>
+        <li><strong>Window 2</strong> &mdash; Player one. Enter the join code and a name.</li>
+        <li><strong>Window 3</strong> &mdash; Player two. Enter the same join code and a different name.</li>
+        <li><strong>Window 4</strong> &mdash; Player three. Same code, different name.</li>
+      </ol>
+
+      <p>Arrange the windows so you can see all of them at once. Start the game from the host window and watch questions appear on all player windows simultaneously. Submit answers from different player windows and watch the host's scoreboard update in real time. This is the moment where everything you built comes together &mdash; real-time communication happening right in front of you across multiple browser windows.</p>
+
+      <div class="callout callout-warning">
+        <strong>Testing Checklist</strong>
+        <ul>
+          <li>Can multiple players join with the same code?</li>
+          <li>Does the question appear on all screens at the same time?</li>
+          <li>Does submitting an answer disable the buttons (preventing double-submit)?</li>
+          <li>Do scores calculate correctly (faster answers earn more points)?</li>
+          <li>Does the timer work? Does it auto-advance when time runs out?</li>
+          <li>Does the scoreboard sort correctly (highest score at the top)?</li>
+          <li>Does the game end properly after the last question?</li>
+          <li>Does the podium show the correct top three?</li>
+          <li>Does Play Again create a fresh game with a new code?</li>
+          <li>What happens if a player disconnects mid-game?</li>
+        </ul>
+      </div>
+
+      <h3>Bring It to Coders Farm</h3>
+
+      <p>This is not a project that should live only on your laptop. This game was designed to be played with real people. Here is how to run it at a Coders Farm meetup:</p>
+
+      <ol>
+        <li>Deploy your Spring Boot app (even locally on the same WiFi network is fine). Find your computer's local IP address (<code>ipconfig</code> on Windows, <code>ifconfig</code> on Mac/Linux).</li>
+        <li>Connect a laptop to a projector or large screen. Open the host view in the browser.</li>
+        <li>Tell players to open their phone browsers and go to <code>http://YOUR_IP:8080</code>.</li>
+        <li>Display the join code on the big screen. Watch players join in real time.</li>
+        <li>Start the game. Watch the room come alive as people race to answer questions.</li>
+      </ol>
+
+      <p>There is something deeply satisfying about building software that other people use right in front of you. When a room full of people are playing your game, answering questions, cheering when they get the right answer, groaning when the timer runs out &mdash; that is the feeling of being a software engineer. You built something real. You built something people enjoy. And you did it with WebSockets, Spring Boot, JavaScript, and everything you have learned at Coders Farm.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="sq-quiz-1">
+        <p class="quiz-question">1. What is the key difference between HTTP and WebSockets?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-quiz-1" value="a"> HTTP is faster but WebSockets are more secure</label>
+          <label><input type="radio" name="sq-quiz-1" value="b"> HTTP follows a request-response pattern while WebSockets maintain a persistent bidirectional connection</label>
+          <label><input type="radio" name="sq-quiz-1" value="c"> WebSockets can only send text while HTTP can send any data type</label>
+          <label><input type="radio" name="sq-quiz-1" value="d"> HTTP requires a server but WebSockets are peer-to-peer</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! HTTP uses a request-response model where the client sends a request, the server responds, and the connection effectively ends. WebSockets establish a persistent, bidirectional connection that stays open, allowing both the client and server to send messages at any time without the overhead of establishing new connections. This makes WebSockets ideal for real-time applications like multiplayer games, chat, and live dashboards.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-quiz-2">
+        <p class="quiz-question">2. Why does the game use a <code>ConcurrentHashMap</code> instead of a regular <code>HashMap</code> to store active games?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-quiz-2" value="a"> ConcurrentHashMap is faster for small collections</label>
+          <label><input type="radio" name="sq-quiz-2" value="b"> Regular HashMap does not support String keys</label>
+          <label><input type="radio" name="sq-quiz-2" value="c"> Multiple WebSocket connections can access the map simultaneously, and ConcurrentHashMap is thread-safe</label>
+          <label><input type="radio" name="sq-quiz-2" value="d"> ConcurrentHashMap automatically saves data to disk</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! In a multiplayer game, multiple players are sending WebSocket messages at the same time. Each message is handled on a different thread. If two threads try to read and write a regular <code>HashMap</code> simultaneously, it can cause data corruption, lost updates, or crashes. <code>ConcurrentHashMap</code> is designed for exactly this scenario &mdash; it allows safe concurrent access from multiple threads without requiring you to write manual synchronization code.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-quiz-3">
+        <p class="quiz-question">3. In the STOMP configuration, what is the purpose of <code>config.enableSimpleBroker("/topic")</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-quiz-3" value="a"> It creates a REST endpoint at /topic for HTTP requests</label>
+          <label><input type="radio" name="sq-quiz-3" value="b"> It sets up an in-memory message broker that broadcasts messages to all clients subscribed to destinations starting with /topic</label>
+          <label><input type="radio" name="sq-quiz-3" value="c"> It restricts WebSocket access to only the /topic URL path</label>
+          <label><input type="radio" name="sq-quiz-3" value="d"> It configures a database table called "topic" for storing messages</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! The simple broker is an in-memory message routing system. When the server sends a message to a destination starting with <code>/topic</code> (like <code>/topic/game/XK7M</code>), the broker delivers that message to every client that has subscribed to that destination. This is how the server broadcasts questions, scores, and game events to all players in a specific game without sending individual messages to each one.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>When you complete this side quest, you should have a <strong>working multiplayer quiz game</strong> that is playable from multiple phones connected via WebSockets. Players join by entering a four-character code on their phone browsers. The host controls the game from a large screen. Questions appear in real time, answers are submitted and scored instantly, and a winner is crowned at the end with a podium animation. The game includes a bank of 20+ programming trivia questions covering the Coders Farm curriculum, making it both a fun competitive game and an effective review tool. Test it with multiple browser windows and then bring it to a Coders Farm meetup to play with real people.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="multiplayer-quiz">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

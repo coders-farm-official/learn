@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Email Alerts — Coders Farm</title>
+  <meta name="description" content="Set up saved searches that run automatically and email you new matches. Your app works while you sleep.">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-email-alerts">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Email Alerts</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Email Alerts</p>
+      <h1>Email Alerts</h1>
+      <p style="color: var(--text-muted);">Estimated time: 4&ndash;5 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Create a saved searches table and build CRUD endpoints to manage them</li>
+          <li>Use Spring's <code>@Scheduled</code> annotation to run background jobs automatically</li>
+          <li>Understand cron expressions and how they control scheduling</li>
+          <li>Send HTML emails using Spring Boot's JavaMail integration</li>
+          <li>Connect scheduled tasks to your API request budget so automated searches do not exhaust your monthly limit</li>
+          <li>Test and monitor scheduled jobs with logging and a simple dashboard</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — AUTOMATED BACKGROUND JOBS ==================== -->
+      <h2>1. Automated Background Jobs</h2>
+
+      <p>Up until now, everything in your Resumator application happens because a user clicks something. They click "Search" and results appear. They click "Save" and a job lands in their favorites. Every action requires a human sitting at a keyboard, making a conscious decision, and triggering a request. The application is entirely <strong>reactive</strong> &mdash; it waits for you, and it does nothing on its own.</p>
+
+      <p>But think about the applications you use every day. Gmail does not wait for you to click "Check for new mail" &mdash; it checks continuously and notifies you when something arrives. Your bank does not wait for you to log in to tell you about a suspicious charge &mdash; it sends you a text message at 2 AM. Price tracking websites do not need you sitting in front of a screen &mdash; they watch prices in the background and alert you when something drops below your threshold.</p>
+
+      <p>These are all examples of <strong>background jobs</strong> &mdash; tasks that run automatically on a schedule, without any user interaction. The application wakes up, does its work, records the results, and goes back to sleep. The user might not even be at their computer. They might be sleeping. The software does not care. It has a job to do, and it does it on time, every time.</p>
+
+      <p>In professional software, background jobs are everywhere:</p>
+
+      <ul>
+        <li><strong>Email newsletters</strong> &mdash; a job runs every Monday morning, gathers the week's content, and sends it to every subscriber</li>
+        <li><strong>Database backups</strong> &mdash; a job runs every night at 3 AM, copies the entire database to a safe location, and logs whether it succeeded or failed</li>
+        <li><strong>Price alerts</strong> &mdash; a job runs every hour, checks current prices against saved thresholds, and emails users whose targets have been hit</li>
+        <li><strong>Report generation</strong> &mdash; a job runs at the end of every business day, compiles sales data into a PDF, and sends it to the management team</li>
+      </ul>
+
+      <p>In this side quest, you are going to add this exact capability to your Resumator. Users will be able to save a search &mdash; say, "Java Developer in Lansing" &mdash; and your application will <strong>automatically</strong> run that search every day at 7 AM, check for new results, and send the user an email with any new matches. No clicking required. No browser open. The application works while you sleep.</p>
+
+      <p>This is one of those features that transforms a project from "something I built for class" to "something that actually feels like a real product." Let us build it.</p>
+
+      <p>Here is a high-level overview of what you will build in this side quest:</p>
+
+      <ul>
+        <li><strong>Part 2</strong> &mdash; You will create a <code>saved_searches</code> database table and build a full set of REST endpoints to create, read, toggle, and delete saved searches</li>
+        <li><strong>Part 3</strong> &mdash; You will learn about Spring's <code>@Scheduled</code> annotation and cron expressions, then build a service that runs your saved searches automatically every morning</li>
+        <li><strong>Part 4</strong> &mdash; You will configure JavaMail and build an email service that sends professionally styled HTML emails with job results</li>
+        <li><strong>Part 5</strong> &mdash; You will connect the scheduler to your API request budget, ensuring automated searches never consume resources meant for manual use</li>
+        <li><strong>Part 6</strong> &mdash; You will learn how to test scheduled jobs, write comprehensive logs, and build a monitoring dashboard</li>
+      </ul>
+
+      <p>Each part builds on the previous one. By the end, all the pieces will connect into a single, cohesive feature that demonstrates real professional-grade engineering.</p>
+
+      <!-- ==================== PART 2 — SAVED SEARCHES TABLE ==================== -->
+      <h2>2. The Saved Searches Table</h2>
+
+      <p>Before you can run a search automatically, you need to <strong>remember</strong> what the user wants to search for. Right now, search queries live only in the moment &mdash; the user types something, results appear, and the query is forgotten. To run that same search tomorrow morning without the user being there, you need to store it in the database.</p>
+
+      <p>This means you need a new table. The <code>saved_searches</code> table will hold everything needed to replay a search: the keywords, the location, the user's email address (so you know where to send results), and some metadata about when the search was created and when it last ran.</p>
+
+      <p>Start by creating the table directly in your database. Open MySQL Workbench and run this SQL:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE saved_searches (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    keywords VARCHAR(255) NOT NULL,
+    location VARCHAR(255),
+    email VARCHAR(255) NOT NULL,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at DATETIME NOT NULL,
+    last_run_at DATETIME,
+    last_result_count INT DEFAULT 0,
+    run_count INT DEFAULT 0
+);</code></pre>
+      </div>
+
+      <p>Each column serves a specific purpose. The <code>keywords</code> column stores what the user searched for &mdash; "Java Developer", "Spring Boot", "Frontend Engineer". The <code>location</code> stores the city or region. The <code>email</code> column is where alert emails will be sent. The <code>is_active</code> flag lets users pause their alerts without deleting them entirely. And the metadata columns &mdash; <code>created_at</code>, <code>last_run_at</code>, <code>last_result_count</code>, <code>run_count</code> &mdash; help you track what the system is doing behind the scenes.</p>
+
+      <p>Now create the corresponding Java entity. Add a new file called <code>SavedSearch.java</code> in your model package:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;saved_searches&quot;)
+public class SavedSearch {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false)
+    private String keywords;
+
+    @Column
+    private String location;
+
+    @Column(nullable = false)
+    private String email;
+
+    @Column(name = &quot;is_active&quot;)
+    private Boolean isActive = true;
+
+    @Column(name = &quot;created_at&quot;, nullable = false)
+    private LocalDateTime createdAt;
+
+    @Column(name = &quot;last_run_at&quot;)
+    private LocalDateTime lastRunAt;
+
+    @Column(name = &quot;last_result_count&quot;)
+    private Integer lastResultCount = 0;
+
+    @Column(name = &quot;run_count&quot;)
+    private Integer runCount = 0;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+    }
+
+    public SavedSearch() {}
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getKeywords() { return keywords; }
+    public void setKeywords(String keywords) { this.keywords = keywords; }
+
+    public String getLocation() { return location; }
+    public void setLocation(String location) { this.location = location; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public Boolean getIsActive() { return isActive; }
+    public void setIsActive(Boolean isActive) { this.isActive = isActive; }
+
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public LocalDateTime getLastRunAt() { return lastRunAt; }
+    public void setLastRunAt(LocalDateTime lastRunAt) { this.lastRunAt = lastRunAt; }
+
+    public Integer getLastResultCount() { return lastResultCount; }
+    public void setLastResultCount(Integer lastResultCount) { this.lastResultCount = lastResultCount; }
+
+    public Integer getRunCount() { return runCount; }
+    public void setRunCount(Integer runCount) { this.runCount = runCount; }
+}</code></pre>
+      </div>
+
+      <p>This entity follows the exact same patterns you learned when building the <code>FavoriteJob</code> entity. The <code>@PrePersist</code> callback automatically sets <code>createdAt</code> when a new saved search is first stored. The <code>isActive</code> field defaults to <code>true</code>, so every new saved search starts out enabled.</p>
+
+      <p>Next, create the repository. Add a new file called <code>SavedSearchRepository.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.repository;
+
+import com.example.resumator.model.SavedSearch;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface SavedSearchRepository extends JpaRepository&lt;SavedSearch, Long&gt; {
+
+    List&lt;SavedSearch&gt; findByIsActiveTrue();
+
+    List&lt;SavedSearch&gt; findByEmail(String email);
+}</code></pre>
+      </div>
+
+      <p>The <code>findByIsActiveTrue()</code> method is the key one. When the scheduled job wakes up every morning, it needs to find only the searches that are currently active. Spring reads the method name and generates the SQL: <code>SELECT * FROM saved_searches WHERE is_active = true</code>. The <code>findByEmail</code> method lets users see all the alerts they have set up.</p>
+
+      <p>Now build the controller with full CRUD endpoints. Create <code>SavedSearchController.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.controller;
+
+import com.example.resumator.model.SavedSearch;
+import com.example.resumator.repository.SavedSearchRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping(&quot;/api/saved-searches&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class SavedSearchController {
+
+    private final SavedSearchRepository repository;
+
+    public SavedSearchController(SavedSearchRepository repository) {
+        this.repository = repository;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;?&gt; createSavedSearch(@RequestBody SavedSearch savedSearch) {
+        if (savedSearch.getKeywords() == null || savedSearch.getKeywords().isBlank()) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Keywords are required&quot;));
+        }
+        if (savedSearch.getEmail() == null || savedSearch.getEmail().isBlank()) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Email is required&quot;));
+        }
+        SavedSearch saved = repository.save(savedSearch);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+    }
+
+    @GetMapping
+    public List&lt;SavedSearch&gt; getAllSavedSearches() {
+        return repository.findAll();
+    }
+
+    @GetMapping(&quot;/by-email&quot;)
+    public List&lt;SavedSearch&gt; getByEmail(@RequestParam String email) {
+        return repository.findByEmail(email);
+    }
+
+    @PatchMapping(&quot;/{id}/toggle&quot;)
+    public ResponseEntity&lt;?&gt; toggleActive(@PathVariable Long id) {
+        return repository.findById(id)
+            .map(search -&gt; {
+                search.setIsActive(!search.getIsActive());
+                repository.save(search);
+                return ResponseEntity.ok(search);
+            })
+            .orElse(ResponseEntity.notFound().build());
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;?&gt; deleteSavedSearch(@PathVariable Long id) {
+        if (!repository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+        repository.deleteById(id);
+        return ResponseEntity.ok(Map.of(&quot;message&quot;, &quot;Saved search deleted&quot;));
+    }
+}</code></pre>
+      </div>
+
+      <p>Notice the <code>/toggle</code> endpoint. This is a <code>PATCH</code> request that flips the <code>isActive</code> flag. When a user wants to temporarily stop receiving alerts for a search, they hit this endpoint instead of deleting the search entirely. It is a small touch, but it is the kind of thoughtful feature that makes software pleasant to use.</p>
+
+      <p>Also pay attention to the validation in the <code>POST</code> endpoint. Before saving a search, the controller checks that both <code>keywords</code> and <code>email</code> are present and not blank. Without this check, a user could accidentally save an empty search, and your scheduled job would run a meaningless query against the API every single day &mdash; wasting budget and sending empty emails. Validation at the controller layer is your first line of defense against bad data entering the system.</p>
+
+      <p>The <code>GET /by-email</code> endpoint deserves a closer look too. It uses <code>@RequestParam</code> instead of <code>@PathVariable</code>, which means the email is passed as a query parameter: <code>/api/saved-searches/by-email?email=user@example.com</code>. This is the correct pattern for filtering operations. Path variables are for identifying specific resources (<code>/api/saved-searches/42</code>). Query parameters are for filtering collections. This distinction matters in REST API design, and interviewers will notice if you get it right.</p>
+
+      <div class="callout callout-info">
+        <strong>The "Save this Search" Button</strong>
+        On your search results page, add a "Save this search" button that captures the current keywords and location, prompts the user for their email, and sends a POST request to <code>/api/saved-searches</code>. When the button is clicked, the search is saved to the database and the user starts receiving daily email alerts. Think about where this button should appear in your UI &mdash; right next to the search results, above the job listings, is a natural spot. Consider showing a small confirmation message after the search is saved, and perhaps a link to "Manage your alerts" so the user can see all their saved searches in one place.
+      </div>
+
+      <!-- ==================== PART 3 — SPRING'S @SCHEDULED ==================== -->
+      <h2>3. Spring's @Scheduled Annotation</h2>
+
+      <p>Now for the magic. Spring has a built-in scheduling system that lets you run methods automatically at specific times. No external tools needed. No complex configuration. You annotate a method, and Spring calls it on schedule. It is remarkably simple for how powerful it is.</p>
+
+      <p>First, you need to enable scheduling in your application. Open your main application class &mdash; the one with <code>@SpringBootApplication</code> &mdash; and add the <code>@EnableScheduling</code> annotation:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+
+@SpringBootApplication
+@EnableScheduling
+public class ResumatorApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ResumatorApplication.class, args);
+    }
+}</code></pre>
+      </div>
+
+      <p>That single annotation &mdash; <code>@EnableScheduling</code> &mdash; tells Spring to start its task scheduling infrastructure. Without it, any <code>@Scheduled</code> methods you write would be silently ignored. With it, Spring scans your application for scheduled methods and sets up timers to call them at the right times.</p>
+
+      <p>Now create the service that will run on schedule. Add a new file called <code>ScheduledSearchService.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.service;
+
+import com.example.resumator.model.SavedSearch;
+import com.example.resumator.repository.SavedSearchRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class ScheduledSearchService {
+
+    private static final Logger logger = LoggerFactory.getLogger(ScheduledSearchService.class);
+
+    private final SavedSearchRepository savedSearchRepository;
+    private final JobSearchService jobSearchService;
+    private final EmailService emailService;
+
+    public ScheduledSearchService(
+            SavedSearchRepository savedSearchRepository,
+            JobSearchService jobSearchService,
+            EmailService emailService) {
+        this.savedSearchRepository = savedSearchRepository;
+        this.jobSearchService = jobSearchService;
+        this.emailService = emailService;
+    }
+
+    @Scheduled(cron = &quot;0 0 7 * * *&quot;)
+    public void runDailySavedSearches() {
+        logger.info(&quot;=== Starting daily saved search run at {} ===&quot;, LocalDateTime.now());
+
+        List&lt;SavedSearch&gt; activeSearches = savedSearchRepository.findByIsActiveTrue();
+        logger.info(&quot;Found {} active saved searches&quot;, activeSearches.size());
+
+        int totalJobsFound = 0;
+        int successCount = 0;
+        int errorCount = 0;
+
+        for (SavedSearch search : activeSearches) {
+            try {
+                logger.info(&quot;Running search: '{}' in '{}'&quot;, search.getKeywords(), search.getLocation());
+
+                List&lt;Map&lt;String, Object&gt;&gt; results = jobSearchService.search(
+                    search.getKeywords(), search.getLocation()
+                );
+
+                int jobCount = results.size();
+                totalJobsFound += jobCount;
+
+                if (jobCount &gt; 0) {
+                    emailService.sendJobAlertEmail(
+                        search.getEmail(),
+                        search.getKeywords(),
+                        search.getLocation(),
+                        results
+                    );
+                    logger.info(&quot;Sent email to {} with {} new jobs&quot;, search.getEmail(), jobCount);
+                } else {
+                    logger.info(&quot;No new jobs found for '{}' &mdash; skipping email&quot;, search.getKeywords());
+                }
+
+                // Update search metadata
+                search.setLastRunAt(LocalDateTime.now());
+                search.setLastResultCount(jobCount);
+                search.setRunCount(search.getRunCount() + 1);
+                savedSearchRepository.save(search);
+                successCount++;
+
+            } catch (Exception e) {
+                errorCount++;
+                logger.error(&quot;Error running search id={}: {}&quot;, search.getId(), e.getMessage(), e);
+            }
+        }
+
+        logger.info(&quot;=== Daily run complete: {} searches, {} succeeded, {} failed, {} total jobs found ===&quot;,
+            activeSearches.size(), successCount, errorCount, totalJobsFound);
+    }
+}</code></pre>
+      </div>
+
+      <p>There is a lot happening in this class, so let us break it down piece by piece.</p>
+
+      <p>The <code>@Service</code> annotation tells Spring this is a service class &mdash; a component that contains business logic. Spring will create an instance of it automatically and inject the three dependencies it needs: the repository (to find saved searches), the job search service (to call the API), and the email service (to send results). This is <strong>constructor injection</strong>, the same pattern you have used throughout the Resumator project. All three dependencies are declared as <code>final</code> fields and assigned in the constructor, which ensures they cannot be null and cannot be changed after the object is created.</p>
+
+      <p>Look at the structure of the <code>runDailySavedSearches</code> method. It follows a clear pattern: <strong>fetch, iterate, process, record</strong>. First, it fetches all active saved searches. Then it loops through each one. For each search, it calls the job search API, sends an email if results exist, updates the metadata, and catches any exceptions so a failure on one search does not kill the entire run. The counters at the top (<code>totalJobsFound</code>, <code>successCount</code>, <code>errorCount</code>) accumulate across the loop and are reported in the summary log at the end.</p>
+
+      <p>The <code>try-catch</code> inside the loop is critical. Without it, if the third search out of ten throws an exception, searches four through ten would never run. By catching exceptions per-search, you ensure that one bad search does not prevent all the others from executing. This is a resilience pattern that matters in any batch processing system.</p>
+
+      <p>The <code>Logger</code> at the top is critically important. When code runs at 7 AM and nobody is watching, logging is the only way you will know what happened. Every step is logged: when the run starts, how many searches were found, what each search returned, whether emails were sent, and a summary at the end. If something goes wrong at 3 AM on a Saturday, the logs will tell you exactly what happened.</p>
+
+      <div class="key-concept">
+        <h4>The Cron Expression</h4>
+        <p>The <code>@Scheduled(cron = "0 0 7 * * *")</code> annotation is what makes this method run automatically. The string <code>"0 0 7 * * *"</code> is a <strong>cron expression</strong> &mdash; a compact way to define a schedule. It has six fields, read left to right:</p>
+      </div>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code> ┌───────────── second (0-59)
+ │ ┌───────────── minute (0-59)
+ │ │ ┌───────────── hour (0-23)
+ │ │ │ ┌───────────── day of month (1-31)
+ │ │ │ │ ┌───────────── month (1-12)
+ │ │ │ │ │ ┌───────────── day of week (0-7, 0 and 7 = Sunday)
+ │ │ │ │ │ │
+ 0 0 7 * * *     &larr; Every day at 7:00:00 AM</code></pre>
+      </div>
+
+      <p>The asterisk (<code>*</code>) means "every." So <code>0 0 7 * * *</code> reads as: "At second 0, minute 0, hour 7, every day of the month, every month, every day of the week." In plain English: <strong>every day at exactly 7:00 AM.</strong></p>
+
+      <p>Here are some other common cron expressions so you can see how flexible they are:</p>
+
+      <ul>
+        <li><code>0 0 9 * * MON-FRI</code> &mdash; every weekday at 9:00 AM</li>
+        <li><code>0 30 8 * * *</code> &mdash; every day at 8:30 AM</li>
+        <li><code>0 0 */2 * * *</code> &mdash; every 2 hours</li>
+        <li><code>0 0 12 1 * *</code> &mdash; noon on the first day of every month</li>
+        <li><code>0 */15 * * * *</code> &mdash; every 15 minutes</li>
+      </ul>
+
+      <p>The power of this annotation is stunning. You did not install a separate scheduling system. You did not configure a cron daemon on a server. You did not set up a message queue. You added one annotation to one method, and Spring handles everything else &mdash; creating the timer, managing the thread, calling the method on schedule, and handling any exceptions that might occur. This is the kind of productivity that makes Spring Boot such a popular framework for building real applications.</p>
+
+      <div class="callout callout-warning">
+        <strong>Important: The method runs automatically</strong>
+        Once you start the application with <code>@EnableScheduling</code> and a <code>@Scheduled</code> method, that method <em>will</em> run on its schedule. There is no user action needed. There is no button to click. There is no API endpoint to call. The method simply executes when the cron expression says it should. If your application is running at 7:00 AM, this method runs. If your application was restarted at 6:59 AM, the method still runs at 7:00 AM. It is fully automatic. This is both powerful and something to be careful with &mdash; you are writing code that will execute without human oversight.
+      </div>
+
+      <!-- ==================== PART 4 — SENDING EMAIL WITH JAVAMAIL ==================== -->
+      <h2>4. Sending Email with JavaMail</h2>
+
+      <p>Your scheduled job can find new results, but it needs a way to tell the user about them. The most natural channel for this kind of notification is email. Spring Boot makes sending emails straightforward through its <code>spring-boot-starter-mail</code> dependency, which integrates JavaMail into your application with minimal configuration.</p>
+
+      <p>First, add the mail dependency to your <code>pom.xml</code> (inside the <code>&lt;dependencies&gt;</code> section):</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-mail&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>Next, configure your SMTP settings. SMTP (Simple Mail Transfer Protocol) is the standard protocol for sending emails. You need to tell Spring Boot which mail server to use, what port to connect on, and what credentials to authenticate with. Add these properties to your <code>application.properties</code> file:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># Email Configuration (SMTP)
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=${EMAIL_USERNAME}
+spring.mail.password=${EMAIL_PASSWORD}
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.starttls.enable=true
+spring.mail.properties.mail.smtp.starttls.required=true
+spring.mail.properties.mail.smtp.connectiontimeout=5000
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.writetimeout=5000</code></pre>
+      </div>
+
+      <p>Notice the <code>${EMAIL_USERNAME}</code> and <code>${EMAIL_PASSWORD}</code> syntax. These are <strong>environment variables</strong>. You never put real credentials directly in your properties file &mdash; anyone who sees your code (on GitHub, in a code review, in a backup) would have your password. Instead, you reference environment variables that are set on the machine where the application runs. You set these in your terminal before starting the application, or in your IDE's run configuration. This is a fundamental security practice that every professional developer follows.</p>
+
+      <div class="callout callout-info">
+        <strong>Using Gmail for SMTP</strong>
+        If you use Gmail, you will need to generate an "App Password" in your Google account settings (Security &rarr; 2-Step Verification &rarr; App Passwords). This gives you a 16-character password specifically for your application, separate from your regular Google password. This is safer because you can revoke it at any time without changing your main password, and it only works for sending mail &mdash; it cannot be used to log into your Google account.
+      </div>
+
+      <p>Now create the email service. Add a new file called <code>EmailService.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.service;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+
+@Service
+public class EmailService {
+
+    private static final Logger logger = LoggerFactory.getLogger(EmailService.class);
+
+    private final JavaMailSender mailSender;
+
+    @Value(&quot;${spring.mail.username}&quot;)
+    private String fromEmail;
+
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void sendJobAlertEmail(String toEmail, String keywords,
+            String location, List&lt;Map&lt;String, Object&gt;&gt; jobs) {
+
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, &quot;UTF-8&quot;);
+
+            helper.setFrom(fromEmail);
+            helper.setTo(toEmail);
+            helper.setSubject(jobs.size() + &quot; new &quot; + keywords + &quot; jobs in &quot; + location);
+
+            String htmlContent = buildHtmlEmail(keywords, location, jobs);
+            helper.setText(htmlContent, true);
+
+            mailSender.send(message);
+            logger.info(&quot;Alert email sent to {} for '{} in {}'&quot;, toEmail, keywords, location);
+
+        } catch (MessagingException e) {
+            logger.error(&quot;Failed to send email to {}: {}&quot;, toEmail, e.getMessage(), e);
+            throw new RuntimeException(&quot;Failed to send email&quot;, e);
+        }
+    }
+
+    private String buildHtmlEmail(String keywords, String location,
+            List&lt;Map&lt;String, Object&gt;&gt; jobs) {
+
+        StringBuilder html = new StringBuilder();
+        html.append(&quot;&lt;!DOCTYPE html&gt;&quot;);
+        html.append(&quot;&lt;html&gt;&lt;head&gt;&lt;style&gt;&quot;);
+        html.append(&quot;body { font-family: Arial, sans-serif; margin: 0; padding: 20px; &quot;);
+        html.append(&quot;background-color: #f5f5f5; }&quot;);
+        html.append(&quot;.container { max-width: 600px; margin: 0 auto; &quot;);
+        html.append(&quot;background: white; border-radius: 8px; overflow: hidden; }&quot;);
+        html.append(&quot;.header { background: #2563eb; color: white; padding: 24px; }&quot;);
+        html.append(&quot;.header h1 { margin: 0; font-size: 20px; }&quot;);
+        html.append(&quot;.header p { margin: 8px 0 0; opacity: 0.9; }&quot;);
+        html.append(&quot;.jobs { padding: 16px 24px; }&quot;);
+        html.append(&quot;.job-card { border: 1px solid #e5e7eb; border-radius: 6px; &quot;);
+        html.append(&quot;padding: 16px; margin-bottom: 12px; }&quot;);
+        html.append(&quot;.job-title { font-size: 16px; font-weight: bold; &quot;);
+        html.append(&quot;color: #1e40af; margin: 0 0 4px; }&quot;);
+        html.append(&quot;.job-company { color: #6b7280; margin: 0 0 8px; }&quot;);
+        html.append(&quot;.job-location { color: #6b7280; font-size: 14px; }&quot;);
+        html.append(&quot;.apply-btn { display: inline-block; background: #2563eb; &quot;);
+        html.append(&quot;color: white; padding: 8px 16px; border-radius: 4px; &quot;);
+        html.append(&quot;text-decoration: none; font-size: 14px; margin-top: 8px; }&quot;);
+        html.append(&quot;.footer { padding: 16px 24px; background: #f9fafb; &quot;);
+        html.append(&quot;border-top: 1px solid #e5e7eb; font-size: 12px; color: #9ca3af; }&quot;);
+        html.append(&quot;.footer a { color: #6b7280; }&quot;);
+        html.append(&quot;&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&quot;);
+
+        html.append(&quot;&lt;div class='container'&gt;&quot;);
+        html.append(&quot;&lt;div class='header'&gt;&quot;);
+        html.append(&quot;&lt;h1&gt;&quot;).append(jobs.size()).append(&quot; new &quot;).append(keywords);
+        html.append(&quot; jobs in &quot;).append(location).append(&quot;&lt;/h1&gt;&quot;);
+        html.append(&quot;&lt;p&gt;Your daily Resumator job alert&lt;/p&gt;&quot;);
+        html.append(&quot;&lt;/div&gt;&quot;);
+
+        html.append(&quot;&lt;div class='jobs'&gt;&quot;);
+        for (Map&lt;String, Object&gt; job : jobs) {
+            String title = (String) job.getOrDefault(&quot;job_title&quot;, &quot;Untitled&quot;);
+            String company = (String) job.getOrDefault(&quot;employer_name&quot;, &quot;Unknown&quot;);
+            String city = (String) job.getOrDefault(&quot;job_city&quot;, &quot;&quot;);
+            String state = (String) job.getOrDefault(&quot;job_state&quot;, &quot;&quot;);
+            String applyLink = (String) job.getOrDefault(&quot;job_apply_link&quot;, &quot;#&quot;);
+
+            html.append(&quot;&lt;div class='job-card'&gt;&quot;);
+            html.append(&quot;&lt;p class='job-title'&gt;&quot;).append(title).append(&quot;&lt;/p&gt;&quot;);
+            html.append(&quot;&lt;p class='job-company'&gt;&quot;).append(company).append(&quot;&lt;/p&gt;&quot;);
+            html.append(&quot;&lt;p class='job-location'&gt;&quot;).append(city);
+            if (!state.isEmpty()) {
+                html.append(&quot;, &quot;).append(state);
+            }
+            html.append(&quot;&lt;/p&gt;&quot;);
+            html.append(&quot;&lt;a href='&quot;).append(applyLink).append(&quot;' class='apply-btn'&gt;View Job&lt;/a&gt;&quot;);
+            html.append(&quot;&lt;/div&gt;&quot;);
+        }
+        html.append(&quot;&lt;/div&gt;&quot;);
+
+        html.append(&quot;&lt;div class='footer'&gt;&quot;);
+        html.append(&quot;&lt;p&gt;You received this email because you saved a search for '&quot;);
+        html.append(keywords).append(&quot;' on Resumator.&lt;/p&gt;&quot;);
+        html.append(&quot;&lt;p&gt;&lt;a href='http://localhost:8080/saved-searches'&gt;Manage your alerts&lt;/a&gt;&quot;);
+        html.append(&quot; | &lt;a href='http://localhost:8080/api/saved-searches/unsubscribe?email=&quot;);
+        html.append(toEmail).append(&quot;'&gt;Unsubscribe from all alerts&lt;/a&gt;&lt;/p&gt;&quot;);
+        html.append(&quot;&lt;/div&gt;&quot;);
+
+        html.append(&quot;&lt;/div&gt;&lt;/body&gt;&lt;/html&gt;&quot;);
+        return html.toString();
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us walk through the key parts of this service:</p>
+
+      <p>The <code>JavaMailSender</code> is provided by Spring Boot automatically when the mail starter dependency is on your classpath. You do not create it yourself &mdash; Spring injects it through the constructor, just like your repositories.</p>
+
+      <p>The <code>MimeMessage</code> and <code>MimeMessageHelper</code> let you send rich HTML emails instead of plain text. The <code>true</code> parameter in the <code>MimeMessageHelper</code> constructor enables multipart mode, which supports HTML content and attachments. The <code>"UTF-8"</code> ensures international characters display correctly.</p>
+
+      <p>The email subject line is dynamic: <strong>"3 new Java Developer jobs in Lansing"</strong>. It tells the user exactly how many results they have and what the search was, right in their inbox before they even open the email.</p>
+
+      <p>The <code>buildHtmlEmail</code> method creates a complete HTML document with inline CSS styling. Why inline CSS? Because most email clients strip out external stylesheets and <code>&lt;style&gt;</code> tags for security reasons. Inline styles are the only reliable way to style emails across Gmail, Outlook, Apple Mail, and mobile clients. The template includes a blue header with the search summary, individual job cards with company and location details, an "apply" button for each job, and a footer with an <strong>unsubscribe link</strong>.</p>
+
+      <div class="callout callout-warning">
+        <strong>Always include an unsubscribe link</strong>
+        This is not optional. Every automated email must include a way for the user to stop receiving messages. This is a legal requirement in many countries (CAN-SPAM Act in the US, GDPR in Europe) and a basic respect for your users. The unsubscribe link in our footer points to an endpoint that deactivates all saved searches for that email address. You should implement this endpoint in your <code>SavedSearchController</code>.
+      </div>
+
+      <p>Notice how the <code>sendJobAlertEmail</code> method wraps the entire email-sending logic in a <code>try-catch</code> block. Email delivery can fail for many reasons: the SMTP server might be down, the user's email address might be invalid, the network might time out. By catching <code>MessagingException</code>, the method logs the error with full details and re-throws it as a <code>RuntimeException</code>. This lets the calling code (the scheduled service) catch it per-search and continue processing the remaining searches.</p>
+
+      <p>The <code>@Value("${spring.mail.username}")</code> annotation on the <code>fromEmail</code> field is another Spring feature worth understanding. It reads the value from your <code>application.properties</code> file and injects it directly into the field. This means the "from" address in your emails automatically matches whatever email account you configured for SMTP. You do not hardcode it, and if you change your SMTP account, the from address updates automatically.</p>
+
+      <p>One more thing about the <code>buildHtmlEmail</code> method: it uses a <code>StringBuilder</code> instead of string concatenation. When you write <code>String result = a + b + c + d</code>, Java creates a new string object for each <code>+</code> operation. For a small number of concatenations, this is fine. But when you are building an entire HTML document with dozens of appends, <code>StringBuilder</code> is significantly more efficient because it maintains a single mutable buffer. This is a performance best practice that professional developers follow instinctively, and it is the kind of detail that shows up in code reviews.</p>
+
+      <!-- ==================== PART 5 — CONNECTING TO API REQUEST BUDGET ==================== -->
+      <h2>5. Connecting to the API Request Budget</h2>
+
+      <p>Here is something that is easy to overlook but critical to get right. Every time your scheduled job runs a saved search, it makes an API request to the JSearch API. And you have a limited budget &mdash; <strong>200 requests per month</strong> on the free tier. If you have 10 saved searches running daily, that is 10 requests per day, 300 per month &mdash; well over your limit. Your automated searches would consume your entire budget before the month is half over, leaving no requests for manual searches.</p>
+
+      <p>This is a real-world constraint that every professional developer has to manage. APIs cost money. Resources are finite. Smart scheduling means being aware of your budget and making intelligent decisions about when to run and when to skip.</p>
+
+      <p>The rules are straightforward:</p>
+
+      <ul>
+        <li><strong>Saved searches use API requests too</strong> &mdash; they count against your 200/month budget just like manual searches</li>
+        <li><strong>Manual searches take priority over automated ones</strong> &mdash; a user actively searching should never be blocked because a background job used up all the requests</li>
+        <li><strong>Check the budget before running</strong> &mdash; if you are running low, skip the automated run and log a warning</li>
+        <li><strong>Reserve a portion of the budget for manual use</strong> &mdash; never let automated searches consume more than a reasonable share</li>
+      </ul>
+
+      <p>Create a budget-aware version of the scheduling logic. You may already have an <code>ApiUsageService</code> or similar class that tracks how many API requests you have used. If not, you will need one. Here is how the scheduled service integrates with the budget:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.service;
+
+import com.example.resumator.model.SavedSearch;
+import com.example.resumator.repository.SavedSearchRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+public class BudgetAwareScheduledService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BudgetAwareScheduledService.class);
+
+    private static final int MONTHLY_BUDGET = 200;
+    private static final int MANUAL_RESERVE = 50;
+    private static final int AUTOMATED_BUDGET = MONTHLY_BUDGET - MANUAL_RESERVE;
+
+    private final SavedSearchRepository savedSearchRepository;
+    private final JobSearchService jobSearchService;
+    private final EmailService emailService;
+    private final ApiUsageService apiUsageService;
+
+    public BudgetAwareScheduledService(
+            SavedSearchRepository savedSearchRepository,
+            JobSearchService jobSearchService,
+            EmailService emailService,
+            ApiUsageService apiUsageService) {
+        this.savedSearchRepository = savedSearchRepository;
+        this.jobSearchService = jobSearchService;
+        this.emailService = emailService;
+        this.apiUsageService = apiUsageService;
+    }
+
+    @Scheduled(cron = &quot;0 0 7 * * *&quot;)
+    public void runDailySavedSearches() {
+        logger.info(&quot;=== Budget-aware daily run starting at {} ===&quot;, LocalDateTime.now());
+
+        int usedThisMonth = apiUsageService.getUsageThisMonth();
+        int remaining = MONTHLY_BUDGET - usedThisMonth;
+        int automatedRemaining = AUTOMATED_BUDGET - apiUsageService.getAutomatedUsageThisMonth();
+
+        logger.info(&quot;Budget status: {}/{} total used, {} automated remaining&quot;,
+            usedThisMonth, MONTHLY_BUDGET, automatedRemaining);
+
+        if (remaining &lt;= MANUAL_RESERVE) {
+            logger.warn(&quot;Budget critically low ({} remaining). Skipping automated run &quot;
+                + &quot;to preserve manual search capacity.&quot;, remaining);
+            return;
+        }
+
+        if (automatedRemaining &lt;= 0) {
+            logger.warn(&quot;Automated budget exhausted for this month. Skipping run.&quot;);
+            return;
+        }
+
+        List&lt;SavedSearch&gt; activeSearches = savedSearchRepository.findByIsActiveTrue();
+        int searchesToRun = Math.min(activeSearches.size(), automatedRemaining);
+
+        if (searchesToRun &lt; activeSearches.size()) {
+            logger.warn(&quot;Budget only allows {} of {} searches. &quot;
+                + &quot;Running oldest-first.&quot;, searchesToRun, activeSearches.size());
+        }
+
+        int successCount = 0;
+
+        for (int i = 0; i &lt; searchesToRun; i++) {
+            SavedSearch search = activeSearches.get(i);
+            try {
+                logger.info(&quot;[{}/{}] Running: '{}' in '{}'&quot;,
+                    i + 1, searchesToRun, search.getKeywords(), search.getLocation());
+
+                List results = jobSearchService.search(
+                    search.getKeywords(), search.getLocation());
+
+                apiUsageService.recordAutomatedUsage();
+
+                if (!results.isEmpty()) {
+                    emailService.sendJobAlertEmail(
+                        search.getEmail(), search.getKeywords(),
+                        search.getLocation(), results);
+                }
+
+                search.setLastRunAt(LocalDateTime.now());
+                search.setLastResultCount(results.size());
+                search.setRunCount(search.getRunCount() + 1);
+                savedSearchRepository.save(search);
+                successCount++;
+
+            } catch (Exception e) {
+                logger.error(&quot;Error on search id={}: {}&quot;, search.getId(), e.getMessage());
+            }
+        }
+
+        logger.info(&quot;=== Daily run complete: {}/{} succeeded, budget now at {}/{} ===&quot;,
+            successCount, searchesToRun,
+            apiUsageService.getUsageThisMonth(), MONTHLY_BUDGET);
+    }
+}</code></pre>
+      </div>
+
+      <p>This version of the scheduled service adds several critical safeguards:</p>
+
+      <p><strong>Budget partitioning.</strong> The total monthly budget of 200 is split into two pools: 150 for automated searches and 50 reserved for manual use. This guarantees that even if every automated request runs, the user can still do at least 50 manual searches during the month. The constants <code>MONTHLY_BUDGET</code>, <code>MANUAL_RESERVE</code>, and <code>AUTOMATED_BUDGET</code> make these decisions visible and easy to adjust.</p>
+
+      <p><strong>Pre-run budget check.</strong> Before processing any searches, the service checks the overall budget. If the remaining requests have dropped to the manual reserve threshold or below, the entire run is skipped. This is a hard stop &mdash; no automated search is worth leaving the user unable to search manually.</p>
+
+      <p><strong>Partial runs.</strong> If there are 10 active searches but only 5 requests remaining in the automated budget, the service runs only 5. It processes them in order (oldest first), logs a warning about the limitation, and stops cleanly. This is better than either running all 10 (and going over budget) or running none (and wasting the remaining capacity).</p>
+
+      <p><strong>Per-request tracking.</strong> After each successful API call, the service calls <code>apiUsageService.recordAutomatedUsage()</code> to increment the automated usage counter. This keeps the manual and automated usage counts separate, so you can always see how your budget is being consumed.</p>
+
+      <div class="key-concept">
+        <h4>Priority: Manual &gt; Automated</h4>
+        <p>This is a design principle, not just a technical detail. When resources are limited, the user's active work always takes priority over background automation. A user sitting at their computer, actively searching for jobs, should never see a "rate limit exceeded" error because a background job ran earlier that morning. The reserve system guarantees this. It is the kind of decision that separates thoughtful software from software that works against its users.</p>
+      </div>
+
+      <p>Think about the math for a moment. With 200 requests per month and 50 reserved for manual use, you have 150 automated requests available. If you run one search per day, that is roughly 30 per month &mdash; well within budget. If you have 5 saved searches, that is 150 per month &mdash; right at the automated limit. If you have 6 or more, the system will start doing partial runs. These numbers will vary depending on your API plan, but the architecture handles it gracefully. When you upgrade to a paid plan with more requests, you only need to change the <code>MONTHLY_BUDGET</code> constant &mdash; the rest of the logic adapts automatically.</p>
+
+      <p>Also notice that the <code>BudgetAwareScheduledService</code> logs budget status at the start of every run. This is not just for debugging &mdash; it creates a historical record. If a user asks "why did I not get my alert yesterday?", you can check the logs and see: "Budget critically low (48 remaining). Skipping automated run." The answer is right there, with no guesswork required.</p>
+
+      <!-- ==================== PART 6 — TESTING AND MONITORING ==================== -->
+      <h2>6. Testing and Monitoring</h2>
+
+      <p>You have built a system that runs automatically, without anyone watching. That is powerful. It is also risky. If the scheduled job fails silently, you will not know until users complain that they stopped receiving alerts. If a bug causes it to send duplicate emails, users will get annoyed before you even realize something is wrong. Automated systems require <strong>monitoring</strong> &mdash; a way to know what the system is doing, whether it is healthy, and when something goes wrong.</p>
+
+      <h3>Testing with a Fast Schedule</h3>
+
+      <p>During development, you do not want to wait until 7 AM to see if your scheduled job works. Change the cron expression to run every minute:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// For testing only — runs every 1 minute
+@Scheduled(cron = &quot;0 */1 * * * *&quot;)
+public void runDailySavedSearches() {
+    // ... same code as before
+}</code></pre>
+      </div>
+
+      <p>Start your application, create a saved search through the API, and watch the console. Within 60 seconds, you should see the log messages from your scheduled method. Check that it finds the saved search, runs the query, and attempts to send the email. Fix any errors you see, restart, and test again. Once everything works reliably with a 1-minute schedule, change it back to the daily cron expression before deploying.</p>
+
+      <div class="callout callout-warning">
+        <strong>Do not forget to change it back!</strong>
+        Running a scheduled job every minute in production would burn through your API budget in hours and flood users with emails. Always use a fast schedule only during testing, and always verify you have restored the production schedule before deploying. A common professional practice is to make the cron expression configurable through <code>application.properties</code>: <code>@Scheduled(cron = "${alerts.cron:0 0 7 * * *}")</code>. This way, you can set a fast schedule in your development properties file and a daily schedule in production, without changing any code.
+      </div>
+
+      <h3>Comprehensive Logging</h3>
+
+      <p>Every run of your scheduled job should log at minimum:</p>
+
+      <ul>
+        <li><strong>Start time</strong> &mdash; when the run began</li>
+        <li><strong>Active search count</strong> &mdash; how many saved searches were found</li>
+        <li><strong>Per-search results</strong> &mdash; for each search: keywords, location, number of jobs found, whether an email was sent</li>
+        <li><strong>Errors</strong> &mdash; the full exception message and stack trace for any failures</li>
+        <li><strong>Summary</strong> &mdash; total searches run, successes, failures, total jobs found, budget remaining</li>
+        <li><strong>End time and duration</strong> &mdash; how long the entire run took</li>
+      </ul>
+
+      <p>Our <code>ScheduledSearchService</code> already logs most of this. The key principle is: <strong>if you cannot see it in the logs, it did not happen.</strong> Future-you, debugging an issue at 10 PM, will thank present-you for writing thorough log messages.</p>
+
+      <h3>A Simple Monitoring Dashboard</h3>
+
+      <p>For a more visual approach, create a monitoring endpoint that returns the status of the scheduled job system. Add this to your controller:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@GetMapping(&quot;/api/saved-searches/dashboard&quot;)
+public Map&lt;String, Object&gt; getDashboard() {
+    List&lt;SavedSearch&gt; allSearches = repository.findAll();
+    List&lt;SavedSearch&gt; activeSearches = repository.findByIsActiveTrue();
+
+    LocalDateTime lastRun = allSearches.stream()
+        .map(SavedSearch::getLastRunAt)
+        .filter(Objects::nonNull)
+        .max(LocalDateTime::compareTo)
+        .orElse(null);
+
+    int totalJobsFoundLastRun = activeSearches.stream()
+        .mapToInt(s -&gt; s.getLastResultCount() != null ? s.getLastResultCount() : 0)
+        .sum();
+
+    return Map.of(
+        &quot;totalSavedSearches&quot;, allSearches.size(),
+        &quot;activeSearches&quot;, activeSearches.size(),
+        &quot;lastRunAt&quot;, lastRun != null ? lastRun.toString() : &quot;Never&quot;,
+        &quot;nextRunAt&quot;, &quot;Tomorrow at 7:00 AM&quot;,
+        &quot;jobsFoundLastRun&quot;, totalJobsFoundLastRun,
+        &quot;budgetUsed&quot;, apiUsageService.getUsageThisMonth(),
+        &quot;budgetRemaining&quot;, 200 - apiUsageService.getUsageThisMonth()
+    );
+}</code></pre>
+      </div>
+
+      <p>Hit <code>http://localhost:8080/api/saved-searches/dashboard</code> in your browser and you will get a JSON response showing the health of your alert system at a glance: how many searches are active, when the last run happened, how many jobs were found, and where your budget stands. During development, check this endpoint after every test run to verify the system is working correctly. In a production application, you could build a simple HTML page that polls this endpoint and displays the data in a dashboard format.</p>
+
+      <p>Notice the Java Streams API in action here. The <code>allSearches.stream()</code> call converts the list into a stream, then <code>.map(SavedSearch::getLastRunAt)</code> extracts the <code>lastRunAt</code> field from each search, <code>.filter(Objects::nonNull)</code> removes any searches that have never run, and <code>.max(LocalDateTime::compareTo)</code> finds the most recent run time. This is a clean, readable way to answer the question "when did the last run happen?" without writing a loop. If you find streams confusing, you can always write a traditional for-loop instead &mdash; the result is the same.</p>
+
+      <h3>Testing Checklist</h3>
+
+      <p>Before you consider this feature complete, walk through each of these scenarios manually:</p>
+
+      <ul>
+        <li><strong>Create a saved search</strong> via POST and verify it appears in the database and in the GET endpoint response</li>
+        <li><strong>Toggle a search inactive</strong> via PATCH and confirm it no longer appears in <code>findByIsActiveTrue()</code> results</li>
+        <li><strong>Trigger a scheduled run</strong> (using the 1-minute cron) and verify logs show the search being executed</li>
+        <li><strong>Check that an email arrives</strong> in the configured inbox with the correct subject, job cards, and unsubscribe link</li>
+        <li><strong>Test with zero results</strong> &mdash; save a search for something obscure and verify no email is sent when there are no matches</li>
+        <li><strong>Test budget limits</strong> &mdash; artificially set the usage counter near the limit and verify the scheduler skips runs gracefully</li>
+        <li><strong>Delete a saved search</strong> and confirm it is gone from both the database and the API response</li>
+        <li><strong>Check the dashboard endpoint</strong> and verify all fields contain accurate, up-to-date information</li>
+      </ul>
+
+      <p>Each of these tests exercises a different path through your code. It is tempting to test only the happy path &mdash; create a search, run it, get an email &mdash; but the edge cases are where bugs hide. What happens when there are no active searches? What happens when the email server is unreachable? What happens when the API returns an error for one search but not another? Testing these scenarios now will save you from discovering them in production.</p>
+
+      <div class="key-concept">
+        <h4>The Monitoring Mindset</h4>
+        <p>Professional developers think about monitoring from the beginning, not as an afterthought. When you build a feature that runs automatically, the very first question should be: "How will I know if this is working?" and the second should be: "How will I know when it breaks?" Logs answer the second question. Dashboards answer the first. Together, they give you confidence that your automated system is doing what it should, even when you are not watching.</p>
+      </div>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q-ea-1">
+        <p class="quiz-question">1. What does the cron expression <code>"0 0 7 * * *"</code> mean in the context of Spring's <code>@Scheduled</code> annotation?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-ea-1" value="a"> Run every 7 seconds</label>
+          <label><input type="radio" name="q-ea-1" value="b"> Run every 7 minutes</label>
+          <label><input type="radio" name="q-ea-1" value="c"> Run once every day at exactly 7:00:00 AM</label>
+          <label><input type="radio" name="q-ea-1" value="d"> Run 7 times per hour</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! The six fields in a Spring cron expression are: second, minute, hour, day-of-month, month, day-of-week. So <code>"0 0 7 * * *"</code> means "at second 0, minute 0, hour 7, every day of every month, every day of the week" &mdash; which is every day at 7:00 AM. The asterisks mean "every" for that field. This is one of the most common cron patterns for daily scheduled tasks.</div>
+      </div>
+
+      <div class="quiz" data-id="q-ea-2">
+        <p class="quiz-question">2. Why does the budget-aware scheduler reserve 50 API requests for manual use instead of letting automated searches use the entire monthly budget?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-ea-2" value="a"> Because the API rejects automated requests that exceed 150</label>
+          <label><input type="radio" name="q-ea-2" value="b"> Because manual user searches should always take priority over background jobs &mdash; a user actively searching should never be blocked by background automation</label>
+          <label><input type="radio" name="q-ea-2" value="c"> Because Spring Boot requires at least 50 requests reserved for health checks</label>
+          <label><input type="radio" name="q-ea-2" value="d"> Because email servers limit the number of automated requests per month</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly right. The principle is that a user's active work always takes priority over background automation. If automated searches consumed the entire budget, a user who sits down to search for jobs manually could be told "rate limit exceeded" &mdash; which would be a terrible experience. The reserve ensures there is always capacity for human-driven searches, even in the worst case. This is a design decision rooted in user experience, not a technical limitation of the API or framework.</div>
+      </div>
+
+      <div class="quiz" data-id="q-ea-3">
+        <p class="quiz-question">3. Why should you avoid putting your SMTP email password directly in <code>application.properties</code> and use environment variables like <code>${EMAIL_PASSWORD}</code> instead?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-ea-3" value="a"> Because Spring Boot cannot read plain text passwords from properties files</label>
+          <label><input type="radio" name="q-ea-3" value="b"> Because properties files are deleted every time the application restarts</label>
+          <label><input type="radio" name="q-ea-3" value="c"> Because anyone who sees your source code (on GitHub, in a backup, in a code review) would have your real password &mdash; environment variables keep secrets out of the codebase</label>
+          <label><input type="radio" name="q-ea-3" value="d"> Because environment variables make the application run faster than reading from a file</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! Credentials in source code are one of the most common security vulnerabilities. If your code is pushed to GitHub (even accidentally), anyone who sees it has your password. Environment variables keep secrets out of the codebase entirely. The properties file references the variable name, but the actual value only exists on the machine where the application runs. This is a fundamental security practice &mdash; never commit real credentials to version control.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>By the end of this side quest, your Resumator application should have a fully working email alerts system with the following capabilities:</p>
+
+      <ul>
+        <li><strong>Saved searches</strong> &mdash; a <code>saved_searches</code> database table with a corresponding JPA entity, repository, and full CRUD REST endpoints including create, list, toggle active/inactive, and delete</li>
+        <li><strong>Daily scheduled execution</strong> &mdash; a <code>@Scheduled</code> method that runs automatically every day at 7:00 AM, finds all active saved searches, and runs each one against the job search API</li>
+        <li><strong>HTML email alerts</strong> &mdash; professionally styled email messages that show the number of new jobs found, list each job with its title, company, location, and an apply link, and include an unsubscribe link in the footer</li>
+        <li><strong>Budget-aware scheduling</strong> &mdash; logic that checks the remaining API request budget before running, reserves a portion for manual searches, handles partial runs when the budget is low, and logs budget status with every execution</li>
+        <li><strong>Monitoring</strong> &mdash; comprehensive logging of every scheduled run and a dashboard endpoint that shows system health at a glance, including last run time, active search count, jobs found, and budget status</li>
+      </ul>
+
+      <p>This is the kind of feature that makes a portfolio project stand out. Recruiters and hiring managers see hundreds of CRUD applications. A project with background jobs, scheduled email delivery, and intelligent resource management shows that you understand how real software works &mdash; not just the happy path, but the operational concerns that matter in production.</p>
+
+      <h3>New Files You Created</h3>
+
+      <ul>
+        <li><code>SavedSearch.java</code> &mdash; JPA entity representing a saved search with keywords, location, email, active status, and run metadata</li>
+        <li><code>SavedSearchRepository.java</code> &mdash; Spring Data repository with custom finders for active searches and searches by email</li>
+        <li><code>SavedSearchController.java</code> &mdash; REST controller with POST, GET, PATCH (toggle), and DELETE endpoints plus a dashboard endpoint</li>
+        <li><code>ScheduledSearchService.java</code> &mdash; Service with a <code>@Scheduled</code> method that runs all active saved searches</li>
+        <li><code>BudgetAwareScheduledService.java</code> &mdash; Enhanced version that checks API budget before running and handles partial runs</li>
+        <li><code>EmailService.java</code> &mdash; Service that sends HTML emails with job results using Spring Boot's JavaMail integration</li>
+      </ul>
+
+      <h3>Key Concepts You Practiced</h3>
+
+      <ul>
+        <li><strong>Background jobs</strong> &mdash; code that runs automatically on a schedule, without user interaction</li>
+        <li><strong>Cron expressions</strong> &mdash; the compact syntax for defining when scheduled tasks execute</li>
+        <li><strong>SMTP configuration</strong> &mdash; connecting to an email server using host, port, and credentials</li>
+        <li><strong>Environment variables</strong> &mdash; keeping secrets out of source code by referencing external configuration</li>
+        <li><strong>Resource budgeting</strong> &mdash; managing limited API requests across manual and automated consumers</li>
+        <li><strong>Operational monitoring</strong> &mdash; logging, dashboards, and the mindset of knowing what your software is doing at all times</li>
+      </ul>
+
+      <p>When you talk about this feature in an interview, emphasize the <em>decisions</em> you made, not just the code you wrote. Why did you reserve budget for manual searches? Why did you catch exceptions per-search instead of per-run? Why did you use <code>PATCH</code> for toggling instead of <code>PUT</code>? Why did you build a dashboard endpoint? These decisions demonstrate engineering judgment &mdash; the ability to think beyond "does it work?" and consider "does it work <em>well</em>?" That is what employers are looking for.</p>
+
+      <p>You have built something that works autonomously. Your Resumator now has a feature that most student projects never attempt: a background process that runs on schedule, interacts with external services, manages a shared resource budget, and communicates results to users through a completely different channel than the web interface. That is real software engineering.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="email-alerts">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

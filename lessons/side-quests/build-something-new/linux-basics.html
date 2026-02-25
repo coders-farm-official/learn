@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Linux Basics for Developers — Coders Farm</title>
+  <meta name="description" content="Learn to navigate the terminal, manage files, and feel at home on any Linux system">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-linux-basics">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Linux Basics</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Linux Basics</p>
+      <h1>Linux Basics for Developers</h1>
+      <p style="color: var(--text-muted);">Estimated time: 3&ndash;4 hours | Difficulty: Beginner</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand why Linux matters for every developer, not just sysadmins</li>
+          <li>Navigate the file system confidently using the terminal</li>
+          <li>Create, move, copy, and delete files and directories from the command line</li>
+          <li>Search through files and logs with <code>find</code>, <code>grep</code>, and piping</li>
+          <li>Understand Linux file permissions and why they matter for deployments</li>
+          <li>Manage processes and services like MySQL</li>
+          <li>Install software using a package manager</li>
+          <li>Connect to remote servers using SSH</li>
+          <li>Build a personal cheat sheet of essential commands</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHY LINUX? ==================== -->
+      <h2>1. Why Linux?</h2>
+
+      <p>Here is a number that should get your attention: <strong>over 96% of the top one million web servers in the world run Linux.</strong> That means virtually every website you have ever visited &mdash; Google, Amazon, Netflix, GitHub, your bank, your favorite social media platform &mdash; is running on a Linux server somewhere. When you deploy a Spring Boot application to the cloud, it will almost certainly land on a Linux machine. When you spin up a Docker container, it runs Linux inside. When you set up a CI/CD pipeline, the build agents are running Linux.</p>
+
+      <p>But Linux is not just for servers. <strong>Android</strong>, which powers the majority of smartphones on the planet, is built on top of the Linux kernel. Chromebooks run Linux. The Steam Deck runs Linux. Many Internet of Things devices run Linux. It is everywhere.</p>
+
+      <p>And even if you are on a Mac, you are closer to Linux than you might think. macOS is built on <strong>Unix</strong>, and Unix is the ancestor of Linux. The terminal commands you will learn in this lesson work almost identically on both systems. The skills transfer directly.</p>
+
+      <p>If you are on Windows, you have an incredible tool called <strong>WSL</strong> &mdash; Windows Subsystem for Linux. WSL gives you a full Linux environment running right inside Windows, with access to a real bash terminal, a real file system, and real Linux tools. No virtual machine, no dual booting, no hassle. Microsoft built it because they recognized that developers need Linux, even when they prefer Windows for their desktop.</p>
+
+      <p>Let us set it up. If you are on Windows, open PowerShell as an administrator and run:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>wsl --install</code></pre>
+      </div>
+
+      <p>That single command installs WSL 2 with Ubuntu as the default distribution. It will ask you to restart your computer. After rebooting, a terminal window will open asking you to create a username and password for your Linux environment. Choose something simple and remember it &mdash; you will use it whenever you need administrator privileges inside Linux.</p>
+
+      <p>If you are on a Mac, you already have everything you need. Open <strong>Terminal.app</strong> (you can find it in Applications &rarr; Utilities, or just press <kbd>Cmd</kbd> + <kbd>Space</kbd> and type "Terminal"). The macOS terminal gives you a Unix shell that accepts nearly all the same commands you will learn here.</p>
+
+      <p>If you are already running Linux on your desktop &mdash; welcome home. Open your terminal and let us get started.</p>
+
+      <p>From this point on, every command in this lesson should be typed into your terminal. <strong>Do not copy and paste.</strong> Typing each command builds muscle memory. You want these commands to become as natural as typing a URL into a browser. By the end of this side quest, the terminal will feel like a superpower, not a scary black screen.</p>
+
+      <!-- ==================== PART 2 — GETTING AROUND ==================== -->
+      <h2>2. Getting Around</h2>
+
+      <p>The first thing you need to know in any new environment is how to figure out where you are, what is around you, and how to move. In a graphical file manager you do this with your eyes &mdash; you see folders, you double-click to open them, you click the back button. In the terminal, you do the exact same things, but with short commands.</p>
+
+      <h3>Where Am I?</h3>
+
+      <p>The <code>pwd</code> command stands for <strong>print working directory</strong>. It tells you exactly where you are in the file system right now:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>pwd</code></pre>
+      </div>
+
+      <p>You will see something like <code>/home/yourname</code> on Linux or <code>/Users/yourname</code> on macOS. This is your <strong>home directory</strong> &mdash; your personal space on the system. Think of it like your "Documents" folder, but for everything.</p>
+
+      <h3>What Is Here?</h3>
+
+      <p>The <code>ls</code> command <strong>lists</strong> the contents of the current directory:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ls</code></pre>
+      </div>
+
+      <p>You will see file and folder names. But this basic view hides a lot. To see <em>everything</em>, including hidden files and detailed information, use:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ls -la</code></pre>
+      </div>
+
+      <p>The <code>-l</code> flag means "long format" &mdash; it shows permissions, owner, size, and modification date. The <code>-a</code> flag means "all" &mdash; it includes files that start with a dot (like <code>.bashrc</code> or <code>.gitconfig</code>). Hidden files in Linux are simply files whose names start with a period. There is no special "hidden" attribute like on Windows. You will use <code>ls -la</code> constantly. Get used to typing it.</p>
+
+      <h3>Moving Around</h3>
+
+      <p>The <code>cd</code> command stands for <strong>change directory</strong>. It is how you move through the file system:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Move into a directory
+cd Documents
+
+# Go up one level (back to the parent directory)
+cd ..
+
+# Go directly to your home directory from anywhere
+cd ~
+
+# Go to the root of the entire file system
+cd /</code></pre>
+      </div>
+
+      <p>The <code>..</code> means "one directory up." You can chain them: <code>cd ../../../</code> goes up three levels. The <code>~</code> (tilde) is a shortcut that always means your home directory, no matter where you are. And <code>/</code> by itself is the root of the file system &mdash; the very top of the tree.</p>
+
+      <h3>Creating Directories and Files</h3>
+
+      <p>The <code>mkdir</code> command <strong>makes directories</strong> (folders), and <code>touch</code> creates empty files:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Create a directory
+mkdir my-project
+
+# Create nested directories in one command
+mkdir -p my-project/src/main/java
+
+# Create an empty file
+touch README.md
+
+# Create multiple files at once
+touch index.html style.css app.js</code></pre>
+      </div>
+
+      <p>The <code>-p</code> flag on <code>mkdir</code> is essential. Without it, <code>mkdir</code> will fail if the parent directory does not exist. With <code>-p</code>, it creates the entire path, no matter how many levels deep. You will use this every time you set up a Java project structure.</p>
+
+      <h3>Tab Completion &mdash; Your Most Useful Habit</h3>
+
+      <p>This is not a command. It is the single most important habit you will develop in the terminal. When you start typing a file name or directory name, <strong>press the Tab key</strong>. The terminal will auto-complete the rest of the name for you. If there are multiple matches, press Tab twice to see all the options.</p>
+
+      <p>Try it right now. Type <code>cd Doc</code> and then press Tab. The terminal will complete it to <code>cd Documents/</code> (assuming that directory exists). This saves time, prevents typos, and confirms that the file or directory you are targeting actually exists. If Tab does nothing, the name you are typing does not match anything &mdash; which means you have a typo or you are in the wrong directory.</p>
+
+      <p><strong>Use Tab completion on every single command.</strong> Professional developers do this instinctively. It is faster than typing and more reliable than memory.</p>
+
+      <h3>Practice: Build a Project Structure</h3>
+
+      <p>Let us put all of this together. Using <em>only</em> the terminal, create the following project structure. Do not use a graphical file manager. Do not use your code editor. Type every command.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Start from your home directory
+cd ~
+
+# Create the project directory and navigate into it
+mkdir linux-practice
+cd linux-practice
+
+# Create the full directory structure
+mkdir -p src/main/java/com/example
+mkdir -p src/main/resources/templates
+mkdir -p src/main/resources/static/css
+mkdir -p src/main/resources/static/js
+mkdir -p src/test/java/com/example
+
+# Create some files
+touch src/main/java/com/example/Application.java
+touch src/main/java/com/example/HomeController.java
+touch src/main/resources/application.properties
+touch src/main/resources/templates/index.html
+touch src/main/resources/static/css/style.css
+touch src/main/resources/static/js/app.js
+touch src/test/java/com/example/ApplicationTest.java
+touch README.md
+touch .gitignore
+
+# Verify your work
+ls -la
+ls -R</code></pre>
+      </div>
+
+      <p>The <code>ls -R</code> command lists everything <strong>recursively</strong> &mdash; it shows the contents of the current directory and every subdirectory inside it. You should see the entire tree you just created. Congratulations &mdash; you just set up a Spring Boot project structure entirely from the terminal. That is a real skill.</p>
+
+      <!-- ==================== PART 3 — WORKING WITH FILES ==================== -->
+      <h2>3. Working with Files</h2>
+
+      <p>Now that you can navigate and create files, you need to learn how to read them, move them, copy them, and yes, delete them. These are the commands you will use dozens of times per day as a developer.</p>
+
+      <h3>Reading Files</h3>
+
+      <p>The <code>cat</code> command prints the entire contents of a file to your terminal:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Print the entire file
+cat README.md
+
+# Print with line numbers
+cat -n Application.java</code></pre>
+      </div>
+
+      <p><code>cat</code> works great for short files. But what about a file with thousands of lines? That is where <code>less</code> comes in:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Open a file in a scrollable viewer
+less application.properties</code></pre>
+      </div>
+
+      <p>Inside <code>less</code>, you can scroll up and down with the arrow keys, jump to the top with <code>g</code>, jump to the bottom with <code>G</code>, search for text by typing <code>/searchterm</code>, and quit by pressing <code>q</code>. It is like a read-only text editor built into the terminal.</p>
+
+      <p>Sometimes you only need to see the beginning or end of a file. That is what <code>head</code> and <code>tail</code> are for:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Show the first 10 lines
+head server.log
+
+# Show the first 20 lines
+head -20 server.log
+
+# Show the last 10 lines
+tail server.log
+
+# Show the last 50 lines
+tail -50 server.log
+
+# FOLLOW the file in real time (watch new lines appear)
+tail -f server.log</code></pre>
+      </div>
+
+      <p>That last one, <code>tail -f</code>, is a game-changer. The <code>-f</code> stands for <strong>follow</strong>. It keeps the terminal open and shows new lines as they are written to the file. This is how developers watch server logs in real time. When you run a Spring Boot application and want to see what is happening, you open a second terminal and run <code>tail -f</code> on the log file. You see errors the instant they happen. Press <kbd>Ctrl</kbd> + <kbd>C</kbd> to stop following.</p>
+
+      <h3>Copying, Moving, and Renaming</h3>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Copy a file
+cp README.md README-backup.md
+
+# Copy a directory and everything in it (recursive)
+cp -r src/ src-backup/
+
+# Move a file (also used for renaming)
+mv README.md docs/README.md
+
+# Rename a file (mv with the same directory)
+mv old-name.txt new-name.txt</code></pre>
+      </div>
+
+      <p>Notice that <code>mv</code> serves double duty: it both moves and renames files. If the destination is a different directory, the file moves. If the destination is the same directory with a different name, the file is renamed. There is no separate "rename" command in Linux.</p>
+
+      <h3>Deleting Files &mdash; With Great Caution</h3>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Delete a file
+rm old-file.txt
+
+# Delete a file and ask for confirmation first
+rm -i important-file.txt
+
+# Delete an empty directory
+rmdir empty-folder/
+
+# Delete a directory and everything inside it
+rm -r my-folder/
+
+# THE DANGEROUS ONE — force delete everything recursively
+rm -rf my-folder/</code></pre>
+      </div>
+
+      <p><strong>Let us talk about <code>rm -rf</code>.</strong> This is the most powerful and most dangerous command in Linux. The <code>-r</code> flag means recursive (delete everything inside), and the <code>-f</code> flag means force (do not ask for confirmation, do not complain about missing files, just delete). There is <strong>no trash can</strong> in the Linux terminal. There is <strong>no undo</strong>. There is <strong>no "Are you sure?"</strong> dialog. When you <code>rm -rf</code> something, it is gone. Forever.</p>
+
+      <p>The classic horror story every Linux user has heard (and some have lived through) is accidentally running <code>rm -rf /</code> &mdash; which attempts to delete <em>literally everything on the entire system</em>. Modern Linux distributions have safeguards against this specific command, but variations of it can still cause catastrophic damage. The rule is simple: <strong>always double-check your <code>rm</code> commands before pressing Enter.</strong> Read the path. Make sure it is correct. Make sure you are in the right directory. Then press Enter.</p>
+
+      <p>A safer habit: run <code>ls</code> first to see what you are about to delete, then change <code>ls</code> to <code>rm -r</code>:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># First, see what is there
+ls old-project/
+
+# Okay, that is what I expected. Now delete it.
+rm -r old-project/</code></pre>
+      </div>
+
+      <h3>Searching for Files and Content</h3>
+
+      <p>Two of the most powerful commands in Linux are <code>find</code> and <code>grep</code>. <code>find</code> searches for files by name, type, size, or other attributes. <code>grep</code> searches for text <em>inside</em> files.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Find all Java files in the current directory and subdirectories
+find . -name "*.java"
+
+# Find all files modified in the last 24 hours
+find . -mtime -1
+
+# Find all empty directories
+find . -type d -empty
+
+# Search for the word "TODO" in all files under src/
+grep -r "TODO" src/
+
+# Search for "TODO" with line numbers and file names
+grep -rn "TODO" src/
+
+# Case-insensitive search
+grep -ri "error" logs/
+
+# Search only in Java files
+grep -rn "public class" --include="*.java" src/</code></pre>
+      </div>
+
+      <h3>Piping &mdash; Connecting Commands Together</h3>
+
+      <p>This is where the terminal starts to feel truly powerful. The <strong>pipe</strong> operator (<code>|</code>) takes the output of one command and feeds it as input to the next command. You can chain as many commands as you want, building a pipeline that processes data step by step.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Find all ERROR lines in a log file, show the last 20
+cat server.log | grep "ERROR" | tail -20
+
+# Count how many TODO comments are in your project
+grep -r "TODO" src/ | wc -l
+
+# Find all Java files and count them
+find . -name "*.java" | wc -l
+
+# Show the 10 largest files in the current directory
+ls -lS | head -10
+
+# Find all unique ERROR types in a log
+cat server.log | grep "ERROR" | sort | uniq</code></pre>
+      </div>
+
+      <p>The <code>wc -l</code> command counts lines. <code>sort</code> sorts lines alphabetically. <code>uniq</code> removes consecutive duplicate lines (which is why you sort first). Each of these commands does one small thing, but piped together they become incredibly powerful. This is the Unix philosophy: <em>small tools that do one thing well, connected together to solve complex problems.</em></p>
+
+      <p>That first example &mdash; <code>cat server.log | grep "ERROR" | tail -20</code> &mdash; is something you will use in your career regularly. When a production application is misbehaving and the log file is 500,000 lines long, you do not open it in a text editor. You pipe it through <code>grep</code> to find the errors, then <code>tail</code> to see only the most recent ones. In seconds, you have exactly the information you need.</p>
+
+      <h3>Output Redirection</h3>
+
+      <p>Pipes send output to another command. But what if you want to save output to a file? That is what <strong>redirection</strong> operators do:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Write output to a file (overwrites if the file exists)
+grep -rn "ERROR" server.log &gt; errors.txt
+
+# Append output to a file (does not overwrite)
+grep -rn "WARNING" server.log &gt;&gt; errors.txt
+
+# Redirect errors to a file
+find / -name "*.conf" 2&gt; /dev/null
+
+# Save both output and errors
+./build.sh &gt; build-output.txt 2&gt;&amp;1</code></pre>
+      </div>
+
+      <p>The <code>&gt;</code> operator writes to a file, replacing whatever was there before. The <code>&gt;&gt;</code> operator appends to the end without erasing existing content. The <code>2&gt;</code> redirects error messages specifically. And <code>2&gt;&amp;1</code> combines errors and regular output into the same stream. That last one is useful when you want a complete log of everything a command produced, including any errors.</p>
+
+      <p>Redirecting to <code>/dev/null</code> is a special trick. <code>/dev/null</code> is a black hole &mdash; anything sent to it disappears. So <code>2&gt; /dev/null</code> means "throw away all error messages." This is useful when a command produces many "Permission denied" errors that you do not care about and you just want the actual results.</p>
+
+      <!-- ==================== PART 4 — PERMISSIONS ==================== -->
+      <h2>4. Permissions</h2>
+
+      <p>Every file and directory in Linux has <strong>permissions</strong> that control who can read it, write to it, and execute it. This system is fundamental to Linux security, and it is something you will encounter constantly as a developer &mdash; especially when deploying applications or running scripts.</p>
+
+      <h3>Understanding Permission Output</h3>
+
+      <p>Run <code>ls -l</code> on any directory and look at the first column. You will see something like this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>-rwxr-xr--  1  sarah  developers  4096  Jan 15 09:30  deploy.sh
+drwxr-xr-x  5  sarah  developers  4096  Jan 15 09:30  src/
+-rw-r--r--  1  sarah  developers  1234  Jan 15 09:30  README.md</code></pre>
+      </div>
+
+      <p>That first column, <code>-rwxr-xr--</code>, is the permission string. Let us decode it:</p>
+
+      <ul>
+        <li><strong>Position 1:</strong> File type. <code>-</code> means a regular file. <code>d</code> means a directory.</li>
+        <li><strong>Positions 2-4:</strong> <strong>Owner</strong> permissions. What the file owner can do.</li>
+        <li><strong>Positions 5-7:</strong> <strong>Group</strong> permissions. What users in the file's group can do.</li>
+        <li><strong>Positions 8-10:</strong> <strong>Other</strong> permissions. What everyone else can do.</li>
+      </ul>
+
+      <p>Each set of three has three possible letters:</p>
+      <ul>
+        <li><code>r</code> = <strong>read</strong> (can view the file's contents)</li>
+        <li><code>w</code> = <strong>write</strong> (can modify or delete the file)</li>
+        <li><code>x</code> = <strong>execute</strong> (can run the file as a program/script)</li>
+        <li><code>-</code> = permission not granted</li>
+      </ul>
+
+      <p>So <code>-rwxr-xr--</code> means:</p>
+      <ul>
+        <li><code>-</code> &mdash; it is a regular file</li>
+        <li><code>rwx</code> &mdash; the owner (sarah) can read, write, and execute</li>
+        <li><code>r-x</code> &mdash; the group (developers) can read and execute, but not write</li>
+        <li><code>r--</code> &mdash; everyone else can only read</li>
+      </ul>
+
+      <h3>Changing Permissions</h3>
+
+      <p>The <code>chmod</code> command changes permissions. The most common use case you will encounter is making a script executable:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Make a script executable
+chmod +x deploy.sh
+
+# Now you can run it
+./deploy.sh
+
+# Remove execute permission
+chmod -x deploy.sh
+
+# Give the owner read and write, group read only, others nothing
+chmod 640 config.properties
+
+# Give everyone read, write, and execute (NOT recommended for most files)
+chmod 777 script.sh</code></pre>
+      </div>
+
+      <p>The numeric system (like <code>640</code>) uses three digits: owner, group, other. Each digit is the sum of: read (4) + write (2) + execute (1). So <code>640</code> means: owner gets read+write (6), group gets read (4), others get nothing (0). You will see <code>chmod 755</code> and <code>chmod 644</code> most often in the real world.</p>
+
+      <h3>Changing Ownership</h3>
+
+      <p>The <code>chown</code> command changes who owns a file. You will need this when deploying web applications:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Change the owner of a file
+sudo chown www-data:www-data /var/www/html/index.html
+
+# Change the owner of a directory and everything inside it
+sudo chown -R appuser:appuser /opt/myapp/</code></pre>
+      </div>
+
+      <p>Notice the <code>sudo</code> in front. Changing file ownership requires administrator privileges. <code>sudo</code> stands for "superuser do" &mdash; it runs the command as the root (admin) user. You will be asked for your password.</p>
+
+      <h3>Why This Matters</h3>
+
+      <p>Permissions are not academic. Here are real scenarios you will encounter:</p>
+
+      <ul>
+        <li><strong>Deploy scripts:</strong> You write a <code>deploy.sh</code> script to restart your Spring Boot app. It does not run because it does not have execute permission. You need <code>chmod +x deploy.sh</code>.</li>
+        <li><strong>Web servers:</strong> Nginx or Apache need to read your HTML, CSS, and JavaScript files. If the permissions are wrong, visitors see a "403 Forbidden" error instead of your website.</li>
+        <li><strong>Configuration files:</strong> Your <code>application.properties</code> might contain database passwords. You want the owner to read and write, but nobody else should see it: <code>chmod 600 application.properties</code>.</li>
+        <li><strong>SSH keys:</strong> SSH refuses to use your private key if other users can read it. You must set <code>chmod 600 ~/.ssh/id_rsa</code> or SSH will reject the key with a "permissions too open" error.</li>
+      </ul>
+
+      <p>When something is not working on a Linux server, <strong>check the permissions first.</strong> It is one of the most common causes of deployment issues.</p>
+
+      <!-- ==================== PART 5 — PROCESSES AND SERVICES ==================== -->
+      <h2>5. Processes and Services</h2>
+
+      <p>Every program running on a Linux system is a <strong>process</strong>. Your terminal is a process. Your web browser is a process. Your Spring Boot application is a process. MySQL is a process. Understanding how to see what is running, stop what is stuck, and manage long-running services is essential.</p>
+
+      <h3>Viewing Running Processes</h3>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Show all running processes with full detail
+ps aux
+
+# Show only processes matching a name
+ps aux | grep java
+
+# Show only your processes
+ps aux | grep $USER
+
+# Interactive process viewer (like Task Manager)
+top
+
+# Better interactive viewer (install with: sudo apt install htop)
+htop</code></pre>
+      </div>
+
+      <p><code>ps aux</code> gives you a snapshot of everything running on the system right now. Each line shows the process ID (PID), the user running it, CPU and memory usage, and the command. When you pipe it through <code>grep</code>, you can find specific processes instantly. If your Spring Boot app is running and you want to confirm it, <code>ps aux | grep java</code> will show you.</p>
+
+      <p><code>top</code> is like Windows Task Manager for the terminal. It updates in real time, showing you which processes are using the most CPU and memory. Press <code>q</code> to quit. <code>htop</code> is a more modern, colorful version of <code>top</code> &mdash; if your system has it, use it instead.</p>
+
+      <h3>Stopping Processes</h3>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Kill a process by its PID (graceful shutdown)
+kill 12345
+
+# Force kill a process that will not stop
+kill -9 12345
+
+# Kill all processes matching a name
+killall java
+
+# Find the PID of a process
+pgrep -f "spring-boot"</code></pre>
+      </div>
+
+      <p>A regular <code>kill</code> sends a polite "please stop" signal (SIGTERM). The process gets a chance to clean up &mdash; close database connections, finish writing files, save state. <code>kill -9</code> sends SIGKILL, which is an immediate, forceful termination. The process does not get to clean up. Use <code>kill -9</code> only when a process is completely stuck and regular <code>kill</code> does not work.</p>
+
+      <h3>Managing Services</h3>
+
+      <p>A <strong>service</strong> is a process that runs in the background, starts automatically when the system boots, and keeps running until you tell it to stop. MySQL is a service. Nginx is a service. On modern Linux systems, you manage services with <code>systemctl</code>:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Start MySQL
+sudo systemctl start mysql
+
+# Stop MySQL
+sudo systemctl stop mysql
+
+# Restart MySQL (stop then start)
+sudo systemctl restart mysql
+
+# Check if MySQL is running
+systemctl status mysql
+
+# Make MySQL start automatically on boot
+sudo systemctl enable mysql
+
+# Prevent MySQL from starting on boot
+sudo systemctl disable mysql</code></pre>
+      </div>
+
+      <p>If you followed the earlier lessons and installed MySQL, you used <code>systemctl</code> without necessarily understanding what it does. Now you know. The <code>status</code> command is especially useful &mdash; it shows whether the service is running, when it started, and any recent log messages. When MySQL will not connect and you are not sure why, <code>systemctl status mysql</code> is your first stop.</p>
+
+      <h3>Running Programs in the Background</h3>
+
+      <p>Sometimes you want to run a command that takes a long time, and you do not want it to block your terminal. There are several ways to do this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Run a command in the background with &amp;
+java -jar myapp.jar &amp;
+
+# Run a command that survives closing the terminal
+nohup java -jar myapp.jar &amp;
+
+# Use screen for persistent terminal sessions
+screen -S myapp
+# (run your commands inside screen)
+# Press Ctrl+A then D to detach
+# Reattach later with:
+screen -r myapp
+
+# Use tmux (modern alternative to screen)
+tmux new -s myapp
+# (run your commands inside tmux)
+# Press Ctrl+B then D to detach
+# Reattach later with:
+tmux attach -t myapp</code></pre>
+      </div>
+
+      <p>The <code>&amp;</code> at the end of a command makes it run in the background, freeing up your terminal. But if you close the terminal, the process dies. <code>nohup</code> (no hang up) prevents that &mdash; the process keeps running even after you log out. This is how you would run a Spring Boot app on a server that does not have a service configuration yet.</p>
+
+      <p><code>screen</code> and <code>tmux</code> are terminal multiplexers. They let you create persistent terminal sessions that survive disconnection. You SSH into a server, start a <code>screen</code> or <code>tmux</code> session, run your commands, detach, and log out. The session keeps running. When you SSH back in later, you reattach and everything is exactly where you left it. This is invaluable for long-running tasks on remote servers.</p>
+
+      <!-- ==================== PART 6 — PACKAGE MANAGEMENT ==================== -->
+      <h2>6. Package Management</h2>
+
+      <p>On Windows, when you want to install a program, you go to a website, download an installer, double-click it, click "Next" five times, and hope it does not install a toolbar in your browser. On Linux, you use a <strong>package manager</strong>. It is faster, safer, and keeps everything up to date.</p>
+
+      <p>On Ubuntu and Debian-based systems (including WSL with Ubuntu), the package manager is called <code>apt</code>:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Update the list of available packages
+sudo apt update
+
+# Install a package
+sudo apt install htop
+
+# Install multiple packages at once
+sudo apt install curl wget git
+
+# Upgrade all installed packages to their latest versions
+sudo apt upgrade
+
+# Remove a package
+sudo apt remove htop
+
+# Remove a package and its configuration files
+sudo apt purge htop
+
+# Search for packages
+apt search "text editor"
+
+# Show information about a package
+apt show nginx</code></pre>
+      </div>
+
+      <p>The <code>sudo apt update</code> command does not install or upgrade anything. It just refreshes the list of what is available, like checking the menu at a restaurant. You should run it before installing anything new so you get the latest version.</p>
+
+      <p>Think about what you have already installed in this course. <strong>MySQL?</strong> You installed it with <code>sudo apt install mysql-server</code>. <strong>Java?</strong> You installed it with <code>sudo apt install openjdk-21-jdk</code>. <strong>Git?</strong> You installed it with <code>sudo apt install git</code>. Every time, you used the package manager. It downloaded the software from trusted repositories, put the files in the right places, set up the right permissions, and configured everything automatically. No websites, no installers, no "Next Next Next Finish."</p>
+
+      <h3>Where Did It Go?</h3>
+
+      <p>When you install a program, how do you know where it ended up? The <code>which</code> command tells you:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Where is java?
+which java
+# /usr/bin/java
+
+# Where is git?
+which git
+# /usr/bin/git
+
+# Where is mysql?
+which mysql
+# /usr/bin/mysql</code></pre>
+      </div>
+
+      <p>Most system-installed programs live in <code>/usr/bin/</code>. But how does the terminal know to look there? That is what <code>$PATH</code> is for.</p>
+
+      <h3>Understanding $PATH</h3>
+
+      <p>The <code>$PATH</code> variable is a list of directories that the terminal searches through when you type a command. When you type <code>java</code>, the terminal does not search your entire hard drive for a program called "java." It only looks in the directories listed in <code>$PATH</code>, in order, and uses the first match it finds.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># See your current PATH
+echo $PATH
+# /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin</code></pre>
+      </div>
+
+      <p>The directories are separated by colons (<code>:</code>). When you type <code>java</code>, the terminal checks <code>/usr/local/sbin/java</code>, then <code>/usr/local/bin/java</code>, then <code>/usr/sbin/java</code>, then <code>/usr/bin/java</code> (found it!), and uses that one.</p>
+
+      <p>If you ever install a program and the terminal says "command not found," it almost always means the program is not in a directory listed in <code>$PATH</code>. The fix is either to add its directory to your <code>$PATH</code>, or to call it with its full path.</p>
+
+      <p>To add a directory to your <code>$PATH</code>, edit your <code>~/.bashrc</code> file and add a line like this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Add a custom directory to PATH
+export PATH="$PATH:/opt/my-program/bin"</code></pre>
+      </div>
+
+      <p>This appends your custom directory to the end of the existing <code>$PATH</code>. After saving the file, run <code>source ~/.bashrc</code> to apply the change. Understanding <code>$PATH</code> saves you from a lot of confusion &mdash; "command not found" is one of the most common errors beginners encounter, and it almost always has a simple <code>$PATH</code> fix.</p>
+
+      <!-- ==================== PART 7 — SSH AND REMOTE SERVERS ==================== -->
+      <h2>7. SSH and Remote Servers</h2>
+
+      <p>Everything you have learned so far has been on your local machine. But in the real world, your application does not run on your laptop. It runs on a <strong>server</strong> &mdash; a computer in a data center somewhere, with no monitor, no keyboard, and no mouse. The only way to interact with it is through the terminal, using <strong>SSH</strong>.</p>
+
+      <p>SSH stands for <strong>Secure Shell</strong>. It gives you a terminal on a remote computer. You type commands on your laptop, and they execute on the server. It is as if you teleported your terminal to a machine thousands of miles away.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Connect to a remote server
+ssh username@192.168.1.100
+
+# Connect to a server by hostname
+ssh deploy@myapp.example.com
+
+# Connect on a specific port (default is 22)
+ssh -p 2222 username@server.example.com</code></pre>
+      </div>
+
+      <p>The first time you connect to a server, SSH will show you the server's "fingerprint" and ask if you trust it. Type <code>yes</code>. After that, it will ask for your password. Once authenticated, you have a terminal on that remote machine. Every command you type now runs on the server, not your laptop. Type <code>exit</code> to disconnect and return to your local terminal.</p>
+
+      <h3>SSH Keys vs. Passwords</h3>
+
+      <p>Typing a password every time you connect is tedious and less secure. The professional approach is to use <strong>SSH keys</strong> &mdash; a pair of cryptographic keys that authenticate you automatically. It is like having a lock (on the server) and a key (on your laptop) instead of a password.</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Generate an SSH key pair
+ssh-keygen -t ed25519 -C "your.email@example.com"
+# Press Enter to accept the default file location
+# Enter a passphrase (or press Enter for none)
+
+# Copy your public key to the server
+ssh-copy-id username@server.example.com
+
+# Now you can connect without a password
+ssh username@server.example.com</code></pre>
+      </div>
+
+      <p>The <code>ssh-keygen</code> command creates two files: a <strong>private key</strong> (<code>~/.ssh/id_ed25519</code>) that stays on your computer and must never be shared, and a <strong>public key</strong> (<code>~/.ssh/id_ed25519.pub</code>) that you put on any server you want to access. The <code>ssh-copy-id</code> command does this for you automatically.</p>
+
+      <p>Remember the permissions lesson? Your private key must have strict permissions: <code>chmod 600 ~/.ssh/id_ed25519</code>. If anyone else can read it, SSH will refuse to use it. Security is built into the system at every level.</p>
+
+      <h3>Transferring Files</h3>
+
+      <p>You will often need to copy files between your laptop and a server. <code>scp</code> (secure copy) uses the same SSH connection to transfer files:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Copy a file from your laptop to the server
+scp myapp.jar deploy@server.example.com:/opt/myapp/
+
+# Copy a file from the server to your laptop
+scp deploy@server.example.com:/var/log/app.log ./local-copy.log
+
+# Copy an entire directory
+scp -r config/ deploy@server.example.com:/opt/myapp/config/</code></pre>
+      </div>
+
+      <p>The syntax is <code>scp source destination</code>, where remote locations use the format <code>user@host:path</code>. The <code>-r</code> flag works the same as with <code>cp</code> &mdash; it copies directories recursively.</p>
+
+      <h3>Preview: Deploying a Spring Boot App</h3>
+
+      <p>Here is what deploying a Spring Boot application to a VPS (Virtual Private Server) looks like, using everything you have learned in this lesson:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># 1. Build your application locally
+./mvnw clean package -DskipTests
+
+# 2. Copy the JAR file to your server
+scp target/resumator-0.0.1-SNAPSHOT.jar deploy@myserver.com:/opt/resumator/
+
+# 3. SSH into the server
+ssh deploy@myserver.com
+
+# 4. Stop the old version
+sudo systemctl stop resumator
+
+# 5. Start the new version
+sudo systemctl start resumator
+
+# 6. Check that it is running
+systemctl status resumator
+
+# 7. Watch the logs
+tail -f /var/log/resumator/app.log</code></pre>
+      </div>
+
+      <p>Every single command in that deployment sequence uses skills from this lesson: <code>scp</code> for file transfer, <code>ssh</code> for remote access, <code>systemctl</code> for service management, and <code>tail -f</code> for log monitoring. This is what real-world deployment looks like. It is not scary &mdash; it is just terminal commands you already know.</p>
+
+      <!-- ==================== PART 8 — THE DEVELOPER'S DAILY COMMANDS ==================== -->
+      <h2>8. The Developer's Daily Commands</h2>
+
+      <p>You now know the fundamentals. Let us bring it all together with a quick reference of the commands you will use most often, plus some tips for making the terminal truly yours.</p>
+
+      <h3>Quick Reference: 20 Most-Used Commands</h3>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Navigation
+pwd                       # Where am I?
+ls -la                    # What is here?
+cd directory/             # Go to a directory
+cd ..                     # Go up one level
+cd ~                      # Go home
+
+# File Operations
+cat file.txt              # View a file
+less file.txt             # Scroll through a file
+touch newfile.txt         # Create an empty file
+mkdir -p path/to/dir      # Create directories
+cp source dest            # Copy
+mv source dest            # Move or rename
+rm file.txt               # Delete a file
+rm -r directory/          # Delete a directory
+
+# Searching
+find . -name "*.java"     # Find files by name
+grep -rn "pattern" src/   # Search inside files
+
+# System
+ps aux | grep process     # Find running processes
+kill PID                  # Stop a process
+sudo apt install package  # Install software
+chmod +x script.sh        # Make a file executable
+ssh user@server           # Connect to remote server</code></pre>
+      </div>
+
+      <h3>Customizing Your Terminal</h3>
+
+      <p>Your terminal has a configuration file that runs every time you open a new terminal window. On most Linux systems with bash, it is <code>~/.bashrc</code>. On macOS with zsh, it is <code>~/.zshrc</code>. You can edit this file to customize your experience:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Open your bash configuration file
+nano ~/.bashrc
+
+# ---- Add these lines at the bottom ----
+
+# Aliases — shortcuts for commands you type often
+alias ll='ls -la'
+alias gs='git status'
+alias gp='git push'
+alias gc='git commit -m'
+alias cls='clear'
+alias ..='cd ..'
+alias ...='cd ../..'
+
+# A better prompt that shows your current directory and git branch
+parse_git_branch() {
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ (\1)/'
+}
+export PS1="\u@\h \[\033[32m\]\w\[\033[33m\]\$(parse_git_branch)\[\033[00m\] $ "
+
+# Always show colors in ls
+alias ls='ls --color=auto'
+
+# Make grep output colorful
+alias grep='grep --color=auto'
+
+# Safety nets — ask before overwriting or deleting
+alias cp='cp -i'
+alias mv='mv -i'
+
+# ---- Save and exit (Ctrl+O, Enter, Ctrl+X in nano) ----</code></pre>
+      </div>
+
+      <p>After editing, apply your changes without reopening the terminal:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Reload your configuration
+source ~/.bashrc</code></pre>
+      </div>
+
+      <p><strong>Aliases</strong> are shortcuts. Instead of typing <code>ls -la</code> every time, you can just type <code>ll</code>. Instead of <code>git status</code>, just <code>gs</code>. These small shortcuts add up to massive time savings over a career. Every experienced developer has a personalized set of aliases.</p>
+
+      <p>The <code>PS1</code> variable controls your command prompt &mdash; what you see before the cursor. The example above shows your username, hostname, current directory (in green), and the current git branch (in yellow). This is incredibly useful because you always know exactly where you are and what branch you are working on.</p>
+
+      <h3>Essential Keyboard Shortcuts</h3>
+
+      <p>These shortcuts work in almost every terminal and will speed up your workflow enormously:</p>
+
+      <ul>
+        <li><kbd>Ctrl</kbd> + <kbd>C</kbd> &mdash; Cancel the currently running command. This is your emergency stop button.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>L</kbd> &mdash; Clear the screen. Same as typing <code>clear</code>, but faster.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>A</kbd> &mdash; Move the cursor to the beginning of the line.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>E</kbd> &mdash; Move the cursor to the end of the line.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>R</kbd> &mdash; Reverse search through your command history. Start typing, and it finds matching previous commands. This is incredibly useful when you need to re-run a long command from earlier.</li>
+        <li><kbd>Up Arrow</kbd> / <kbd>Down Arrow</kbd> &mdash; Scroll through previous commands one at a time.</li>
+        <li><kbd>Ctrl</kbd> + <kbd>D</kbd> &mdash; Exit the current shell (same as typing <code>exit</code>).</li>
+        <li><kbd>Ctrl</kbd> + <kbd>Z</kbd> &mdash; Suspend the current process and send it to the background. Bring it back with <code>fg</code>.</li>
+      </ul>
+
+      <p>The <kbd>Ctrl</kbd> + <kbd>R</kbd> shortcut deserves special attention. Imagine you ran a complex <code>find</code> command twenty minutes ago and need it again. Instead of retyping the whole thing, press <kbd>Ctrl</kbd> + <kbd>R</kbd> and type a few characters from that command. The terminal will search your history and show the most recent match. Press Enter to run it, or <kbd>Ctrl</kbd> + <kbd>R</kbd> again to see older matches. Once you start using this, you will wonder how you ever lived without it.</p>
+
+      <h3>The Terminal Is Your Most Powerful Tool</h3>
+
+      <p>Here is a truth that takes most developers a while to accept: <strong>the terminal is the most powerful tool on your computer.</strong> Your IDE is nice. Your graphical git client is convenient. Your file manager works fine. But the terminal can do everything they can do, plus a thousand things they cannot.</p>
+
+      <p>You can write a one-line command that finds every Java file in your project containing the word "deprecated," counts them, and saves the list to a report. You can watch a server log in real time, filter it to only show errors from the last hour, and pipe those errors to a file for later analysis. You can SSH into five servers, deploy your application, restart services, and verify health checks &mdash; all from the same terminal window using <code>tmux</code>.</p>
+
+      <p>The graphical tools will always be there when you want them. But the developers who are truly productive &mdash; the ones who can solve problems quickly, automate tedious tasks, and manage complex systems &mdash; they live in the terminal. And now, so can you.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q-sq-linux-1">
+        <p class="quiz-question">1. You write a deploy script called <code>deploy.sh</code> and try to run it with <code>./deploy.sh</code>, but the terminal says "Permission denied." What is the most likely fix?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-linux-1" value="a"> Run <code>sudo ./deploy.sh</code> to execute it as root</label>
+          <label><input type="radio" name="q-sq-linux-1" value="b"> Run <code>chmod +x deploy.sh</code> to add execute permission, then try again</label>
+          <label><input type="radio" name="q-sq-linux-1" value="c"> Delete the file and create it again with the correct permissions</label>
+          <label><input type="radio" name="q-sq-linux-1" value="d"> Rename the file to <code>deploy.exe</code> so Linux knows it is executable</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! When you create a new file in Linux, it does not have execute permission by default. The <code>chmod +x deploy.sh</code> command adds execute permission, allowing you to run the script with <code>./deploy.sh</code>. Linux does not use file extensions like <code>.exe</code> to determine if a file is executable &mdash; it uses the permission system. While <code>sudo</code> would technically work, it runs the script with full administrator privileges, which is unnecessary and potentially dangerous for a simple deploy script.</div>
+      </div>
+
+      <div class="quiz" data-id="q-sq-linux-2">
+        <p class="quiz-question">2. Your Spring Boot application is running on a server and you want to see error messages as they happen in real time. Which command should you use?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-linux-2" value="a"> <code>cat /var/log/app.log</code></label>
+          <label><input type="radio" name="q-sq-linux-2" value="b"> <code>head -f /var/log/app.log</code></label>
+          <label><input type="radio" name="q-sq-linux-2" value="c"> <code>tail -f /var/log/app.log</code></label>
+          <label><input type="radio" name="q-sq-linux-2" value="d"> <code>grep "error" /var/log/app.log</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! <code>tail -f</code> follows the file in real time, displaying new lines as they are written. The <code>-f</code> flag stands for "follow." This is the standard way developers monitor server logs during development and deployment. <code>cat</code> dumps the entire file at once and exits. <code>head</code> shows the beginning of the file and does not have a <code>-f</code> option. <code>grep</code> searches existing content but does not follow new output. For filtering errors in real time, you could combine them: <code>tail -f /var/log/app.log | grep "ERROR"</code>.</div>
+      </div>
+
+      <div class="quiz" data-id="q-sq-linux-3">
+        <p class="quiz-question">3. What does the pipe operator (<code>|</code>) do in the command <code>cat server.log | grep "ERROR" | tail -20</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-linux-3" value="a"> It saves the output to three separate files</label>
+          <label><input type="radio" name="q-sq-linux-3" value="b"> It runs all three commands simultaneously in parallel</label>
+          <label><input type="radio" name="q-sq-linux-3" value="c"> It takes the output of each command and feeds it as input to the next command in the chain</label>
+          <label><input type="radio" name="q-sq-linux-3" value="d"> It creates an alias for the combined command so you can reuse it later</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! The pipe operator takes the standard output of the command on its left and passes it as standard input to the command on its right. In this example, <code>cat server.log</code> outputs the entire file. That output is piped to <code>grep "ERROR"</code>, which filters it to only lines containing "ERROR." Those filtered lines are then piped to <code>tail -20</code>, which shows only the last 20 of them. The result is the 20 most recent error messages from the log. This is the Unix philosophy in action: small, focused tools chained together to solve specific problems.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>Create a <strong>Linux command cheat sheet</strong> using only the terminal. Here is how:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Create the cheat sheet file
+nano ~/linux-cheatsheet.txt</code></pre>
+      </div>
+
+      <p>Inside this file, organize the commands you learned into categories. Include the command, a short description, and an example for each. Your cheat sheet should cover:</p>
+
+      <ul>
+        <li><strong>Navigation</strong> &mdash; <code>pwd</code>, <code>ls</code>, <code>cd</code>, <code>mkdir</code>, <code>touch</code></li>
+        <li><strong>File operations</strong> &mdash; <code>cat</code>, <code>less</code>, <code>head</code>, <code>tail</code>, <code>cp</code>, <code>mv</code>, <code>rm</code></li>
+        <li><strong>Searching</strong> &mdash; <code>find</code>, <code>grep</code>, piping with <code>|</code></li>
+        <li><strong>Permissions</strong> &mdash; <code>chmod</code>, <code>chown</code>, reading <code>ls -l</code> output</li>
+        <li><strong>Processes</strong> &mdash; <code>ps</code>, <code>top</code>, <code>kill</code>, <code>systemctl</code></li>
+        <li><strong>Package management</strong> &mdash; <code>apt</code> commands, <code>which</code>, <code>$PATH</code></li>
+        <li><strong>Remote access</strong> &mdash; <code>ssh</code>, <code>scp</code>, SSH keys</li>
+        <li><strong>Customization</strong> &mdash; aliases, <code>.bashrc</code>, <code>source</code></li>
+      </ul>
+
+      <p>This cheat sheet is for <em>you</em>. Write it in your own words. Add notes about things that confused you or things you want to remember. Pin it next to your monitor or keep it open in a terminal tab. Over the next few weeks, every time you discover a new command or a useful flag, add it to your cheat sheet. By the end of this course, it will be one of your most valuable references.</p>
+
+      <p>Beyond the cheat sheet, you should be able to:</p>
+
+      <ul>
+        <li>Navigate any directory structure without a graphical file manager</li>
+        <li>Create, read, move, copy, and delete files using terminal commands</li>
+        <li>Search for files and text across a project using <code>find</code> and <code>grep</code></li>
+        <li>Understand and modify file permissions</li>
+        <li>Check running processes and manage system services</li>
+        <li>Install software using <code>apt</code></li>
+        <li>Explain what SSH is and how SSH keys work</li>
+      </ul>
+
+      <p>The terminal is not something you learn once and move on from. It is a skill that deepens over your entire career. Every week you will discover a new command, a new flag, a new way to pipe things together. The foundation you built today makes every future discovery easier. Welcome to Linux.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="linux-basics">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

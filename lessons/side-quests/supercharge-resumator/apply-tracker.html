@@ -1,0 +1,1175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Apply Tracker — Coders Farm</title>
+  <meta name="description" content="Build a drag-and-drop Kanban board to track job applications from Interested to Offer">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-apply-tracker">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Apply Tracker</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Apply Tracker</p>
+      <h1>Apply Tracker</h1>
+      <p style="color: var(--text-muted);">Estimated time: 5&ndash;6 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>A full Kanban board with drag-and-drop columns for tracking job applications</li>
+          <li>A new database table with a foreign key relationship to your existing <code>favorite_jobs</code> table</li>
+          <li>Backend endpoints for grouping applications by status and updating them</li>
+          <li>Native HTML5 drag and drop &mdash; no external libraries required</li>
+          <li>An application timeline that records every status change with timestamps</li>
+          <li>A stats dashboard showing your application metrics at a glance</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHAT IS A KANBAN BOARD ==================== -->
+      <h2>1. What Is a Kanban Board?</h2>
+
+      <p>Before you write a single line of code, you need to understand the tool you are building. A <strong>Kanban board</strong> is a visual workflow management system. The idea is beautifully simple: you have a set of <strong>columns</strong> that represent stages in a process, and <strong>cards</strong> that represent individual items. As an item progresses through the process, you drag its card from one column to the next.</p>
+
+      <p>The word "Kanban" comes from Japanese and roughly translates to "visual signal" or "signboard." It was originally developed by Toyota in the 1940s for manufacturing. The core insight was that visualizing work in progress makes it dramatically easier to manage. When you can <em>see</em> where everything stands at a glance, bottlenecks become obvious, nothing gets forgotten, and you always know what to do next.</p>
+
+      <p>You have almost certainly used a Kanban board already, even if you did not know the name. <strong>Trello</strong> is a Kanban board. <strong>Jira</strong> boards in agile software teams are Kanban boards. <strong>GitHub Projects</strong> uses a Kanban layout. Even a simple sticky-note wall with "To Do," "In Progress," and "Done" columns is a Kanban board. The pattern is everywhere because it works.</p>
+
+      <div class="key-concept">
+        <h4>Columns = Stages, Cards = Items</h4>
+        <p>Every Kanban board follows the same principle. The <strong>columns</strong> represent the stages of your workflow. The <strong>cards</strong> represent individual work items. Cards move left to right as they progress through the stages. At any moment, you can look at the board and instantly understand the status of every item.</p>
+      </div>
+
+      <p>For a job application tracker, the stages map perfectly to the job search process:</p>
+
+      <ul>
+        <li><strong>Interested</strong> &mdash; You found a job that looks promising. You have not applied yet, but you want to keep track of it.</li>
+        <li><strong>Applied</strong> &mdash; You submitted your application. The ball is in their court now.</li>
+        <li><strong>Phone Screen</strong> &mdash; They called you back. You have an initial phone conversation scheduled or completed.</li>
+        <li><strong>Interview</strong> &mdash; You made it past the phone screen. You have a formal interview (technical, behavioral, or both).</li>
+        <li><strong>Offer</strong> &mdash; They want you. You have a job offer to consider.</li>
+        <li><strong>Rejected</strong> &mdash; This one did not work out. And that is completely fine &mdash; tracking rejections is just as important as tracking offers.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Why track rejections?</strong>
+        It might feel counterintuitive to have a "Rejected" column. Why would you want to see your rejections? Because data removes emotion. When you can see that you applied to 40 jobs, got 12 phone screens, 6 interviews, and 2 offers, the 38 rejections stop feeling personal. They are just the normal math of job searching. Every professional goes through this. The board makes that visible and turns a stressful process into a manageable one.
+      </div>
+
+      <p>By the end of this side quest, you will have a fully functional Kanban board where you can drag job cards between columns, see your application history as a timeline, and view stats about your overall job search progress. This is a real tool you can actually use &mdash; and it is an impressive portfolio piece that shows you understand both frontend interactivity and backend data management.</p>
+
+      <!-- ==================== PART 2 — NEW DATABASE TABLE ==================== -->
+      <h2>2. New Database Table</h2>
+
+      <p>Your Resumator already has a <code>favorite_jobs</code> table from Lesson 26. Now you need a new table to track the <em>application status</em> of those jobs. This is a separate concern: a job being favorited is not the same as tracking where it stands in your hiring pipeline. You want a dedicated <code>job_applications</code> table that links back to the favorited job.</p>
+
+      <p>This will be the <strong>third foreign key relationship</strong> you have built in this course. By now, you know the pattern: one table references a row in another table using a foreign key column. The <code>job_applications</code> table will have a <code>favorite_job_id</code> column that points to the <code>id</code> column in <code>favorite_jobs</code>. This means every application record is tied to a specific saved job.</p>
+
+      <div class="key-concept">
+        <h4>Why a Separate Table?</h4>
+        <p>You could add a <code>status</code> column directly to the <code>favorite_jobs</code> table. That would work for the simplest case. But we want to track more than just the current status &mdash; we want a <strong>timeline</strong> of status changes, notes, and metadata specific to the application process. Keeping this in its own table follows the <strong>Single Responsibility Principle</strong>: the <code>favorite_jobs</code> table stores job data, and the <code>job_applications</code> table tracks your application journey.</p>
+      </div>
+
+      <p>Open MySQL Workbench and run the following SQL to create the table:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE job_applications (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    favorite_job_id BIGINT NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'INTERESTED',
+    notes TEXT,
+    applied_date DATE,
+    last_updated DATETIME NOT NULL,
+    created_at DATETIME NOT NULL,
+
+    CONSTRAINT fk_application_favorite
+        FOREIGN KEY (favorite_job_id)
+        REFERENCES favorite_jobs(id)
+        ON DELETE CASCADE,
+
+    CONSTRAINT chk_status
+        CHECK (status IN (
+            'INTERESTED',
+            'APPLIED',
+            'PHONE_SCREEN',
+            'INTERVIEW',
+            'OFFER',
+            'REJECTED'
+        ))
+);</code></pre>
+      </div>
+
+      <p>Let us break down the important parts of this table:</p>
+
+      <p><strong>The foreign key (<code>favorite_job_id</code>):</strong> This column stores the <code>id</code> of a row in the <code>favorite_jobs</code> table. The <code>FOREIGN KEY</code> constraint enforces this relationship &mdash; you cannot insert an application that references a favorite job that does not exist. The <code>ON DELETE CASCADE</code> clause means that if a favorite job is deleted, all associated application records are automatically removed too. This prevents orphaned records.</p>
+
+      <p><strong>The status column:</strong> This is a <code>VARCHAR(50)</code> with a <code>CHECK</code> constraint that limits the allowed values to exactly six strings: <code>INTERESTED</code>, <code>APPLIED</code>, <code>PHONE_SCREEN</code>, <code>INTERVIEW</code>, <code>OFFER</code>, and <code>REJECTED</code>. Using uppercase with underscores is a common convention for status values because they behave like constants &mdash; and in your Java code, they will map to an <code>enum</code>.</p>
+
+      <p><strong>The default value:</strong> Notice <code>DEFAULT 'INTERESTED'</code>. When a new application row is created, if no status is specified, it starts as <code>INTERESTED</code>. This makes sense because the natural starting point is "I am interested in this job but have not applied yet."</p>
+
+      <p><strong>Timestamps:</strong> The <code>created_at</code> field records when the application record was first created. The <code>last_updated</code> field records the most recent change. These will be essential for the timeline feature you build later.</p>
+
+      <div class="callout callout-warning">
+        <strong>Make sure favorite_jobs exists first</strong>
+        The <code>FOREIGN KEY</code> constraint references the <code>favorite_jobs</code> table. If that table does not exist in your database yet, this <code>CREATE TABLE</code> statement will fail. Make sure you have completed Lesson 26 and created the <code>favorite_jobs</code> table before running this SQL.
+      </div>
+
+      <!-- ==================== PART 3 — BACKEND ENDPOINTS ==================== -->
+      <h2>3. Backend Endpoints</h2>
+
+      <p>With the database table in place, you need two backend endpoints to power the Kanban board. The first endpoint retrieves all applications <strong>grouped by status</strong> &mdash; this is what the board will use to know which cards belong in which column. The second endpoint <strong>updates the status</strong> of a single application &mdash; this is what fires when you drag a card to a new column.</p>
+
+      <p>First, create the <code>JobApplication</code> entity and an enum for the status values. The enum ensures type safety &mdash; your Java code will only accept the six valid statuses, and the compiler will catch any typos:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+public enum ApplicationStatus {
+    INTERESTED,
+    APPLIED,
+    PHONE_SCREEN,
+    INTERVIEW,
+    OFFER,
+    REJECTED
+}</code></pre>
+      </div>
+
+      <p>Now the entity class that maps to your new table:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;job_applications&quot;)
+public class JobApplication {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = &quot;favorite_job_id&quot;, nullable = false)
+    private FavoriteJob favoriteJob;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;status&quot;, nullable = false, length = 50)
+    private ApplicationStatus status = ApplicationStatus.INTERESTED;
+
+    @Column(columnDefinition = &quot;TEXT&quot;)
+    private String notes;
+
+    @Column(name = &quot;applied_date&quot;)
+    private LocalDate appliedDate;
+
+    @Column(name = &quot;last_updated&quot;, nullable = false)
+    private LocalDateTime lastUpdated;
+
+    @Column(name = &quot;created_at&quot;, nullable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.lastUpdated = LocalDateTime.now();
+    }
+
+    public JobApplication() {}
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public FavoriteJob getFavoriteJob() { return favoriteJob; }
+    public void setFavoriteJob(FavoriteJob favoriteJob) {
+        this.favoriteJob = favoriteJob;
+    }
+
+    public ApplicationStatus getStatus() { return status; }
+    public void setStatus(ApplicationStatus status) { this.status = status; }
+
+    public String getNotes() { return notes; }
+    public void setNotes(String notes) { this.notes = notes; }
+
+    public LocalDate getAppliedDate() { return appliedDate; }
+    public void setAppliedDate(LocalDate appliedDate) {
+        this.appliedDate = appliedDate;
+    }
+
+    public LocalDateTime getLastUpdated() { return lastUpdated; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+}</code></pre>
+      </div>
+
+      <p>Notice the <code>@ManyToOne</code> annotation on the <code>favoriteJob</code> field. This tells JPA that many applications can point to one favorite job. The <code>@JoinColumn</code> annotation specifies which database column holds the foreign key. And <code>@Enumerated(EnumType.STRING)</code> tells JPA to store the enum value as a string in the database (e.g., <code>"APPLIED"</code>) rather than as a number. Strings are far more readable when you query the database directly.</p>
+
+      <p>Now build the controller. The GET endpoint groups applications by status so the frontend can populate each column. The PUT endpoint updates a single application's status when a card is dragged:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.controller;
+
+import com.example.resumator.model.ApplicationStatus;
+import com.example.resumator.model.JobApplication;
+import com.example.resumator.repository.JobApplicationRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+@RestController
+@RequestMapping(&quot;/api/applications&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class ApplicationController {
+
+    private final JobApplicationRepository repository;
+
+    public ApplicationController(JobApplicationRepository repository) {
+        this.repository = repository;
+    }
+
+    @GetMapping
+    public ResponseEntity&lt;Map&lt;String, List&lt;JobApplication&gt;&gt;&gt; getAllGrouped() {
+        List&lt;JobApplication&gt; all = repository.findAll();
+
+        Map&lt;String, List&lt;JobApplication&gt;&gt; grouped = all.stream()
+            .collect(Collectors.groupingBy(
+                app -&gt; app.getStatus().name()
+            ));
+
+        // Ensure every status column exists in the response,
+        // even if it has zero applications
+        for (ApplicationStatus status : ApplicationStatus.values()) {
+            grouped.putIfAbsent(status.name(), List.of());
+        }
+
+        return ResponseEntity.ok(grouped);
+    }
+
+    @PutMapping(&quot;/{id}/status&quot;)
+    public ResponseEntity&lt;?&gt; updateStatus(
+            @PathVariable Long id,
+            @RequestBody Map&lt;String, String&gt; body) {
+
+        String newStatus = body.get(&quot;status&quot;);
+        if (newStatus == null) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Missing 'status' in request body&quot;));
+        }
+
+        ApplicationStatus status;
+        try {
+            status = ApplicationStatus.valueOf(newStatus);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                .body(Map.of(&quot;error&quot;, &quot;Invalid status: &quot; + newStatus));
+        }
+
+        return repository.findById(id).map(app -&gt; {
+            app.setStatus(status);
+            repository.save(app);
+            return ResponseEntity.ok(app);
+        }).orElse(ResponseEntity.notFound().build());
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us look at the GET endpoint in detail. It fetches every application from the database, then uses Java Streams to group them by status. The <code>Collectors.groupingBy</code> method creates a <code>Map</code> where the key is the status name (a string like <code>"APPLIED"</code>) and the value is a list of applications with that status. The loop at the end ensures that every status appears in the response, even if no applications have that status yet &mdash; this way the frontend always gets all six columns.</p>
+
+      <p>The PUT endpoint extracts the new status from the request body, validates it against the enum (catching invalid values with a try-catch), and then updates the application. The <code>@PreUpdate</code> lifecycle callback you defined in the entity automatically updates the <code>lastUpdated</code> timestamp.</p>
+
+      <div class="callout callout-info">
+        <strong>Auto-creating applications when a job is favorited</strong>
+        You will want to automatically create a <code>JobApplication</code> record whenever a user favorites a job. The cleanest way to do this is to modify your existing <code>FavoriteController.saveFavorite()</code> method: after saving the favorite, immediately create a new <code>JobApplication</code> with that favorite and a default status of <code>INTERESTED</code>. This way, every favorited job automatically appears on the Kanban board without the user doing anything extra. The board becomes the natural home for all saved jobs.
+      </div>
+
+      <!-- ==================== PART 4 — DRAG AND DROP ==================== -->
+      <h2>4. Drag and Drop with the HTML Drag API</h2>
+
+      <p>This is the part that makes the Kanban board <em>feel</em> like a real application. Dragging a card from one column to another is one of the most satisfying interactions in UI design. And the best part? You do not need React. You do not need a library. You do not need any framework at all. The <strong>HTML5 Drag and Drop API</strong> is built right into every modern browser.</p>
+
+      <p>The drag and drop system works through a set of <strong>events</strong>. When you make an element draggable and attach event handlers, the browser manages the entire visual experience &mdash; the cursor changes, the element follows the mouse, and drop targets respond. You just need to tell the browser what should happen at each stage.</p>
+
+      <div class="key-concept">
+        <h4>The Four Essential Drag Events</h4>
+        <p><strong><code>dragstart</code></strong> fires when the user starts dragging an element. This is where you store data about what is being dragged.<br>
+        <strong><code>dragover</code></strong> fires continuously while a dragged element is over a valid drop target. You <em>must</em> call <code>event.preventDefault()</code> here, or the browser will not allow a drop.<br>
+        <strong><code>drop</code></strong> fires when the user releases the dragged element over a valid target. This is where you handle the actual move.<br>
+        <strong><code>dragend</code></strong> fires when the drag operation ends, regardless of whether a drop occurred. Use this for cleanup.</p>
+      </div>
+
+      <p>Here is a complete, working implementation. Study it carefully &mdash; every line serves a purpose:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// ============================================
+// Kanban Board — Drag and Drop Handlers
+// ============================================
+
+// Store the ID of the card currently being dragged
+let draggedCardId = null;
+
+/**
+ * Called when a user starts dragging a card.
+ * Stores the application ID so the drop handler
+ * knows which record to update.
+ */
+function handleDragStart(event) {
+    draggedCardId = event.target.dataset.applicationId;
+    event.target.classList.add('dragging');
+
+    // Set the drag data (required for Firefox)
+    event.dataTransfer.setData('text/plain', draggedCardId);
+    event.dataTransfer.effectAllowed = 'move';
+}
+
+/**
+ * Called continuously while a card hovers over a column.
+ * We MUST call preventDefault() here — without it,
+ * the browser will not allow a drop event to fire.
+ */
+function handleDragOver(event) {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = 'move';
+
+    // Add a visual highlight to the column
+    const column = event.currentTarget;
+    column.classList.add('drag-over');
+}
+
+/**
+ * Called when the dragged card leaves a column.
+ * Remove the visual highlight.
+ */
+function handleDragLeave(event) {
+    event.currentTarget.classList.remove('drag-over');
+}
+
+/**
+ * Called when the user drops a card onto a column.
+ * This is where the real work happens — we update
+ * the backend and move the card in the DOM.
+ */
+function handleDrop(event) {
+    event.preventDefault();
+    const column = event.currentTarget;
+    column.classList.remove('drag-over');
+
+    const newStatus = column.dataset.status;
+
+    if (!draggedCardId || !newStatus) return;
+
+    // Find the card element and move it into this column
+    const card = document.querySelector(
+        `[data-application-id="${draggedCardId}"]`
+    );
+
+    if (card) {
+        const cardContainer = column.querySelector('.column-cards');
+        cardContainer.appendChild(card);
+        card.classList.remove('dragging');
+
+        // Call the backend to persist the status change
+        updateApplicationStatus(draggedCardId, newStatus);
+    }
+
+    draggedCardId = null;
+}
+
+/**
+ * Called when any drag operation ends.
+ * Clean up visual state regardless of outcome.
+ */
+function handleDragEnd(event) {
+    event.target.classList.remove('dragging');
+    // Remove drag-over from all columns
+    document.querySelectorAll('.kanban-column').forEach(col =&gt; {
+        col.classList.remove('drag-over');
+    });
+    draggedCardId = null;
+}
+
+/**
+ * Send a PUT request to update the application status
+ * on the backend. This persists the column change.
+ */
+async function updateApplicationStatus(applicationId, newStatus) {
+    try {
+        const response = await fetch(
+            `/api/applications/${applicationId}/status`,
+            {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ status: newStatus })
+            }
+        );
+
+        if (!response.ok) {
+            console.error('Failed to update status:', response.status);
+            // In a production app, you would revert the card
+            // position here and show an error message
+        }
+    } catch (error) {
+        console.error('Network error updating status:', error);
+    }
+}
+
+// ============================================
+// Initialize the board
+// ============================================
+
+/**
+ * Attach drag event listeners to all columns.
+ * Call this after the board HTML is rendered.
+ */
+function initializeKanbanBoard() {
+    // Make all cards draggable
+    document.querySelectorAll('.kanban-card').forEach(card =&gt; {
+        card.setAttribute('draggable', 'true');
+        card.addEventListener('dragstart', handleDragStart);
+        card.addEventListener('dragend', handleDragEnd);
+    });
+
+    // Make all columns accept drops
+    document.querySelectorAll('.kanban-column').forEach(column =&gt; {
+        column.addEventListener('dragover', handleDragOver);
+        column.addEventListener('dragleave', handleDragLeave);
+        column.addEventListener('drop', handleDrop);
+    });
+}
+
+// Run initialization when the DOM is ready
+document.addEventListener('DOMContentLoaded', initializeKanbanBoard);
+
+console.log('Kanban drag-and-drop handlers loaded.');</code></pre>
+      </div>
+
+      <p>There are several critical details in this code that are worth understanding deeply:</p>
+
+      <p><strong>Why <code>event.preventDefault()</code> in <code>dragover</code>?</strong> This is the number one gotcha with HTML drag and drop. By default, the browser does <em>not</em> allow elements to be dropped on other elements. You have to explicitly opt in by calling <code>preventDefault()</code> on the <code>dragover</code> event. If you forget this single line, the <code>drop</code> event will never fire, and you will spend an hour wondering why your board does not work. Every developer who has used the Drag API has hit this at least once.</p>
+
+      <p><strong>Why <code>event.dataTransfer.setData()</code>?</strong> Some browsers, particularly Firefox, require you to set data on the <code>dataTransfer</code> object for the drag operation to work at all. Even though we store the ID in a variable (<code>draggedCardId</code>), the <code>setData</code> call ensures cross-browser compatibility.</p>
+
+      <p><strong>Optimistic UI update:</strong> Notice that the card is moved in the DOM <em>before</em> the API call completes. This is called an <strong>optimistic update</strong> &mdash; you assume the server call will succeed and update the UI immediately. This makes the board feel instant and responsive. If the API call fails, you would ideally revert the card position. For now, we log the error, but in a production application you would move the card back to its original column and show a notification.</p>
+
+      <div class="callout callout-info">
+        <strong>No library needed</strong>
+        You might see tutorials recommending libraries like SortableJS, react-beautiful-dnd, or dnd-kit for drag and drop. Those libraries are excellent and handle many edge cases. But for a Kanban board with column-based drops, the native HTML5 Drag API does everything you need. Building it yourself means you understand what is actually happening &mdash; and that understanding will make you far more effective when you eventually use a library in a professional project.
+      </div>
+
+      <!-- ==================== PART 5 — THE BOARD UI ==================== -->
+      <h2>5. The Board UI</h2>
+
+      <p>The JavaScript handles the behavior. Now you need the visual structure &mdash; the columns, the cards, and the layout that makes it all look like a proper Kanban board. The key design challenge is that the board needs to scroll <strong>horizontally</strong>. Six columns side by side will not fit on a phone screen (or even most laptop screens). Horizontal scrolling lets the user see as many columns as their screen allows and scroll to see the rest.</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Kanban Board Container --&gt;
+&lt;div class=&quot;kanban-board&quot;&gt;
+
+  &lt;div class=&quot;kanban-column&quot; data-status=&quot;INTERESTED&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Interested&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;
+      &lt;!-- Cards inserted here dynamically --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;kanban-column&quot; data-status=&quot;APPLIED&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Applied&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;kanban-column&quot; data-status=&quot;PHONE_SCREEN&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Phone Screen&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;kanban-column&quot; data-status=&quot;INTERVIEW&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Interview&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;kanban-column column-offer&quot; data-status=&quot;OFFER&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Offer&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class=&quot;kanban-column column-rejected&quot; data-status=&quot;REJECTED&quot;&gt;
+    &lt;div class=&quot;column-header&quot;&gt;
+      &lt;span class=&quot;column-title&quot;&gt;Rejected&lt;/span&gt;
+      &lt;span class=&quot;column-count&quot;&gt;0&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;column-cards&quot;&gt;&lt;/div&gt;
+  &lt;/div&gt;
+
+&lt;/div&gt;
+
+&lt;!-- Card Template (generated dynamically per application) --&gt;
+&lt;!--
+&lt;div class=&quot;kanban-card&quot; draggable=&quot;true&quot;
+     data-application-id=&quot;42&quot;&gt;
+  &lt;div class=&quot;card-company&quot;&gt;Google&lt;/div&gt;
+  &lt;div class=&quot;card-title&quot;&gt;Senior Java Developer&lt;/div&gt;
+  &lt;div class=&quot;card-meta&quot;&gt;
+    &lt;span&gt;Mountain View, CA&lt;/span&gt;
+    &lt;span&gt;$120k - $180k&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;card-date&quot;&gt;Applied: Jan 15, 2026&lt;/div&gt;
+&lt;/div&gt;
+--&gt;</code></pre>
+      </div>
+
+      <p>Now the CSS that brings the board to life:</p>
+
+      <div class="code-editor" data-language="css" data-editable="true" data-runnable="false">
+        <pre><code>/* ============================================
+   Kanban Board Layout
+   ============================================ */
+
+.kanban-board {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    overflow-x: auto;          /* horizontal scroll */
+    min-height: 70vh;
+    align-items: flex-start;
+}
+
+.kanban-column {
+    min-width: 280px;
+    max-width: 320px;
+    flex-shrink: 0;            /* prevent columns from compressing */
+    background: var(--bg-secondary, #f4f5f7);
+    border-radius: 8px;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    border-top: 3px solid var(--accent-blue, #2684ff);
+    transition: background 0.2s ease;
+}
+
+/* Color coding for special columns */
+.kanban-column.column-offer {
+    border-top-color: #22c55e;       /* green for offers */
+}
+
+.kanban-column.column-rejected {
+    border-top-color: #ef4444;       /* red for rejections */
+}
+
+/* Visual highlight when dragging over a column */
+.kanban-column.drag-over {
+    background: var(--bg-drag-over, #e2e8f0);
+    outline: 2px dashed var(--accent-blue, #2684ff);
+    outline-offset: -2px;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 4px;
+    margin-bottom: 12px;
+}
+
+.column-title {
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-primary, #1a1a1a);
+}
+
+.column-count {
+    background: var(--bg-tertiary, #dfe1e6);
+    color: var(--text-muted, #666);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.column-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-height: 60px;          /* ensures empty columns are droppable */
+    flex-grow: 1;
+}
+
+/* ============================================
+   Kanban Card Design
+   ============================================ */
+
+.kanban-card {
+    background: var(--bg-card, #ffffff);
+    border-radius: 6px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    cursor: grab;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+    user-select: none;
+}
+
+.kanban-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-1px);
+}
+
+.kanban-card.dragging {
+    opacity: 0.5;
+    transform: rotate(2deg);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    cursor: grabbing;
+}
+
+.card-company {
+    font-size: 0.75rem;
+    color: var(--text-muted, #888);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 4px;
+}
+
+.card-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--text-primary, #1a1a1a);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.card-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-muted, #888);
+    margin-bottom: 6px;
+}
+
+.card-date {
+    font-size: 0.75rem;
+    color: var(--text-muted, #aaa);
+}
+
+/* ============================================
+   Expanded Card View
+   ============================================ */
+
+.card-expanded-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.card-expanded {
+    background: var(--bg-card, #ffffff);
+    border-radius: 12px;
+    padding: 32px;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.card-expanded h3 {
+    margin-top: 0;
+    font-size: 1.3rem;
+}
+
+.card-expanded .detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border-color, #eee);
+    font-size: 0.9rem;
+}
+
+.card-expanded .detail-label {
+    font-weight: 600;
+    color: var(--text-muted, #666);
+}
+
+.card-expanded .notes-section textarea {
+    width: 100%;
+    min-height: 80px;
+    border: 1px solid var(--border-color, #ddd);
+    border-radius: 6px;
+    padding: 10px;
+    font-family: inherit;
+    font-size: 0.9rem;
+    resize: vertical;
+}</code></pre>
+      </div>
+
+      <p>A few design decisions worth highlighting:</p>
+
+      <p><strong>Horizontal scrolling:</strong> The <code>.kanban-board</code> uses <code>display: flex</code> with <code>overflow-x: auto</code>. Each column has <code>flex-shrink: 0</code> and a <code>min-width</code>, which means columns will never compress &mdash; they keep their size and the board scrolls horizontally when needed. This is the standard pattern for Kanban boards and works well on both desktop and mobile.</p>
+
+      <p><strong>Color coding:</strong> The <code>border-top</code> on each column provides a subtle but effective color signal. Active columns (Interested through Interview) use the default blue. The Offer column uses green &mdash; the color of success. The Rejected column uses red. These colors are immediately intuitive and let you read the board's meaning at a glance.</p>
+
+      <p><strong>Click to expand:</strong> When a user clicks a card, you show the expanded view as a modal overlay. The expanded view shows the full job details &mdash; company name, title, salary, location, job description &mdash; plus a notes textarea where the user can write reminders, and the application timeline (which you will build next). The overlay uses <code>position: fixed</code> with <code>inset: 0</code> to cover the entire viewport.</p>
+
+      <p><strong>Drag feedback:</strong> The <code>.dragging</code> class makes the card semi-transparent and slightly rotated &mdash; a visual cue that you are in drag mode. The <code>.drag-over</code> class on columns adds a dashed outline to show where you can drop. These small details make the interaction feel polished and professional.</p>
+
+      <!-- ==================== PART 6 — APPLICATION TIMELINE ==================== -->
+      <h2>6. Application Timeline</h2>
+
+      <p>A status column tells you where an application <em>is</em>. A timeline tells you where it has <em>been</em>. When you are managing dozens of applications, being able to see the history of each one is invaluable. When did you apply? When did they respond? How long were you in the interview stage? This data helps you follow up at the right time and understand which companies move fast versus slow.</p>
+
+      <p>You need a new table to store timeline events. Each event records an application, a status, and a timestamp. Every time an application's status changes, you insert a new row:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE application_timeline (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    application_id BIGINT NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    changed_at DATETIME NOT NULL,
+    note VARCHAR(500),
+
+    CONSTRAINT fk_timeline_application
+        FOREIGN KEY (application_id)
+        REFERENCES job_applications(id)
+        ON DELETE CASCADE
+);</code></pre>
+      </div>
+
+      <p>Now the JPA entity that maps to this table:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;application_timeline&quot;)
+public class ApplicationTimelineEvent {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;application_id&quot;, nullable = false)
+    private JobApplication application;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;status&quot;, nullable = false, length = 50)
+    private ApplicationStatus status;
+
+    @Column(name = &quot;changed_at&quot;, nullable = false)
+    private LocalDateTime changedAt;
+
+    @Column(length = 500)
+    private String note;
+
+    @PrePersist
+    protected void onCreate() {
+        this.changedAt = LocalDateTime.now();
+    }
+
+    public ApplicationTimelineEvent() {}
+
+    public ApplicationTimelineEvent(
+            JobApplication application,
+            ApplicationStatus status) {
+        this.application = application;
+        this.status = status;
+    }
+
+    public ApplicationTimelineEvent(
+            JobApplication application,
+            ApplicationStatus status,
+            String note) {
+        this.application = application;
+        this.status = status;
+        this.note = note;
+    }
+
+    // Getters
+    public Long getId() { return id; }
+    public JobApplication getApplication() { return application; }
+    public ApplicationStatus getStatus() { return status; }
+    public LocalDateTime getChangedAt() { return changedAt; }
+    public String getNote() { return note; }
+}</code></pre>
+      </div>
+
+      <p>The key idea is that the <code>ApplicationTimelineEvent</code> is an <em>immutable record</em>. You never update a timeline event &mdash; you only insert new ones. This creates a complete, append-only history. The <code>@ManyToOne</code> relationship links each event to its parent application. The convenience constructors let you create events with or without a note in a single line of code.</p>
+
+      <p>Now update the status-change endpoint to automatically record a timeline event whenever an application moves to a new column:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Inside ApplicationController — updated updateStatus method
+
+@PutMapping(&quot;/{id}/status&quot;)
+public ResponseEntity&lt;?&gt; updateStatus(
+        @PathVariable Long id,
+        @RequestBody Map&lt;String, String&gt; body) {
+
+    String newStatus = body.get(&quot;status&quot;);
+    if (newStatus == null) {
+        return ResponseEntity.badRequest()
+            .body(Map.of(&quot;error&quot;, &quot;Missing 'status' in request body&quot;));
+    }
+
+    ApplicationStatus status;
+    try {
+        status = ApplicationStatus.valueOf(newStatus);
+    } catch (IllegalArgumentException e) {
+        return ResponseEntity.badRequest()
+            .body(Map.of(&quot;error&quot;, &quot;Invalid status: &quot; + newStatus));
+    }
+
+    return repository.findById(id).map(app -&gt; {
+        ApplicationStatus oldStatus = app.getStatus();
+        app.setStatus(status);
+        repository.save(app);
+
+        // Record the status change in the timeline
+        if (oldStatus != status) {
+            ApplicationTimelineEvent event =
+                new ApplicationTimelineEvent(app, status);
+            timelineRepository.save(event);
+        }
+
+        return ResponseEntity.ok(app);
+    }).orElse(ResponseEntity.notFound().build());
+}</code></pre>
+      </div>
+
+      <p>Notice the check <code>if (oldStatus != status)</code>. This prevents creating a duplicate timeline entry if someone accidentally drops a card back into the same column. Only genuine status changes get recorded.</p>
+
+      <p>On the frontend, when a user clicks a card to expand it, you fetch the timeline for that application and display it as a vertical timeline:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>/**
+ * Fetch and render the timeline for a given application.
+ * Displays a vertical list of status changes with timestamps.
+ */
+async function loadTimeline(applicationId, container) {
+    const response = await fetch(
+        `/api/applications/${applicationId}/timeline`
+    );
+
+    if (!response.ok) {
+        container.innerHTML = '&lt;p&gt;Could not load timeline.&lt;/p&gt;';
+        return;
+    }
+
+    const events = await response.json();
+
+    if (events.length === 0) {
+        container.innerHTML = '&lt;p class="timeline-empty"&gt;'
+            + 'No status changes yet.&lt;/p&gt;';
+        return;
+    }
+
+    const html = events.map(event =&gt; `
+        &lt;div class="timeline-event"&gt;
+            &lt;div class="timeline-dot"&gt;&lt;/div&gt;
+            &lt;div class="timeline-content"&gt;
+                &lt;span class="timeline-status"&gt;
+                    ${formatStatus(event.status)}
+                &lt;/span&gt;
+                &lt;span class="timeline-date"&gt;
+                    ${formatDate(event.changedAt)}
+                &lt;/span&gt;
+                ${event.note
+                    ? `&lt;p class="timeline-note"&gt;${event.note}&lt;/p&gt;`
+                    : ''}
+            &lt;/div&gt;
+        &lt;/div&gt;
+    `).join('');
+
+    container.innerHTML = `
+        &lt;div class="timeline"&gt;${html}&lt;/div&gt;
+    `;
+}
+
+/** Convert STATUS_NAME to readable format */
+function formatStatus(status) {
+    return status.replace(/_/g, ' ').replace(/\b\w/g,
+        c =&gt; c.toUpperCase()
+    );
+}
+
+/** Format ISO datetime to a friendly string */
+function formatDate(isoString) {
+    const date = new Date(isoString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+        hour: 'numeric', minute: '2-digit'
+    });
+}</code></pre>
+      </div>
+
+      <p>The timeline reads like a story of your interaction with that company. "Interested on January 10. Applied on January 12. Phone Screen on January 20. Interview on February 3." When you have this data, follow-ups become natural: if you applied two weeks ago and the timeline shows no movement, it is time to send a polite check-in email.</p>
+
+      <div class="callout callout-info">
+        <strong>Append-only data is powerful</strong>
+        The timeline follows an <strong>append-only</strong> pattern &mdash; you only insert new events, never update or delete them. This is the same pattern used by bank transaction histories, Git commit logs, and audit trails. Append-only data is inherently trustworthy because it preserves the complete history. You can always answer "what happened and when?" without any ambiguity.
+      </div>
+
+      <!-- ==================== PART 7 — STATS DASHBOARD ==================== -->
+      <h2>7. Stats Dashboard</h2>
+
+      <p>You have a board. You have a timeline. Now add one more layer: <strong>numbers</strong>. A simple stats dashboard that sits above the board and shows you the big picture. When you are deep in the grind of applying to jobs, it is surprisingly easy to lose perspective. A stats dashboard gives you concrete data that replaces anxiety with clarity.</p>
+
+      <p>The stats you want are simple but meaningful:</p>
+
+      <ul>
+        <li><strong>Total Applications</strong> &mdash; How many jobs are you tracking? This number alone can be motivating. If it is low, you know you need to cast a wider net. If it is high, you know you are putting in the work.</li>
+        <li><strong>Response Rate</strong> &mdash; What percentage of your applications have moved past "Applied"? This tells you how well your resume and applications are performing. Industry average for junior developers is roughly 10&ndash;15%. If yours is higher, your resume is strong.</li>
+        <li><strong>Interviews Landed</strong> &mdash; How many applications turned into actual interviews? This is the number that matters most. Every interview is a real shot at a job.</li>
+        <li><strong>Average Time in Each Stage</strong> &mdash; How long do applications typically sit in "Applied" before moving? How long does the interview stage last? These numbers help you set realistic expectations and know when to follow up.</li>
+      </ul>
+
+      <p>You can compute all of these from the data you already have. The applications table gives you counts and statuses. The timeline table gives you timestamps for calculating averages. Here is a backend endpoint that aggregates the stats:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@GetMapping(&quot;/stats&quot;)
+public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; getStats() {
+    List&lt;JobApplication&gt; all = repository.findAll();
+
+    long total = all.size();
+    long applied = all.stream()
+        .filter(a -&gt; a.getStatus() != ApplicationStatus.INTERESTED)
+        .count();
+    long interviews = all.stream()
+        .filter(a -&gt; a.getStatus() == ApplicationStatus.INTERVIEW
+            || a.getStatus() == ApplicationStatus.OFFER)
+        .count();
+    long offers = all.stream()
+        .filter(a -&gt; a.getStatus() == ApplicationStatus.OFFER)
+        .count();
+    long rejected = all.stream()
+        .filter(a -&gt; a.getStatus() == ApplicationStatus.REJECTED)
+        .count();
+
+    double responseRate = applied &gt; 0
+        ? ((double)(applied - rejected) / applied) * 100.0
+        : 0.0;
+
+    Map&lt;String, Object&gt; stats = new java.util.LinkedHashMap&lt;&gt;();
+    stats.put(&quot;totalTracked&quot;, total);
+    stats.put(&quot;totalApplied&quot;, applied);
+    stats.put(&quot;interviews&quot;, interviews);
+    stats.put(&quot;offers&quot;, offers);
+    stats.put(&quot;rejected&quot;, rejected);
+    stats.put(&quot;responseRate&quot;, Math.round(responseRate * 10.0) / 10.0);
+
+    return ResponseEntity.ok(stats);
+}</code></pre>
+      </div>
+
+      <p>On the frontend, display these stats as a row of cards above the Kanban board:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>/**
+ * Fetch stats from the backend and render them
+ * as a dashboard above the Kanban board.
+ */
+async function loadStats() {
+    const response = await fetch('/api/applications/stats');
+    if (!response.ok) return;
+
+    const stats = await response.json();
+
+    const dashboard = document.getElementById('stats-dashboard');
+    dashboard.innerHTML = `
+        &lt;div class="stat-card"&gt;
+            &lt;div class="stat-number"&gt;${stats.totalTracked}&lt;/div&gt;
+            &lt;div class="stat-label"&gt;Total Tracked&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="stat-card"&gt;
+            &lt;div class="stat-number"&gt;${stats.totalApplied}&lt;/div&gt;
+            &lt;div class="stat-label"&gt;Applied&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="stat-card"&gt;
+            &lt;div class="stat-number"&gt;${stats.interviews}&lt;/div&gt;
+            &lt;div class="stat-label"&gt;Interviews&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="stat-card stat-card-green"&gt;
+            &lt;div class="stat-number"&gt;${stats.offers}&lt;/div&gt;
+            &lt;div class="stat-label"&gt;Offers&lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class="stat-card"&gt;
+            &lt;div class="stat-number"&gt;${stats.responseRate}%&lt;/div&gt;
+            &lt;div class="stat-label"&gt;Response Rate&lt;/div&gt;
+        &lt;/div&gt;
+    `;
+}
+
+// Load stats when the page loads
+document.addEventListener('DOMContentLoaded', loadStats);</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Why stats matter for your mental health</strong>
+        Job searching is one of the most emotionally draining experiences in a professional career. Rejections pile up and it is easy to feel like nothing is working. But concrete numbers tell a different story. When you can see that you have applied to 35 jobs, gotten 5 phone screens, and landed 3 interviews, you realize the process is <em>working</em> &mdash; it is just a numbers game. The stats dashboard turns abstract anxiety into actionable data. It might sound like a small thing, but for many developers, tracking their applications this way is what kept them going until they landed their first job.
+      </div>
+
+      <p>Think about how far you have come in this side quest. You started with a concept &mdash; a Kanban board &mdash; and built every layer yourself. A database table with foreign keys. Backend endpoints that group data and handle status transitions. Native drag and drop with no libraries. A timeline that tracks history. A stats dashboard that aggregates everything into meaningful numbers. This is a full-stack feature. It touches the database, the backend, the API, the DOM, the CSS, and the user experience. And you built it all.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="sq-apply-1">
+        <p class="quiz-question">1. In the HTML5 Drag and Drop API, why is it necessary to call <code>event.preventDefault()</code> inside the <code>dragover</code> event handler?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-apply-1" value="a"> It prevents the dragged element from snapping back to its original position</label>
+          <label><input type="radio" name="sq-apply-1" value="b"> It stops the browser from navigating away from the page</label>
+          <label><input type="radio" name="sq-apply-1" value="c"> By default, elements do not allow drops &mdash; calling <code>preventDefault()</code> signals that this target accepts drops, enabling the <code>drop</code> event to fire</label>
+          <label><input type="radio" name="sq-apply-1" value="d"> It improves performance by canceling unnecessary repaints during the drag</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! The browser's default behavior is to reject drops on elements. By calling <code>event.preventDefault()</code> on the <code>dragover</code> event, you override this default and tell the browser that the element is a valid drop target. Without this call, the <code>drop</code> event will simply never fire, no matter what other code you write. This is the single most common mistake developers make when first working with the HTML5 Drag and Drop API.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-apply-2">
+        <p class="quiz-question">2. Why does the <code>job_applications</code> table use a foreign key to <code>favorite_jobs</code> instead of storing all the job details directly?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-apply-2" value="a"> Foreign keys make queries run faster</label>
+          <label><input type="radio" name="sq-apply-2" value="b"> MySQL does not allow duplicate data in multiple tables</label>
+          <label><input type="radio" name="sq-apply-2" value="c"> It avoids duplicating job data across tables &mdash; the application references the single source of truth in <code>favorite_jobs</code>, following database normalization principles</label>
+          <label><input type="radio" name="sq-apply-2" value="d"> Spring Boot requires foreign keys for all entity relationships</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! This is <strong>database normalization</strong> in practice. Instead of copying the job title, company name, salary, and every other field into the <code>job_applications</code> table, you store a single <code>favorite_job_id</code> that points to the original record. If the job details ever need to be updated, you update them in one place. This eliminates data duplication, reduces storage, and prevents inconsistencies where the same job has different information in different tables.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-apply-3">
+        <p class="quiz-question">3. What is an "optimistic UI update" in the context of the drag-and-drop Kanban board?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-apply-3" value="a"> The UI only updates after receiving a successful response from the server</label>
+          <label><input type="radio" name="sq-apply-3" value="b"> The UI moves the card immediately when dropped, assuming the server call will succeed, and reverts if it fails</label>
+          <label><input type="radio" name="sq-apply-3" value="c"> The UI shows a loading spinner while waiting for the server response</label>
+          <label><input type="radio" name="sq-apply-3" value="d"> The UI pre-fetches the next likely status change to reduce latency</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! An optimistic UI update means you update the interface <em>immediately</em> without waiting for the server to respond. You "optimistically" assume the request will succeed, which makes the app feel instant and responsive. If the server call fails, you revert the change and notify the user. This pattern is used extensively in modern web applications &mdash; Google Docs, Trello, and GitHub all use optimistic updates to keep the UI feeling fast even when network requests take time.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>When you complete this side quest, you should have a <strong>working Kanban board</strong> integrated into your Resumator application with the following features:</p>
+
+      <ul>
+        <li><strong>Drag-and-drop columns</strong> &mdash; Six columns (Interested, Applied, Phone Screen, Interview, Offer, Rejected) with cards that can be dragged between them using the native HTML5 Drag API.</li>
+        <li><strong>Persistent status tracking</strong> &mdash; When a card is dropped into a new column, the status change is saved to the database via the PUT endpoint. Refreshing the page shows cards in their correct columns.</li>
+        <li><strong>Application timeline</strong> &mdash; Every status change is recorded with a timestamp. Clicking a card shows the full history of that application as a vertical timeline.</li>
+        <li><strong>Stats dashboard</strong> &mdash; A row of stat cards above the board showing total tracked, total applied, interviews, offers, and response rate.</li>
+        <li><strong>Expanded card view</strong> &mdash; Clicking a card opens a modal with full job details, notes, and the timeline.</li>
+        <li><strong>Auto-creation</strong> &mdash; Favoriting a job automatically creates a Kanban card in the "Interested" column.</li>
+      </ul>
+
+      <p>This is a portfolio-worthy feature. A Kanban board demonstrates that you can build interactive, data-driven interfaces, manage relational data across multiple tables, and implement a real workflow system. When an interviewer asks "What have you built?", this is the kind of feature that starts a great conversation.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="apply-tracker">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

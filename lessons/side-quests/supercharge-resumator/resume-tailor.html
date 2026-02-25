@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Resume Tailor &mdash; Coders Farm</title>
+  <meta name="description" content="Build an AI-powered resume tailoring feature that generates personalized suggestions via LLM API">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-resume-tailor">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Resume Tailor</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Resume Tailor</p>
+      <h1>Resume Tailor</h1>
+      <p style="color: var(--text-muted);">Estimated time: 4&ndash;5 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>Connect your Resumator to an LLM API (OpenAI, Anthropic, Google, or Ollama)</li>
+          <li>Build a Spring Boot service that sends job descriptions and resumes to an AI model</li>
+          <li>Design a UI with a modal for pasting job descriptions and generating tailored resume suggestions</li>
+          <li>Learn prompt engineering to dramatically improve AI output quality</li>
+          <li>Understand responsible AI use in the job application process</li>
+        </ul>
+      </div>
+
+      <h3>Deliverable</h3>
+      <p>A working <strong>"Tailor Resume"</strong> feature in your Resumator that accepts a job description and your current resume, sends them to an LLM API, and returns personalized suggestions for how to adjust your resume to better match the role.</p>
+
+      <!-- ==================== PART 1 — WHY TAILOR YOUR RESUME? ==================== -->
+      <h2>1. Why Tailor Your Resume?</h2>
+
+      <p>Sending the same resume to every job application is one of the most common mistakes job seekers make. It feels efficient &mdash; you write one great resume, polish it until it shines, and then blast it out to fifty companies. But here is the uncomfortable truth: <strong>a generic resume is a missed opportunity</strong>. Every single time.</p>
+
+      <p>Think about it from the other side of the desk. A recruiter at a mid-sized company receives two hundred applications for a single opening. They do not read each resume carefully from top to bottom. Research consistently shows that <strong>recruiters spend between 6 and 10 seconds scanning a resume</strong> before deciding whether to keep reading or move on. Six seconds. That is barely enough time to read your name, your most recent job title, and a handful of bullet points. If the words they are scanning for do not jump off the page immediately, your resume goes into the "no" pile. It does not matter how qualified you are.</p>
+
+      <p>But it gets worse. Before a human even sees your resume, it often has to pass through an <strong>Applicant Tracking System (ATS)</strong>. An ATS is software that companies use to manage job applications at scale. When you submit your resume through a company's careers page, the ATS parses it, extracts keywords, and scores it against the job description. If your resume does not contain enough matching keywords, it gets filtered out automatically. A real human never sees it. You could be the perfect candidate, and you would never know you were rejected &mdash; by a machine.</p>
+
+      <p>This is why tailoring matters. When you tailor your resume, you are not fabricating experience or lying about your skills. <strong>Tailoring means emphasizing the parts of your real experience that are most relevant to this specific job.</strong> If the job description mentions "REST APIs" six times and your resume buries that experience in the last bullet point of your second job, you move it up. If the posting asks for "cross-functional collaboration" and you have done plenty of it but describe it as "working with different teams," you adjust your language. Same experience, better presentation.</p>
+
+      <p>The problem is that tailoring is tedious. Reading a job description carefully, identifying the key requirements, cross-referencing them against your resume, rewriting bullet points &mdash; it takes 20 to 30 minutes per application if you do it properly. Multiply that by the dozens of jobs you apply to during a serious job search, and you understand why most people give up and send the same resume everywhere.</p>
+
+      <p>That is exactly the problem we are going to solve. You are going to build a feature that uses an LLM (Large Language Model) to analyze a job description alongside your resume and generate specific, actionable suggestions for how to tailor it. Not a rewrite &mdash; <em>suggestions</em>. You remain in control. The AI does the tedious analysis; you make the final decisions.</p>
+
+      <p>By the end of this side quest, you will have a "Tailor Resume" button on every job card in your Resumator. Click it, and a modal appears with the job description pre-filled. Paste your resume, hit generate, and within seconds you have a list of specific changes: which bullet points to reword, which keywords to add, which sections to emphasize. You save 20 minutes per application while producing better results than you could manually. That is the power of combining your software engineering skills with AI capabilities.</p>
+
+      <!-- ==================== PART 2 — CHOOSING AN LLM API ==================== -->
+      <h2>2. Choosing an LLM API</h2>
+
+      <p>Before you can build anything, you need to decide which LLM to use. There are several excellent options, and the good news is that the code pattern is nearly identical regardless of which one you choose. Here are your main options:</p>
+
+      <ul>
+        <li><strong>OpenAI (GPT-4o, GPT-4o-mini)</strong> &mdash; The most well-known option. Excellent quality, well-documented API, generous free tier for experimentation. Sign up at <code>platform.openai.com</code>.</li>
+        <li><strong>Anthropic (Claude)</strong> &mdash; Known for careful, thoughtful responses. Strong at following detailed instructions, which matters a lot for resume tailoring. Sign up at <code>console.anthropic.com</code>.</li>
+        <li><strong>Google (Gemini)</strong> &mdash; Google's AI offering. Competitive quality, integrates well if you already use Google Cloud. Sign up at <code>ai.google.dev</code>.</li>
+        <li><strong>Ollama (local models)</strong> &mdash; Run open-source models like Llama or Mistral entirely on your own computer. No API key needed, no cost, complete privacy. Download at <code>ollama.com</code>. Quality is lower than the cloud options, but it is free and works offline.</li>
+      </ul>
+
+      <p>For this side quest, we will write the code using OpenAI's API as the primary example, but we will structure the service so you can swap in any provider with minimal changes. The concepts are identical across all providers: you send an HTTP POST request with your prompt in the body, you receive a JSON response with the generated text. The URL, headers, and JSON structure differ slightly between providers, but the pattern is the same. This is an important insight: once you learn to integrate one REST API, integrating any other REST API is just a matter of reading the documentation.</p>
+
+      <p>A note on cost: LLM API calls are not free (except Ollama). However, for this feature each call costs fractions of a cent. A typical resume tailoring request uses roughly 1,000 to 2,000 tokens, which costs less than $0.01 on most providers. Even during heavy development and testing, you are unlikely to spend more than a few dollars total. Most providers also offer free credits when you sign up.</p>
+
+      <h3>Getting Your API Key</h3>
+
+      <p>Whichever provider you choose, you will need an API key. The process is the same pattern you followed when setting up the JSearch API key for your Resumator:</p>
+
+      <ol>
+        <li>Create an account on your chosen provider's platform</li>
+        <li>Navigate to the API keys section (usually under Settings or API)</li>
+        <li>Generate a new key</li>
+        <li>Copy it immediately &mdash; most providers only show it once</li>
+      </ol>
+
+      <p>Store your API key in <code>application.properties</code>, the same file where you keep your JSearch key:</p>
+
+      <div class="code-editor" data-language="properties" data-editable="false" data-runnable="false">
+        <pre><code># application.properties
+
+# Existing JSearch key
+jsearch.api.key=your-jsearch-key-here
+
+# LLM API key (choose one)
+llm.api.key=your-api-key-here
+llm.api.url=https://api.openai.com/v1/chat/completions
+llm.model=gpt-4o-mini</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Never commit API keys to Git.</strong> Your <code>application.properties</code> file should already be listed in <code>.gitignore</code>. If it is not, add it now. Leaked API keys can be exploited within minutes, and you will be billed for someone else's usage. This is not theoretical &mdash; it happens constantly to developers who push keys to public repositories.
+      </div>
+
+      <p>By using <code>application.properties</code>, Spring Boot will inject these values into your service automatically using the <code>@Value</code> annotation &mdash; the same pattern you used for the JSearch API key. Same pattern, different API. This is the power of learning patterns rather than memorizing specific implementations.</p>
+
+      <!-- ==================== PART 3 — BUILDING THE SERVICE ==================== -->
+      <h2>3. Building the Service</h2>
+
+      <p>Now for the core of this feature: a service that takes a job description and a resume, sends them to an LLM, and returns tailored suggestions. This is a Spring Boot <code>@Service</code> class, exactly like the services you have already built for job searching.</p>
+
+      <h3>The ResumeTailorService</h3>
+
+      <p>Create a new file called <code>ResumeTailorService.java</code> in your service package:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@Service
+public class ResumeTailorService {
+
+    @Value("${llm.api.key}")
+    private String apiKey;
+
+    @Value("${llm.api.url}")
+    private String apiUrl;
+
+    @Value("${llm.model}")
+    private String model;
+
+    private final RestTemplate restTemplate;
+    private final ObjectMapper objectMapper;
+
+    public ResumeTailorService(RestTemplate restTemplate,
+                               ObjectMapper objectMapper) {
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
+
+    public String tailorResume(String jobDescription,
+                               String currentResume) {
+        String prompt = buildPrompt(jobDescription, currentResume);
+        return callLlmApi(prompt);
+    }
+
+    private String buildPrompt(String jobDescription,
+                                String currentResume) {
+        return """
+            You are an expert career coach and resume writer.
+            Your task is to analyze a job description and a resume,
+            then provide specific, actionable suggestions for how
+            to tailor the resume to better match the job.
+
+            RULES:
+            - Do NOT rewrite the entire resume
+            - Provide 5-8 specific suggestions
+            - Each suggestion should reference a specific part of
+              the resume and a specific requirement from the job
+            - Suggest keyword additions from the job description
+            - Recommend reordering or rephrasing bullet points
+            - Never suggest fabricating experience
+            - Format each suggestion as a clear, numbered item
+
+            === JOB DESCRIPTION ===
+            %s
+
+            === CURRENT RESUME ===
+            %s
+
+            Provide your suggestions now:
+            """.formatted(jobDescription, currentResume);
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us walk through what this code does. The <code>@Value</code> annotations pull configuration from <code>application.properties</code> &mdash; you have seen this pattern before. The <code>RestTemplate</code> handles HTTP requests to the LLM API, and the <code>ObjectMapper</code> handles JSON parsing. The <code>tailorResume</code> method is the public entry point: give it a job description and a resume, and it returns suggestions.</p>
+
+      <p>The <code>buildPrompt</code> method is where the magic happens. Notice how specific the instructions are: we tell the model exactly what we want (numbered suggestions), what we do not want (no full rewrites), and set constraints (never fabricate experience). The quality of these instructions directly determines the quality of the output. We will improve this prompt significantly in Part 5.</p>
+
+      <h3>Calling the LLM API</h3>
+
+      <p>Now add the method that actually makes the API call:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>private String callLlmApi(String prompt) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.setBearerAuth(apiKey);
+
+    // Build the request body for OpenAI's chat completions format
+    String requestBody;
+    try {
+        var body = objectMapper.createObjectNode();
+        body.put("model", model);
+        body.put("max_tokens", 1500);
+        body.put("temperature", 0.7);
+
+        var messages = body.putArray("messages");
+        var userMessage = messages.addObject();
+        userMessage.put("role", "user");
+        userMessage.put("content", prompt);
+
+        requestBody = objectMapper.writeValueAsString(body);
+    } catch (Exception e) {
+        throw new RuntimeException(
+            "Failed to build API request", e);
+    }
+
+    HttpEntity&lt;String&gt; request =
+        new HttpEntity&lt;&gt;(requestBody, headers);
+
+    try {
+        ResponseEntity&lt;String&gt; response =
+            restTemplate.exchange(
+                apiUrl,
+                HttpMethod.POST,
+                request,
+                String.class
+            );
+
+        // Parse the response to extract the generated text
+        JsonNode root =
+            objectMapper.readTree(response.getBody());
+        return root
+            .path("choices")
+            .get(0)
+            .path("message")
+            .path("content")
+            .asText();
+
+    } catch (Exception e) {
+        throw new RuntimeException(
+            "LLM API call failed: " + e.getMessage(), e);
+    }
+}</code></pre>
+      </div>
+
+      <p>This follows the exact same pattern as your JSearch API calls: set headers, build a request body, make an HTTP call, and parse the JSON response. The only difference is the shape of the request and response. OpenAI expects a <code>messages</code> array with roles, and returns the generated text nested inside <code>choices[0].message.content</code>. If you use Anthropic or Google, the JSON structure is slightly different, but the pattern is identical.</p>
+
+      <h3>Error Handling</h3>
+
+      <p>LLM APIs can fail in ways that your JSearch API calls probably have not. These are external services maintained by other companies, and they have their own reliability characteristics. You need to handle failures gracefully so your users see a helpful message instead of a broken page.</p>
+
+      <ul>
+        <li><strong>API down or unreachable</strong> &mdash; The <code>RestTemplate</code> will throw a <code>ResourceAccessException</code> if it cannot reach the server. This happens during provider outages, network issues, or DNS problems. Your <code>try/catch</code> block catches it and wraps it in a <code>RuntimeException</code> with a clear message. The controller then translates that into a user-friendly response.</li>
+        <li><strong>Rate limits (HTTP 429)</strong> &mdash; Most LLM providers limit how many requests you can make per minute. Free tiers are especially strict &mdash; OpenAI's free tier allows roughly 3 requests per minute. If you hit the limit, the API returns a 429 status code with a <code>Retry-After</code> header. In a production app, you would implement retry logic with exponential backoff: wait 1 second, then 2, then 4, and so on. For now, catching the exception and showing a user-friendly "please wait and try again" message is sufficient.</li>
+        <li><strong>Invalid API key (HTTP 401)</strong> &mdash; If your key is wrong, expired, or revoked, you get a 401 Unauthorized response. Your error handling surfaces this clearly rather than failing silently. During development, this is the most common error you will encounter &mdash; usually because the key was not copied correctly or <code>application.properties</code> has a typo.</li>
+        <li><strong>Token limit exceeded (HTTP 400)</strong> &mdash; Every LLM has a maximum context window &mdash; the total number of tokens (roughly words) it can process in a single request. If the job description plus resume plus your prompt exceeds this limit, the API rejects the request with a 400 error. You could add validation to check the approximate length before sending, or truncate the job description to a reasonable size. Most job descriptions are well within limits, but some company postings are extremely long.</li>
+        <li><strong>Timeout</strong> &mdash; LLM responses can take 10 to 30 seconds depending on the model and server load. Spring Boot's default <code>RestTemplate</code> timeout may not be long enough. Consider configuring a longer timeout specifically for LLM calls by creating a separate <code>RestTemplate</code> bean with a 60-second timeout.</li>
+      </ul>
+
+      <p>A key principle here: <strong>never show raw exception messages to users.</strong> An error like <code>HttpClientErrorException: 429 Too Many Requests</code> means nothing to someone using your application. Translate every error into plain language: "The AI service is busy right now. Please wait a moment and try again." This is a professional habit that distinguishes polished applications from student projects.</p>
+
+      <p>Now add a controller endpoint so your frontend can reach this service:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.controller;
+
+import com.example.resumator.service.ResumeTailorService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/tailor")
+public class ResumeTailorController {
+
+    private final ResumeTailorService tailorService;
+
+    public ResumeTailorController(
+            ResumeTailorService tailorService) {
+        this.tailorService = tailorService;
+    }
+
+    @PostMapping
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; tailor(
+            @RequestBody Map&lt;String, String&gt; request) {
+
+        String jobDescription =
+            request.get("jobDescription");
+        String resume = request.get("resume");
+
+        if (jobDescription == null
+                || jobDescription.isBlank()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("error",
+                    "Job description is required"));
+        }
+        if (resume == null || resume.isBlank()) {
+            return ResponseEntity.badRequest().body(
+                Map.of("error", "Resume is required"));
+        }
+
+        try {
+            String suggestions =
+                tailorService.tailorResume(
+                    jobDescription, resume);
+            return ResponseEntity.ok(
+                Map.of("suggestions", suggestions));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError()
+                .body(Map.of("error",
+                    "Failed to generate suggestions. "
+                    + "Please try again later."));
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p>This controller receives a POST request with a JSON body containing the job description and resume, validates both fields, calls the service, and returns the suggestions. The error handling ensures users always see a friendly message rather than a stack trace. This is the same controller pattern you have used throughout the Resumator &mdash; nothing new here except the endpoint it calls.</p>
+
+      <p>Notice the input validation at the top of the method. We check that both the job description and resume are present and non-blank before calling the service. This is a defensive programming habit you should apply to every controller endpoint: validate inputs before processing. Without this check, a request with a missing resume would still call the LLM API, waste tokens, and return nonsensical suggestions &mdash; a bad user experience and a waste of money.</p>
+
+      <p>Also notice the generic <code>Map&lt;String, String&gt;</code> used for both the request and response. For a simple feature like this, a Map is perfectly adequate. In a larger application, you might define dedicated request and response DTOs (Data Transfer Objects) for type safety and documentation. Either approach works &mdash; use your judgment based on the complexity of the data.</p>
+
+      <!-- ==================== PART 4 — THE UI ==================== -->
+      <h2>4. The UI</h2>
+
+      <p>You have a working backend. Now you need a way for users to actually use it. The UI for this feature has three parts: a button on each job card, a modal dialog for input, and JavaScript to tie it all together.</p>
+
+      <h3>The "Tailor Resume" Button</h3>
+
+      <p>Add a "Tailor Resume" button to each job card in your search results. This sits alongside your existing "Save to Favorites" button:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Add this inside your job card template --&gt;
+&lt;div class="job-card-actions"&gt;
+  &lt;button class="btn btn-primary btn-save-favorite"
+          data-job-id="${job.id}"&gt;
+    Save to Favorites
+  &lt;/button&gt;
+  &lt;button class="btn btn-secondary btn-tailor-resume"
+          data-job-id="${job.id}"
+          data-job-description="${job.description}"&gt;
+    Tailor Resume
+  &lt;/button&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <h3>The Tailor Resume Modal</h3>
+
+      <p>When the user clicks "Tailor Resume," a modal appears with the job description pre-filled and a textarea for their resume. Add this HTML to the bottom of your main page, before the closing <code>&lt;/body&gt;</code> tag:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Resume Tailor Modal --&gt;
+&lt;div id="tailor-modal" class="modal-overlay" hidden&gt;
+  &lt;div class="modal-content"&gt;
+    &lt;div class="modal-header"&gt;
+      &lt;h2&gt;Tailor Your Resume&lt;/h2&gt;
+      &lt;button class="modal-close"
+              aria-label="Close modal"&gt;&amp;times;&lt;/button&gt;
+    &lt;/div&gt;
+    &lt;div class="modal-body"&gt;
+      &lt;div class="tailor-section"&gt;
+        &lt;label for="tailor-job-desc"&gt;
+          Job Description
+        &lt;/label&gt;
+        &lt;textarea id="tailor-job-desc" rows="8"
+                  readonly&gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+      &lt;div class="tailor-section"&gt;
+        &lt;label for="tailor-resume"&gt;
+          Your Resume (paste or edit below)
+        &lt;/label&gt;
+        &lt;textarea id="tailor-resume" rows="10"
+            placeholder="Paste your resume here..."
+        &gt;&lt;/textarea&gt;
+      &lt;/div&gt;
+      &lt;button id="tailor-generate-btn"
+              class="btn btn-primary btn-lg"&gt;
+        Generate Suggestions
+      &lt;/button&gt;
+      &lt;div id="tailor-loading" class="loading-indicator"
+           hidden&gt;
+        &lt;div class="spinner"&gt;&lt;/div&gt;
+        &lt;p&gt;Analyzing your resume against the job
+           description... This may take 10-20 seconds.&lt;/p&gt;
+      &lt;/div&gt;
+      &lt;div id="tailor-results" class="tailor-results"
+           hidden&gt;
+        &lt;h3&gt;Suggestions&lt;/h3&gt;
+        &lt;div id="tailor-suggestions"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;div id="tailor-error" class="tailor-error"
+           hidden&gt;&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>Style the modal so it looks polished and professional. Add this CSS:</p>
+
+      <div class="code-editor" data-language="css" data-editable="true" data-runnable="false">
+        <pre><code>/* Resume Tailor Modal Styles */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+.modal-overlay[hidden] { display: none; }
+
+.modal-content {
+  background: var(--bg-primary);
+  border-radius: 12px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+.modal-header h2 { margin: 0; }
+.modal-close {
+  background: none; border: none;
+  font-size: 1.5rem; cursor: pointer;
+  color: var(--text-muted);
+}
+
+.modal-body { padding: 1.5rem; }
+
+.tailor-section { margin-bottom: 1.5rem; }
+.tailor-section label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.tailor-section textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.loading-indicator {
+  text-align: center;
+  padding: 2rem 0;
+}
+.spinner {
+  width: 40px; height: 40px;
+  border: 4px solid var(--border-color);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 1rem;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.tailor-results {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  border-left: 4px solid var(--accent);
+}
+
+.tailor-error {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #fee;
+  color: #c00;
+  border-radius: 8px;
+}</code></pre>
+      </div>
+
+      <h3>The JavaScript</h3>
+
+      <p>Now wire everything together. This JavaScript handles opening the modal, loading the saved resume from LocalStorage, making the API call, and displaying results:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>// Resume Tailor functionality
+(function() {
+  const modal =
+    document.getElementById('tailor-modal');
+  const jobDescField =
+    document.getElementById('tailor-job-desc');
+  const resumeField =
+    document.getElementById('tailor-resume');
+  const generateBtn =
+    document.getElementById('tailor-generate-btn');
+  const loadingEl =
+    document.getElementById('tailor-loading');
+  const resultsEl =
+    document.getElementById('tailor-results');
+  const suggestionsEl =
+    document.getElementById('tailor-suggestions');
+  const errorEl =
+    document.getElementById('tailor-error');
+
+  // Load saved resume from LocalStorage
+  const STORAGE_KEY = 'resumator-saved-resume';
+
+  function loadSavedResume() {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      resumeField.value = saved;
+    }
+  }
+
+  function saveResume() {
+    localStorage.setItem(
+      STORAGE_KEY, resumeField.value);
+  }
+
+  // Open modal when "Tailor Resume" button is clicked
+  document.addEventListener('click', function(e) {
+    const btn = e.target.closest('.btn-tailor-resume');
+    if (!btn) return;
+
+    const jobDesc =
+      btn.getAttribute('data-job-description');
+    jobDescField.value = jobDesc || '';
+    loadSavedResume();
+
+    // Reset previous state
+    resultsEl.hidden = true;
+    errorEl.hidden = true;
+    loadingEl.hidden = true;
+    generateBtn.disabled = false;
+
+    modal.hidden = false;
+  });
+
+  // Close modal
+  modal.addEventListener('click', function(e) {
+    if (e.target === modal
+        || e.target.closest('.modal-close')) {
+      modal.hidden = true;
+    }
+  });
+
+  // Close on Escape key
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && !modal.hidden) {
+      modal.hidden = true;
+    }
+  });
+
+  // Generate suggestions
+  generateBtn.addEventListener('click', async () => {
+    const jobDescription = jobDescField.value.trim();
+    const resume = resumeField.value.trim();
+
+    if (!resume) {
+      errorEl.textContent =
+        'Please paste your resume first.';
+      errorEl.hidden = false;
+      return;
+    }
+
+    // Save resume for next time
+    saveResume();
+
+    // Show loading, hide previous results
+    generateBtn.disabled = true;
+    loadingEl.hidden = false;
+    resultsEl.hidden = true;
+    errorEl.hidden = true;
+
+    try {
+      const response = await fetch('/api/tailor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          jobDescription, resume
+        })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.error || 'Something went wrong');
+      }
+
+      // Display suggestions
+      suggestionsEl.innerHTML =
+        formatSuggestions(data.suggestions);
+      resultsEl.hidden = false;
+
+    } catch (err) {
+      errorEl.textContent =
+        err.message
+        || 'Failed to generate suggestions.';
+      errorEl.hidden = false;
+    } finally {
+      generateBtn.disabled = false;
+      loadingEl.hidden = true;
+    }
+  });
+
+  function formatSuggestions(text) {
+    // Convert plain text suggestions to HTML
+    return text
+      .split('\n')
+      .filter(line => line.trim())
+      .map(line => '&lt;p&gt;' + line + '&lt;/p&gt;')
+      .join('');
+  }
+})();</code></pre>
+      </div>
+
+      <p>There are several important details in this code worth understanding. Each one represents a pattern you will use again and again in frontend development:</p>
+
+      <ul>
+        <li><strong>LocalStorage persistence</strong> &mdash; The user's resume is saved to LocalStorage every time they generate suggestions. The next time they open the modal &mdash; for any job, not just the same one &mdash; their resume is pre-filled automatically. This is a significant quality-of-life improvement during a real job search. Without it, the user would have to paste their resume every single time they want to tailor for a new job. LocalStorage survives page refreshes and browser restarts, so even if they close the tab and come back tomorrow, their resume is still there.</li>
+        <li><strong>Event delegation</strong> &mdash; Instead of attaching click handlers to every "Tailor Resume" button (which would break when new search results are loaded dynamically), we use event delegation: a single listener on the <code>document</code> that checks if the clicked element matches <code>.btn-tailor-resume</code>. You learned this pattern in earlier lessons. It works because events "bubble up" from the clicked element through every parent element to the document. No matter how many buttons exist on the page or when they were created, this single listener catches them all.</li>
+        <li><strong>Loading state management</strong> &mdash; LLM API calls take 10 to 20 seconds, which is an eternity in web UI terms. Without a clear loading indicator, users will assume the button is broken and click it again, generating duplicate API requests (and duplicate charges to your API account). The spinner, disabled button, and explanatory text ("This may take 10-20 seconds") all work together to set expectations and keep the user informed. Notice that the button is re-enabled in the <code>finally</code> block, which runs regardless of success or failure.</li>
+        <li><strong>Error handling</strong> &mdash; Every <code>fetch</code> call can fail for reasons completely outside your control: the network drops, the server returns an error, or the response is not valid JSON. All of these are caught in the <code>catch</code> block and displayed in the error element. The user always sees a message explaining what went wrong, never a blank screen or a frozen spinner.</li>
+        <li><strong>State reset on modal open</strong> &mdash; Every time the modal opens, we reset the previous results, errors, and loading indicators. Without this reset, the user would see stale suggestions from a previous job while the new request is loading, which would be confusing. Small details like this are what make an application feel polished.</li>
+      </ul>
+
+      <!-- ==================== PART 5 — PROMPT ENGINEERING ==================== -->
+      <h2>5. Prompt Engineering</h2>
+
+      <p>Your feature works now. But the quality of the suggestions depends almost entirely on one thing: <strong>the prompt</strong>. The code you wrote in Part 3 sends a prompt to the LLM, and the LLM generates its response based on what you asked for and how you asked for it. A vague prompt produces vague suggestions. A specific, well-structured prompt produces specific, actionable suggestions.</p>
+
+      <p>This is not a minor detail. <strong>Prompt engineering</strong> &mdash; the practice of crafting prompts that reliably produce high-quality outputs from LLMs &mdash; is a real and increasingly valuable skill in software development. Companies are hiring prompt engineers. Developers who understand how to communicate effectively with AI models build better products. This section teaches you the fundamentals.</p>
+
+      <h3>Start with a Basic Prompt</h3>
+
+      <p>Imagine you sent the simplest possible prompt to an LLM:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>Here is a job description and a resume.
+Give me suggestions.
+
+Job: [job description]
+Resume: [resume]</code></pre>
+      </div>
+
+      <p>The results from this prompt will be mediocre. The model does not know what kind of suggestions you want. It might rewrite your entire resume. It might give one generic sentence. It might focus on formatting instead of content. It might suggest skills you do not have. The output is unpredictable because the input was unstructured.</p>
+
+      <h3>Iterate: Add Structure</h3>
+
+      <p>Now compare that to a more structured prompt. Each addition improves the output:</p>
+
+      <div class="code-editor" data-language="text" data-editable="true" data-runnable="false">
+        <pre><code>You are a career coach specializing in tech resumes.
+
+TASK: Analyze the job description and resume below.
+Produce exactly 6 tailoring suggestions.
+
+FORMAT each suggestion as:
+  [Number]. [SECTION: which resume section to change]
+  Current: [what the resume currently says]
+  Suggested: [what it should say instead]
+  Why: [how this matches the job description]
+
+RULES:
+- Only suggest changes to EXISTING content
+- Never add skills or experience the candidate
+  does not have
+- Focus on keyword alignment with the job posting
+- Prioritize the top half of the resume (recruiters
+  read top-down)
+- Use action verbs that match the job posting's
+  language
+
+=== JOB DESCRIPTION ===
+{jobDescription}
+
+=== RESUME ===
+{resume}
+
+Provide your 6 suggestions now:</code></pre>
+      </div>
+
+      <p>This prompt is dramatically better. Here is why each change matters:</p>
+
+      <ul>
+        <li><strong>Role assignment</strong> ("You are a career coach") &mdash; Giving the model a role focuses its response style and expertise. A career coach gives different advice than a generic assistant.</li>
+        <li><strong>Explicit count</strong> ("exactly 6") &mdash; Without a count, the model might give 2 suggestions or 20. Specifying a number gives you predictable, useful output.</li>
+        <li><strong>Output format</strong> (Number, Section, Current, Suggested, Why) &mdash; Defining the exact structure means the output is consistent and parseable. Every suggestion has the same format, making it easy for users to compare and act on them.</li>
+        <li><strong>Constraints</strong> ("Never add skills the candidate does not have") &mdash; Constraints prevent the most common failure modes. Without them, the model will happily suggest adding "10 years of Kubernetes experience" to a junior developer's resume.</li>
+        <li><strong>Priority guidance</strong> ("top half of the resume") &mdash; This incorporates domain knowledge about how resumes are actually read, steering the model toward the most impactful suggestions.</li>
+        <li><strong>Action trigger</strong> ("Provide your 6 suggestions now") &mdash; Ending with a clear instruction to begin generating ensures the model starts immediately rather than asking clarifying questions.</li>
+      </ul>
+
+      <h3>Advanced: Add Examples</h3>
+
+      <p>The most powerful prompting technique is <strong>few-shot prompting</strong> &mdash; providing one or two examples of what good output looks like. When the model sees an example, it mimics the style, depth, and format:</p>
+
+      <div class="code-editor" data-language="text" data-editable="true" data-runnable="false">
+        <pre><code>EXAMPLE of a good suggestion:
+
+1. [SECTION: Professional Summary]
+   Current: "Software developer with 3 years of
+   experience building web applications."
+   Suggested: "Full-stack developer with 3 years of
+   experience building scalable REST APIs and React
+   front-ends in agile, cross-functional teams."
+   Why: The job posting mentions "REST APIs" 4 times,
+   "React" 3 times, and "cross-functional" twice.
+   The current summary misses all of these keywords
+   that the ATS will scan for.</code></pre>
+      </div>
+
+      <p>Adding even a single example like this dramatically improves the output quality because the model now understands exactly what depth and specificity you expect.</p>
+
+      <div class="callout callout-info">
+        <strong>Prompt engineering is iterative.</strong> You will not get a perfect prompt on the first try. Run it, read the results, identify what is missing or wrong, adjust the prompt, and run it again. This iteration cycle is exactly how professional prompt engineers work. Expect to go through 5 to 10 iterations before the output is consistently good. Keep a text file of your prompt versions so you can track what changed and why. This is prompt engineering's equivalent of version control.
+      </div>
+
+      <h3>Testing Your Prompts</h3>
+
+      <p>Before integrating your improved prompt into the Java code, test it directly in the LLM provider's playground or web interface. Every provider has one: OpenAI has the ChatGPT interface, Anthropic has the Claude console, Google has AI Studio. Copy your prompt, paste in a real job description and a real resume (use your own or create a sample), and evaluate the results. Is each suggestion specific and actionable? Does the format match what you asked for? Are there any hallucinated skills? Iterate in the playground where feedback is instant, then transfer the final prompt to your code.</p>
+
+      <p>A common mistake is to test with only one job description and declare the prompt "done." Test with at least three or four very different roles: a backend Java position, a frontend React role, a DevOps job, and a management position. A good prompt produces useful, differentiated suggestions for all of them. A weak prompt produces the same generic advice regardless of the job.</p>
+
+      <p>Update your <code>buildPrompt</code> method in <code>ResumeTailorService.java</code> with your improved prompt. The beauty of this architecture is that improving the prompt requires zero changes to the rest of your code &mdash; the controller, the API call, and the frontend all stay the same. You are only changing the instructions, not the plumbing.</p>
+
+      <!-- ==================== PART 6 — RESPONSIBLE AI USE ==================== -->
+      <h2>6. Responsible AI Use</h2>
+
+      <p>You have built a powerful tool. Before you use it in a real job search, there are things you need to understand about using AI in the application process. This is not a lecture about ethics for the sake of it &mdash; this is practical advice that will affect whether you get hired.</p>
+
+      <h3>AI Suggestions Are a Starting Point</h3>
+
+      <p>The suggestions your tool generates are exactly that: <strong>suggestions</strong>. They are not a finished product. The LLM does not know the full context of your career, the nuances of your experience, or the specific culture of the company you are applying to. It is pattern-matching based on text. It is very good at identifying keyword gaps and suggesting rephrasing, but it cannot replace your judgment about what is accurate and what represents you authentically.</p>
+
+      <p>Treat every suggestion as a starting point. Read each one carefully. Ask yourself: "Is this accurate? Does this represent my actual experience? Would I be comfortable explaining this in an interview?" If the answer to any of these is no, modify or discard the suggestion.</p>
+
+      <h3>Never Submit an Unread Resume</h3>
+
+      <p>This should be obvious, but it happens more than you would think: <strong>never submit a resume you have not read word-for-word after making AI-suggested changes.</strong> LLMs can introduce subtle inaccuracies. They might rephrase something in a way that overstates your role. They might use industry jargon that you do not actually know. They might describe a technology in a way that sounds impressive but is technically wrong. Any of these will be immediately apparent to a knowledgeable interviewer, and the result is worse than if you had sent the original resume.</p>
+
+      <h3>Do Not Fabricate Experience</h3>
+
+      <p>There is a difference between rephrasing your experience to highlight relevant keywords and inventing experience you do not have. The line is clear: <strong>if you cannot talk about it confidently in an interview, it should not be on your resume.</strong></p>
+
+      <p>Your prompt already includes the constraint "never suggest fabricating experience," but the model does not always follow instructions perfectly. It might suggest adding a skill you have barely touched, or rewording a bullet point in a way that implies more responsibility than you had. You are the final filter. Use your judgment.</p>
+
+      <h3>Hiring Managers Can Detect AI-Generated Resumes</h3>
+
+      <p>Here is the practical reality: <strong>hiring managers are getting very good at spotting resumes that were entirely written by AI.</strong> The tells are obvious once you know what to look for:</p>
+
+      <ul>
+        <li><strong>Generic phrasing</strong> &mdash; "Leveraged cutting-edge technologies to drive innovative solutions" sounds impressive but says nothing. AI models gravitate toward this kind of filler when they lack specific details.</li>
+        <li><strong>Buzzword soup</strong> &mdash; When every bullet point contains "synergy," "stakeholder," "cross-functional," and "data-driven," it reads like an AI tried to maximize keyword density rather than describe real work.</li>
+        <li><strong>Unnaturally uniform structure</strong> &mdash; Real humans vary their sentence structure. AI-written resumes often have bullet points that all follow the exact same pattern: "Led [something] resulting in [metric] across [scope]." The repetition is a dead giveaway.</li>
+        <li><strong>Mismatch with interview performance</strong> &mdash; This is the most damaging one. If your resume uses sophisticated industry jargon and polished language, but your interview answers sound completely different, the interviewer notices. This creates a trust problem that is very difficult to recover from.</li>
+      </ul>
+
+      <p>This is why your tool generates <em>suggestions</em> rather than a complete rewritten resume. The goal is to keep your authentic voice and real experience while optimizing for keyword alignment and relevance. A resume that is clearly yours but strategically tailored will always outperform one that reads like it was generated by ChatGPT.</p>
+
+      <div class="callout callout-warning">
+        <strong>The bottom line:</strong> Use AI to work smarter, not to pretend you are someone you are not. A tailored resume that accurately represents your experience, written in your voice, with strategic keyword placement &mdash; that is the sweet spot. That is what this tool helps you build.
+      </div>
+
+      <p>One final thought on this topic. The skills you are building here &mdash; integrating APIs, building services, designing user interfaces, engineering prompts &mdash; are the <em>real</em> resume items. When an interviewer sees "Built an AI-powered resume tailoring feature using Spring Boot and OpenAI's API" on your resume, they are going to want to hear about it. And because you actually built it, you can talk about every decision, every tradeoff, and every challenge. That conversation is worth more than any amount of keyword optimization.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="qsq-rt-1">
+        <p class="quiz-question">1. Why is sending the same generic resume to every job application a problem?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-rt-1" value="a"> Generic resumes are too long for most job applications</label>
+          <label><input type="radio" name="qsq-rt-1" value="b"> ATS systems filter by keyword match, and recruiters spend only 6-10 seconds scanning &mdash; so a resume that does not reflect the specific job's language gets filtered out or skipped before a human truly evaluates it</label>
+          <label><input type="radio" name="qsq-rt-1" value="c"> Companies require a unique resume format for each application</label>
+          <label><input type="radio" name="qsq-rt-1" value="d"> Generic resumes are automatically rejected by email spam filters</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! ATS software scores your resume against the job description by matching keywords, and recruiters only spend a few seconds scanning what makes it through. A generic resume misses the specific language and keywords each job posting uses, meaning it either gets filtered out by the ATS or fails to catch the recruiter's eye during their brief scan. Tailoring your resume means emphasizing the parts of your real experience that match what each specific role is looking for.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-rt-2">
+        <p class="quiz-question">2. What is the most impactful way to improve the quality of suggestions from an LLM API?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-rt-2" value="a"> Use a more expensive model with more parameters</label>
+          <label><input type="radio" name="qsq-rt-2" value="b"> Send the request multiple times and average the responses</label>
+          <label><input type="radio" name="qsq-rt-2" value="c"> Improve the prompt by adding specific structure, constraints, output format, and examples (prompt engineering)</label>
+          <label><input type="radio" name="qsq-rt-2" value="d"> Increase the <code>max_tokens</code> parameter to allow longer responses</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Exactly right! Prompt engineering &mdash; crafting a clear prompt with a defined role, specific constraints, output format, and examples &mdash; has the greatest impact on output quality. A well-engineered prompt on a smaller model often outperforms a vague prompt on a larger one. Adding structure (numbered suggestions with sections), constraints (never fabricate experience), and examples (few-shot prompting) transforms mediocre output into specific, actionable suggestions.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-rt-3">
+        <p class="quiz-question">3. Why does the Resume Tailor feature generate <em>suggestions</em> rather than a fully rewritten resume?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-rt-3" value="a"> Because the LLM API has a character limit and cannot generate a full resume</label>
+          <label><input type="radio" name="qsq-rt-3" value="b"> Because fully rewritten resumes are easily detected by hiring managers, may contain inaccuracies, and remove the candidate's authentic voice &mdash; suggestions keep the human in control</label>
+          <label><input type="radio" name="qsq-rt-3" value="c"> Because rewriting the full resume would take too long and time out the API request</label>
+          <label><input type="radio" name="qsq-rt-3" value="d"> Because it is illegal to use AI to write a resume in most states</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That's right! AI-generated resumes have telltale patterns that hiring managers increasingly recognize: generic phrasing, buzzword overload, and unnaturally uniform structure. More importantly, the LLM does not know the full context of your career and may introduce subtle inaccuracies. By generating suggestions rather than a rewrite, you stay in control. You decide which suggestions to adopt, you maintain your authentic voice, and you can confidently discuss everything on your resume in an interview.</div>
+      </div>
+
+      <!-- ==================== SUMMARY ==================== -->
+      <h2>Side Quest Complete</h2>
+
+      <p>You have built a genuinely useful feature &mdash; one that solves a real problem in the job search process. Let us recap what you accomplished:</p>
+
+      <ul>
+        <li><strong>You connected your Resumator to an LLM API</strong> &mdash; configuring API keys, building HTTP requests, and parsing JSON responses. The same pattern as the JSearch API, applied to a completely different service.</li>
+        <li><strong>You built a Spring Boot service</strong> (<code>ResumeTailorService</code>) that constructs prompts, calls an AI model, and returns structured suggestions. Clean separation of concerns, proper error handling, configurable via properties.</li>
+        <li><strong>You designed and implemented a polished UI</strong> with a modal dialog, loading indicators, LocalStorage persistence, and event delegation. Every interaction pattern follows best practices.</li>
+        <li><strong>You learned prompt engineering</strong> &mdash; how to go from a vague prompt that produces mediocre results to a structured, constrained prompt with examples that produces specific, actionable output. This skill applies far beyond this project.</li>
+        <li><strong>You understood responsible AI use</strong> &mdash; why suggestions beat rewrites, why you must read every change, and why authenticity matters more than optimization.</li>
+      </ul>
+
+      <p>This feature makes your Resumator significantly more valuable as a real job search tool. More importantly, you now understand how to integrate LLM APIs into any application &mdash; a skill that is in high demand across the entire software industry.</p>
+
+      <p>Think about what else you could build with this same pattern. Interview preparation questions generated from a job description. Cover letter drafts. Salary negotiation talking points based on the role and your experience. The LLM API is a general-purpose tool, and now that you know how to use it, the possibilities are limited only by your prompt engineering skills and your imagination.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="resume-tailor">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

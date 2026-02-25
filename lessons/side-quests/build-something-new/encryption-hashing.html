@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Encryption &amp; Hashing Lab — Coders Farm</title>
+  <meta name="description" content="Learn hashing, salting, bcrypt, symmetric and asymmetric encryption, and HTTPS through hands-on Java programs">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-encryption-hashing">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Encryption &amp; Hashing</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Encryption &amp; Hashing Lab</p>
+      <h1>Encryption &amp; Hashing Lab</h1>
+      <p style="color: var(--text-muted);">Estimated time: 3&ndash;4 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand why storing passwords as plain text is catastrophic</li>
+          <li>Use Java&rsquo;s <code>MessageDigest</code> to hash strings with SHA-256</li>
+          <li>Explain the avalanche effect and why hash functions are one-way</li>
+          <li>Understand rainbow table attacks and why salting defeats them</li>
+          <li>Use Spring Security&rsquo;s <code>BCryptPasswordEncoder</code> for real-world password hashing</li>
+          <li>Distinguish between hashing (one-way) and encryption (two-way)</li>
+          <li>Implement AES symmetric encryption and RSA asymmetric encryption in Java</li>
+          <li>Explain how HTTPS uses both asymmetric and symmetric encryption</li>
+          <li>Build a simple bcrypt-based password registration and login system</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHY PASSWORDS CAN'T BE STORED AS TEXT ==================== -->
+      <h2>1. Why Passwords Cannot Be Stored as Text</h2>
+
+      <p>Imagine you sign up for a website. You type in your email, choose a password, and click &ldquo;Create Account.&rdquo; What happens next? The obvious approach &mdash; the one that seems perfectly reasonable if you have never thought about security &mdash; is for the website to store your email and password directly in a database table. Something like this:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- THIS IS HOW YOU SHOULD NEVER STORE PASSWORDS
+CREATE TABLE users (
+    id       INT PRIMARY KEY AUTO_INCREMENT,
+    email    VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
+);
+
+INSERT INTO users (email, password) VALUES
+('alice@example.com', 'sunshine99'),
+('bob@example.com',   'qwerty123'),
+('carol@example.com', 'ilovecats!');</code></pre>
+      </div>
+
+      <p>This is called <strong>plain text storage</strong>, and it is an absolute catastrophe waiting to happen. Here is why: databases get breached. It is not a question of <em>if</em> but <em>when</em>. Attackers find SQL injection vulnerabilities. Employees make mistakes. Backups get left on unsecured servers. When a database is breached and passwords are stored in plain text, the attacker instantly has every single username and password combination. No cracking required. No computation needed. They just read them.</p>
+
+      <p>This is not a hypothetical scenario. It has happened repeatedly to massive companies:</p>
+
+      <div class="callout callout-warning">
+        <strong>Real-world plain text breaches</strong>
+        <ul>
+          <li><strong>LinkedIn, 2012:</strong> 6.5 million password hashes were leaked. They were using unsalted SHA-1 &mdash; barely better than plain text. Within hours, security researchers had cracked the majority of them. The breach later turned out to affect 117 million accounts.</li>
+          <li><strong>Adobe, 2013:</strong> 153 million user records were stolen. Adobe used reversible encryption (not hashing) with a single key for all passwords, and stored password hints in plain text. Researchers could figure out common passwords just by looking at the hints. The password &ldquo;123456&rdquo; appeared 1.9 million times.</li>
+          <li><strong>RockYou, 2009:</strong> 32 million passwords stored in completely plain text. When the database was breached, every single password was immediately readable. This database became one of the most widely used wordlists for password cracking tools.</li>
+        </ul>
+      </div>
+
+      <p>So if you cannot store the password itself, what do you store? The answer is: <strong>you do not store the password at all.</strong> You store a <em>hash</em> of the password. And that is what this entire lesson is about.</p>
+
+      <!-- ==================== PART 2 — WHAT IS HASHING? ==================== -->
+      <h2>2. What Is Hashing?</h2>
+
+      <p>A <strong>hash function</strong> is a mathematical function that takes any input &mdash; a string, a file, an entire novel &mdash; and produces a fixed-size output called a <strong>hash</strong> (also called a <strong>digest</strong> or <strong>fingerprint</strong>). The input can be any length, but the output is always the same length. For SHA-256, that output is always exactly 256 bits, which is 64 hexadecimal characters.</p>
+
+      <p>Hash functions have three critical properties that make them useful for security:</p>
+
+      <div class="key-concept">
+        <h4>Property 1: Deterministic</h4>
+        <p>The same input always produces the same output. If you hash the string <code>"password123"</code> with SHA-256 today, tomorrow, or ten years from now, you will always get exactly the same 64-character hex string. This is what makes verification possible &mdash; when a user logs in, you hash what they typed and compare it to the stored hash.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Property 2: One-Way (Pre-image Resistance)</h4>
+        <p>Given a hash output, it is computationally infeasible to figure out what the original input was. You cannot &ldquo;reverse&rdquo; a hash. You cannot &ldquo;decrypt&rdquo; it. The mathematical operations involved destroy information in a way that cannot be reconstructed. The only way to find the input is to guess inputs and hash them until you find a match &mdash; which is exactly what attackers try to do.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Property 3: Avalanche Effect</h4>
+        <p>Changing even a single character in the input produces a completely different hash. The outputs look entirely unrelated. There is no pattern, no gradual change, no way to look at two hashes and determine whether their inputs were similar. This prevents attackers from &ldquo;getting close&rdquo; to the right answer.</p>
+      </div>
+
+      <p>Let us see this in action. The following Java program uses <code>MessageDigest</code> to hash two nearly identical strings with SHA-256:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+public class HashDemo {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+        String input1 = "password123";
+        String input2 = "password124";
+
+        String hash1 = sha256(input1);
+        String hash2 = sha256(input2);
+
+        System.out.println("Input:  " + input1);
+        System.out.println("SHA-256: " + hash1);
+        System.out.println();
+        System.out.println("Input:  " + input2);
+        System.out.println("SHA-256: " + hash2);
+        System.out.println();
+
+        // Demonstrate determinism: hash the first input again
+        String hash1Again = sha256(input1);
+        System.out.println("Hash input1 again: " + hash1Again);
+        System.out.println("Same as before?    " + hash1.equals(hash1Again));
+    }
+
+    public static String sha256(String input) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(input.getBytes());
+
+        // Convert byte array to hexadecimal string
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+}</code></pre>
+      </div>
+
+      <p>Run that program. You will see that <code>"password123"</code> produces the hash <code>ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f</code>. And <code>"password124"</code> &mdash; which differs by just one character &mdash; produces something completely different. There is no similarity between the two hashes whatsoever. That is the avalanche effect.</p>
+
+      <p>Also notice that hashing <code>"password123"</code> a second time produces the exact same hash. That is determinism. This is how login verification works: the server hashes what the user typed and checks if it matches the stored hash. If it matches, the password is correct. The server never needs to know or store the actual password.</p>
+
+      <p>Let us walk through the code. <code>MessageDigest.getInstance("SHA-256")</code> creates a SHA-256 hash function. The <code>digest()</code> method takes a byte array and returns the hash as a byte array. We then convert each byte to its two-character hexadecimal representation. The <code>0xff &amp; b</code> handles Java&rsquo;s signed bytes correctly (bytes in Java range from -128 to 127, but we need unsigned values 0 to 255).</p>
+
+      <div class="callout callout-info">
+        <strong>Common hash algorithms</strong>
+        <ul>
+          <li><strong>MD5:</strong> Produces a 128-bit (32-character hex) hash. <em>Broken for security purposes.</em> Collisions (two different inputs producing the same hash) can be generated in seconds. Never use MD5 for passwords or security. It is still sometimes used for file integrity checksums.</li>
+          <li><strong>SHA-1:</strong> Produces a 160-bit (40-character hex) hash. Also broken &mdash; Google demonstrated a practical collision in 2017 (the &ldquo;SHAttered&rdquo; attack). Deprecated for security use.</li>
+          <li><strong>SHA-256:</strong> Part of the SHA-2 family. Produces a 256-bit (64-character hex) hash. Currently secure for general hashing, but <em>too fast</em> for password hashing (we will explain why shortly).</li>
+          <li><strong>bcrypt, scrypt, Argon2:</strong> Purpose-built password hashing functions. They are intentionally slow and include built-in salting. These are what you should use for passwords in real applications.</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 3 — WHY SIMPLE HASHING ISN'T ENOUGH ==================== -->
+      <h2>3. Why Simple Hashing Is Not Enough</h2>
+
+      <p>You might think we are done. Just hash every password with SHA-256 before storing it, and the database is safe. Sadly, it is not that simple. Simple hashing has a devastating weakness: <strong>rainbow tables</strong>.</p>
+
+      <p>A rainbow table is a massive pre-computed database that maps hash values back to their original inputs. Someone has already hashed millions &mdash; sometimes billions &mdash; of common passwords, dictionary words, and combinations, and stored the results. If your password hash appears in a rainbow table, it can be &ldquo;cracked&rdquo; instantly by looking it up.</p>
+
+      <p>Remember the SHA-256 hash of <code>"password123"</code>? That hash &mdash; <code>ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f</code> &mdash; is in every rainbow table on the internet. An attacker who steals your database does not need to &ldquo;crack&rdquo; it. They just look it up, and within milliseconds they know the password was <code>"password123"</code>.</p>
+
+      <p>It gets worse. Because hash functions are deterministic, every user who chose the password <code>"password123"</code> has exactly the same hash in the database. An attacker can identify every account that shares the same password just by looking for duplicate hashes. If the most common hash appears 10,000 times, you can bet that password is <code>"123456"</code>.</p>
+
+      <p>The speed of SHA-256 makes this even more dangerous. Modern GPUs can compute billions of SHA-256 hashes per second. An attacker can hash every word in a dictionary, every 8-character combination, every leaked password from previous breaches, and build a comprehensive lookup table in hours.</p>
+
+      <p>The solution is <strong>salting</strong>.</p>
+
+      <div class="key-concept">
+        <h4>What Is a Salt?</h4>
+        <p>A salt is a random string of characters that is generated uniquely for each password. Before hashing, the salt is combined with the password, and the result is hashed. The salt is then stored alongside the hash in the database. When verifying a password, you retrieve the salt, combine it with the user&rsquo;s input, hash the result, and compare it to the stored hash.</p>
+        <p>Because every password gets a unique random salt, two users who chose the same password will have completely different hashes. Rainbow tables become useless because the attacker would need a separate rainbow table for every possible salt &mdash; which is computationally impossible.</p>
+      </div>
+
+      <p>This is exactly what <strong>bcrypt</strong> does, and it does it automatically. You never generate or manage the salt yourself. Bcrypt generates a random salt, hashes the password with that salt, and encodes the salt directly into the output string. When you verify a password, bcrypt extracts the salt from the stored hash and uses it automatically.</p>
+
+      <p>Here is how it works in Java using Spring Security&rsquo;s <code>BCryptPasswordEncoder</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+public class BcryptDemo {
+    public static void main(String[] args) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+
+        String password = "password123";
+
+        // Hash the same password twice
+        String hash1 = encoder.encode(password);
+        String hash2 = encoder.encode(password);
+
+        System.out.println("Password: " + password);
+        System.out.println();
+        System.out.println("Hash 1: " + hash1);
+        System.out.println("Hash 2: " + hash2);
+        System.out.println();
+        System.out.println("Are the hashes the same? " + hash1.equals(hash2));
+        System.out.println();
+
+        // But BOTH hashes verify against the original password
+        System.out.println("Hash 1 matches password? " + encoder.matches(password, hash1));
+        System.out.println("Hash 2 matches password? " + encoder.matches(password, hash2));
+        System.out.println();
+
+        // Wrong password does NOT match
+        System.out.println("Wrong password matches?  " + encoder.matches("wrongpassword", hash1));
+    }
+}</code></pre>
+      </div>
+
+      <p>Run this code and something remarkable happens. You hash the same password twice, and you get <em>two completely different hashes</em>. This seems contradictory &mdash; did we not just say hash functions are deterministic? They are. But bcrypt adds a unique random salt each time. The actual input to the hash function is different each time because the salt is different.</p>
+
+      <p>Yet both hashes verify correctly against the original password. The <code>matches()</code> method extracts the salt embedded in the hash, re-hashes the password with that salt, and compares. This is the magic of bcrypt: different hashes for the same password, but reliable verification every time.</p>
+
+      <p>Look at a bcrypt hash closely: <code>$2a$10$N9qo8uLOickgx2ZMRZoMye...</code>. The <code>$2a$</code> identifies the bcrypt version. The <code>$10$</code> is the <strong>cost factor</strong> (also called work factor or rounds) &mdash; it controls how slow the hashing is. A cost of 10 means 2<sup>10</sup> = 1,024 internal iterations. Increasing this by 1 doubles the computation time. The next 22 characters are the salt. The rest is the hash itself.</p>
+
+      <div class="callout callout-info">
+        <strong>Why is bcrypt intentionally slow?</strong>
+        SHA-256 is designed to be fast. That is great for file integrity checks, but terrible for passwords. If an attacker can compute 10 billion SHA-256 hashes per second, they can try every 8-character lowercase password in about 3 minutes. Bcrypt is designed to be slow &mdash; about 100 milliseconds per hash with a reasonable cost factor. That means the attacker can only try about 10 hashes per second per CPU core. Brute-forcing becomes impractical. And as hardware gets faster, you simply increase the cost factor.
+      </div>
+
+      <!-- ==================== PART 4 — ENCRYPTION VS HASHING ==================== -->
+      <h2>4. Encryption vs Hashing</h2>
+
+      <p>People often use &ldquo;encryption&rdquo; and &ldquo;hashing&rdquo; interchangeably. They are fundamentally different operations with fundamentally different purposes. Understanding the difference is essential.</p>
+
+      <div class="key-concept">
+        <h4>Hashing: One-Way</h4>
+        <p><strong>Hashing</strong> transforms data into a fixed-size fingerprint that cannot be reversed. You cannot get the original data back from a hash. This is perfect for passwords: you do not need to know the password, you only need to verify it. Hashing is a one-way street with no return trip.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Encryption: Two-Way</h4>
+        <p><strong>Encryption</strong> transforms data into an unreadable form that <em>can</em> be reversed with the correct key. This is necessary when you need the original data back &mdash; for example, sending a private message, storing a credit card number (encrypted at rest), or transmitting data over HTTPS. Encryption is a round trip: encrypt with a key, decrypt with a key.</p>
+      </div>
+
+      <p>Think of it this way. Hashing is like putting a document through a paper shredder. You can verify that a specific document would produce those exact shreds, but you can never reassemble the original from the shreds alone. Encryption is like putting a document in a locked safe. Anyone with the key can open the safe and read the document. Without the key, the contents are inaccessible.</p>
+
+      <p>There are two types of encryption: <strong>symmetric</strong> and <strong>asymmetric</strong>.</p>
+
+      <h3>Symmetric Encryption (AES)</h3>
+
+      <p>In symmetric encryption, the <strong>same key</strong> is used to both encrypt and decrypt. Think of it like a house key &mdash; the same key that locks the door also unlocks it. The most widely used symmetric algorithm is <strong>AES</strong> (Advanced Encryption Standard). AES is extremely fast and is used everywhere: disk encryption, VPNs, file encryption, and the bulk data transfer phase of HTTPS.</p>
+
+      <p>The challenge with symmetric encryption is <strong>key distribution</strong>: how do you securely share the secret key with the other person? If you send the key over an insecure channel, anyone who intercepts it can decrypt all your messages. This is where asymmetric encryption comes in &mdash; but first, let us see AES in action:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import java.security.SecureRandom;
+import java.util.Base64;
+
+public class AESDemo {
+    public static void main(String[] args) throws Exception {
+        // Generate a random 256-bit AES key
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(256);
+        SecretKey secretKey = keyGen.generateKey();
+
+        // Generate a random initialization vector (IV)
+        byte[] ivBytes = new byte[16];
+        new SecureRandom().nextBytes(ivBytes);
+        IvParameterSpec iv = new IvParameterSpec(ivBytes);
+
+        String originalMessage = "This is a secret message that only the key holder can read.";
+
+        // Encrypt
+        Cipher encryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
+        byte[] encryptedBytes = encryptCipher.doFinal(originalMessage.getBytes("UTF-8"));
+        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
+
+        System.out.println("Original:  " + originalMessage);
+        System.out.println("Encrypted: " + encryptedBase64);
+        System.out.println();
+
+        // Decrypt (using the SAME key and IV)
+        Cipher decryptCipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        decryptCipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
+        byte[] decryptedBytes = decryptCipher.doFinal(encryptedBytes);
+        String decryptedMessage = new String(decryptedBytes, "UTF-8");
+
+        System.out.println("Decrypted: " + decryptedMessage);
+        System.out.println("Match?     " + originalMessage.equals(decryptedMessage));
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us walk through this carefully. <code>KeyGenerator.getInstance("AES")</code> creates a generator for AES keys. <code>keyGen.init(256)</code> specifies a 256-bit key (the strongest standard AES key size). <code>keyGen.generateKey()</code> generates a random secret key.</p>
+
+      <p>The <strong>initialization vector (IV)</strong> is a random value that ensures the same plaintext encrypted with the same key produces different ciphertext each time. Without an IV, encrypting the same message twice would produce identical ciphertext, which leaks information. The IV does not need to be secret &mdash; it is typically stored alongside the ciphertext.</p>
+
+      <p><code>"AES/CBC/PKCS5Padding"</code> specifies three things: the algorithm (AES), the mode (CBC &mdash; Cipher Block Chaining), and the padding scheme (PKCS5). CBC mode chains blocks together so that each block&rsquo;s encryption depends on the previous block, which prevents pattern detection. PKCS5Padding adds bytes to the end of the message so it aligns to the block size (16 bytes for AES).</p>
+
+      <p>The encrypted output is raw bytes, so we encode it as Base64 for display. When decrypting, we use the exact same key and IV. If either is wrong, decryption fails.</p>
+
+      <h3>Asymmetric Encryption (RSA)</h3>
+
+      <p>Asymmetric encryption uses <strong>two different keys</strong>: a <strong>public key</strong> and a <strong>private key</strong>. They are mathematically linked but you cannot derive the private key from the public key. Data encrypted with the public key can only be decrypted with the private key, and vice versa.</p>
+
+      <p>The best analogy is a <strong>mailbox</strong>. Anyone can walk up to your mailbox and drop a letter through the slot (encrypt with your public key). But only you have the key to open the mailbox and read the letters (decrypt with your private key). You can share your public key with the entire world. Only you keep the private key secret.</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import javax.crypto.Cipher;
+import java.util.Base64;
+
+public class RSADemo {
+    public static void main(String[] args) throws Exception {
+        // Generate an RSA key pair (public + private)
+        KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
+        keyPairGen.initialize(2048);
+        KeyPair keyPair = keyPairGen.generateKeyPair();
+
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        String originalMessage = "Hello, this message is encrypted with RSA!";
+
+        // Encrypt with the PUBLIC key
+        Cipher encryptCipher = Cipher.getInstance("RSA");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+        byte[] encryptedBytes = encryptCipher.doFinal(originalMessage.getBytes("UTF-8"));
+        String encryptedBase64 = Base64.getEncoder().encodeToString(encryptedBytes);
+
+        System.out.println("Original:  " + originalMessage);
+        System.out.println("Encrypted: " + encryptedBase64);
+        System.out.println();
+
+        // Decrypt with the PRIVATE key
+        Cipher decryptCipher = Cipher.getInstance("RSA");
+        decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+        byte[] decryptedBytes = decryptCipher.doFinal(encryptedBytes);
+        String decryptedMessage = new String(decryptedBytes, "UTF-8");
+
+        System.out.println("Decrypted: " + decryptedMessage);
+        System.out.println("Match?     " + originalMessage.equals(decryptedMessage));
+        System.out.println();
+
+        // Show key sizes
+        System.out.println("Public key size:  " +
+            Base64.getEncoder().encodeToString(publicKey.getEncoded()).length() + " chars (Base64)");
+        System.out.println("Private key size: " +
+            Base64.getEncoder().encodeToString(privateKey.getEncoded()).length() + " chars (Base64)");
+    }
+}</code></pre>
+      </div>
+
+      <p><code>KeyPairGenerator.getInstance("RSA")</code> creates an RSA key pair generator. <code>keyPairGen.initialize(2048)</code> specifies 2048-bit keys, which is the current minimum recommended size for RSA. The generator produces both a public key and a private key simultaneously.</p>
+
+      <p>Notice the critical difference from AES: we encrypt with the <strong>public</strong> key and decrypt with the <strong>private</strong> key. Anyone who has the public key can encrypt a message, but only the holder of the private key can read it.</p>
+
+      <p>RSA has a significant limitation: it is <strong>much slower</strong> than AES and can only encrypt small amounts of data (for 2048-bit RSA, the maximum is 245 bytes). This is why RSA is not used to encrypt entire messages or files directly. Instead, it is used to encrypt <em>a symmetric key</em>, which is then used to encrypt the actual data. This hybrid approach gives you the key-distribution advantages of asymmetric encryption with the speed of symmetric encryption. This is exactly how HTTPS works, as we will see in the next section.</p>
+
+      <div class="callout callout-warning">
+        <strong>AES vs RSA: When to use which</strong>
+        <table style="width:100%; border-collapse:collapse; margin-top:0.5rem;">
+          <thead>
+            <tr>
+              <th style="text-align:left; padding:0.4rem; border-bottom:2px solid var(--border);">Feature</th>
+              <th style="text-align:left; padding:0.4rem; border-bottom:2px solid var(--border);">AES (Symmetric)</th>
+              <th style="text-align:left; padding:0.4rem; border-bottom:2px solid var(--border);">RSA (Asymmetric)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Keys</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">One shared secret key</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Public key + private key</td>
+            </tr>
+            <tr>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Speed</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Very fast</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Slow (100&ndash;1000x slower)</td>
+            </tr>
+            <tr>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Data size</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Unlimited</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Very small (245 bytes for 2048-bit)</td>
+            </tr>
+            <tr>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Use case</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Encrypting files, disk, bulk data</td>
+              <td style="padding:0.4rem; border-bottom:1px solid var(--border);">Key exchange, digital signatures</td>
+            </tr>
+            <tr>
+              <td style="padding:0.4rem;">Key problem</td>
+              <td style="padding:0.4rem;">How to share the key securely</td>
+              <td style="padding:0.4rem;">Too slow for large data</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ==================== PART 5 — HTTPS EXPLAINED ==================== -->
+      <h2>5. HTTPS Explained</h2>
+
+      <p>Every time you visit a website that starts with <code>https://</code>, something extraordinary is happening behind the scenes. Your browser and the server are performing a cryptographic handshake that uses both asymmetric and symmetric encryption to create a secure channel. Let us walk through exactly what happens when you type <code>https://google.com</code> into your browser.</p>
+
+      <h3>The TLS Handshake</h3>
+
+      <p>TLS (Transport Layer Security) is the protocol that powers HTTPS. Here is the handshake, step by step:</p>
+
+      <div class="key-concept">
+        <h4>Step 1: Client Hello</h4>
+        <p>Your browser sends a &ldquo;Client Hello&rdquo; message to Google&rsquo;s server. This message includes: the TLS version your browser supports, a list of cipher suites (combinations of encryption algorithms) your browser can use, and a random number generated by your browser (called the <strong>client random</strong>).</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Step 2: Server Hello + Certificate</h4>
+        <p>Google&rsquo;s server responds with a &ldquo;Server Hello&rdquo; that includes: the cipher suite it chose from your list, a random number generated by the server (the <strong>server random</strong>), and Google&rsquo;s <strong>TLS certificate</strong>. The certificate contains Google&rsquo;s public key and is digitally signed by a <strong>Certificate Authority</strong> (CA) like DigiCert or Let&rsquo;s Encrypt. Your browser checks this signature to verify that the certificate really belongs to Google and has not been tampered with.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Step 3: Key Exchange (Asymmetric)</h4>
+        <p>Your browser generates a <strong>pre-master secret</strong> &mdash; a random value that will be used to derive the encryption keys for this session. Your browser encrypts the pre-master secret using Google&rsquo;s public key from the certificate. Only Google&rsquo;s server, which holds the corresponding private key, can decrypt it. Your browser sends this encrypted pre-master secret to the server.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Step 4: Session Keys (Symmetric)</h4>
+        <p>Both the browser and the server now have three values: the client random, the server random, and the pre-master secret. Both sides independently use these three values to derive the same <strong>session key</strong> &mdash; a symmetric AES key. From this point forward, all communication is encrypted with this AES session key. The asymmetric cryptography has served its purpose: it allowed two strangers to agree on a shared secret without anyone else being able to learn it.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Step 5: Secure Communication</h4>
+        <p>Everything you send to Google and everything Google sends back is now encrypted with AES using the session key. Your search queries, your email contents, your login credentials &mdash; all encrypted. When the session ends, the session key is discarded. A new session means a new handshake and new keys.</p>
+      </div>
+
+      <p>This design is elegant because it uses each type of encryption where it excels. RSA (asymmetric) solves the key distribution problem &mdash; your browser can securely send a secret to a server it has never communicated with before. AES (symmetric) handles the actual data encryption at high speed. The best of both worlds.</p>
+
+      <h3>What Happens Without HTTPS</h3>
+
+      <p>On plain HTTP (without the S), <strong>nothing is encrypted</strong>. Every single byte travels across the network as readable text. This means:</p>
+
+      <ul>
+        <li>Anyone on the same Wi-Fi network (a coffee shop, an airport, a library) can read every page you visit, every form you submit, every password you type.</li>
+        <li>Your Internet Service Provider (ISP) can see and log every URL you visit and every piece of data you send.</li>
+        <li>Attackers can perform <strong>man-in-the-middle attacks</strong>, intercepting your traffic, reading it, modifying it, and forwarding it &mdash; and you would never know.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>The padlock icon</strong>
+        The padlock icon in your browser&rsquo;s address bar means the connection is using HTTPS. Click on it to see the certificate details: who issued it, when it expires, and the domain it was issued for. A valid certificate means two things: (1) the connection is encrypted, and (2) a trusted Certificate Authority has verified that the server really belongs to the domain you requested. If a certificate is invalid, expired, or issued for the wrong domain, your browser will show a prominent warning.
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Modern note on TLS</strong>
+        The handshake described above is a simplified version. Modern TLS 1.3 uses <strong>Diffie-Hellman key exchange</strong> instead of RSA for the key exchange step, which provides <strong>forward secrecy</strong> &mdash; even if the server&rsquo;s private key is compromised in the future, past sessions cannot be decrypted. The core concept remains the same: asymmetric cryptography bootstraps a symmetric session key.
+      </div>
+
+      <!-- ==================== PART 6 — HANDS-ON CHALLENGES ==================== -->
+      <h2>6. Hands-On Challenges</h2>
+
+      <p>Theory only becomes knowledge when you put it into practice. This section has three challenges of increasing difficulty. Work through each one carefully. These are not puzzles with trick answers &mdash; they are realistic scenarios that use everything you have learned.</p>
+
+      <h3>Challenge 1: Crack These SHA-256 Hashes</h3>
+
+      <p>Below are five SHA-256 hashes. Each one was produced by hashing a common password. Your job is to write a Java program that takes a list of common passwords, hashes each one with SHA-256, and checks if any of the hashes match the targets. This is exactly how rainbow table attacks work &mdash; you are playing the role of the attacker to understand the threat.</p>
+
+      <p>Here are the target hashes to crack:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>Hash 1: 5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8
+Hash 2: 8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92
+Hash 3: 65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5
+Hash 4: 8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414
+Hash 5: b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb7</code></pre>
+      </div>
+
+      <p>Write a program that hashes common passwords and identifies which password produced each hash. Use the <code>sha256()</code> method from Part 2. Start with passwords like: <code>password</code>, <code>123456</code>, <code>qwerty</code>, <code>letmein</code>, <code>password1</code>, <code>abc123</code>, <code>monkey</code>, <code>dragon</code>, <code>iloveyou</code>, <code>trustno1</code>, <code>123456789</code>, <code>baseball</code>, <code>shadow</code>. Add more if needed.</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.Map;
+
+public class HashCracker {
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+        // Target hashes to crack
+        Map&lt;String, String&gt; targets = new HashMap&lt;&gt;();
+        targets.put("5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8", "Hash 1");
+        targets.put("8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92", "Hash 2");
+        targets.put("65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5", "Hash 3");
+        targets.put("8bb0cf6eb9b17d0f7d22b456f121257dc1254e1f01665370476383ea776df414", "Hash 4");
+        targets.put("b109f3bbbc244eb82441917ed06d618b9008dd09b3befd1b5e07394c706a8bb7", "Hash 5");
+
+        // Common passwords to try
+        String[] commonPasswords = {
+            "password", "123456", "qwerty", "letmein", "password1",
+            "abc123", "monkey", "dragon", "iloveyou", "trustno1",
+            "123456789", "baseball", "shadow", "master", "michael",
+            "football", "654321", "welcome", "hello", "charlie"
+            // TODO: Add more common passwords to crack all five hashes!
+        };
+
+        System.out.println("Attempting to crack " + targets.size() + " hashes...");
+        System.out.println();
+
+        int cracked = 0;
+        for (String password : commonPasswords) {
+            String hash = sha256(password);
+            if (targets.containsKey(hash)) {
+                System.out.println("CRACKED " + targets.get(hash) + "!");
+                System.out.println("  Password: " + password);
+                System.out.println("  Hash:     " + hash);
+                System.out.println();
+                cracked++;
+            }
+        }
+
+        System.out.println("Cracked " + cracked + " out of " + targets.size() + " hashes.");
+        if (cracked < targets.size()) {
+            System.out.println("Try adding more common passwords to crack the rest!");
+        }
+    }
+
+    public static String sha256(String input) throws NoSuchAlgorithmException {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] hashBytes = digest.digest(input.getBytes());
+        StringBuilder hexString = new StringBuilder();
+        for (byte b : hashBytes) {
+            String hex = Integer.toHexString(0xff & b);
+            if (hex.length() == 1) hexString.append('0');
+            hexString.append(hex);
+        }
+        return hexString.toString();
+    }
+}</code></pre>
+      </div>
+
+      <p>This challenge demonstrates exactly why unsalted SHA-256 is terrible for password storage. You just cracked passwords by doing exactly what an attacker does: hash a list of guesses and compare. With a GPU, an attacker could try billions of guesses per second. Every cracked hash in your output is a user whose account is compromised. This is why salting and bcrypt exist.</p>
+
+      <h3>Challenge 2: AES Encrypt/Decrypt Exchange</h3>
+
+      <p>In this challenge you will build a complete AES encryption utility that can encrypt a message, display the encrypted form, and then decrypt it back. Think of this as building the &ldquo;lock and unlock&rdquo; mechanism for a secure messaging system. The program should accept user input, encrypt it, and then decrypt the result to prove the round trip works.</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import javax.crypto.Cipher;
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.SecureRandom;
+import java.util.Base64;
+
+public class AESExchange {
+
+    // Generate a new random AES-256 key
+    public static SecretKey generateKey() throws Exception {
+        KeyGenerator keyGen = KeyGenerator.getInstance("AES");
+        keyGen.init(256);
+        return keyGen.generateKey();
+    }
+
+    // Encrypt a plaintext message. Returns "iv:ciphertext" in Base64.
+    public static String encrypt(String plaintext, SecretKey key) throws Exception {
+        byte[] ivBytes = new byte[16];
+        new SecureRandom().nextBytes(ivBytes);
+        IvParameterSpec iv = new IvParameterSpec(ivBytes);
+
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, key, iv);
+        byte[] encrypted = cipher.doFinal(plaintext.getBytes("UTF-8"));
+
+        // Combine IV and ciphertext so the recipient has everything needed to decrypt
+        String ivBase64 = Base64.getEncoder().encodeToString(ivBytes);
+        String cipherBase64 = Base64.getEncoder().encodeToString(encrypted);
+        return ivBase64 + ":" + cipherBase64;
+    }
+
+    // Decrypt a message in "iv:ciphertext" Base64 format
+    public static String decrypt(String encryptedPackage, SecretKey key) throws Exception {
+        String[] parts = encryptedPackage.split(":");
+        byte[] ivBytes = Base64.getDecoder().decode(parts[0]);
+        byte[] cipherBytes = Base64.getDecoder().decode(parts[1]);
+
+        IvParameterSpec iv = new IvParameterSpec(ivBytes);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.DECRYPT_MODE, key, iv);
+        byte[] decrypted = cipher.doFinal(cipherBytes);
+
+        return new String(decrypted, "UTF-8");
+    }
+
+    public static void main(String[] args) throws Exception {
+        SecretKey sharedKey = generateKey();
+
+        // Simulate an exchange of encrypted messages
+        String[] messages = {
+            "Meet me at the library at 3pm.",
+            "The project deadline is next Friday.",
+            "Remember: never store passwords in plain text!"
+        };
+
+        System.out.println("=== AES-256 Encrypted Message Exchange ===");
+        System.out.println("Key (Base64): " +
+            Base64.getEncoder().encodeToString(sharedKey.getEncoded()));
+        System.out.println();
+
+        for (String message : messages) {
+            String encrypted = encrypt(message, sharedKey);
+            String decrypted = decrypt(encrypted, sharedKey);
+
+            System.out.println("Original:  " + message);
+            System.out.println("Encrypted: " + encrypted);
+            System.out.println("Decrypted: " + decrypted);
+            System.out.println("Valid:     " + message.equals(decrypted));
+            System.out.println();
+        }
+
+        // Demonstrate that a wrong key cannot decrypt
+        SecretKey wrongKey = generateKey();
+        String encrypted = encrypt("Secret message", sharedKey);
+        System.out.println("--- Attempting decryption with wrong key ---");
+        try {
+            String result = decrypt(encrypted, wrongKey);
+            System.out.println("Decrypted (wrong key): " + result);
+        } catch (Exception e) {
+            System.out.println("FAILED: " + e.getClass().getSimpleName());
+            System.out.println("The wrong key cannot decrypt the message. Security works!");
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p>This program packages the IV with the ciphertext (separated by a colon) so that the recipient has everything they need to decrypt. In a real messaging system, the IV and ciphertext would be sent together over the network. The key would have been shared separately through a secure channel (or, more commonly, through an RSA key exchange as in HTTPS).</p>
+
+      <h3>Challenge 3: BCrypt Password Registration and Login System</h3>
+
+      <p>This is the capstone challenge. You are going to build a simple but complete password system that registers users with bcrypt-hashed passwords and verifies them at login. This is the core of how every modern web application handles authentication.</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="true">
+        <pre><code>import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.HashMap;
+import java.util.Map;
+
+public class PasswordSystem {
+
+    // Simulated database: maps username to bcrypt hash
+    private static Map&lt;String, String&gt; userDatabase = new HashMap&lt;&gt;();
+    private static BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+
+    // Register a new user
+    public static boolean register(String username, String password) {
+        // Check if username already exists
+        if (userDatabase.containsKey(username)) {
+            System.out.println("  ERROR: Username '" + username + "' already exists.");
+            return false;
+        }
+
+        // Validate password strength (basic check)
+        if (password.length() < 8) {
+            System.out.println("  ERROR: Password must be at least 8 characters.");
+            return false;
+        }
+
+        // Hash the password with bcrypt and store it
+        String hashedPassword = encoder.encode(password);
+        userDatabase.put(username, hashedPassword);
+
+        System.out.println("  User '" + username + "' registered successfully.");
+        System.out.println("  Stored hash: " + hashedPassword);
+        return true;
+    }
+
+    // Attempt to log in
+    public static boolean login(String username, String password) {
+        // Check if user exists
+        if (!userDatabase.containsKey(username)) {
+            System.out.println("  ERROR: Invalid username or password.");
+            return false;
+        }
+
+        // Retrieve the stored hash and verify the password
+        String storedHash = userDatabase.get(username);
+        boolean matches = encoder.matches(password, storedHash);
+
+        if (matches) {
+            System.out.println("  Login successful! Welcome back, " + username + ".");
+        } else {
+            System.out.println("  ERROR: Invalid username or password.");
+        }
+        return matches;
+    }
+
+    public static void main(String[] args) {
+        System.out.println("=== BCrypt Password Registration &amp; Login System ===");
+        System.out.println();
+
+        // Register users
+        System.out.println("--- Registration ---");
+        register("alice", "securePassword99");
+        System.out.println();
+        register("bob", "myStr0ngP@ssword");
+        System.out.println();
+        register("carol", "iLoveJava2025!");
+        System.out.println();
+
+        // Try registering a duplicate user
+        System.out.println("--- Duplicate Registration Attempt ---");
+        register("alice", "differentPassword");
+        System.out.println();
+
+        // Try registering with a weak password
+        System.out.println("--- Weak Password Attempt ---");
+        register("dave", "short");
+        System.out.println();
+
+        // Successful logins
+        System.out.println("--- Login Attempts ---");
+        login("alice", "securePassword99");
+        System.out.println();
+        login("bob", "myStr0ngP@ssword");
+        System.out.println();
+
+        // Failed logins
+        System.out.println("--- Failed Login Attempts ---");
+        login("alice", "wrongPassword");
+        System.out.println();
+        login("alice", "securePassword98");  // Off by one character
+        System.out.println();
+        login("eve", "hacker123");  // Non-existent user
+        System.out.println();
+
+        // Show that the database never contains plain text passwords
+        System.out.println("--- Database Contents (what an attacker would see) ---");
+        for (Map.Entry&lt;String, String&gt; entry : userDatabase.entrySet()) {
+            System.out.println("  " + entry.getKey() + " -> " + entry.getValue());
+        }
+        System.out.println();
+        System.out.println("Notice: No plain text passwords anywhere. Even if this");
+        System.out.println("database is stolen, the attacker gets only bcrypt hashes.");
+        System.out.println("Each hash has a unique salt, so rainbow tables are useless.");
+    }
+}</code></pre>
+      </div>
+
+      <p>Study this program carefully. It demonstrates every principle from this lesson working together:</p>
+
+      <ul>
+        <li><strong>No plain text passwords are stored.</strong> The <code>userDatabase</code> map only contains bcrypt hashes.</li>
+        <li><strong>Each hash is unique.</strong> Even if two users chose the same password, their hashes would be different because bcrypt generates a random salt each time.</li>
+        <li><strong>Verification works without knowing the password.</strong> The <code>matches()</code> method extracts the salt from the stored hash, re-hashes the input, and compares. The original password is never stored or reconstructed.</li>
+        <li><strong>Wrong passwords fail reliably.</strong> Even <code>"securePassword98"</code> (off by one character from the correct password) produces a completely different hash and fails verification.</li>
+        <li><strong>Error messages are generic.</strong> The login method says &ldquo;Invalid username or password&rdquo; for both wrong usernames and wrong passwords. This is a security best practice &mdash; specific error messages like &ldquo;Username not found&rdquo; or &ldquo;Wrong password&rdquo; tell an attacker which half of the credential is correct.</li>
+        <li><strong>The cost factor is set to 12.</strong> <code>new BCryptPasswordEncoder(12)</code> means 2<sup>12</sup> = 4,096 internal hashing iterations. This makes each hash take roughly 200&ndash;300 milliseconds &mdash; imperceptible to a user logging in, but devastating to an attacker trying millions of guesses.</li>
+      </ul>
+
+      <!-- ==================== PART 7 — SECURITY IN THE REAL WORLD ==================== -->
+      <h2>7. Security in the Real World</h2>
+
+      <p>Everything you have learned in this lab forms the foundation of real-world application security. Let us connect these concepts to the technologies and practices you will encounter as a professional developer.</p>
+
+      <h3>JWT Tokens</h3>
+
+      <p><strong>JSON Web Tokens (JWTs)</strong> are how most modern web applications handle authentication after login. When a user logs in successfully (their bcrypt-hashed password is verified), the server creates a JWT &mdash; a signed token that contains the user&rsquo;s identity information. The token is signed using HMAC (a hash-based message authentication code) or RSA, so the server can verify that it was not tampered with.</p>
+
+      <p>The token structure is <code>header.payload.signature</code>, where each part is Base64-encoded. The signature is a hash (or RSA signature) of the header and payload using a secret key. If anyone modifies the payload (for example, changing their user role from &ldquo;user&rdquo; to &ldquo;admin&rdquo;), the signature will not match and the server will reject the token. This is hashing being used for <strong>integrity verification</strong> &mdash; another critical application beyond password storage.</p>
+
+      <h3>Key Management</h3>
+
+      <p>In the AES and RSA examples above, we generated keys in our program. In production, key management is one of the hardest problems in security. Keys need to be stored securely (not in your source code, not in a config file committed to Git). Companies use dedicated services like <strong>AWS Key Management Service (KMS)</strong>, <strong>HashiCorp Vault</strong>, or <strong>Azure Key Vault</strong> to generate, store, rotate, and audit access to encryption keys. A leaked encryption key is just as catastrophic as a leaked password &mdash; it renders all the encryption meaningless.</p>
+
+      <h3>The Golden Rule: Never Implement Your Own Crypto</h3>
+
+      <p>This is the single most important security principle for software developers. <strong>Never implement your own cryptographic algorithms.</strong> The code in this lesson uses Java&rsquo;s built-in <code>MessageDigest</code>, <code>Cipher</code>, and Spring Security&rsquo;s <code>BCryptPasswordEncoder</code>. These are battle-tested implementations written by cryptography experts and reviewed by thousands of security researchers over decades.</p>
+
+      <p>Even tiny implementation mistakes &mdash; a timing side-channel, a biased random number generator, an incorrect padding scheme &mdash; can completely break the security of a system. Cryptography is one of the few areas in software engineering where &ldquo;it works&rdquo; does not mean &ldquo;it is correct.&rdquo; A broken crypto implementation will produce outputs that look perfectly valid, pass all your tests, and appear to work flawlessly &mdash; while being trivially breakable by anyone who knows what to look for.</p>
+
+      <p>Use established libraries. Use them correctly. Let the experts handle the math.</p>
+
+      <h3>Further Reading</h3>
+
+      <div class="callout callout-info">
+        <strong>Recommended resources</strong>
+        <ul>
+          <li><strong>Crypto 101</strong> (crypto101.io) &mdash; A free, comprehensive introduction to cryptography. It covers everything from basic concepts to advanced protocols, written for programmers rather than mathematicians. Start here if you want to go deeper.</li>
+          <li><strong>Computerphile (YouTube)</strong> &mdash; The channel has excellent videos on hashing, encryption, public key cryptography, and HTTPS. Search for &ldquo;Computerphile hashing,&rdquo; &ldquo;Computerphile AES,&rdquo; or &ldquo;Computerphile public key cryptography.&rdquo; The explanations are visual and approachable.</li>
+          <li><strong>OWASP Password Storage Cheat Sheet</strong> &mdash; The Open Web Application Security Project maintains a definitive guide on how to store passwords correctly. It covers algorithm selection, cost factors, migration strategies, and common mistakes.</li>
+          <li><strong>The Spring Security documentation</strong> &mdash; If you are building Java web applications, Spring Security provides battle-tested implementations for password hashing, authentication, authorization, CSRF protection, and more.</li>
+        </ul>
+      </div>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Quiz</h2>
+
+      <div class="quiz" data-id="q-sq-enc-1">
+        <p class="quiz-question">1. A company stores user passwords by hashing them with SHA-256 (no salt). An attacker steals the database. Which statement best describes the attacker&rsquo;s situation?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-enc-1" value="a"> The attacker cannot crack any passwords because SHA-256 is a one-way function</label>
+          <label><input type="radio" name="q-sq-enc-1" value="b"> The attacker can use rainbow tables to instantly look up common passwords, and can identify all users who share the same password by finding duplicate hashes</label>
+          <label><input type="radio" name="q-sq-enc-1" value="c"> The attacker can decrypt the hashes directly back into passwords using the SHA-256 algorithm in reverse</label>
+          <label><input type="radio" name="q-sq-enc-1" value="d"> The attacker needs the server&rsquo;s private key to decrypt the hashes</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! While SHA-256 is technically one-way (you cannot reverse the math), unsalted hashes are vulnerable to <strong>rainbow table attacks</strong> &mdash; pre-computed databases that map hashes to known passwords. Common passwords like &ldquo;123456&rdquo; or &ldquo;password&rdquo; have well-known SHA-256 hashes that appear in every rainbow table. Additionally, because SHA-256 is deterministic and no salt is used, every user with the same password has the exact same hash, letting the attacker identify duplicate passwords at a glance. This is why bcrypt (with automatic salting) is the standard for password storage.</div>
+      </div>
+
+      <div class="quiz" data-id="q-sq-enc-2">
+        <p class="quiz-question">2. In the HTTPS/TLS handshake, why does the browser use asymmetric encryption (RSA) to exchange a key and then switch to symmetric encryption (AES) for the rest of the communication?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-enc-2" value="a"> RSA is more secure than AES, so it is used first to establish trust, then AES is used as a fallback</label>
+          <label><input type="radio" name="q-sq-enc-2" value="b"> AES requires both parties to already share a secret key, and RSA solves the key distribution problem &mdash; but RSA is far too slow for encrypting bulk data, so AES handles the actual communication</label>
+          <label><input type="radio" name="q-sq-enc-2" value="c"> The browser does not actually use both &mdash; it only uses RSA throughout the entire session</label>
+          <label><input type="radio" name="q-sq-enc-2" value="d"> AES is used first because it is faster, and RSA is only used if AES fails</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly right! This is the elegant hybrid design of TLS. The core problem is that AES (symmetric encryption) requires both parties to share the same secret key &mdash; but how do you share a secret with someone you have never communicated with before? RSA (asymmetric encryption) solves this: the browser encrypts a secret using the server&rsquo;s public key, and only the server can decrypt it with its private key. Now both sides have a shared secret. But RSA is 100&ndash;1000x slower than AES and can only encrypt tiny amounts of data, so the shared secret is used to derive AES session keys, and AES handles all the actual data encryption at high speed.</div>
+      </div>
+
+      <div class="quiz" data-id="q-sq-enc-3">
+        <p class="quiz-question">3. You hash the password &ldquo;hunter2&rdquo; twice using Spring Security&rsquo;s <code>BCryptPasswordEncoder</code>. The two resulting hashes are completely different strings. Why?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q-sq-enc-3" value="a"> BCrypt is not deterministic &mdash; it produces random output each time</label>
+          <label><input type="radio" name="q-sq-enc-3" value="b"> The computer&rsquo;s clock time is mixed into the hash, so hashes at different times are always different</label>
+          <label><input type="radio" name="q-sq-enc-3" value="c"> BCrypt generates a unique random salt for each hash operation, so the actual input to the hash function is different each time &mdash; but the <code>matches()</code> method can still verify the original password because the salt is stored within the hash string</label>
+          <label><input type="radio" name="q-sq-enc-3" value="d"> The two hashes are encrypted with different encryption keys</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! BCrypt is deterministic <em>for a given salt</em>, but it generates a new random salt every time <code>encode()</code> is called. The salt is embedded directly in the resulting hash string (the 22 characters after the cost factor). When you call <code>matches(password, storedHash)</code>, bcrypt extracts the salt from the stored hash, re-hashes the password with that specific salt, and compares the result. This is why two hashes of the same password look different but both verify correctly. This design defeats rainbow tables because an attacker would need a separate rainbow table for every possible salt value, which is computationally impossible.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <div class="key-concept">
+        <h4>What You Built</h4>
+        <p>Working Java programs demonstrating SHA-256 hashing with <code>MessageDigest</code>, the avalanche effect, salting concepts, bcrypt password hashing with <code>BCryptPasswordEncoder</code>, AES-256 symmetric encryption and decryption, RSA asymmetric encryption and decryption, and a complete bcrypt-based password registration and login system with duplicate detection, password validation, and secure error messages. You also gained a thorough understanding of how HTTPS uses both asymmetric and symmetric cryptography to secure web communication.</p>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="encryption-hashing">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
