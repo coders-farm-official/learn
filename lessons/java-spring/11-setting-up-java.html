@@ -181,6 +181,12 @@ javac -version</code></pre>
 
       <p>Open VS Code, click the <strong>Extensions</strong> icon in the left sidebar (it looks like four small squares), and search for <strong>"Extension Pack for Java"</strong> by Microsoft. Click <strong>Install</strong>. This single extension pack bundles together everything you need: Java language support, a debugger, test runner, project manager, and IntelliSense (smart code completion that suggests what to type as you write). Once it is installed, VS Code becomes a powerful Java development environment. You will see red underlines for errors, helpful auto-complete suggestions, and the ability to run Java programs directly from the editor.</p>
 
+      <p>Once the Extension Pack is installed, VS Code will look and feel different when you open a Java file. Here is what to expect:</p>
+
+      <div class="callout callout-info"><strong>What You Will See:</strong> The Extension Pack adds several features you will use constantly. The most important is the <strong>Run | Debug</strong> link that appears directly above every <code>main</code> method &mdash; clicking it compiles and runs your program in one step. You will also see <strong>red squiggly underlines</strong> beneath errors in real time, just like a spell-checker for your code. As you type, <strong>IntelliSense</strong> will pop up suggestions to auto-complete class names, method names, and variables. Finally, the <strong>Java Projects</strong> view appears in the Explorer sidebar, giving you a structured overview of your files and packages.</div>
+
+      <div class="callout callout-tip"><strong>The Integrated Terminal:</strong> VS Code has a built-in terminal so you never have to leave the editor. Open it with <kbd>Ctrl+`</kbd> on Windows/Linux or <kbd>Cmd+`</kbd> on Mac (that is the backtick key, usually above Tab). You can also open it from the menu: <strong>Terminal &gt; New Terminal</strong>. It appears at the bottom of the VS Code window and works exactly like your system terminal &mdash; you can run <code>javac</code>, <code>java</code>, and any other command right there. We will use this terminal throughout the Java lessons.</div>
+
       <p>If you want to explore other options, the most popular alternative is <strong>IntelliJ IDEA Community Edition</strong> by JetBrains. IntelliJ is a full-featured Integrated Development Environment (IDE) built specifically for Java. It is incredibly powerful and is what many professional Java developers use at work. The Community Edition is completely free. You can download it from <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">jetbrains.com/idea</a>. IntelliJ is heavier than VS Code &mdash; it uses more memory and takes longer to start up &mdash; but it provides deeper Java-specific features right out of the box.</p>
 
       <p>For this course, we recommend <strong>sticking with VS Code</strong> since you are already familiar with it. It keeps things simple and avoids the learning curve of a new tool. You can always switch to IntelliJ later as you become more comfortable with Java. The code you write will be exactly the same regardless of which editor you use.</p>
@@ -194,6 +200,8 @@ javac -version</code></pre>
 
       <p>Open your code editor and create a new file called <strong><code>HelloWorld.java</code></strong>. This file name matters &mdash; in Java, the file name <em>must</em> match the class name inside it (we will explain what a class is in a moment). Type the following code exactly as shown:</p>
 
+      <div class="callout callout-tip"><strong>Creating a file in VS Code:</strong> Press <kbd>Ctrl+N</kbd> (Windows/Linux) or <kbd>Cmd+N</kbd> (Mac) to create a new file, then <kbd>Ctrl+S</kbd> / <kbd>Cmd+S</kbd> to save it as <code>HelloWorld.java</code>. You can also right-click in the Explorer sidebar and choose <strong>New File</strong>. Once you save with the <code>.java</code> extension, the file icon will change to a Java icon &mdash; that is your confirmation that VS Code recognizes it as a Java file.</div>
+
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
         <pre><code>package org.codersfarm.learn;
 
@@ -203,6 +211,8 @@ public class HelloWorld {
     }
 }</code></pre>
       </div>
+
+      <div class="callout callout-tip"><strong>Look for Run | Debug:</strong> With the Extension Pack for Java installed, you should see a <strong>Run | Debug</strong> link appear directly above the <code>public static void main</code> line. Clicking <strong>Run</strong> will compile and execute your program automatically &mdash; no terminal commands needed. We will also show you the terminal commands below, because understanding <code>javac</code> and <code>java</code> is important. But for quick testing, the Run button is your friend.</div>
 
       <p>That is your first Java program! If you are coming from JavaScript, your first reaction might be: "That is a <em>lot</em> of code just to print one line." And you are right &mdash; in JavaScript, you could accomplish the same thing with just <code>console.log("Hello, World!");</code>. Java requires more structure, and every piece of that structure has a purpose. Let us break it down line by line.</p>
 
@@ -248,7 +258,7 @@ public class HelloWorld {
 
       <h3>Compiling and Running Your Program</h3>
 
-      <p>Now let us compile and run your program. Open your terminal, navigate to the folder where you saved <code>HelloWorld.java</code>, and run these two commands:</p>
+      <p>Now let us compile and run your program. Open VS Code's integrated terminal with <kbd>Ctrl+`</kbd> (Windows/Linux) or <kbd>Cmd+`</kbd> (Mac), navigate to the folder where you saved <code>HelloWorld.java</code>, and run these two commands:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
         <pre><code>javac -d . HelloWorld.java
@@ -256,6 +266,8 @@ java org.codersfarm.learn.HelloWorld</code></pre>
       </div>
 
       <p>The first command, <code>javac -d . HelloWorld.java</code>, runs the Java compiler. The <code>-d .</code> flag tells the compiler to create the proper folder structure for the package &mdash; it will automatically create an <code>org/codersfarm/learn/</code> directory and place the compiled <code>HelloWorld.class</code> file inside it. If your code has no errors, it will do this silently. If there are errors, the compiler will print error messages telling you what went wrong and on which line. Read those messages carefully &mdash; they are usually very specific and helpful.</p>
+
+      <div class="callout callout-info"><strong>VS Code catches errors before you compile:</strong> Thanks to the Extension Pack, VS Code shows errors as <strong>red underlines</strong> in your code <em>before</em> you even run <code>javac</code>. Hover over any red underline to see a tooltip explaining the problem. You can also open the <strong>Problems panel</strong> with <kbd>Ctrl+Shift+M</kbd> (Windows/Linux) or <kbd>Cmd+Shift+M</kbd> (Mac) to see all errors in one list. Fix the red underlines before compiling and <code>javac</code> will usually succeed on the first try.</div>
 
       <p>The second command, <code>java org.codersfarm.learn.HelloWorld</code>, runs the compiled bytecode on the JVM. Notice that you use <code>javac</code> (Java Compiler) to compile, but just <code>java</code> to run. You also need to use the <strong>fully qualified class name</strong> &mdash; the package name followed by the class name, separated by dots. If everything worked, you should see:</p>
 
@@ -539,6 +551,8 @@ public class AboutMe {
       </div>
 
       <p>Save this file as <code>AboutMe.java</code> (remember &mdash; the file name must match the class name). Replace <code>"Your Name"</code> with your actual name, update your age, and then compile and run it:</p>
+
+      <div class="callout callout-tip"><strong>Quick reminder:</strong> Create a new file with <kbd>Ctrl+N</kbd> / <kbd>Cmd+N</kbd>, save it as <code>AboutMe.java</code>, and you can click the <strong>Run</strong> link above <code>main</code> to run it instantly. Or use the terminal commands below.</div>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
         <pre><code>javac -d . AboutMe.java
