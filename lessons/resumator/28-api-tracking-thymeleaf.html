@@ -491,7 +491,9 @@ long remaining = 200 - used;</code></pre>
       <p>Here is the updated <code>searchJobs</code> method. The new tracking code is woven into the existing logic:</p>
 
       <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
-        <pre><code>@Service
+        <pre><code>package com.example.resumator;
+
+@Service
 public class JobSearchService {
 
     private final ApiRequestRepository apiRequestRepository;
