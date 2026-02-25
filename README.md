@@ -10,7 +10,7 @@
 
 ## About Coders Farm
 
-Coders Farm is a civic technology nonprofit based in Lansing, Michigan. We believe that access to quality tech education shouldn't depend on your zip code, your income, or your background. Our mission is to meet people where they are and give them a real path from curious beginner to employable developer — at zero cost.
+Coders Farm is a technology education nonprofit based in Lansing, Michigan. We believe that access to quality tech education shouldn't depend on your zip code, your income, or your background. Our mission is to meet people where they are and give them a real path from curious beginner to employable developer — at zero cost.
 
 Everything we build is open source. Everything we teach is free. We don't collect your data, and we don't sell your attention.
 
