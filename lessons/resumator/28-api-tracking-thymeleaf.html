@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 28: Tracking API Usage with Thymeleaf — Coders Farm</title>
+  <meta name="description" content="Learn Thymeleaf server-side templates and build API request tracking">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-28-api-tracking-thymeleaf">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">API Tracking with Thymeleaf</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/resumator/27-completing-resumator.html" role="menuitem">Lesson 27: Completing Resumator</a>
+      <a href="/lessons/resumator/28-api-tracking-thymeleaf.html" role="menuitem">Lesson 28: API Tracking with Thymeleaf</a>
+      <a href="/lessons/resumator/29-search-security.html" role="menuitem">Lesson 29: Search &amp; Security</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / API Tracking with Thymeleaf</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="8" data-current="6">Lesson 6 of 8</p>
+      <h1>Tracking API Usage with Thymeleaf</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2.5&ndash;3 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand what Thymeleaf is and how server-side rendering differs from client-side rendering</li>
+          <li>Add Thymeleaf to a Spring Boot project and create templates</li>
+          <li>Build reusable page fragments (shared header, navigation)</li>
+          <li>Design and create the <code>api_requests</code> tracking table in MySQL</li>
+          <li>Build the <code>ApiRequest</code> entity and repository</li>
+          <li>Update <code>JobSearchService</code> to track every API call</li>
+          <li>Create a <code>PageController</code> that serves Thymeleaf pages with model data</li>
+          <li>Implement API quota enforcement (200 requests/month limit)</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — THE PROBLEM ==================== -->
+      <h2>1. The Problem</h2>
+
+      <p>Your Resumator application is working. You can search for jobs, save favorites, add notes, and manage your job hunt. But there is a problem lurking under the surface that you cannot see &mdash; and it is going to bite you eventually.</p>
+
+      <p>The JSearch API you are using has a <strong>free tier limit of 200 requests per month</strong>. Every time your application calls the API to search for jobs, that counts as one request. Two hundred sounds like a lot, but think about how quickly you can burn through them. A search for "Java Developer in Austin" is one request. Change it to "Python Developer in Austin" &mdash; that is two. Try "Remote Software Engineer" &mdash; three. Show it to a friend who searches five more times &mdash; eight. Run your application during development and test the search ten times in an afternoon &mdash; eighteen. You can see where this is going.</p>
+
+      <p>Right now, you have <strong>zero visibility</strong> into how many requests you have used. There is no counter anywhere. There is no warning when you are getting close. There is no way to check your usage without logging into the RapidAPI dashboard. And here is the worst part: if you run out of requests, <strong>your searches silently fail</strong>. The API returns an error, your application might show an empty results list or a generic error message, and you have no idea why. Did the API change? Is the server down? Did you misspell the query? No &mdash; you simply ran out of requests, and you have no way of knowing.</p>
+
+      <p>This lesson solves that problem. You are going to:</p>
+
+      <ul>
+        <li><strong>Track every API call</strong> in a database table, recording the query, the result count, the status, and the timestamp</li>
+        <li><strong>Calculate remaining requests</strong> by counting how many calls you have made since the 1st of the current month</li>
+        <li><strong>Display that count on every page</strong> so you always know where you stand</li>
+        <li><strong>Block searches</strong> when the quota is exhausted, showing a clear message instead of a confusing failure</li>
+      </ul>
+
+      <p>But wait &mdash; "display that count on every page" means you need the same header, with the same API usage badge, on the search page <em>and</em> the favorites page <em>and</em> any other page you might add later. If you copy and paste the same HTML header into every page, what happens when you need to change it? You have to update every single file. Miss one, and your pages are inconsistent. This is fragile, error-prone, and exactly the kind of duplication that real applications avoid.</p>
+
+      <p>The solution is a <strong>template engine</strong>. You define the header once, in one file, and every page includes it. Change it in one place, and every page updates automatically. The template engine we are going to use is called <strong>Thymeleaf</strong>, and it is the industry standard for Spring Boot applications.</p>
+
+      <!-- ==================== PART 2 — WHAT IS THYMELEAF ==================== -->
+      <h2>2. What is Thymeleaf?</h2>
+
+      <p>Thymeleaf is a <strong>server-side template engine</strong> for Java and Spring Boot. That sentence contains the most important concept you need to understand: <em>server-side</em>. Let us break down what that means.</p>
+
+      <p>Right now, your Resumator works like this: the browser requests a static HTML file from the server, the server sends it exactly as-is, and then JavaScript in the browser makes API calls to fetch data and dynamically builds the page. The server has no idea what the page looks like when the user sees it. It just hands over files.</p>
+
+      <p>With Thymeleaf, the process is different. The browser requests a page. The server receives that request, runs your Java code to gather data (like the number of API requests remaining), <strong>injects that data directly into the HTML</strong>, and sends the fully assembled page to the browser. By the time the HTML reaches the browser, it is complete. The data is already there. No JavaScript needed to fill it in.</p>
+
+      <p>Thymeleaf uses special <code>th:</code> attributes in your HTML to mark where data should be inserted. Here is a simple example:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Thymeleaf processes this on the server --&gt;
+&lt;p th:text=&quot;'Hello, ' + ${userName}&quot;&gt;Hello, placeholder&lt;/p&gt;
+
+&lt;!-- Browser receives this --&gt;
+&lt;p&gt;Hello, Jane&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>Look at what happened. The template contains <code>th:text="'Hello, ' + ${userName}"</code>. When the server processes this template, it evaluates the expression <code>${userName}</code>, which pulls the value from the model data your Java controller provided. If the controller set <code>userName</code> to <code>"Jane"</code>, Thymeleaf replaces the element's text content with <code>"Hello, Jane"</code>. The placeholder text <code>"Hello, placeholder"</code> is what you see if you open the file directly in a browser without the server &mdash; that is a Thymeleaf feature called <strong>natural templates</strong>. The HTML is valid and viewable even without the server running.</p>
+
+      <p>So why Thymeleaf instead of just static HTML and JavaScript?</p>
+
+      <div class="key-concept">
+        <h4>Shared Layouts</h4>
+        <p>Define your header, navigation, and footer once in a fragment file. Every page includes the fragment. Change it in one place, and every page updates. No more copying and pasting HTML across files.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Server-Rendered Data</h4>
+        <p>The page arrives in the browser with its data already filled in. The user does not see a blank page that flickers while JavaScript loads and fetches data. The HTML is complete from the moment it arrives.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Natural Templates</h4>
+        <p>Thymeleaf templates are valid HTML. A designer can open them in a browser and see a working page with placeholder content, without needing a running Java server. This makes collaboration between designers and developers easier.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>Industry Standard for Spring Boot</h4>
+        <p>Thymeleaf is the officially recommended template engine for Spring Boot. It is well-documented, actively maintained, and widely used across the Java ecosystem. When you learn Thymeleaf, you are learning a skill that appears in job postings.</p>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Thymeleaf vs. JavaScript Frontends: When to Use Which</strong>
+        <p>This is a question that comes up constantly in professional development. Here is the simple answer:</p>
+        <ul>
+          <li><strong>Thymeleaf</strong> is ideal for server-rendered web applications, admin panels, dashboards, and content-heavy pages where the data is assembled on the server and the page is relatively straightforward.</li>
+          <li><strong>JavaScript frameworks like React or Vue</strong> are ideal for highly interactive single-page applications (SPAs) with real-time updates, complex state management, and rich client-side interactions.</li>
+          <li><strong>Many applications use both.</strong> A company might use Thymeleaf for its internal admin dashboard and React for its customer-facing product. Or even within one app, some pages might be server-rendered with Thymeleaf while interactive widgets use JavaScript. This hybrid approach is exactly what you are building &mdash; Thymeleaf renders the page shell with server data, and JavaScript handles the interactive search and favorites features.</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 3 — ADDING THYMELEAF ==================== -->
+      <h2>3. Adding Thymeleaf to the Project</h2>
+
+      <p>Adding Thymeleaf to a Spring Boot project is remarkably easy. You add a single dependency to your <code>pom.xml</code>, and Spring Boot auto-configures everything. Open your <code>pom.xml</code> and add the following inside the <code>&lt;dependencies&gt;</code> section:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="true" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-thymeleaf&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>That is it. One dependency. Spring Boot sees this on the classpath and automatically configures Thymeleaf as the template engine. It knows where to look for templates, how to process them, and how to integrate them with your controllers. You do not need to configure anything else in <code>application.properties</code> for basic usage.</p>
+
+      <p>But you do need to understand where files go now. With Thymeleaf, your project has <strong>two separate resource directories</strong> that serve different purposes:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>src/main/resources/
+├── static/
+│   ├── css/style.css
+│   └── js/
+│       ├── search.js
+│       └── favorites.js
+└── templates/
+    ├── fragments/
+    │   └── header.html        # Shared header fragment
+    ├── search.html             # Search page (was static/index.html)
+    └── favorites.html          # Favorites page (was static/favorites.html)</code></pre>
+      </div>
+
+      <div class="key-concept">
+        <h4>templates/ vs. static/</h4>
+        <p><code>src/main/resources/templates/</code> is where Thymeleaf looks for template files. These files are <strong>processed by the server</strong> before being sent to the browser. Thymeleaf evaluates the <code>th:</code> attributes, injects data, resolves fragments, and produces the final HTML.</p>
+        <p><code>src/main/resources/static/</code> is where static assets live &mdash; CSS files, JavaScript files, images. These are served directly to the browser <strong>without any processing</strong>. The server hands them over exactly as they are.</p>
+        <p>If you put an HTML file in <code>static/</code>, the server sends it as-is. If you put it in <code>templates/</code>, Thymeleaf processes it first. This distinction is critical. Your search and favorites pages need to move from <code>static/</code> to <code>templates/</code> so that Thymeleaf can inject the API usage count and include the shared header fragment.</p>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Do not put templates in static/</strong>
+        A common beginner mistake is putting Thymeleaf templates in the <code>static/</code> directory. If you do, the server serves them as plain HTML files and the <code>th:</code> attributes are ignored. Your dynamic data will not appear. Templates <strong>must</strong> be in the <code>templates/</code> directory for Thymeleaf to process them.
+      </div>
+
+      <!-- ==================== PART 4 — FRAGMENTS ==================== -->
+      <h2>4. Fragments: Define Once, Use Everywhere</h2>
+
+      <p>A <strong>fragment</strong> in Thymeleaf is a reusable piece of HTML that you define in one file and include in multiple pages. Think of it like a Java method for HTML. Instead of copying your header into every page, you define it once as a fragment and include it wherever you need it.</p>
+
+      <p>This is the feature that solves the problem we identified in Part 1. Your API usage badge needs to appear on every page. If you have two pages now and five pages later, you do not want to maintain five copies of the same header HTML. You want one source of truth.</p>
+
+      <p>Create a new file at <code>src/main/resources/templates/fragments/header.html</code>:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;
+&lt;body&gt;
+
+&lt;nav th:fragment=&quot;siteHeader(requestsRemaining)&quot; class=&quot;site-nav&quot;&gt;
+    &lt;div class=&quot;nav-container&quot;&gt;
+        &lt;a href=&quot;/&quot; class=&quot;nav-logo&quot;&gt;Resumator&lt;/a&gt;
+
+        &lt;div class=&quot;nav-links&quot;&gt;
+            &lt;a href=&quot;/search&quot;
+               th:classappend=&quot;${#httpServletRequest.requestURI == '/search'
+                   ? 'active' : ''}&quot;&gt;Search&lt;/a&gt;
+            &lt;a href=&quot;/favorites&quot;
+               th:classappend=&quot;${#httpServletRequest.requestURI == '/favorites'
+                   ? 'active' : ''}&quot;&gt;Favorites&lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;nav-status&quot;&gt;
+            &lt;span class=&quot;api-badge&quot;
+                  th:classappend=&quot;${requestsRemaining &lt; 20
+                      ? 'api-badge-warning' : ''}&quot;
+                  th:text=&quot;${requestsRemaining} + ' requests left'&quot;&gt;
+                200 requests left
+            &lt;/span&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/nav&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>There is a lot happening in this file. Let us walk through every Thymeleaf attribute:</p>
+
+      <div class="key-concept">
+        <h4>th:fragment="siteHeader(requestsRemaining)"</h4>
+        <p>This defines a named fragment called <code>siteHeader</code>. It takes one parameter: <code>requestsRemaining</code>. When another page includes this fragment, it passes the value for that parameter. Think of this exactly like a method definition: <code>siteHeader</code> is the method name, and <code>requestsRemaining</code> is the argument.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>th:classappend</h4>
+        <p>This conditionally adds a CSS class to an element. For the navigation links, it checks the current URL. If the user is on <code>/search</code>, the Search link gets the <code>active</code> class. If the user is on <code>/favorites</code>, the Favorites link gets it. This is how you highlight the current page in the navigation &mdash; a pattern you see on almost every website.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>th:text</h4>
+        <p>This replaces the text content of an element with a dynamic value. The expression <code>${requestsRemaining} + ' requests left'</code> concatenates the number with the string. If 150 requests remain, the badge shows "150 requests left." The placeholder text "200 requests left" only appears if you open the HTML file directly in a browser without the server.</p>
+      </div>
+
+      <p>Now, to use this fragment in any page, you include it with a single line:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;div th:replace=&quot;~{fragments/header :: siteHeader(${requestsRemaining})}&quot;&gt;&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>Let us decode that expression piece by piece:</p>
+
+      <ul>
+        <li><code>th:replace</code> &mdash; tells Thymeleaf to replace this entire <code>&lt;div&gt;</code> with the fragment's content</li>
+        <li><code>~{...}</code> &mdash; the fragment expression syntax</li>
+        <li><code>fragments/header</code> &mdash; the path to the template file (relative to the <code>templates/</code> directory, without the <code>.html</code> extension)</li>
+        <li><code>::</code> &mdash; separates the template path from the fragment name</li>
+        <li><code>siteHeader(${requestsRemaining})</code> &mdash; the fragment name with the parameter value being passed from the current page's model</li>
+      </ul>
+
+      <p>When Thymeleaf processes this line, it finds the fragment file, locates the <code>siteHeader</code> fragment inside it, evaluates the parameter, builds the complete HTML, and replaces the <code>&lt;div&gt;</code> with the result. The browser never sees <code>th:replace</code> or <code>th:fragment</code> &mdash; it receives clean, standard HTML.</p>
+
+      <div class="callout callout-tip">
+        <strong>Change it in one place, update everywhere.</strong>
+        If you later decide to add a "Dashboard" link to the navigation, you edit <code>fragments/header.html</code> once. Every page that includes this fragment automatically shows the new link the next time it is loaded. This is the power of fragments. It eliminates one of the most common sources of bugs in web applications: inconsistent headers across pages.
+      </div>
+
+      <!-- ==================== PART 5 — THE TRACKING TABLE ==================== -->
+      <h2>5. The API Request Tracking Table</h2>
+
+      <p>Before you can track API requests in Java, you need a place to store them. That means creating a new database table. This is the <strong>fourth table</strong> you have created in the Resumator project (after the jobs table, the favorite_jobs table, and any others from earlier lessons). The process should feel familiar by now.</p>
+
+      <p>Here is the complete <code>CREATE TABLE</code> statement:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="true" data-runnable="false">
+        <pre><code>CREATE TABLE api_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    search_query VARCHAR(255),
+    search_location VARCHAR(255),
+    status VARCHAR(20) NOT NULL,
+    new_results_count INT DEFAULT 0,
+    existing_results_count INT DEFAULT 0,
+    response_code INT,
+    error_message TEXT,
+    requested_at DATETIME NOT NULL
+);</code></pre>
+      </div>
+
+      <p>Let us go through every column and understand why it exists:</p>
+
+      <div class="key-concept">
+        <h4>id (BIGINT AUTO_INCREMENT PRIMARY KEY)</h4>
+        <p>The unique identifier for each API request log entry. Auto-incremented, just like every other table you have built. This is the primary key &mdash; the column that uniquely identifies each row.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>search_query (VARCHAR(255))</h4>
+        <p>The search term the user typed. "Java Developer," "Remote Python Engineer," "Marketing Intern" &mdash; whatever they searched for. This lets you see what people are searching for and how they are using the application.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>search_location (VARCHAR(255))</h4>
+        <p>The location the user searched in, like "Austin, TX" or "New York." Nullable, because the user might search without specifying a location.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>status (VARCHAR(20) NOT NULL)</h4>
+        <p>Whether the API call succeeded or failed. Values will be <code>"SUCCESS"</code> or <code>"ERROR"</code>. This column is <code>NOT NULL</code> because every request must have a status &mdash; there is no such thing as a request with an unknown outcome.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>new_results_count (INT DEFAULT 0)</h4>
+        <p>How many new job results the API returned that were not already in your database. This tells you whether your searches are productive &mdash; are you finding new jobs, or are you seeing the same ones over and over?</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>existing_results_count (INT DEFAULT 0)</h4>
+        <p>How many results from the API were jobs you had already seen in a previous search. If this number is consistently high and <code>new_results_count</code> is consistently low, you know the same jobs keep coming back. That is useful information for deciding when to search and when to wait.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>response_code (INT)</h4>
+        <p>The HTTP response code from the API. <code>200</code> means success. <code>429</code> means you have been rate-limited. <code>500</code> means the API server had an error. This helps you distinguish between different types of failures.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>error_message (TEXT)</h4>
+        <p>If the API call failed, this stores the error message. <code>TEXT</code> because error messages can be long and unpredictable. Nullable, because successful requests do not have error messages.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>requested_at (DATETIME NOT NULL)</h4>
+        <p>The exact moment the API call was made. This is the most important column for quota tracking. To calculate how many requests you have used this month, you count rows where <code>requested_at</code> is after the 1st of the current month.</p>
+      </div>
+
+      <p>This table gives you visibility into three important things:</p>
+
+      <ul>
+        <li><strong>Burn rate:</strong> How quickly are you using your 200 monthly requests? At the current pace, will you run out before the month ends?</li>
+        <li><strong>Productive searches:</strong> Are your API calls returning new results, or are they wasting quota on jobs you have already seen?</li>
+        <li><strong>Error patterns:</strong> Are there recurring errors? Is the API failing during certain times? Is a specific query causing problems?</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>This is a standalone log table.</strong>
+        Notice that <code>api_requests</code> has no foreign keys. It does not reference the jobs table or the favorite_jobs table. Not every table needs relationships. This is a <strong>log table</strong> &mdash; its job is to record events independently, like a diary. Each row is a self-contained record of one API call. This is the fourth table you have created in the Resumator project, and it is the first one that stands completely alone with no connections to other tables. That is perfectly normal and common in real applications.
+      </div>
+
+      <!-- ==================== PART 6 — ENTITY AND REPOSITORY ==================== -->
+      <h2>6. The Java Entity and Repository</h2>
+
+      <p>Now you need the Java side &mdash; the entity that maps to the <code>api_requests</code> table and the repository that provides database operations. By now, you have built several entities. This one follows the same pattern.</p>
+
+      <p>Create a new file called <code>ApiRequest.java</code> in your model package:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;api_requests&quot;)
+public class ApiRequest {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = &quot;search_query&quot;)
+    private String searchQuery;
+
+    @Column(name = &quot;search_location&quot;)
+    private String searchLocation;
+
+    @Column(nullable = false, length = 20)
+    private String status;
+
+    @Column(name = &quot;new_results_count&quot;)
+    private int newResultsCount;
+
+    @Column(name = &quot;existing_results_count&quot;)
+    private int existingResultsCount;
+
+    @Column(name = &quot;response_code&quot;)
+    private Integer responseCode;
+
+    @Column(name = &quot;error_message&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String errorMessage;
+
+    @Column(name = &quot;requested_at&quot;, nullable = false)
+    private LocalDateTime requestedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.requestedAt = LocalDateTime.now();
+    }
+
+    // Default constructor required by JPA
+    public ApiRequest() {}
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getSearchQuery() { return searchQuery; }
+    public void setSearchQuery(String searchQuery) { this.searchQuery = searchQuery; }
+
+    public String getSearchLocation() { return searchLocation; }
+    public void setSearchLocation(String searchLocation) { this.searchLocation = searchLocation; }
+
+    public String getStatus() { return status; }
+    public void setStatus(String status) { this.status = status; }
+
+    public int getNewResultsCount() { return newResultsCount; }
+    public void setNewResultsCount(int newResultsCount) { this.newResultsCount = newResultsCount; }
+
+    public int getExistingResultsCount() { return existingResultsCount; }
+    public void setExistingResultsCount(int existingResultsCount) {
+        this.existingResultsCount = existingResultsCount;
+    }
+
+    public Integer getResponseCode() { return responseCode; }
+    public void setResponseCode(Integer responseCode) { this.responseCode = responseCode; }
+
+    public String getErrorMessage() { return errorMessage; }
+    public void setErrorMessage(String errorMessage) { this.errorMessage = errorMessage; }
+
+    public LocalDateTime getRequestedAt() { return requestedAt; }
+    public void setRequestedAt(LocalDateTime requestedAt) { this.requestedAt = requestedAt; }
+}</code></pre>
+      </div>
+
+      <p>This should look familiar. It follows the exact same pattern as <code>FavoriteJob</code>: <code>@Entity</code> marks it as a database entity, <code>@Table</code> sets the table name, <code>@Id</code> and <code>@GeneratedValue</code> handle the primary key, <code>@Column</code> maps each field to a column, and <code>@PrePersist</code> automatically sets the timestamp before saving. You have done this before. The pattern is the same. The only thing that changed is the fields.</p>
+
+      <p>Notice one subtle difference: <code>newResultsCount</code> and <code>existingResultsCount</code> use the primitive <code>int</code> type (lowercase), while <code>responseCode</code> uses the wrapper <code>Integer</code> type (uppercase). The primitive <code>int</code> defaults to <code>0</code>, which makes sense for counts &mdash; if you do not set a count, zero is a reasonable default. But <code>responseCode</code> might be <code>null</code> if the API call never completed (for example, a network timeout), and primitive <code>int</code> cannot be null. Using <code>Integer</code> (the object wrapper) allows null values.</p>
+
+      <p>Now create the repository. Create a new file called <code>ApiRequestRepository.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.repository;
+
+import com.example.resumator.model.ApiRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.time.LocalDateTime;
+
+public interface ApiRequestRepository extends JpaRepository&lt;ApiRequest, Long&gt; {
+
+    long countByRequestedAtAfter(LocalDateTime dateTime);
+
+    long countByStatusAndRequestedAtAfter(String status, LocalDateTime dateTime);
+}</code></pre>
+      </div>
+
+      <p>Two custom methods. Let us read them using the Spring Data naming convention you learned in the favorites lesson:</p>
+
+      <p><code>countByRequestedAtAfter(LocalDateTime dateTime)</code> &mdash; <code>count</code> means "return the number of rows." <code>By</code> means "filter by the following field." <code>RequestedAt</code> refers to the <code>requestedAt</code> field. <code>After</code> means "where the value is after (greater than) the given parameter." So the full meaning is: <strong>"How many API requests have been made since this date?"</strong> Spring generates the SQL: <code>SELECT COUNT(*) FROM api_requests WHERE requested_at &gt; ?</code></p>
+
+      <p>This is the method that powers your quota tracking. To find out how many requests you have used this month, you call it with the first moment of the current month:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>LocalDateTime startOfMonth = LocalDateTime.now()
+    .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+long used = apiRequestRepository.countByRequestedAtAfter(startOfMonth);
+long remaining = 200 - used;</code></pre>
+      </div>
+
+      <p><code>countByStatusAndRequestedAtAfter(String status, LocalDateTime dateTime)</code> adds another filter: it only counts requests with a specific status. You can use this to count only successful requests, or only errors, within a given time period. For example, <code>countByStatusAndRequestedAtAfter("ERROR", startOfMonth)</code> tells you how many failed requests you have had this month.</p>
+
+      <div class="callout callout-tip">
+        <strong>The naming convention is the query.</strong>
+        You did not write a single line of SQL. You did not configure anything. You just followed Spring Data's naming pattern, and it generated the query for you. This is one of the most powerful features of Spring Data JPA, and it is worth pausing to appreciate how much boilerplate code it eliminates.
+      </div>
+
+      <!-- ==================== PART 7 — UPDATING JOBSEARCHSERVICE ==================== -->
+      <h2>7. Updating JobSearchService</h2>
+
+      <p>Now comes the integration. Your <code>JobSearchService</code> is the class that makes the actual API calls to JSearch. Right now, it calls the API, parses the results, and returns them. You need to add tracking: before and after every API call, record what happened in the <code>api_requests</code> table.</p>
+
+      <p>Here is the updated <code>searchJobs</code> method. The new tracking code is woven into the existing logic:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@Service
+public class JobSearchService {
+
+    private final ApiRequestRepository apiRequestRepository;
+    // ... other existing fields (RestTemplate, job repository, etc.)
+
+    public JobSearchService(ApiRequestRepository apiRequestRepository
+                            /* ... other existing parameters */) {
+        this.apiRequestRepository = apiRequestRepository;
+        // ... other existing assignments
+    }
+
+    public List&lt;Job&gt; searchJobs(String query, String location) {
+        // Create the tracking record before the call
+        ApiRequest apiRequest = new ApiRequest();
+        apiRequest.setSearchQuery(query);
+        apiRequest.setSearchLocation(location);
+
+        try {
+            // Make the API call (existing code)
+            String url = buildApiUrl(query, location);
+            ResponseEntity&lt;String&gt; response = restTemplate.getForEntity(url, String.class);
+
+            // Parse results (existing code)
+            List&lt;Job&gt; jobs = parseJobResults(response.getBody());
+
+            // Count new vs. existing results
+            int newCount = 0;
+            int existingCount = 0;
+            for (Job job : jobs) {
+                if (jobRepository.existsByJobId(job.getJobId())) {
+                    existingCount++;
+                } else {
+                    jobRepository.save(job);
+                    newCount++;
+                }
+            }
+
+            // Record success
+            apiRequest.setStatus(&quot;SUCCESS&quot;);
+            apiRequest.setResponseCode(response.getStatusCode().value());
+            apiRequest.setNewResultsCount(newCount);
+            apiRequest.setExistingResultsCount(existingCount);
+            apiRequestRepository.save(apiRequest);
+
+            return jobs;
+
+        } catch (Exception e) {
+            // Record the error
+            apiRequest.setStatus(&quot;ERROR&quot;);
+            apiRequest.setErrorMessage(e.getMessage());
+            apiRequestRepository.save(apiRequest);
+
+            // Re-throw so the controller can handle it
+            throw e;
+        }
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us walk through the tracking logic step by step:</p>
+
+      <p><strong>Before the API call:</strong> You create an <code>ApiRequest</code> object and set the search query and location. You do this <em>before</em> the call because you want to capture what was searched regardless of whether the call succeeds or fails.</p>
+
+      <p><strong>On success:</strong> After parsing the results, you loop through the jobs and count how many are new (not already in your database) and how many are existing (duplicates of jobs you have already seen). This gives you insight into how productive each search is. You set the status to <code>"SUCCESS"</code>, record the HTTP response code, set the counts, and save the tracking record.</p>
+
+      <p><strong>On failure:</strong> If anything goes wrong &mdash; a network error, a rate limit, an API server failure &mdash; the catch block records the error. It sets the status to <code>"ERROR"</code>, captures the error message, and saves the tracking record. Then it re-throws the exception so that the controller can handle it and return an appropriate error response to the user.</p>
+
+      <div class="callout callout-warning">
+        <strong>Always re-throw after logging.</strong>
+        Notice the <code>throw e;</code> at the end of the catch block. This is important. If you catch an exception, log it, but do <em>not</em> re-throw it, the calling code will think everything went fine. The controller would receive <code>null</code> or an empty list and might show "no results found" instead of an error message. By re-throwing, you let the error propagate to where it can be properly handled and communicated to the user.
+      </div>
+
+      <div class="callout callout-info">
+        <strong>The try-catch guarantees tracking.</strong>
+        Look at the structure carefully. The <code>apiRequestRepository.save(apiRequest)</code> call appears in <strong>both</strong> the try block and the catch block. This means the tracking record is saved no matter what happens. Success? Saved with status "SUCCESS." Failure? Saved with status "ERROR." The API request is always logged. This is a pattern called <strong>guaranteed logging</strong>, and it is essential for any monitoring or tracking system. If you only logged successes, you would have no visibility into failures &mdash; which are often more important to know about.
+      </div>
+
+      <!-- ==================== PART 8 — CONVERTING CONTROLLERS ==================== -->
+      <h2>8. Converting Controllers to Serve Pages</h2>
+
+      <p>Up until now, your controllers have been <code>@RestController</code> classes that return JSON data. The browser sends a request, the controller processes it, and returns data that JavaScript on the page uses to build the display. That pattern still works for your API endpoints. But now you also need controllers that return <strong>complete HTML pages</strong> &mdash; pages that Thymeleaf renders with the API usage count already embedded.</p>
+
+      <p>This is where a new type of controller comes in. Create a new file called <code>PageController.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.controller;
+
+import com.example.resumator.repository.ApiRequestRepository;
+import com.example.resumator.repository.FavoriteJobRepository;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import java.time.LocalDateTime;
+
+@Controller
+public class PageController {
+
+    private final ApiRequestRepository apiRequestRepository;
+    private final FavoriteJobRepository favoriteJobRepository;
+
+    public PageController(ApiRequestRepository apiRequestRepository,
+                          FavoriteJobRepository favoriteJobRepository) {
+        this.apiRequestRepository = apiRequestRepository;
+        this.favoriteJobRepository = favoriteJobRepository;
+    }
+
+    @GetMapping(&quot;/search&quot;)
+    public String searchPage(Model model) {
+        model.addAttribute(&quot;requestsRemaining&quot;, getRequestsRemaining());
+        model.addAttribute(&quot;favoriteCount&quot;, favoriteJobRepository.count());
+        return &quot;search&quot;;
+    }
+
+    @GetMapping(&quot;/favorites&quot;)
+    public String favoritesPage(Model model) {
+        model.addAttribute(&quot;requestsRemaining&quot;, getRequestsRemaining());
+        model.addAttribute(&quot;favoriteCount&quot;, favoriteJobRepository.count());
+        return &quot;favorites&quot;;
+    }
+
+    private long getRequestsRemaining() {
+        LocalDateTime startOfMonth = LocalDateTime.now()
+            .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+        long used = apiRequestRepository.countByRequestedAtAfter(startOfMonth);
+        return Math.max(0, 200 - used);
+    }
+}</code></pre>
+      </div>
+
+      <p>This controller looks different from what you have built before. Let us examine every important detail:</p>
+
+      <div class="key-concept">
+        <h4>@Controller vs. @RestController</h4>
+        <p>This is one of the most important distinctions in Spring Boot. <code>@Controller</code> (without "Rest") tells Spring that the return value of each method is a <strong>view name</strong> &mdash; the name of a Thymeleaf template to render. When <code>searchPage()</code> returns the string <code>"search"</code>, Spring looks for a template file at <code>templates/search.html</code>, processes it through Thymeleaf, and sends the resulting HTML to the browser.</p>
+        <p><code>@RestController</code> tells Spring that the return value is the <strong>actual response data</strong>, which Spring serializes to JSON and sends directly. Your <code>JobSearchController</code> and <code>FavoriteController</code> use <code>@RestController</code> because they return data objects, not template names.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>The Model Parameter</h4>
+        <p>The <code>Model</code> parameter is how you pass data from your Java controller to your Thymeleaf template. When you call <code>model.addAttribute("requestsRemaining", getRequestsRemaining())</code>, you are saying: "Make this value available in the template under the name <code>requestsRemaining</code>." In the template, <code>${requestsRemaining}</code> retrieves this value. The model is the bridge between Java and HTML.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>The getRequestsRemaining() Method</h4>
+        <p>This private helper method calculates the remaining API quota. It builds a <code>LocalDateTime</code> representing the first moment of the current month (day 1, midnight), queries the repository for the count of requests since then, and subtracts from 200. The <code>Math.max(0, 200 - used)</code> ensures the result never goes negative &mdash; if somehow more than 200 requests were made (perhaps the limit was not enforced earlier), the display shows 0 rather than a confusing negative number.</p>
+      </div>
+
+      <p>Here is the critical point to understand: <strong>both types of controllers exist side by side</strong>. Your application now has a <em>hybrid architecture</em>:</p>
+
+      <ul>
+        <li><code>PageController</code> (a <code>@Controller</code>) serves Thymeleaf-rendered HTML pages at <code>/search</code> and <code>/favorites</code></li>
+        <li><code>JobSearchController</code> (a <code>@RestController</code>) serves JSON data at <code>/api/jobs/search</code></li>
+        <li><code>FavoriteController</code> (a <code>@RestController</code>) serves JSON data at <code>/api/favorites</code></li>
+      </ul>
+
+      <p>When a user navigates to <code>/search</code> in their browser, the <code>PageController</code> runs, builds the model with the API usage count, and returns the Thymeleaf-rendered page with the header already populated. Then, when the user types a search query and clicks the button, JavaScript on the page calls <code>/api/jobs/search</code>, which hits the <code>@RestController</code> and returns JSON that JavaScript uses to build the results list.</p>
+
+      <div class="callout callout-tip">
+        <strong>This hybrid approach is common in the real world.</strong>
+        Many professional applications use server-side rendering for the page shell (navigation, layout, server-known data) and client-side JavaScript for interactive features (search, filtering, real-time updates). You are not choosing one or the other &mdash; you are using each where it makes the most sense. The page structure and global data come from Thymeleaf. The interactive features come from JavaScript. This is a practical, production-ready pattern.
+      </div>
+
+      <!-- ==================== PART 9 — CONVERTING TEMPLATES ==================== -->
+      <h2>9. Converting the Templates</h2>
+
+      <p>Now you need to convert your existing HTML pages into Thymeleaf templates. This involves three changes: moving the files, adding the Thymeleaf namespace, and replacing the hardcoded header with the fragment include.</p>
+
+      <p><strong>Step 1: Move the files.</strong> Move <code>search.html</code> from <code>src/main/resources/static/</code> to <code>src/main/resources/templates/</code>. Do the same for <code>favorites.html</code>. Remember: files in <code>templates/</code> are processed by Thymeleaf. Files in <code>static/</code> are served as-is.</p>
+
+      <p><strong>Step 2: Add the Thymeleaf namespace.</strong> At the top of each file, update the <code>&lt;html&gt;</code> tag to include the Thymeleaf namespace:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Before --&gt;
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;!-- After --&gt;
+&lt;html lang=&quot;en&quot; xmlns:th=&quot;http://www.thymeleaf.org&quot;&gt;</code></pre>
+      </div>
+
+      <p>The <code>xmlns:th</code> namespace declaration tells the HTML parser that attributes starting with <code>th:</code> are valid Thymeleaf attributes. Without this, some IDEs and validators might flag <code>th:</code> attributes as errors. It does not change how the template works, but it makes your tooling happy.</p>
+
+      <p><strong>Step 3: Replace the hardcoded header.</strong> Remove the entire header/navigation HTML that was previously copied into each file and replace it with the fragment include:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- Remove the old hardcoded header HTML and replace with: --&gt;
+&lt;div th:replace=&quot;~{fragments/header :: siteHeader(${requestsRemaining})}&quot;&gt;&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>That is the entire conversion. Three steps: move, namespace, fragment. Everything else stays the same.</p>
+
+      <div class="callout callout-info">
+        <strong>Your JavaScript stays exactly where it is.</strong>
+        The <code>search.js</code> and <code>favorites.js</code> files remain in <code>static/js/</code>. They still work the same way &mdash; they still make <code>fetch()</code> calls to your REST API endpoints and dynamically build the results. The only thing Thymeleaf handles is the page shell: the header with the API usage badge, the navigation links, and the basic page structure. The interactive search and favorites features are still powered by JavaScript. This is the hybrid approach in action.
+      </div>
+
+      <p>After these changes, your search page works like this:</p>
+
+      <ol>
+        <li>User navigates to <code>/search</code></li>
+        <li><code>PageController.searchPage()</code> runs, calculates remaining API requests, adds the count to the model</li>
+        <li>Thymeleaf processes <code>templates/search.html</code>, includes the header fragment with the request count, and sends the complete HTML to the browser</li>
+        <li>The browser renders the page with the API usage badge already showing the correct count</li>
+        <li>User types a query and clicks search</li>
+        <li>JavaScript calls <code>/api/jobs/search</code>, which hits the <code>@RestController</code></li>
+        <li>The <code>JobSearchService</code> makes the API call, tracks it in the database, and returns the results</li>
+        <li>JavaScript builds the job cards and displays them on the page</li>
+      </ol>
+
+      <p>Server-rendered shell. Client-rendered interactivity. Both working together.</p>
+
+      <!-- ==================== PART 10 — QUOTA ENFORCEMENT ==================== -->
+      <h2>10. Quota Enforcement</h2>
+
+      <p>Tracking API requests is valuable, but it is reactive &mdash; it tells you what already happened. You also need something <strong>proactive</strong>: a mechanism that <em>prevents</em> searches when the quota is exhausted. Without this, a user who has used all 200 requests would click search, the API call would fail with a rate-limit error, and they would see a confusing error message. It is much better to check the quota <em>before</em> making the call and show a clear, helpful message.</p>
+
+      <p>Add a quota check at the very beginning of the <code>searchJobs</code> method in <code>JobSearchService</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>public List&lt;Job&gt; searchJobs(String query, String location) {
+    // Check quota BEFORE making the API call
+    LocalDateTime startOfMonth = LocalDateTime.now()
+        .withDayOfMonth(1).withHour(0).withMinute(0).withSecond(0);
+    long used = apiRequestRepository.countByRequestedAtAfter(startOfMonth);
+    if (used &gt;= 200) {
+        throw new RuntimeException(
+            &quot;Monthly API limit reached. Resets on the 1st.&quot;);
+    }
+
+    // Create the tracking record
+    ApiRequest apiRequest = new ApiRequest();
+    apiRequest.setSearchQuery(query);
+    apiRequest.setSearchLocation(location);
+
+    try {
+        // ... rest of the existing method
+    } catch (Exception e) {
+        // ... existing error handling
+    }
+}</code></pre>
+      </div>
+
+      <p>This check runs <em>before</em> the API call is made. It queries the database for the count of requests made since the start of the current month. If that count is 200 or more, it immediately throws a <code>RuntimeException</code> with a clear message. The API call never happens. No quota is wasted on a call that would fail anyway.</p>
+
+      <p>On the frontend side, you need to handle this error gracefully. When your JavaScript receives an error response from the search endpoint, check if the error message mentions the API limit and display it prominently:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!-- In your search.html template --&gt;
+&lt;div id=&quot;quota-warning&quot; class=&quot;alert alert-warning&quot; style=&quot;display: none;&quot;&gt;
+    You have reached the monthly API limit of 200 requests.
+    Your quota resets on the 1st of next month.
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>// In your search.js
+async function performSearch(query, location) {
+    try {
+        const response = await fetch(
+            `/api/jobs/search?query=${query}&amp;location=${location}`
+        );
+
+        if (!response.ok) {
+            const error = await response.json();
+            if (error.message &amp;&amp; error.message.includes('API limit')) {
+                document.getElementById('quota-warning').style.display = 'block';
+                return;
+            }
+            throw new Error(error.message || 'Search failed');
+        }
+
+        const jobs = await response.json();
+        displayResults(jobs);
+
+    } catch (error) {
+        console.error('Search error:', error);
+        // Show user-friendly error message
+    }
+}</code></pre>
+      </div>
+
+      <p>The Thymeleaf header fragment already shows the remaining count on every page. The quota enforcement in <code>JobSearchService</code> prevents wasted API calls. And the JavaScript error handling shows a clear message when the limit is reached. Together, these three layers provide complete protection:</p>
+
+      <ul>
+        <li><strong>Awareness:</strong> The header badge shows remaining requests at all times</li>
+        <li><strong>Prevention:</strong> The server-side check blocks calls when the quota is exhausted</li>
+        <li><strong>Communication:</strong> The frontend shows a clear, helpful message explaining what happened and when it will reset</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <strong>Why block on the server, not just the frontend?</strong>
+        You might wonder why we do not just hide the search button in JavaScript when the quota is exhausted. The answer is <strong>defense in depth</strong>. JavaScript checks can be bypassed &mdash; a user could open the browser console, modify the code, or call the API endpoint directly. The server-side check in <code>JobSearchService</code> is the real enforcement. The frontend check is a courtesy that provides a better user experience. Both matter, but the server is the authority.
+      </div>
+
+      <!-- ==================== PART 11 — CREATING THE TABLE ==================== -->
+      <h2>11. Creating the Table in MySQL Workbench</h2>
+
+      <p>This is the fourth table you are creating in the Resumator project. The process should feel familiar by now. Open <strong>MySQL Workbench</strong>, connect to your local MySQL server, and make sure you are using the <code>resumator</code> database:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="true" data-runnable="false">
+        <pre><code>USE resumator;</code></pre>
+      </div>
+
+      <p>Now run the <code>CREATE TABLE</code> statement:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="true" data-runnable="false">
+        <pre><code>CREATE TABLE api_requests (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    search_query VARCHAR(255),
+    search_location VARCHAR(255),
+    status VARCHAR(20) NOT NULL,
+    new_results_count INT DEFAULT 0,
+    existing_results_count INT DEFAULT 0,
+    response_code INT,
+    error_message TEXT,
+    requested_at DATETIME NOT NULL
+);</code></pre>
+      </div>
+
+      <p>Click the lightning bolt icon to execute. You should see a green checkmark. Verify the table was created:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="true" data-runnable="false">
+        <pre><code>DESCRIBE api_requests;</code></pre>
+      </div>
+
+      <p>You should see all nine columns listed with their types, null constraints, and defaults. If you see that output, the table is ready.</p>
+
+      <div class="callout callout-info">
+        <strong>No foreign keys on this table.</strong>
+        Unlike many database tables, <code>api_requests</code> has no foreign keys and no relationships to other tables. It is a standalone log table. Each row is an independent record of one API call. This is intentional. Not every table needs to be connected to other tables. Log tables, audit tables, and event tables are commonly standalone. They record what happened without needing to reference other data. This is perfectly normal and a common pattern in production databases.
+      </div>
+
+      <p>After creating the table, restart your Spring Boot application and perform a search. Then check the tracking table:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="true" data-runnable="false">
+        <pre><code>SELECT * FROM api_requests;</code></pre>
+      </div>
+
+      <p>You should see a row with the search query you just ran, the status <code>SUCCESS</code>, the counts of new and existing results, the HTTP response code <code>200</code>, and the timestamp of when the call was made. Every future search will add another row. You now have complete visibility into your API usage.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="q28-1">
+        <p class="quiz-question">1. What is a Thymeleaf fragment and why is it useful?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q28-1" value="a"> A JavaScript function that updates the page without refreshing</label>
+          <label><input type="radio" name="q28-1" value="b"> A reusable piece of HTML defined once and included in multiple pages, eliminating code duplication</label>
+          <label><input type="radio" name="q28-1" value="c"> A CSS file that styles multiple pages at once</label>
+          <label><input type="radio" name="q28-1" value="d"> A database query that runs on every page load</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! A Thymeleaf fragment is a reusable piece of HTML that you define in one file using <code>th:fragment</code> and include in multiple pages using <code>th:replace</code>. This eliminates code duplication &mdash; instead of copying the same header HTML into every page, you define it once and include it everywhere. When you need to change the header, you change it in one place and every page updates automatically.</div>
+      </div>
+
+      <div class="quiz" data-id="q28-2">
+        <p class="quiz-question">2. What is the difference between @Controller and @RestController?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q28-2" value="a"> @Controller is for GET requests and @RestController is for POST requests</label>
+          <label><input type="radio" name="q28-2" value="b"> @Controller returns view template names that Thymeleaf renders, while @RestController returns data directly as JSON</label>
+          <label><input type="radio" name="q28-2" value="c"> @Controller is the old way and @RestController is the new way</label>
+          <label><input type="radio" name="q28-2" value="d"> @Controller is for web pages and @RestController is for mobile apps</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That's right! <code>@Controller</code> tells Spring that the return value of each method is a view name &mdash; the name of a Thymeleaf template that Spring should process and render into HTML. <code>@RestController</code> tells Spring that the return value is the actual response data, which Spring serializes to JSON and sends directly. Both can exist in the same application, serving different purposes: <code>@Controller</code> for page rendering and <code>@RestController</code> for API endpoints.</div>
+      </div>
+
+      <div class="quiz" data-id="q28-3">
+        <p class="quiz-question">3. Why do we track API requests in a database instead of just counting in memory?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q28-3" value="a"> Because databases are faster than in-memory counting</label>
+          <label><input type="radio" name="q28-3" value="b"> Because Java does not support in-memory counters</label>
+          <label><input type="radio" name="q28-3" value="c"> Database tracking persists across server restarts, provides historical data for analysis, and gives visibility into usage patterns</label>
+          <label><input type="radio" name="q28-3" value="d"> Because Thymeleaf can only read data from databases</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! If you tracked API requests with an in-memory counter (like a simple <code>int</code> variable), the count would reset to zero every time you restarted the server. You would lose all history and have no way to analyze patterns over time. Database tracking persists across restarts, gives you a complete history of every API call with details like the query, status, and timing, and lets you analyze usage patterns to make informed decisions about how you use your limited quota.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <div class="key-concept">
+        <h4>What You Built</h4>
+        <p>Your Resumator now has Thymeleaf-rendered pages with a shared header fragment showing API requests remaining, a fully tracked <code>api_requests</code> table logging every API call, and quota enforcement that prevents exceeding the monthly limit.</p>
+      </div>
+
+      <p>Let us recap everything you accomplished in this lesson:</p>
+
+      <ul>
+        <li><strong>You learned what Thymeleaf is</strong> and how server-side rendering differs from client-side rendering. You understand that the server builds the complete HTML before sending it to the browser, and that Thymeleaf uses <code>th:</code> attributes to inject dynamic data into HTML templates.</li>
+        <li><strong>You added Thymeleaf to your Spring Boot project</strong> with a single dependency and learned the difference between the <code>templates/</code> directory (server-processed) and the <code>static/</code> directory (served as-is).</li>
+        <li><strong>You built a reusable fragment</strong> for the site header, including navigation with active-state highlighting and an API usage badge with a warning state. This fragment is defined once and included in every page.</li>
+        <li><strong>You designed and created the <code>api_requests</code> table</strong> in MySQL, with columns for tracking the search query, location, status, result counts, response code, error messages, and timestamps.</li>
+        <li><strong>You built the <code>ApiRequest</code> entity and repository</strong>, using the same JPA patterns you have practiced throughout the Resumator track, with custom query methods for counting requests within a time period.</li>
+        <li><strong>You updated <code>JobSearchService</code></strong> to track every API call &mdash; both successes and failures &mdash; with guaranteed logging that records the outcome no matter what happens.</li>
+        <li><strong>You created a <code>PageController</code></strong> that uses <code>@Controller</code> (not <code>@RestController</code>) to serve Thymeleaf-rendered pages with model data, and you understand the hybrid architecture where both types of controllers coexist.</li>
+        <li><strong>You implemented quota enforcement</strong> with server-side blocking, frontend error handling, and a persistent header badge that keeps you informed at all times.</li>
+      </ul>
+
+      <p>This lesson introduced two major concepts &mdash; server-side templating and API usage tracking &mdash; and wove them together into a cohesive feature. The Thymeleaf skills you learned here (fragments, model attributes, <code>@Controller</code> vs. <code>@RestController</code>) are foundational skills for Spring Boot development that you will use in every professional project. The tracking table pattern is one you will see in production systems everywhere, from API usage monitoring to audit logs to analytics dashboards.</p>
+
+      <p>Your Resumator is becoming a more sophisticated, production-quality application with every lesson. You have a search feature, a favorites system, and now visibility and control over your API consumption. In the next lesson, you will add search features and security basics to take it even further.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="28-api-tracking-thymeleaf">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/resumator/27-completing-resumator.html" class="lesson-nav-btn">&larr; Previous: Completing Resumator</a>
+      <a href="/lessons/resumator/29-search-security.html" class="lesson-nav-btn">Next: Search Features &amp; Security Basics &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

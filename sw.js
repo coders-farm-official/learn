@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v3';
+const CACHE_NAME = 'cf-cache-v4';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -47,7 +47,9 @@ const APP_SHELL = [
   '/lessons/resumator/25-search-interface.html',
   '/lessons/resumator/26-when-things-break.html',
   '/lessons/resumator/27-completing-resumator.html',
-  '/lessons/resumator/28-review-whats-next.html'
+  '/lessons/resumator/28-api-tracking-thymeleaf.html',
+  '/lessons/resumator/29-search-security.html',
+  '/lessons/resumator/30-review-whats-next.html'
 ];
 
 // Monaco Editor core files to pre-cache

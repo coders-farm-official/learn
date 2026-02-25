@@ -41,9 +41,23 @@
       "estimatedTime": "2-2.5 hours"
     },
     {
-      "id": "28-review-whats-next",
+      "id": "28-api-tracking-thymeleaf",
+      "title": "Tracking API Usage with Thymeleaf",
+      "file": "28-api-tracking-thymeleaf.html",
+      "description": "Add Thymeleaf templates, API request tracking, and quota enforcement",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "29-search-security",
+      "title": "Search Features & Security Basics",
+      "file": "29-search-security.html",
+      "description": "Build local search, learn SQL injection prevention, and security fundamentals",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "30-review-whats-next",
       "title": "Review, Reflect & What's Next",
-      "file": "28-review-whats-next.html",
+      "file": "30-review-whats-next.html",
       "description": "Celebrate your journey and plan what comes next",
       "estimatedTime": "1-1.5 hours"
     }
