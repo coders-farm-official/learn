@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 24: Integrating the Job Search API — Coders Farm</title>
+  <meta name="description" content="Connect to JSearch API and build the search endpoint">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-24-job-search-api">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Job Search API</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/resumator/23-project-planning-setup.html" role="menuitem">Lesson 23: Resumator Setup</a>
+      <a href="/lessons/resumator/24-job-search-api.html" role="menuitem">Lesson 24: Job Search API</a>
+      <a href="/lessons/resumator/25-search-interface.html" role="menuitem">Lesson 25: Search Interface</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / Job Search API</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="6" data-current="2">Lesson 2 of 6</p>
+      <h1>Integrating the Job Search API</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2.5&ndash;3 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>What a third-party API is and why we use APIs instead of web scraping</li>
+          <li>How to build a <strong>service class</strong> in Spring Boot that calls an external API</li>
+          <li>How to use <code>RestTemplate</code> to make HTTP requests from Java</li>
+          <li>How to securely inject API keys using <code>application.properties</code></li>
+          <li>How to build a <strong>controller</strong> that exposes a search endpoint for your frontend</li>
+          <li>How to read and understand a real JSON response from a job search API</li>
+          <li>How to handle errors and API downtime gracefully</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1: OPENING ==================== -->
+      <h2>Part 1 &mdash; Your Server Talking to Another Server</h2>
+
+      <p>
+        In Lessons 12 and 13, you built your first Spring Boot application. You created controllers that handled requests from a web browser, and you sent JSON responses back. That was a huge milestone &mdash; you built a real, working API. But in those lessons, all the data either came from the user (like contact form submissions) or was hardcoded in your Java code. Your server was self-contained. It did not need to talk to anything else on the internet to do its job.
+      </p>
+
+      <p>
+        Today, everything changes. In this lesson, your Spring Boot server is going to reach out across the internet and talk to <em>another</em> server. Specifically, it is going to call a real job search API to find actual job listings based on a search query and location. Your server becomes a <strong>middleman</strong> &mdash; the browser asks your server for jobs, your server asks the job search API for jobs, the job search API responds with data, and your server passes that data back to the browser. This is called <strong>third-party API integration</strong>, and it is one of the most common patterns in professional software development.
+      </p>
+
+      <p>
+        Think about the apps you use every day. When a weather app shows you the forecast, it is calling a weather API. When a travel site shows you flight prices, it is calling airline APIs. When a food delivery app shows restaurants near you, it is calling a maps API and a restaurant API. Almost every modern application is built by combining multiple APIs together. After this lesson, you will know how to do that yourself.
+      </p>
+
+      <!-- ==================== PART 2: WHAT IS A THIRD-PARTY API ==================== -->
+      <h2>Part 2 &mdash; What Is a Third-Party API?</h2>
+
+      <p>
+        A <strong>third-party API</strong> is simply an API built and maintained by someone else that you call from your own code. The word "third-party" means it is not built by you (first party) or by your user (second party) &mdash; it is built by a <em>third</em> party, some other company or developer. You do not own the data, you do not manage the servers, and you do not write the code that powers it. You just make HTTP requests to it and get data back.
+      </p>
+
+      <p>
+        For our Resumator project, we are going to use an API called <strong>JSearch</strong>, which is available through a platform called <strong>RapidAPI</strong>. JSearch aggregates job listings from across the internet &mdash; from company career pages, job boards, and other sources &mdash; and makes them available through a clean, simple API. You send it a job title and a location, and it sends back a list of real, current job openings. These are not fake listings or sample data. These are real jobs that real companies are hiring for right now.
+      </p>
+
+      <div class="key-concept">
+        <h4>Why Use an API Instead of Scraping?</h4>
+        <p>
+          You might be wondering: "Why not just write code that visits job websites and reads the HTML directly?" That approach is called <strong>web scraping</strong>, and while it technically works, it has serious problems:
+        </p>
+        <ul>
+          <li><strong>It breaks constantly.</strong> Websites change their HTML structure all the time. A scraper that works today might be completely broken tomorrow because a company redesigned their job listings page.</li>
+          <li><strong>It is usually against the rules.</strong> Most websites explicitly forbid scraping in their Terms of Service. Violating these terms can get your IP address blocked or even lead to legal trouble.</li>
+          <li><strong>It is slow and fragile.</strong> Scraping requires downloading entire HTML pages, parsing through all the markup to find the data you want, and handling inconsistent formatting. APIs give you clean, structured data instantly.</li>
+          <li><strong>It does not scale.</strong> If you need to search across dozens of job boards, you would need a separate scraper for each one. An aggregation API like JSearch does all of that work for you behind the scenes.</li>
+        </ul>
+        <p>
+          APIs are the professional, reliable, and legal way to get data from other services. This is how it is done in the real world, and learning to work with third-party APIs is a critical skill for any developer.
+        </p>
+      </div>
+
+      <p>
+        To use the JSearch API, you will need to sign up for a free account on <a href="https://rapidapi.com" target="_blank" rel="noopener">RapidAPI</a> and subscribe to the JSearch API. The free tier gives you a limited number of requests per month, which is more than enough for development and learning. When you subscribe, RapidAPI gives you an <strong>API key</strong> &mdash; a long string of characters that identifies you. Every time your code calls the API, you include this key so the API knows who is making the request.
+      </p>
+
+      <div class="callout callout-warning">
+        <strong>API Key Security:</strong> Your API key is like a password. <strong>Never</strong> put it directly in your Java source code, and <strong>never</strong> commit it to a public Git repository. If someone gets your API key, they can use your account and run up charges. In this lesson, we will store the key in <code>application.properties</code>, and you should add that file to your <code>.gitignore</code> to keep it out of version control. In a production application, you would use environment variables or a secrets management service instead.
+      </div>
+
+      <p>
+        Once you have your RapidAPI account and have subscribed to JSearch, find your API key on the JSearch API page. It will be a long alphanumeric string. Copy it &mdash; you will need it in a moment.
+      </p>
+
+      <p>
+        First, add your API key to your project's configuration. Open the file <code>src/main/resources/application.properties</code> and add this line:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># JSearch API configuration
+rapidapi.key=YOUR_RAPIDAPI_KEY_HERE
+rapidapi.host=jsearch.p.rapidapi.com</code></pre>
+      </div>
+
+      <p>
+        Replace <code>YOUR_RAPIDAPI_KEY_HERE</code> with the actual API key you copied from RapidAPI. Spring Boot automatically reads this file when your application starts, and it makes these values available to your Java code through a mechanism called <strong>property injection</strong>. You will see how that works in the next section.
+      </p>
+
+      <!-- ==================== PART 3: BUILDING THE SERVICE ==================== -->
+      <h2>Part 3 &mdash; Building JobSearchService.java</h2>
+
+      <p>
+        In Lessons 12 and 13, you put all of your logic directly inside the controller class. That works fine for simple applications, but as your code grows, it is important to <strong>separate concerns</strong>. The controller's job should be limited to handling HTTP requests and responses &mdash; it should not contain business logic or API call details. The actual work of calling the JSearch API belongs in a dedicated <strong>service class</strong>.
+      </p>
+
+      <p>
+        A service class is a Java class whose sole purpose is to perform a specific piece of business logic. In our case, that logic is "call the JSearch API and return the results." The controller will delegate to the service, and the service will do the heavy lifting. This separation makes your code easier to read, easier to test, and easier to maintain.
+      </p>
+
+      <p>
+        Create a new file called <code>JobSearchService.java</code> in your project's source folder (in the same package as your main application class). Here is the complete code:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+@Service
+public class JobSearchService {
+
+    @Value("${rapidapi.key}")
+    private String apiKey;
+
+    @Value("${rapidapi.host}")
+    private String apiHost;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    public String searchJobs(String query, String location, int page) {
+        // Build the URL with query parameters
+        String url = "https://jsearch.p.rapidapi.com/search"
+            + "?query=" + query + " in " + location
+            + "&amp;page=" + page
+            + "&amp;num_pages=1";
+
+        // Set the required headers for RapidAPI authentication
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-RapidAPI-Key", apiKey);
+        headers.set("X-RapidAPI-Host", apiHost);
+
+        // Create the request entity (headers only, no body for GET requests)
+        HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);
+
+        // Make the GET request to JSearch API
+        ResponseEntity&lt;String&gt; response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            entity,
+            String.class
+        );
+
+        // Return the JSON response body
+        return response.getBody();
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        This is a critical file, so let us go through it line by line. Understanding every piece here will give you the skills to integrate <em>any</em> third-party API in the future, not just JSearch.
+      </p>
+
+      <h3>The @Service Annotation</h3>
+
+      <p>
+        <strong><code>@Service</code></strong> &mdash; This annotation at the top of the class tells Spring Boot: "This class is a service component. Please create an instance of it and manage its lifecycle." This is similar to <code>@RestController</code>, which you learned in Lesson 12. The difference is that <code>@RestController</code> marks a class that handles HTTP requests, while <code>@Service</code> marks a class that contains business logic. Spring Boot automatically discovers classes with <code>@Service</code> and makes them available for other classes to use (this is called <strong>dependency injection</strong>, and you will see it in action when we build the controller).
+      </p>
+
+      <h3>The @Value Annotation for API Key Injection</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@Value("${rapidapi.key}")
+private String apiKey;
+
+@Value("${rapidapi.host}")
+private String apiHost;</code></pre>
+      </div>
+
+      <p>
+        <strong><code>@Value("${rapidapi.key}")</code></strong> &mdash; This is <strong>property injection</strong>. Remember the <code>application.properties</code> file where you stored your API key? The <code>@Value</code> annotation tells Spring Boot: "When you create this class, go look up the property called <code>rapidapi.key</code> in the configuration files and assign its value to this field." The <code>${...}</code> syntax is called a <strong>property placeholder</strong> &mdash; Spring Boot replaces it with the actual value at runtime.
+      </p>
+
+      <p>
+        This is why we do not hardcode the API key in our Java code. If you ever need to change the key (for example, when rotating credentials or switching to a production key), you only update <code>application.properties</code>. You do not have to touch any Java code at all. This is a fundamental best practice in professional software development.
+      </p>
+
+      <h3>RestTemplate for HTTP Calls</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>private final RestTemplate restTemplate = new RestTemplate();</code></pre>
+      </div>
+
+      <p>
+        <strong><code>RestTemplate</code></strong> is a class provided by Spring that makes it easy to send HTTP requests from Java code. Think of it as the Java equivalent of the <code>fetch()</code> function you used in JavaScript. Just like <code>fetch()</code> lets a browser send requests to a server, <code>RestTemplate</code> lets your <em>server</em> send requests to <em>other servers</em>. It handles all the low-level details of opening network connections, sending headers, reading response bodies, and managing timeouts.
+      </p>
+
+      <p>
+        We create a single <code>RestTemplate</code> instance and reuse it for every API call. This is more efficient than creating a new one each time.
+      </p>
+
+      <h3>Building the URL</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>String url = "https://jsearch.p.rapidapi.com/search"
+    + "?query=" + query + " in " + location
+    + "&amp;page=" + page
+    + "&amp;num_pages=1";</code></pre>
+      </div>
+
+      <p>
+        This constructs the URL we will send to the JSearch API. Let us break it apart:
+      </p>
+
+      <ul>
+        <li><strong><code>https://jsearch.p.rapidapi.com/search</code></strong> &mdash; This is the <strong>base URL</strong> of the JSearch search endpoint. Just like your Spring Boot API has endpoints at specific paths (like <code>/api/jobs/search</code>), the JSearch API has its own endpoints. This is the one that searches for jobs.</li>
+        <li><strong><code>?query=</code></strong> &mdash; The question mark begins the <strong>query parameters</strong>. These are key-value pairs appended to the URL that provide input to the API. The <code>query</code> parameter tells JSearch what kind of job to search for. We combine the user's search term with their location using the format "java developer in Lansing Michigan."</li>
+        <li><strong><code>&amp;page=</code></strong> &mdash; The ampersand separates additional query parameters. The <code>page</code> parameter controls pagination &mdash; which page of results to return. If there are 100 results and each page shows 10, page 1 gives you results 1&ndash;10, page 2 gives you 11&ndash;20, and so on.</li>
+        <li><strong><code>&amp;num_pages=1</code></strong> &mdash; This tells JSearch to return one page of results at a time. We keep this simple for now.</li>
+      </ul>
+
+      <h3>Setting the Authentication Headers</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>HttpHeaders headers = new HttpHeaders();
+headers.set("X-RapidAPI-Key", apiKey);
+headers.set("X-RapidAPI-Host", apiHost);</code></pre>
+      </div>
+
+      <p>
+        HTTP headers are metadata that travel along with every HTTP request. They provide extra information about the request to the server. In this case, the JSearch API (through RapidAPI) requires two specific headers for authentication:
+      </p>
+
+      <ul>
+        <li><strong><code>X-RapidAPI-Key</code></strong> &mdash; This is your API key. It proves that you are a registered user with permission to call this API. The <code>apiKey</code> variable gets its value from <code>application.properties</code> via the <code>@Value</code> annotation we discussed earlier.</li>
+        <li><strong><code>X-RapidAPI-Host</code></strong> &mdash; This identifies which specific API on the RapidAPI platform you are calling. RapidAPI hosts thousands of APIs, and this header tells it to route your request to JSearch specifically.</li>
+      </ul>
+
+      <p>
+        If you remember from Lesson 13, when we used JavaScript <code>fetch()</code> to call our own API, we set the <code>Content-Type</code> header to tell the server that we were sending JSON. The concept here is exactly the same &mdash; headers communicate important information. The difference is that instead of describing the data format, these headers provide authentication credentials.
+      </p>
+
+      <h3>Making the GET Request</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);
+
+ResponseEntity&lt;String&gt; response = restTemplate.exchange(
+    url,
+    HttpMethod.GET,
+    entity,
+    String.class
+);</code></pre>
+      </div>
+
+      <p>
+        This is where the actual HTTP call happens. Let us break it down:
+      </p>
+
+      <ul>
+        <li><strong><code>HttpEntity&lt;String&gt; entity</code></strong> &mdash; An <code>HttpEntity</code> packages together the headers (and optionally a request body) into a single object that <code>RestTemplate</code> can use. Since we are making a GET request, there is no body &mdash; we only need the headers. Think of it as an envelope: the headers are the address label, and the body (if we had one) would be the letter inside.</li>
+        <li><strong><code>restTemplate.exchange()</code></strong> &mdash; This is the method that actually sends the HTTP request over the internet. It takes four arguments:
+          <ol>
+            <li><strong><code>url</code></strong> &mdash; The URL to send the request to (the JSearch endpoint we built above).</li>
+            <li><strong><code>HttpMethod.GET</code></strong> &mdash; The HTTP method to use. We want to <em>read</em> data from JSearch, so we use GET.</li>
+            <li><strong><code>entity</code></strong> &mdash; The <code>HttpEntity</code> containing our authentication headers.</li>
+            <li><strong><code>String.class</code></strong> &mdash; The type we want the response body to be converted to. We ask for a raw <code>String</code> because we are going to pass the JSON response directly to the browser without parsing it in Java.</li>
+          </ol>
+        </li>
+        <li><strong><code>ResponseEntity&lt;String&gt; response</code></strong> &mdash; The <code>exchange()</code> method returns a <code>ResponseEntity</code> that contains everything about the response: the status code, the headers, and the body. We care about the body, which contains the JSON job listings.</li>
+      </ul>
+
+      <p>
+        Finally, <code>response.getBody()</code> extracts just the body (the JSON string) from the response and returns it. This JSON will contain all the job listings matching the search query.
+      </p>
+
+      <div class="key-concept">
+        <h4>The Big Picture of RestTemplate</h4>
+        <p>
+          When you used <code>fetch()</code> in JavaScript (Lesson 13), your <strong>browser</strong> was making HTTP requests to your Spring Boot server. Now with <code>RestTemplate</code>, your <strong>Spring Boot server</strong> is making HTTP requests to the JSearch server. The concept is identical &mdash; HTTP requests and responses &mdash; but the direction is different. Your server is now acting as both a <em>server</em> (to your browser) and a <em>client</em> (to JSearch).
+        </p>
+      </div>
+
+      <!-- ==================== PART 4: BUILDING THE CONTROLLER ==================== -->
+      <h2>Part 4 &mdash; Building JobSearchController.java</h2>
+
+      <p>
+        With the service class complete, we now need a controller to expose a search endpoint that the browser can call. The controller's job is simple: receive the search parameters from the browser, pass them to the service, and return whatever the service gives back. It acts as a thin layer between the frontend and the service logic.
+      </p>
+
+      <p>
+        Create a new file called <code>JobSearchController.java</code> in the same package:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.resumator;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@CrossOrigin(origins = "*")
+@RestController
+@RequestMapping("/api/jobs")
+public class JobSearchController {
+
+    private final JobSearchService jobSearchService;
+
+    // Constructor injection — Spring automatically provides the service
+    public JobSearchController(JobSearchService jobSearchService) {
+        this.jobSearchService = jobSearchService;
+    }
+
+    @GetMapping("/search")
+    public String searchJobs(
+        @RequestParam String query,
+        @RequestParam String location,
+        @RequestParam(defaultValue = "1") int page
+    ) {
+        return jobSearchService.searchJobs(query, location, page);
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        This controller is short, and that is a good thing. A well-designed controller should be thin &mdash; it should delegate the real work to service classes. Let us walk through each part.
+      </p>
+
+      <h3>The Class-Level Annotations</h3>
+
+      <p>
+        <strong><code>@CrossOrigin(origins = "*")</code></strong> &mdash; You saw this in Lesson 13 when we discussed the CORS problem. This annotation tells Spring Boot to allow requests from any origin. Since the Resumator frontend will eventually run in a browser and may be served from a different port or domain than the API, we need this to avoid CORS errors. Remember, in production you would replace <code>"*"</code> with the specific URL of your frontend.
+      </p>
+
+      <p>
+        <strong><code>@RestController</code></strong> &mdash; Same as in Lesson 12. This marks the class as a REST controller that sends and receives data (typically JSON) rather than HTML pages.
+      </p>
+
+      <p>
+        <strong><code>@RequestMapping("/api/jobs")</code></strong> &mdash; This is a new annotation. It sets a <strong>base path</strong> for all endpoints in this controller. Every <code>@GetMapping</code>, <code>@PostMapping</code>, etc. inside this class will have <code>/api/jobs</code> prepended to its path. So when we write <code>@GetMapping("/search")</code> below, the full URL becomes <code>/api/jobs/search</code>. This is a convenient way to organize your API paths and avoid repeating the base path on every method.
+      </p>
+
+      <h3>Constructor Injection</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>private final JobSearchService jobSearchService;
+
+public JobSearchController(JobSearchService jobSearchService) {
+    this.jobSearchService = jobSearchService;
+}</code></pre>
+      </div>
+
+      <p>
+        This is <strong>dependency injection</strong> in action. Remember how we marked <code>JobSearchService</code> with the <code>@Service</code> annotation? That told Spring Boot to create and manage an instance of that class. Here, we are telling Spring Boot: "When you create the <code>JobSearchController</code>, I need you to provide me with an instance of <code>JobSearchService</code>." Spring Boot sees the constructor parameter, finds the managed <code>JobSearchService</code> instance, and passes it in automatically.
+      </p>
+
+      <p>
+        This is a core Spring Boot concept. Instead of creating objects yourself with <code>new JobSearchService()</code>, you let Spring Boot create them and hand them to you. This makes your code more flexible and easier to test, because you can swap out implementations without changing the controller.
+      </p>
+
+      <h3>The Search Endpoint</h3>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@GetMapping("/search")
+public String searchJobs(
+    @RequestParam String query,
+    @RequestParam String location,
+    @RequestParam(defaultValue = "1") int page
+) {
+    return jobSearchService.searchJobs(query, location, page);
+}</code></pre>
+      </div>
+
+      <p>
+        <strong><code>@GetMapping("/search")</code></strong> &mdash; Combined with the class-level <code>@RequestMapping("/api/jobs")</code>, this creates an endpoint at <code>/api/jobs/search</code> that responds to HTTP GET requests.
+      </p>
+
+      <p>
+        <strong><code>@RequestParam</code></strong> &mdash; This is how you read <strong>query parameters</strong> from the URL. When someone visits <code>/api/jobs/search?query=java+developer&amp;location=Lansing+Michigan&amp;page=1</code>, Spring Boot automatically extracts the values and passes them to your method parameters:
+      </p>
+
+      <ul>
+        <li><code>query</code> gets the value <code>"java developer"</code></li>
+        <li><code>location</code> gets the value <code>"Lansing Michigan"</code></li>
+        <li><code>page</code> gets the value <code>1</code></li>
+      </ul>
+
+      <p>
+        Notice that <code>page</code> has <code>defaultValue = "1"</code>. This means if the user does not include a <code>page</code> parameter in the URL, it defaults to 1. The <code>query</code> and <code>location</code> parameters are required &mdash; if someone calls the endpoint without them, Spring Boot will return a 400 Bad Request error automatically.
+      </p>
+
+      <p>
+        The method body is beautifully simple: it calls <code>jobSearchService.searchJobs()</code> with the parameters and returns whatever comes back. The service handles all the complexity of building the URL, setting headers, and making the API call. The controller just passes the request along and returns the result. This clean separation is exactly how professional Spring Boot applications are structured.
+      </p>
+
+      <!-- ==================== PART 5: TESTING THE API ==================== -->
+      <h2>Part 5 &mdash; Testing the API</h2>
+
+      <p>
+        It is time to see this all in action. Make sure your <code>application.properties</code> file has your RapidAPI key and host configured, then start your Spring Boot application using <code>./mvnw spring-boot:run</code> (or run the main class from your IDE). Wait for the startup message confirming the server is running on port 8080.
+      </p>
+
+      <h3>Testing in the Browser</h3>
+
+      <p>
+        Open your web browser and navigate to:
+      </p>
+
+      <p style="text-align: center; font-size: 1.15em;">
+        <strong><code>http://localhost:8080/api/jobs/search?query=java+developer&amp;location=Lansing+Michigan</code></strong>
+      </p>
+
+      <p>
+        After a moment (the JSearch API needs a second or two to respond), you should see a large block of JSON appear in your browser. This is real job listing data. Let us look at what comes back.
+      </p>
+
+      <h3>Understanding the JSON Response</h3>
+
+      <p>
+        The JSearch API returns a JSON object with several fields. The most important one is <code>data</code>, which contains an array of job listings. Each job listing is a JSON object with many fields. Here are the most useful ones for our Resumator project:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>{
+  "status": "OK",
+  "data": [
+    {
+      "job_id": "abc123",
+      "job_title": "Junior Java Developer",
+      "employer_name": "Acme Corporation",
+      "employer_logo": "https://example.com/logo.png",
+      "job_city": "Lansing",
+      "job_state": "MI",
+      "job_description": "We are looking for a motivated Junior Java Developer...",
+      "job_apply_link": "https://acme.com/careers/java-dev",
+      "job_min_salary": 55000,
+      "job_max_salary": 75000,
+      "job_salary_currency": "USD",
+      "job_salary_period": "YEAR"
+    },
+    {
+      "job_id": "def456",
+      "job_title": "Java Backend Engineer",
+      "employer_name": "TechStart LLC",
+      "employer_logo": null,
+      "job_city": "East Lansing",
+      "job_state": "MI",
+      "job_description": "Join our growing engineering team...",
+      "job_apply_link": "https://techstart.io/apply/java",
+      "job_min_salary": null,
+      "job_max_salary": null,
+      "job_salary_currency": null,
+      "job_salary_period": null
+    }
+  ]
+}</code></pre>
+      </div>
+
+      <p>
+        Let us go through the key fields:
+      </p>
+
+      <ul>
+        <li><strong><code>job_title</code></strong> &mdash; The title of the position, like "Junior Java Developer" or "Java Backend Engineer."</li>
+        <li><strong><code>employer_name</code></strong> &mdash; The company that is hiring.</li>
+        <li><strong><code>employer_logo</code></strong> &mdash; A URL pointing to the company's logo image. This can be <code>null</code> if no logo is available.</li>
+        <li><strong><code>job_city</code></strong> and <strong><code>job_state</code></strong> &mdash; The location of the job.</li>
+        <li><strong><code>job_description</code></strong> &mdash; A full description of the role, responsibilities, and requirements. This is often a long string that may contain HTML formatting.</li>
+        <li><strong><code>job_apply_link</code></strong> &mdash; A direct URL where the user can apply for the job. This is crucial for Resumator &mdash; we want users to be able to click through and actually apply.</li>
+        <li><strong><code>job_min_salary</code></strong> and <strong><code>job_max_salary</code></strong> &mdash; The salary range, if provided. Many listings do not include salary information, in which case these fields will be <code>null</code>.</li>
+        <li><strong><code>job_salary_currency</code></strong> and <strong><code>job_salary_period</code></strong> &mdash; The currency (usually "USD") and pay period (usually "YEAR" for salaried positions or "HOUR" for hourly positions).</li>
+      </ul>
+
+      <p>
+        <strong>These are real jobs.</strong> If you click on a <code>job_apply_link</code> value, it will take you to an actual job application page. The data comes from real company career pages that are actively hiring. This is what makes the Resumator project so practical &mdash; you are building a tool with real, useful data.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> The raw JSON in your browser can be hard to read. If you are using Chrome, install the "JSON Viewer" extension to automatically format JSON responses with syntax highlighting and collapsible sections. Firefox has a built-in JSON viewer that activates automatically.
+      </div>
+
+      <h3>Try It with a Fetch Call</h3>
+
+      <p>
+        You can also test the endpoint using JavaScript <code>fetch()</code>, just like you did in Lesson 13. The editor below shows how to call your search endpoint. If your Spring Boot server is running, try modifying the query and location to search for different jobs:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// This would work if your Spring Boot server is running
+// Try modifying the query and location!
+const query = "java developer";
+const location = "Lansing Michigan";
+const url = `/api/jobs/search?query=${encodeURIComponent(query)}&amp;location=${encodeURIComponent(location)}`;
+
+console.log("Fetching: " + url);
+console.log("(This is a demo — your Spring Boot server needs to be running for real results)");</code></pre>
+      </div>
+
+      <p>
+        Notice the use of <code>encodeURIComponent()</code>. This function converts special characters (like spaces) into their URL-safe equivalents. For example, "java developer" becomes "java%20developer." This ensures the URL is valid even when the search terms contain spaces or special characters. Always encode user input when putting it into URLs &mdash; this is a habit that will prevent bugs and security issues.
+      </p>
+
+      <!-- ==================== PART 6: ERROR HANDLING ==================== -->
+      <h2>Part 6 &mdash; Error Handling</h2>
+
+      <p>
+        So far, we have assumed everything goes perfectly: the API responds quickly, the response is valid, and nothing goes wrong. In the real world, things go wrong <em>all the time</em>. The JSearch API might be temporarily down for maintenance. Your API key might expire. The user might enter a search query that returns no results. Your internet connection might drop in the middle of a request. A professional application needs to handle all of these scenarios gracefully instead of crashing.
+      </p>
+
+      <p>
+        Let us update our <code>JobSearchService</code> to include proper error handling. Here is the improved version of the <code>searchJobs</code> method:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public String searchJobs(String query, String location, int page) {
+    try {
+        String url = "https://jsearch.p.rapidapi.com/search"
+            + "?query=" + query + " in " + location
+            + "&amp;page=" + page
+            + "&amp;num_pages=1";
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-RapidAPI-Key", apiKey);
+        headers.set("X-RapidAPI-Host", apiHost);
+
+        HttpEntity&lt;String&gt; entity = new HttpEntity&lt;&gt;(headers);
+
+        ResponseEntity&lt;String&gt; response = restTemplate.exchange(
+            url,
+            HttpMethod.GET,
+            entity,
+            String.class
+        );
+
+        return response.getBody();
+
+    } catch (Exception e) {
+        // Log the error so we can debug it later
+        System.err.println("Error calling JSearch API: " + e.getMessage());
+
+        // Return a JSON error message instead of crashing
+        return "{\"status\": \"ERROR\", \"message\": \"Failed to fetch job listings. Please try again later.\", \"data\": []}";
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        The key change is wrapping the entire API call in a <strong>try/catch block</strong>. If anything goes wrong inside the <code>try</code> block &mdash; a network timeout, an invalid response, a server error from JSearch &mdash; the code jumps to the <code>catch</code> block instead of crashing your entire application.
+      </p>
+
+      <p>
+        Inside the <code>catch</code> block, we do two things:
+      </p>
+
+      <ol>
+        <li><strong>Log the error.</strong> We print the error message to the console using <code>System.err.println()</code>. This is important for debugging &mdash; if something goes wrong in production, you can look at the logs to figure out what happened. In a real application, you would use a proper logging framework like SLF4J, but <code>System.err</code> works fine for learning.</li>
+        <li><strong>Return a structured error response.</strong> Instead of letting the exception bubble up and showing the user an ugly error page, we return a JSON string that has the same general structure as a successful response but with an error status and an empty data array. This way, the frontend can check the <code>status</code> field and show a user-friendly message like "No results found. Please try again later." without breaking.</li>
+      </ol>
+
+      <div class="key-concept">
+        <h4>Rate Limiting</h4>
+        <p>
+          Most third-party APIs have <strong>rate limits</strong> &mdash; a maximum number of requests you can make within a certain time period. The free tier of JSearch on RapidAPI typically allows a limited number of requests per month. If you exceed this limit, the API will respond with a <strong>429 Too Many Requests</strong> error.
+        </p>
+        <p>
+          You do not need to worry about rate limits during development, since you will only be making a few requests at a time. But it is good to be aware that rate limits exist. In a production application, you would implement <strong>caching</strong> (storing API responses temporarily so you do not repeat identical requests) and <strong>rate limit monitoring</strong> (tracking how many requests you have made and slowing down if you are approaching the limit).
+        </p>
+      </div>
+
+      <p>
+        A good rule of thumb for error handling: <strong>never show your users raw error messages or stack traces.</strong> These are useful for developers but confusing and potentially scary for users. Always catch errors and return a clean, understandable response that the frontend can display gracefully.
+      </p>
+
+      <!-- ==================== PART 7: DATA FLOW RECAP ==================== -->
+      <h2>Part 7 &mdash; The Complete Data Flow</h2>
+
+      <p>
+        Now that all the pieces are built, let us step back and look at the complete picture. When a user searches for jobs in the Resumator, here is exactly what happens, step by step:
+      </p>
+
+      <div class="architecture-diagram">
+        <div class="arch-component">Browser</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">JobSearchController</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">JobSearchService</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">JSearch API</div>
+      </div>
+
+      <p>
+        Let us trace a complete request through this chain:
+      </p>
+
+      <ol>
+        <li><strong>The user types a search.</strong> They enter "java developer" in the search field and "Lansing Michigan" as the location, then click "Search." The browser builds a URL like <code>/api/jobs/search?query=java+developer&amp;location=Lansing+Michigan</code> and sends an HTTP GET request.</li>
+        <li><strong>JobSearchController receives the request.</strong> Spring Boot routes the request to the <code>searchJobs()</code> method based on the <code>@GetMapping("/search")</code> annotation. The <code>@RequestParam</code> annotations extract the query and location values from the URL.</li>
+        <li><strong>The controller delegates to JobSearchService.</strong> The controller calls <code>jobSearchService.searchJobs("java developer", "Lansing Michigan", 1)</code>. It does not know or care how the service gets the data &mdash; it just passes the parameters along.</li>
+        <li><strong>JobSearchService calls the JSearch API.</strong> The service builds the full JSearch URL, sets the authentication headers with your API key, and uses <code>RestTemplate</code> to send an HTTP GET request to <code>https://jsearch.p.rapidapi.com/search</code>.</li>
+        <li><strong>JSearch processes the request.</strong> The JSearch API searches its database of job listings, finds matches for "java developer" near "Lansing Michigan," and builds a JSON response containing the results.</li>
+        <li><strong>The response travels back.</strong> JSearch sends the JSON response back to your <code>RestTemplate</code>. The service extracts the response body and returns it to the controller. The controller returns it to Spring Boot, which sends it as an HTTP response to the browser.</li>
+        <li><strong>The browser displays the results.</strong> The browser receives the JSON, your frontend JavaScript parses it, and the job listings appear on the screen. The entire round trip typically takes 1&ndash;3 seconds, most of which is spent waiting for JSearch to process the search.</li>
+      </ol>
+
+      <p>
+        This is the same pattern used by every application that integrates with a third-party API. The details change &mdash; different URLs, different headers, different response formats &mdash; but the architecture is always the same: <strong>Browser &rarr; Your Controller &rarr; Your Service &rarr; External API</strong>, and then the response flows back through the same chain in reverse.
+      </p>
+
+      <div class="key-concept">
+        <h4>Why Not Call JSearch Directly from the Browser?</h4>
+        <p>
+          You might wonder: "Why do we need the Spring Boot server in the middle? Why not have the browser call the JSearch API directly?" There are two critical reasons:
+        </p>
+        <ul>
+          <li><strong>Security.</strong> Calling JSearch requires your API key. If you put that key in your frontend JavaScript code, anyone who visits your website could open the browser's developer tools, find your key, and use it for their own purposes. By keeping the API key on your server (in <code>application.properties</code>), it never gets sent to the browser. The browser only talks to your server, and your server handles the sensitive API call.</li>
+          <li><strong>Control.</strong> Having the request pass through your server lets you add logging, caching, rate limiting, input validation, and data transformation. You are in control of what your users can search for and how the data is formatted before it reaches them.</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 8: QUIZ ==================== -->
+      <h2>Quiz &mdash; Check Your Understanding</h2>
+
+      <div class="quiz" data-id="q24-1">
+        <p class="quiz-question">1. What is the purpose of the <code>@Service</code> annotation in Spring Boot?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q24-1" value="a"> It marks a class as an HTTP endpoint that handles browser requests</label>
+          <label><input type="radio" name="q24-1" value="b"> It marks a class as a business logic component that Spring Boot should manage</label>
+          <label><input type="radio" name="q24-1" value="c"> It automatically connects the class to an external API</label>
+          <label><input type="radio" name="q24-1" value="d"> It encrypts the class so its code cannot be read</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> The <code>@Service</code> annotation tells Spring Boot that a class contains business logic and should be managed by the Spring container. Spring Boot creates an instance of the class automatically and makes it available for dependency injection into other classes (like controllers). It does not handle HTTP requests directly &mdash; that is the job of <code>@RestController</code>.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q24-2">
+        <p class="quiz-question">2. Why do we store the API key in <code>application.properties</code> instead of hardcoding it in the Java file?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q24-2" value="a"> Java does not support string constants</label>
+          <label><input type="radio" name="q24-2" value="b"> The application runs faster when keys are in a properties file</label>
+          <label><input type="radio" name="q24-2" value="c"> It keeps the key separate from code so it is easier to change and harder to accidentally commit to version control</label>
+          <label><input type="radio" name="q24-2" value="d"> Spring Boot cannot read values from Java source files</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: C.</strong> Storing sensitive values like API keys in <code>application.properties</code> (and adding that file to <code>.gitignore</code>) keeps them separate from your source code. This makes it easy to change keys without modifying Java code, prevents accidental exposure in public repositories, and allows different environments (development, staging, production) to use different keys without code changes.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q24-3">
+        <p class="quiz-question">3. In the data flow diagram (Browser &rarr; Controller &rarr; Service &rarr; JSearch API), why does the browser not call the JSearch API directly?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q24-3" value="a"> Browsers cannot make HTTP requests to external servers</label>
+          <label><input type="radio" name="q24-3" value="b"> The JSearch API only accepts requests from Java applications</label>
+          <label><input type="radio" name="q24-3" value="c"> Calling from the browser would expose the API key in the frontend code, which is a security risk</label>
+          <label><input type="radio" name="q24-3" value="d"> The browser is too slow to make API requests</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: C.</strong> If the browser called JSearch directly, the API key would have to be included in the frontend JavaScript code, where anyone could see it using the browser's developer tools. By routing the request through your Spring Boot server, the API key stays safely on the server and is never sent to the browser. This server-side proxy pattern also gives you the ability to add caching, logging, and rate limiting.</p>
+        </div>
+      </div>
+
+      <!-- ==================== LESSON SUMMARY ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>
+        This lesson was a major step forward. You went from building self-contained APIs (like the contact form in Lesson 13) to building an API that communicates with the outside world. Let us recap everything you accomplished:
+      </p>
+
+      <ul>
+        <li><strong>Third-party API integration.</strong> You learned what third-party APIs are, why they are preferable to web scraping, and how to sign up for and authenticate with the JSearch API through RapidAPI.</li>
+        <li><strong>Service class architecture.</strong> You built a <code>JobSearchService</code> class that separates business logic (calling JSearch) from request handling (the controller). This is a professional best practice that keeps your code organized and maintainable.</li>
+        <li><strong>RestTemplate.</strong> You learned how to use Spring's <code>RestTemplate</code> to make HTTP requests from your server to another server, including setting custom headers for authentication.</li>
+        <li><strong>Property injection.</strong> You stored your API key in <code>application.properties</code> and used <code>@Value</code> to inject it into your service class, keeping sensitive credentials out of your source code.</li>
+        <li><strong>Controller with @RequestParam.</strong> You built a <code>JobSearchController</code> with <code>@RequestMapping</code> for a base path and <code>@RequestParam</code> for extracting search parameters from the URL.</li>
+        <li><strong>Error handling.</strong> You added try/catch blocks to handle API failures gracefully, ensuring your application returns a clean error response instead of crashing.</li>
+        <li><strong>Data flow understanding.</strong> You traced the complete journey of a request from the browser through your controller, through your service, to the JSearch API, and all the way back.</li>
+      </ul>
+
+      <p>
+        You now have a working backend that can search for real job listings. But right now, the only way to see the results is by typing a URL into your browser's address bar and reading raw JSON. That is not exactly a pleasant user experience.
+      </p>
+
+      <p>
+        In the <strong>next lesson</strong>, we are going to fix that. You will build a beautiful search interface with HTML, CSS, and JavaScript that lets users type in a job title and location, click a search button, and see the results displayed as formatted job cards. The backend you just built will power that frontend &mdash; and your Resumator will start to feel like a real application.
+      </p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="24-job-search-api">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/resumator/23-project-planning-setup.html" class="lesson-nav-btn">&larr; Previous: Resumator Setup</a>
+      <a href="/lessons/resumator/25-search-interface.html" class="lesson-nav-btn">Next: Search Interface &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

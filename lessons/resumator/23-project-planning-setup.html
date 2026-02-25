@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 23: Resumator — Project Planning &amp; Setup — Coders Farm</title>
+  <meta name="description" content="Plan the architecture and set up the Spring Boot project">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-23-project-planning-setup">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Resumator Setup</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/22-setting-up-mysql.html" role="menuitem">Lesson 22: Setting Up MySQL</a>
+      <a href="/lessons/resumator/23-project-planning-setup.html" role="menuitem">Lesson 23: Resumator Setup</a>
+      <a href="/lessons/resumator/24-job-search-api.html" role="menuitem">Lesson 24: Job Search API</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / Project Planning &amp; Setup</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="6" data-current="1">Lesson 1 of 6</p>
+      <h1>Resumator &mdash; Project Planning &amp; Setup</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand what the Resumator application does and why you are building it</li>
+          <li>Plan the architecture of a full-stack Spring Boot application</li>
+          <li>Set up a new Spring Boot project with the correct dependencies</li>
+          <li>Create a MySQL database and user for the project</li>
+          <li>Configure <code>application.properties</code> for database and API connectivity</li>
+          <li>Sign up for the JSearch API and securely store your API key</li>
+          <li>Organize your project into a clean package structure</li>
+          <li>Verify that your Spring Boot application starts without errors</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1: OPENING ==================== -->
+      <h2>Part 1 &mdash; Building Something Real</h2>
+
+      <p>
+        Welcome to the most exciting part of the Coders Farm curriculum. Over the next six lessons, you are going to build a <strong>real application</strong> that you will actually use in your job search. Not a toy project. Not a tutorial exercise. A genuine tool that searches for real job listings, lets you browse results, save your favorites, and manage your job search &mdash; all powered by a Spring Boot backend and a MySQL database.
+      </p>
+
+      <p>
+        This application is called <strong>Resumator</strong>. Think of it as your personal job search assistant. You have already learned how to build Spring Boot APIs (Lessons 11&ndash;15), and you just finished setting up MySQL (Lesson 22). Now it is time to combine everything you know into a cohesive, professional-grade application. Every skill you have built so far &mdash; HTML, CSS, JavaScript, Java, Spring Boot, SQL &mdash; comes together here.
+      </p>
+
+      <p>
+        Why a job search app? Because learning to code is only half the battle. You also need to find a job. Resumator solves both problems at once: you practice your development skills <em>while</em> building a tool that helps you land your first role. When you sit down for an interview and someone asks "What have you built?", you will have a real, working application to show them &mdash; one that demonstrates API integration, database management, full-stack architecture, and practical problem-solving.
+      </p>
+
+      <p>
+        In this first lesson, we are going to plan the entire project and set up the foundation. By the end of today, you will have a fully configured Spring Boot project connected to a MySQL database and ready to start accepting code. Think of this lesson as laying the foundation of a house &mdash; it is not the most glamorous part, but nothing else works without it.
+      </p>
+
+      <!-- ==================== PART 2: WHAT RESUMATOR DOES ==================== -->
+      <h2>Part 2 &mdash; What Resumator Does</h2>
+
+      <p>
+        Before we write a single line of code, let us clearly define what Resumator will do when it is finished. Professional developers always start by understanding the requirements before jumping into code. This is a habit worth building now.
+      </p>
+
+      <div class="key-concept">
+        <h4>Resumator Features</h4>
+        <ol>
+          <li><strong>Search for real jobs.</strong> You will type a job title (like "Java Developer" or "Software Engineer") and a city (like "Lansing, MI" or "Detroit, MI"), and Resumator will search for real, current job listings using the JSearch API.</li>
+          <li><strong>Browse results.</strong> The search results will be displayed in a clean, easy-to-read format showing the job title, company name, location, and a snippet of the description.</li>
+          <li><strong>Favorite listings.</strong> When you find a job that looks interesting, you can click a button to save it to your favorites. This saves the listing to your MySQL database so it persists even if you close the browser or restart the server.</li>
+          <li><strong>Manage saved jobs.</strong> You can view all of your saved jobs in one place, and remove any that you are no longer interested in.</li>
+        </ol>
+      </div>
+
+      <p>
+        That is the complete application. It may sound simple, but building it will teach you how real applications are structured. You will work with external APIs, handle HTTP requests and responses, manage a database, and build a frontend that ties it all together. These are the exact same skills you will use every day as a professional developer.
+      </p>
+
+      <!-- ==================== PART 3: ARCHITECTURE OVERVIEW ==================== -->
+      <h2>Part 3 &mdash; Architecture Overview</h2>
+
+      <p>
+        Every application has an <strong>architecture</strong> &mdash; a plan for how the different parts fit together. Before you start building, you need to understand the big picture. Resumator has three main components, and they talk to each other in a specific order.
+      </p>
+
+      <p>
+        When a user searches for jobs, the data flows like this:
+      </p>
+
+      <div class="architecture-diagram">
+        <div class="arch-component">Browser (HTML/JS)</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">Spring Boot</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">JSearch API</div>
+      </div>
+
+      <p>
+        Here is what happens step by step. The user types a search query into a form in their <strong>browser</strong>. The browser sends that query to your <strong>Spring Boot</strong> backend server. Your Spring Boot server then calls the <strong>JSearch API</strong> (an external job search service) with that query, receives the results, and passes them back to the browser for display. Your Spring Boot server acts as a middleman between the browser and the external API. This is a very common pattern in web development &mdash; your backend talks to external services on behalf of your frontend.
+      </p>
+
+      <p>
+        When a user favorites a job, the data flows differently:
+      </p>
+
+      <div class="architecture-diagram">
+        <div class="arch-component">Browser</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">Spring Boot</div>
+        <div class="arch-arrow">&rarr;</div>
+        <div class="arch-component">MySQL</div>
+      </div>
+
+      <p>
+        The user clicks "Save" on a job listing in the <strong>browser</strong>. The browser sends the job data to your <strong>Spring Boot</strong> server. Your server then stores the job in your <strong>MySQL</strong> database. When the user wants to see their saved jobs, the flow reverses: Spring Boot reads from MySQL and sends the data back to the browser.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>Why not call JSearch directly from the browser?</strong> You might wonder why the browser does not just call the JSearch API directly. There are two important reasons. First, your API key would be visible in the browser's source code, which is a major security risk. Second, having your backend handle the API calls gives you control &mdash; you can transform the data, add caching, handle errors gracefully, and more. This "backend as middleman" pattern is industry standard.
+      </div>
+
+      <div class="key-concept">
+        <h4>The Three Layers</h4>
+        <ul>
+          <li><strong>Frontend (Browser):</strong> HTML, CSS, and JavaScript that the user interacts with. Sends requests to your Spring Boot server.</li>
+          <li><strong>Backend (Spring Boot):</strong> Your Java application. Handles business logic, talks to external APIs, and manages the database. This is where most of your code lives.</li>
+          <li><strong>Data Layer (MySQL + JSearch):</strong> MySQL stores your persistent data (saved jobs). JSearch provides real-time job listings from across the internet.</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 4: SETTING UP SPRING BOOT ==================== -->
+      <h2>Part 4 &mdash; Setting Up the Spring Boot Project</h2>
+
+      <p>
+        You have done this before in Lesson 12 when you created the contact-api project. The process is the same, but this time we are choosing different dependencies because Resumator has different needs. Head over to <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a> and configure the project with the following settings.
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+            <th>What It Means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Project</td>
+            <td><code>Maven</code></td>
+            <td>The build tool that manages your dependencies and compiles your code. Same as the contact-api project.</td>
+          </tr>
+          <tr>
+            <td>Language</td>
+            <td><code>Java</code></td>
+            <td>The programming language for our backend code.</td>
+          </tr>
+          <tr>
+            <td>Spring Boot</td>
+            <td>Latest stable (3.4.x)</td>
+            <td>Avoid SNAPSHOT or pre-release versions. Pick the latest stable release.</td>
+          </tr>
+          <tr>
+            <td>Group</td>
+            <td><code>org.codersfarm</code></td>
+            <td>Your organization identifier in reverse domain format.</td>
+          </tr>
+          <tr>
+            <td>Artifact</td>
+            <td><code>resumator</code></td>
+            <td>The name of your project. This becomes the folder name and the jar file name.</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td><code>resumator</code></td>
+            <td>A human-readable name for the project.</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td><code>Job search assistant for Coders Farm</code></td>
+            <td>A brief description of what this project does.</td>
+          </tr>
+          <tr>
+            <td>Package name</td>
+            <td><code>org.codersfarm.resumator</code></td>
+            <td>The base Java package. Auto-generated from Group and Artifact.</td>
+          </tr>
+          <tr>
+            <td>Packaging</td>
+            <td><code>Jar</code></td>
+            <td>Standard packaging format for Spring Boot applications.</td>
+          </tr>
+          <tr>
+            <td>Java</td>
+            <td><code>21</code></td>
+            <td>Java 21 LTS &mdash; the latest long-term support release.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Now for the dependencies. Click <strong>"Add Dependencies"</strong> (or press Ctrl+B) and add the following three dependencies. Each one serves a specific purpose:
+      </p>
+
+      <div class="key-concept">
+        <h4>Dependencies Explained</h4>
+        <ul>
+          <li>
+            <strong>Spring Web</strong> &mdash; This is the same dependency you used in the contact-api project. It gives you everything you need to build REST APIs: the embedded Tomcat web server, HTTP request handling, JSON serialization, and the <code>@RestController</code> and <code>@GetMapping</code> annotations you already know. Without this, your application cannot serve web requests.
+          </li>
+          <li>
+            <strong>Spring Data JPA</strong> &mdash; JPA stands for Java Persistence API. This dependency lets your Java code talk to a database without writing raw SQL. You define Java classes that represent database tables, and Spring Data automatically generates the SQL queries for you. You saw this pattern briefly in Lesson 14 with SQLite. Now you will use it with MySQL.
+          </li>
+          <li>
+            <strong>MySQL Driver</strong> &mdash; This is the JDBC driver that allows Java to communicate with MySQL. Think of it as a translator &mdash; your Java code speaks Java, MySQL speaks its own protocol, and the driver handles the translation between them. Without this driver, Spring Boot would not know how to connect to your MySQL database.
+          </li>
+        </ul>
+      </div>
+
+      <p>
+        Double-check that all three dependencies are listed, then click <strong>"Generate"</strong>. Download the <code>resumator.zip</code> file, unzip it, and open the <code>resumator</code> folder in your code editor (VS Code or IntelliJ IDEA). If you are using IntelliJ, it will detect the Maven project and begin downloading the dependencies automatically.
+      </p>
+
+      <p>
+        Once the project is open, take a quick look at the generated <code>pom.xml</code> file. You should see all three dependencies listed. Here is what the relevant section looks like:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-web&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+    &lt;/dependency&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+        &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+        &lt;scope&gt;runtime&lt;/scope&gt;
+    &lt;/dependency&gt;
+
+    &lt;dependency&gt;
+        &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+        &lt;artifactId&gt;spring-boot-starter-test&lt;/artifactId&gt;
+        &lt;scope&gt;test&lt;/scope&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</code></pre>
+      </div>
+
+      <p>
+        Notice the <code>&lt;scope&gt;runtime&lt;/scope&gt;</code> tag on the MySQL driver. This tells Maven that the driver is only needed when the application runs, not when compiling your code. This is because your code never directly references MySQL-specific classes &mdash; Spring Data JPA provides an abstraction layer. Also notice that Spring Boot included a test dependency automatically. You do not need to do anything with it right now, but it is there when you are ready to write tests.
+      </p>
+
+      <!-- ==================== PART 5: CREATING THE MYSQL DATABASE ==================== -->
+      <h2>Part 5 &mdash; Creating the MySQL Database</h2>
+
+      <p>
+        In Lesson 22, you installed MySQL and learned how to use the MySQL command-line client. Now you are going to create a dedicated database and user for Resumator. This is a best practice in professional development &mdash; every application gets its own database and its own database user with specific permissions. You never want your application connecting as the root user.
+      </p>
+
+      <p>
+        Open your terminal and connect to MySQL as the root user:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>mysql -u root -p</code></pre>
+      </div>
+
+      <p>
+        Enter your root password when prompted. Once you are connected, run the following SQL commands one at a time:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE DATABASE resumator;
+CREATE USER 'resumator_app'@'localhost' IDENTIFIED BY 'your_password_here';
+GRANT ALL PRIVILEGES ON resumator.* TO 'resumator_app'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+      </div>
+
+      <p>
+        Let us break down each command:
+      </p>
+
+      <ul>
+        <li><strong><code>CREATE DATABASE resumator;</code></strong> &mdash; Creates a new, empty database called <code>resumator</code>. All of your application's tables will live inside this database.</li>
+        <li><strong><code>CREATE USER 'resumator_app'@'localhost' ...</code></strong> &mdash; Creates a new MySQL user named <code>resumator_app</code> that can only connect from your local machine (<code>localhost</code>). Replace <code>your_password_here</code> with an actual password of your choosing. Write it down &mdash; you will need it in the next step.</li>
+        <li><strong><code>GRANT ALL PRIVILEGES ON resumator.* ...</code></strong> &mdash; Gives the <code>resumator_app</code> user full access to the <code>resumator</code> database, but only that database. This user cannot see or modify any other databases on your MySQL server.</li>
+        <li><strong><code>FLUSH PRIVILEGES;</code></strong> &mdash; Tells MySQL to reload the permission tables so the new user's access takes effect immediately.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Why not just use the root user?</strong> The root user has unlimited power over your entire MySQL server. If your application code ever has a bug (or gets hacked), an attacker with root access could delete every database on your server. By creating a dedicated user with limited permissions, you contain the blast radius. This is the <strong>principle of least privilege</strong> &mdash; every user and application should have only the permissions they absolutely need and nothing more.
+      </div>
+
+      <p>
+        You can verify everything worked by running these commands while still logged into MySQL:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SHOW DATABASES;
+-- You should see "resumator" in the list
+
+SELECT User, Host FROM mysql.user WHERE User = 'resumator_app';
+-- You should see one row: resumator_app | localhost</code></pre>
+      </div>
+
+      <p>
+        Once you have confirmed the database and user exist, type <code>exit;</code> to leave the MySQL client.
+      </p>
+
+      <!-- ==================== PART 6: APPLICATION.PROPERTIES ==================== -->
+      <h2>Part 6 &mdash; Configuring application.properties</h2>
+
+      <p>
+        Now you need to tell Spring Boot how to connect to your MySQL database. Open the file <code>src/main/resources/application.properties</code>. This file is currently empty. Add the following configuration:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># ===== Database Configuration =====
+spring.datasource.url=jdbc:mysql://localhost:3306/resumator
+spring.datasource.username=resumator_app
+spring.datasource.password=your_password_here
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ===== JPA / Hibernate Configuration =====
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# ===== Server Configuration =====
+server.port=8080
+
+# ===== JSearch API Configuration =====
+jsearch.api.key=YOUR_API_KEY_HERE
+jsearch.api.url=https://jsearch.p.rapidapi.com</code></pre>
+      </div>
+
+      <p>
+        Let us go through each section:
+      </p>
+
+      <p>
+        <strong>Database Configuration:</strong> The <code>spring.datasource.url</code> tells Spring Boot where to find your MySQL database. The format is <code>jdbc:mysql://host:port/database_name</code>. Since MySQL runs on your local machine on port 3306 (the default), and your database is called <code>resumator</code>, the URL is <code>jdbc:mysql://localhost:3306/resumator</code>. The username and password are the ones you created in the previous step. The driver class name tells Spring Boot which JDBC driver to use for the connection.
+      </p>
+
+      <p>
+        <strong>JPA / Hibernate Configuration:</strong> The <code>spring.jpa.hibernate.ddl-auto=none</code> setting tells Hibernate (the JPA implementation that Spring Boot uses) not to automatically create or modify your database tables. This means you will manage your database schema yourself. The <code>spring.jpa.show-sql=true</code> setting prints every SQL query that Hibernate generates to the console, which is incredibly helpful for learning and debugging. The dialect setting tells Hibernate that you are using MySQL so it generates MySQL-compatible SQL.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>About ddl-auto=none:</strong> You might see tutorials that set <code>ddl-auto</code> to <code>update</code> or <code>create</code>, which would make Hibernate automatically create database tables for you. We are intentionally setting it to <code>none</code> for now. Managing your database schema manually is an important skill, and we will walk through table creation step by step in a later lesson.
+      </div>
+
+      <p>
+        <strong>Server Configuration:</strong> The <code>server.port=8080</code> sets the port that your embedded Tomcat server will listen on. Port 8080 is the Spring Boot default, so this line is technically optional, but it is good practice to be explicit about your configuration.
+      </p>
+
+      <p>
+        <strong>JSearch API Configuration:</strong> These are custom properties that you will read from your Java code. The <code>jsearch.api.key</code> will hold your RapidAPI key (we will set this up in the next section), and <code>jsearch.api.url</code> is the base URL for the JSearch API. Custom properties like these are a clean way to keep configuration values out of your Java code.
+      </p>
+
+      <div class="callout callout-warning">
+        <strong>Replace the placeholder values!</strong> Make sure you replace <code>your_password_here</code> with the actual password you chose when creating the MySQL user, and <code>YOUR_API_KEY_HERE</code> with your real API key (which you will get in the next section). These placeholder values will not work.
+      </div>
+
+      <!-- ==================== PART 7: JSEARCH API ==================== -->
+      <h2>Part 7 &mdash; Signing Up for the JSearch API</h2>
+
+      <p>
+        Resumator searches for real job listings using an external service called <strong>JSearch</strong>, which is available through <strong>RapidAPI</strong>. RapidAPI is a marketplace where developers can discover and connect to thousands of APIs. JSearch aggregates job postings from across the internet &mdash; LinkedIn, Indeed, Glassdoor, and many more &mdash; and makes them available through a single, simple API.
+      </p>
+
+      <p>
+        The JSearch free tier gives you <strong>500 requests per month</strong>, which is more than enough for development and personal use. Here is how to set it up:
+      </p>
+
+      <ol>
+        <li>
+          <strong>Create a RapidAPI account.</strong> Go to <a href="https://rapidapi.com" target="_blank" rel="noopener">rapidapi.com</a> and sign up for a free account. You can use your email or sign in with GitHub or Google.
+        </li>
+        <li>
+          <strong>Find JSearch.</strong> Once logged in, search for <strong>"JSearch"</strong> in the RapidAPI search bar. Click on the JSearch API by OpenWeb Ninja. You should see the API documentation page with endpoints like <code>/search</code>, <code>/search-filters</code>, and <code>/job-details</code>.
+        </li>
+        <li>
+          <strong>Subscribe to the free tier.</strong> Click the <strong>"Pricing"</strong> tab and select the <strong>Basic (Free)</strong> plan. This gives you 500 requests per month at no cost. You may be asked to enter a credit card for verification, but you will not be charged on the free tier.
+        </li>
+        <li>
+          <strong>Get your API key.</strong> After subscribing, go back to the API's <strong>"Endpoints"</strong> tab. In the code snippets section on the right side, look for the header labeled <code>x-rapidapi-key</code>. The value next to it is your API key &mdash; a long string of letters and numbers. Copy this key.
+        </li>
+        <li>
+          <strong>Add the key to application.properties.</strong> Go back to your <code>application.properties</code> file and replace <code>YOUR_API_KEY_HERE</code> with the key you just copied.
+        </li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <strong>NEVER commit your API key to Git.</strong> Your API key is like a password. If someone else gets it, they can use your 500 free requests (or worse, rack up charges on a paid plan). You must take two steps to protect it:
+        <ol>
+          <li>Add <code>src/main/resources/application.properties</code> to your <code>.gitignore</code> file so Git never tracks it.</li>
+          <li>Create a file called <code>application.properties.example</code> in the same folder with placeholder values (like <code>YOUR_API_KEY_HERE</code>) so that other developers know what configuration is needed without seeing your actual secrets.</li>
+        </ol>
+      </div>
+
+      <p>
+        Let us add the <code>.gitignore</code> entry now. Open the <code>.gitignore</code> file in your project's root directory (Spring Initializr created one for you) and add this line at the bottom:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># Sensitive configuration
+src/main/resources/application.properties</code></pre>
+      </div>
+
+      <p>
+        Then create a copy of your properties file as a template for other developers:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># ===== Database Configuration =====
+spring.datasource.url=jdbc:mysql://localhost:3306/resumator
+spring.datasource.username=resumator_app
+spring.datasource.password=YOUR_DB_PASSWORD_HERE
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+# ===== JPA / Hibernate Configuration =====
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQLDialect
+
+# ===== Server Configuration =====
+server.port=8080
+
+# ===== JSearch API Configuration =====
+jsearch.api.key=YOUR_RAPIDAPI_KEY_HERE
+jsearch.api.url=https://jsearch.p.rapidapi.com</code></pre>
+      </div>
+
+      <p>
+        Save this as <code>src/main/resources/application.properties.example</code>. This file <em>is</em> safe to commit to Git because it contains no real secrets &mdash; just placeholders that tell other developers what values they need to provide.
+      </p>
+
+      <!-- ==================== PART 8: PACKAGE STRUCTURE ==================== -->
+      <h2>Part 8 &mdash; Project Package Structure</h2>
+
+      <p>
+        When you build a small project with one or two files, organization does not matter much. But as your application grows, you need a clear structure so you can find things quickly. Professional Spring Boot applications follow a standard package layout that separates code by responsibility. Here is the structure you are going to use for Resumator:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>src/main/java/org/codersfarm/resumator/
+    ResumatorApplication.java          &lt;-- Main entry point (already generated)
+
+    controller/                        &lt;-- Handles HTTP requests
+        JobSearchController.java
+        FavoriteController.java
+
+    service/                           &lt;-- Business logic
+        JobSearchService.java
+        FavoriteService.java
+
+    model/                             &lt;-- Data structures (entities)
+        Job.java
+        FavoriteJob.java
+
+    repository/                        &lt;-- Database access
+        FavoriteJobRepository.java</code></pre>
+      </div>
+
+      <p>
+        Each package has a specific responsibility:
+      </p>
+
+      <div class="key-concept">
+        <h4>The Four-Package Pattern</h4>
+        <ul>
+          <li>
+            <strong><code>controller</code></strong> &mdash; Controllers handle incoming HTTP requests and return responses. They are the "front door" of your application. When a browser sends a request to <code>/api/jobs/search</code>, a controller method receives it. Controllers should be thin &mdash; they receive the request, call a service to do the real work, and return the result. You already used this pattern with <code>HelloController</code> and <code>ContactController</code> in earlier lessons.
+          </li>
+          <li>
+            <strong><code>service</code></strong> &mdash; Services contain your business logic &mdash; the rules and processes that make your application actually do things. For example, the <code>JobSearchService</code> will call the JSearch API, parse the response, and transform it into Java objects. Putting this logic in a service (instead of directly in the controller) keeps your code organized and makes it easier to test.
+          </li>
+          <li>
+            <strong><code>model</code></strong> &mdash; Models are plain Java classes that represent your data. A <code>Job</code> model might have fields like <code>title</code>, <code>company</code>, <code>location</code>, and <code>description</code>. When a model is also saved to the database, it is called an <strong>entity</strong>. Your <code>FavoriteJob</code> class will be an entity because it maps to a MySQL table.
+          </li>
+          <li>
+            <strong><code>repository</code></strong> &mdash; Repositories handle all database operations. Spring Data JPA makes this incredibly easy: you write a Java interface (not a class), and Spring automatically implements the database queries for you. Your <code>FavoriteJobRepository</code> will let you save, find, and delete favorite jobs with zero SQL.
+          </li>
+        </ul>
+      </div>
+
+      <p>
+        This pattern is called <strong>layered architecture</strong>, and it is used by virtually every professional Spring Boot application. The flow always moves in one direction: <strong>Controller &rarr; Service &rarr; Repository &rarr; Database</strong>. Controllers never talk directly to the database, and repositories never handle HTTP requests. Each layer does one job and does it well.
+      </p>
+
+      <p>
+        For now, just create the empty package folders. In your <code>src/main/java/org/codersfarm/resumator/</code> directory, create four new folders:
+      </p>
+
+      <ul>
+        <li><code>controller</code></li>
+        <li><code>service</code></li>
+        <li><code>model</code></li>
+        <li><code>repository</code></li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Java and empty packages:</strong> Some IDEs will not show an empty package in the project tree. If that happens, do not worry. The folders will appear once you add a Java file to them. In the next lesson, you will create your first controller and service classes, and the packages will show up.
+      </div>
+
+      <!-- ==================== PART 9: VERIFY SETUP ==================== -->
+      <h2>Part 9 &mdash; Verify Your Setup</h2>
+
+      <p>
+        It is time to make sure everything is wired up correctly. Open your terminal, navigate to the <code>resumator</code> project directory (the folder that contains <code>pom.xml</code>), and run the application:
+      </p>
+
+      <p><strong>Mac or Linux:</strong></p>
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>./mvnw spring-boot:run</code></pre>
+      </div>
+
+      <p><strong>Windows:</strong></p>
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>mvnw.cmd spring-boot:run</code></pre>
+      </div>
+
+      <p>
+        Watch the terminal output carefully. You are looking for a line like this near the end:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>Started ResumatorApplication in X.XXX seconds</code></pre>
+      </div>
+
+      <p>
+        If you see that message, congratulations &mdash; your project is correctly configured and running. The Spring Boot embedded Tomcat server is live on port 8080, and your application has successfully connected to the MySQL database.
+      </p>
+
+      <p>
+        If you see errors instead, here are the most common issues and their fixes:
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Error Message</th>
+            <th>Likely Cause</th>
+            <th>Fix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Access denied for user 'resumator_app'</code></td>
+            <td>Wrong password in application.properties</td>
+            <td>Double-check the password matches what you used in the <code>CREATE USER</code> command</td>
+          </tr>
+          <tr>
+            <td><code>Unknown database 'resumator'</code></td>
+            <td>The database was not created</td>
+            <td>Log into MySQL as root and run <code>CREATE DATABASE resumator;</code></td>
+          </tr>
+          <tr>
+            <td><code>Communications link failure</code></td>
+            <td>MySQL is not running</td>
+            <td>Start the MySQL service: <code>sudo systemctl start mysql</code> (Linux) or <code>brew services start mysql</code> (Mac)</td>
+          </tr>
+          <tr>
+            <td><code>Port 8080 already in use</code></td>
+            <td>Another application is using port 8080</td>
+            <td>Stop the other application or change <code>server.port</code> in application.properties to 8081</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <strong>Tip:</strong> If you are stuck on an error, read the full stack trace in the terminal. The most useful information is usually in the <strong>first few lines</strong> and the <strong>"Caused by"</strong> sections. Spring Boot error messages are generally very descriptive and often tell you exactly what went wrong.
+      </div>
+
+      <p>
+        Once the application starts successfully, press <strong>Ctrl+C</strong> in the terminal to stop it. Your foundation is solid and ready for the next lesson.
+      </p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Quiz &mdash; Check Your Understanding</h2>
+
+      <div class="quiz" data-id="q23-1">
+        <p class="quiz-question">1. In Resumator's architecture, why does the browser send requests to your Spring Boot server instead of calling the JSearch API directly?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q23-1" value="a"> Because browsers cannot make HTTP requests to external APIs</label>
+          <label><input type="radio" name="q23-1" value="b"> To keep the API key secret and have control over data transformation and error handling</label>
+          <label><input type="radio" name="q23-1" value="c"> Because JSearch only accepts requests from Java applications</label>
+          <label><input type="radio" name="q23-1" value="d"> To make the application slower and more complex</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> If the browser called the JSearch API directly, your API key would be visible in the browser's source code, which is a serious security risk. By routing requests through your Spring Boot backend, you keep the key hidden on the server and gain control over data transformation, caching, and error handling.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q23-2">
+        <p class="quiz-question">2. Which three dependencies did you add to the Resumator project?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q23-2" value="a"> Spring Web, Spring Security, PostgreSQL Driver</label>
+          <label><input type="radio" name="q23-2" value="b"> Spring Web, Spring Data JPA, MySQL Driver</label>
+          <label><input type="radio" name="q23-2" value="c"> Spring Web, Thymeleaf, MySQL Driver</label>
+          <label><input type="radio" name="q23-2" value="d"> Spring Data JPA, MySQL Driver, Spring Boot DevTools</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> Resumator needs Spring Web (for REST API endpoints and the embedded web server), Spring Data JPA (for database access without writing raw SQL), and MySQL Driver (so Java can communicate with your MySQL database).</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q23-3">
+        <p class="quiz-question">3. In the four-package pattern, which package is responsible for making calls to the database?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q23-3" value="a"> controller</label>
+          <label><input type="radio" name="q23-3" value="b"> service</label>
+          <label><input type="radio" name="q23-3" value="c"> model</label>
+          <label><input type="radio" name="q23-3" value="d"> repository</label>
+        </div>
+        <div class="quiz-answer" data-correct="d">
+          <p><strong>Correct answer: D.</strong> The <code>repository</code> package is responsible for all database operations. In a layered architecture, the flow goes Controller &rarr; Service &rarr; Repository &rarr; Database. Controllers handle HTTP requests, services contain business logic, models define data structures, and repositories handle database access.</p>
+        </div>
+      </div>
+
+      <!-- ==================== LESSON SUMMARY ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>
+        You accomplished a lot in this lesson. Let us recap everything you did:
+      </p>
+
+      <ul>
+        <li>You learned what <strong>Resumator</strong> is: a job search assistant that searches for real jobs, lets you browse results, favorite listings, and manage saved jobs.</li>
+        <li>You planned the <strong>architecture</strong>: Browser &rarr; Spring Boot &rarr; JSearch API for searching, and Browser &rarr; Spring Boot &rarr; MySQL for saving favorites.</li>
+        <li>You created a new <strong>Spring Boot project</strong> at start.spring.io with three dependencies: Spring Web, Spring Data JPA, and MySQL Driver.</li>
+        <li>You created a <strong>MySQL database</strong> called <code>resumator</code> and a dedicated user with the right permissions.</li>
+        <li>You configured <strong>application.properties</strong> with database connection settings, JPA configuration, and API credentials.</li>
+        <li>You signed up for the <strong>JSearch API</strong> on RapidAPI and learned how to keep your API key secure.</li>
+        <li>You organized your project into the <strong>four-package pattern</strong>: controller, service, model, and repository.</li>
+        <li>You <strong>verified</strong> that the application starts without errors.</li>
+      </ul>
+
+      <p>
+        The foundation is laid. In the next lesson, you will bring Resumator to life by building the <strong>Job Search API</strong> &mdash; a set of endpoints that call the JSearch API and return real job listings. You will write your first service class, learn how to make HTTP calls from Spring Boot, and parse JSON responses. The real fun starts now.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>Great work!</strong> Setting up a project correctly is one of the most underrated skills in software development. Many developers rush through setup and spend hours later fixing configuration issues. You took the time to do it right. That discipline will pay off throughout the rest of this track.
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="23-project-planning-setup">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/databases/22-setting-up-mysql.html" class="lesson-nav-btn">&larr; Previous: Setting Up MySQL</a>
+      <a href="/lessons/resumator/24-job-search-api.html" class="lesson-nav-btn">Next: Job Search API &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

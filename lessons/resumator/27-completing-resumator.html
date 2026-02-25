@@ -1,0 +1,1358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 27: Completing Resumator — Coders Farm</title>
+  <meta name="description" content="Build the favorites page and polish the application">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-27-completing-resumator">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Completing Resumator</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/resumator/26-when-things-break.html" role="menuitem">Lesson 26: When Things Break</a>
+      <a href="/lessons/resumator/27-completing-resumator.html" role="menuitem">Lesson 27: Completing Resumator</a>
+      <a href="/lessons/resumator/28-review-whats-next.html" role="menuitem">Lesson 28: Review &amp; What's Next</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / Completing Resumator</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="6" data-current="5">Lesson 5 of 6</p>
+      <h1>Completing Resumator</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Build a complete <strong>favorites page</strong> that displays all saved jobs with their details</li>
+          <li>Create JavaScript that <strong>fetches, renders, and manages</strong> favorite jobs dynamically</li>
+          <li>Add a <strong>PUT endpoint</strong> for saving personal notes on favorite jobs</li>
+          <li>Implement <strong>debounced auto-save</strong> so notes are saved automatically as you type</li>
+          <li>Prevent <strong>duplicate favorites</strong> on both the backend and frontend</li>
+          <li>Polish the application with <strong>sorting, filtering, badges, animations, toasts, and confirmation dialogs</strong></li>
+          <li>Perform a <strong>full end-to-end test</strong> of the entire Resumator workflow</li>
+        </ul>
+      </div>
+
+      <!-- ==================== OPENING ==================== -->
+      <p>
+        This is the moment you have been building toward. Over the last four lessons, you planned the architecture, connected to a real job search API, built a beautiful search interface, and &mdash; in Lesson 26 &mdash; encountered your first real production error and learned how to fix it. You did not give up when things broke. You debugged, you researched, you solved the problem. That is exactly what real developers do every single day.
+      </p>
+
+      <p>
+        Now it is time to finish what you started. In this lesson, you will build the <strong>favorites page</strong> &mdash; the place where users can see all the jobs they have saved, add personal notes, remove listings they no longer care about, and generally manage their job search. You will also polish the entire application with the kind of finishing touches that separate a student project from something that feels like a real product: sorting, filtering, smooth animations, toast notifications, and confirmation dialogs.
+      </p>
+
+      <p>
+        By the end of this lesson, Resumator will be a fully functional, polished job search application. You will have built something real &mdash; something you can show to friends, family, and future employers. Let us finish strong.
+      </p>
+
+      <div class="callout">
+        <strong>Where we left off:</strong> In Lesson 26, you built the save-to-favorites feature on the search page. You added a star button to each job card, created the <code>FavoriteJob</code> entity, set up the <code>POST /api/favorites</code> endpoint, and fixed the <code>Table 'resumator.favorite_job' doesn't exist</code> error by configuring <code>spring.jpa.hibernate.ddl-auto=update</code>. Your favorites are now saving to the database successfully. Today, we build the page that <em>displays</em> them.
+      </div>
+
+      <!-- ==================== PART 1: FAVORITES PAGE HTML ==================== -->
+      <h2>1. The Favorites Page (favorites.html)</h2>
+
+      <p>
+        Right now, users can save jobs from the search page, but they have no way to <em>see</em> what they have saved. That changes now. We are going to create <code>favorites.html</code> &mdash; a dedicated page where users can view, manage, and take notes on all the jobs they have favorited.
+      </p>
+
+      <p>
+        Think about what a favorites page needs to show for each saved job: the <strong>job title</strong> so you know what the position is, the <strong>company name</strong> so you know who is hiring, the <strong>location</strong> so you know where the job is, the <strong>salary range</strong> if one was listed, and the <strong>date you saved it</strong> so you can track how long ago you found it. Each job should also have action buttons &mdash; a way to remove it from favorites, a link to view the original listing, and a place to write personal notes like "Applied on Monday" or "Follow up next week."
+      </p>
+
+      <p>
+        And what about when you have no favorites at all? The page needs an <strong>empty state</strong> &mdash; a friendly message that says "You haven't saved any jobs yet" instead of just showing a blank page. Good applications always handle the empty case gracefully.
+      </p>
+
+      <p>
+        Here is the complete HTML for the favorites page. Study it carefully &mdash; you will see that it follows the same structure as the search page you built in Lesson 25, with a consistent header, navigation, and card layout:
+      </p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Favorites &mdash; Resumator&lt;/title&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;header class="app-header"&gt;
+    &lt;div class="header-inner"&gt;
+      &lt;a href="index.html" class="app-logo"&gt;Resumator&lt;/a&gt;
+      &lt;nav class="app-nav"&gt;
+        &lt;a href="index.html"&gt;Search&lt;/a&gt;
+        &lt;a href="favorites.html" class="active"&gt;
+          Favorites &lt;span id="fav-count-badge" class="badge"&gt;0&lt;/span&gt;
+        &lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;main class="container"&gt;
+    &lt;div class="page-header"&gt;
+      &lt;h1&gt;My Saved Jobs&lt;/h1&gt;
+      &lt;div class="favorites-controls"&gt;
+        &lt;input
+          type="text"
+          id="filter-input"
+          class="filter-input"
+          placeholder="Filter favorites..."
+        &gt;
+        &lt;select id="sort-select" class="sort-select"&gt;
+          &lt;option value="date-desc"&gt;Newest first&lt;/option&gt;
+          &lt;option value="date-asc"&gt;Oldest first&lt;/option&gt;
+          &lt;option value="company"&gt;Company A&ndash;Z&lt;/option&gt;
+          &lt;option value="title"&gt;Title A&ndash;Z&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Empty state: shown when there are no favorites --&gt;
+    &lt;div id="empty-state" class="empty-state" style="display: none;"&gt;
+      &lt;div class="empty-icon"&gt;&amp;#9734;&lt;/div&gt;
+      &lt;h2&gt;No saved jobs yet&lt;/h2&gt;
+      &lt;p&gt;
+        Jobs you favorite from the search page will appear here.
+        &lt;br&gt;
+        &lt;a href="index.html"&gt;Start searching for jobs &amp;rarr;&lt;/a&gt;
+      &lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Favorites list: cards are injected here by JavaScript --&gt;
+    &lt;div id="favorites-list" class="favorites-list"&gt;&lt;/div&gt;
+  &lt;/main&gt;
+
+  &lt;script src="favorites.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>Let us walk through the key parts of this page:</p>
+
+      <ul>
+        <li><strong>The header and nav</strong> match the search page exactly. Consistency matters &mdash; users should feel like they are in the same application. Notice the <code>Favorites</code> link has a <code>class="active"</code> to highlight it, and a <code>&lt;span id="fav-count-badge"&gt;</code> that will display a count like "Favorites (5)."</li>
+        <li><strong>The controls section</strong> has a text input for filtering and a dropdown for sorting. These let users quickly find a specific saved job without scrolling through a long list.</li>
+        <li><strong>The empty state</strong> (<code>id="empty-state"</code>) starts hidden with <code>style="display: none;"</code>. JavaScript will show it only when there are zero favorites. It includes a star icon, a friendly message, and a link back to the search page.</li>
+        <li><strong>The favorites list</strong> (<code>id="favorites-list"</code>) is an empty container. JavaScript will fill it with cards dynamically after fetching data from the API.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>Key Concept: Empty States</h4>
+        <p>An <strong>empty state</strong> is what users see when there is no data to display. Good applications never show a blank page &mdash; they explain what belongs here and how to get started. Think about how Google Drive shows "No files" with a suggestion to upload, or how a shopping cart shows "Your cart is empty" with a link to keep shopping. Always design for the empty case.</p>
+      </div>
+
+      <p>
+        Each favorite card that JavaScript renders will have this structure. You do not need to type this into any file &mdash; this is the HTML that your JavaScript will generate dynamically for each saved job:
+      </p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- This is generated by JavaScript for each favorite --&gt;
+&lt;div class="favorite-card" data-id="1"&gt;
+  &lt;div class="card-header"&gt;
+    &lt;h3 class="job-title"&gt;Junior Java Developer&lt;/h3&gt;
+    &lt;span class="saved-date"&gt;Saved Jan 15, 2025&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class="card-body"&gt;
+    &lt;p class="company"&gt;TechCorp Inc.&lt;/p&gt;
+    &lt;p class="location"&gt;Lansing, MI&lt;/p&gt;
+    &lt;p class="salary"&gt;$55,000 &ndash; $75,000&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;div class="card-notes"&gt;
+    &lt;label for="notes-1"&gt;My Notes:&lt;/label&gt;
+    &lt;textarea
+      id="notes-1"
+      class="notes-textarea"
+      placeholder="Add notes about this job..."
+    &gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+  &lt;div class="card-actions"&gt;
+    &lt;a href="https://example.com/job/123"
+       class="btn btn-primary"
+       target="_blank"
+       rel="noopener noreferrer"&gt;
+      View Listing
+    &lt;/a&gt;
+    &lt;button class="btn btn-danger remove-btn"&gt;Remove&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <p>
+        Notice the <code>data-id</code> attribute on each card &mdash; this stores the database ID of the favorite so that when the user clicks "Remove" or saves notes, your JavaScript knows exactly which record to update. The <code>textarea</code> for notes has a unique <code>id</code> based on the favorite's ID, and the "View Listing" link opens the original job posting in a new tab using <code>target="_blank"</code>.
+      </p>
+
+      <!-- ==================== PART 2: FAVORITES JAVASCRIPT ==================== -->
+      <h2>2. The Favorites JavaScript (favorites.js)</h2>
+
+      <p>
+        The HTML page is just the skeleton. Now we need to bring it to life with JavaScript. The <code>favorites.js</code> file is responsible for everything dynamic on this page: fetching saved jobs from the backend, rendering them as cards, handling the remove button, and auto-saving notes as the user types.
+      </p>
+
+      <p>
+        This is the most complex JavaScript file in our application, so we are going to build it piece by piece. First, here is the complete file. Read through it once to get the big picture, and then we will break down every section:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// favorites.js — Manages the favorites page
+
+const API_URL = "/api/favorites";
+let allFavorites = []; // Stores all favorites for filtering
+
+// ========================================
+// 1. Fetch all favorites when the page loads
+// ========================================
+async function loadFavorites() {
+  try {
+    const response = await fetch(API_URL);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch favorites");
+    }
+
+    allFavorites = await response.json();
+    updateBadge(allFavorites.length);
+    applyFilterAndSort();
+  } catch (error) {
+    console.error("Error loading favorites:", error);
+    showToast("Could not load favorites. Please try again.", "error");
+  }
+}
+
+// ========================================
+// 2. Render favorite cards into the page
+// ========================================
+function renderFavorites(favorites) {
+  const list = document.getElementById("favorites-list");
+  const emptyState = document.getElementById("empty-state");
+
+  // Clear existing cards
+  list.innerHTML = "";
+
+  // Show empty state if no favorites
+  if (favorites.length === 0) {
+    list.style.display = "none";
+    emptyState.style.display = "block";
+    return;
+  }
+
+  // Hide empty state and show list
+  emptyState.style.display = "none";
+  list.style.display = "grid";
+
+  // Create a card for each favorite
+  favorites.forEach(function(fav) {
+    const card = document.createElement("div");
+    card.className = "favorite-card";
+    card.setAttribute("data-id", fav.id);
+
+    // Format the saved date
+    const savedDate = new Date(fav.savedAt);
+    const dateString = savedDate.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    });
+
+    // Build salary display (might be null)
+    const salaryText = fav.salary
+      ? fav.salary
+      : "Salary not listed";
+
+    card.innerHTML =
+      '&lt;div class="card-header"&gt;' +
+      '  &lt;h3 class="job-title"&gt;' + escapeHtml(fav.title) + '&lt;/h3&gt;' +
+      '  &lt;span class="saved-date"&gt;Saved ' + dateString + '&lt;/span&gt;' +
+      '&lt;/div&gt;' +
+      '&lt;div class="card-body"&gt;' +
+      '  &lt;p class="company"&gt;' + escapeHtml(fav.company) + '&lt;/p&gt;' +
+      '  &lt;p class="location"&gt;' + escapeHtml(fav.location) + '&lt;/p&gt;' +
+      '  &lt;p class="salary"&gt;' + escapeHtml(salaryText) + '&lt;/p&gt;' +
+      '&lt;/div&gt;' +
+      '&lt;div class="card-notes"&gt;' +
+      '  &lt;label for="notes-' + fav.id + '"&gt;My Notes:&lt;/label&gt;' +
+      '  &lt;textarea id="notes-' + fav.id + '" ' +
+      '    class="notes-textarea" ' +
+      '    placeholder="Add notes about this job..."&gt;' +
+          (fav.notes || "") +
+      '  &lt;/textarea&gt;' +
+      '&lt;/div&gt;' +
+      '&lt;div class="card-actions"&gt;' +
+      '  &lt;a href="' + escapeHtml(fav.jobUrl) + '" ' +
+      '     class="btn btn-primary" target="_blank" ' +
+      '     rel="noopener noreferrer"&gt;' +
+      '    View Listing' +
+      '  &lt;/a&gt;' +
+      '  &lt;button class="btn btn-danger remove-btn"&gt;Remove&lt;/button&gt;' +
+      '&lt;/div&gt;';
+
+    // Attach event listeners
+    const removeBtn = card.querySelector(".remove-btn");
+    removeBtn.addEventListener("click", function() {
+      confirmAndRemove(fav.id, fav.title);
+    });
+
+    const textarea = card.querySelector(".notes-textarea");
+    textarea.addEventListener("input", debounce(function() {
+      saveNotes(fav.id, textarea.value);
+    }, 800));
+
+    list.appendChild(card);
+  });
+}
+
+// ========================================
+// 3. Remove a favorite
+// ========================================
+async function removeFavorite(id) {
+  try {
+    const response = await fetch(API_URL + "/" + id, {
+      method: "DELETE"
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to remove favorite");
+    }
+
+    // Remove from local array
+    allFavorites = allFavorites.filter(function(fav) {
+      return fav.id !== id;
+    });
+
+    updateBadge(allFavorites.length);
+    applyFilterAndSort();
+    showToast("Job removed from favorites.", "success");
+  } catch (error) {
+    console.error("Error removing favorite:", error);
+    showToast("Could not remove job. Please try again.", "error");
+  }
+}
+
+// ========================================
+// 4. Save notes with debounced auto-save
+// ========================================
+async function saveNotes(id, notes) {
+  try {
+    const response = await fetch(API_URL + "/" + id + "/notes", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ notes: notes })
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to save notes");
+    }
+
+    // Update local array
+    const fav = allFavorites.find(function(f) { return f.id === id; });
+    if (fav) {
+      fav.notes = notes;
+    }
+
+    showToast("Notes saved!", "success");
+  } catch (error) {
+    console.error("Error saving notes:", error);
+    showToast("Could not save notes. Please try again.", "error");
+  }
+}
+
+// ========================================
+// 5. Debounce helper function
+// ========================================
+function debounce(func, delay) {
+  let timer;
+  return function() {
+    const context = this;
+    const args = arguments;
+    clearTimeout(timer);
+    timer = setTimeout(function() {
+      func.apply(context, args);
+    }, delay);
+  };
+}
+
+// ========================================
+// 6. Filter and sort
+// ========================================
+function applyFilterAndSort() {
+  const filterValue = document.getElementById("filter-input")
+    .value.toLowerCase();
+  const sortValue = document.getElementById("sort-select").value;
+
+  // Filter
+  let filtered = allFavorites.filter(function(fav) {
+    const searchable = (
+      fav.title + " " + fav.company + " " + fav.location
+    ).toLowerCase();
+    return searchable.includes(filterValue);
+  });
+
+  // Sort
+  filtered.sort(function(a, b) {
+    switch (sortValue) {
+      case "date-desc":
+        return new Date(b.savedAt) - new Date(a.savedAt);
+      case "date-asc":
+        return new Date(a.savedAt) - new Date(b.savedAt);
+      case "company":
+        return a.company.localeCompare(b.company);
+      case "title":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
+
+  renderFavorites(filtered);
+}
+
+// ========================================
+// 7. Confirmation dialog
+// ========================================
+function confirmAndRemove(id, title) {
+  const confirmed = confirm(
+    'Remove "' + title + '" from your favorites?'
+  );
+  if (confirmed) {
+    removeFavorite(id);
+  }
+}
+
+// ========================================
+// 8. Toast notifications
+// ========================================
+function showToast(message, type) {
+  // Remove any existing toast
+  const existing = document.querySelector(".toast");
+  if (existing) {
+    existing.remove();
+  }
+
+  const toast = document.createElement("div");
+  toast.className = "toast toast-" + type;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+
+  // Trigger animation
+  setTimeout(function() { toast.classList.add("show"); }, 10);
+
+  // Auto-dismiss after 3 seconds
+  setTimeout(function() {
+    toast.classList.remove("show");
+    setTimeout(function() { toast.remove(); }, 300);
+  }, 3000);
+}
+
+// ========================================
+// 9. Update the nav badge count
+// ========================================
+function updateBadge(count) {
+  const badge = document.getElementById("fav-count-badge");
+  if (badge) {
+    badge.textContent = count;
+    badge.style.display = count &gt; 0 ? "inline-block" : "none";
+  }
+}
+
+// ========================================
+// 10. Escape HTML to prevent XSS
+// ========================================
+function escapeHtml(text) {
+  const div = document.createElement("div");
+  div.textContent = text || "";
+  return div.innerHTML;
+}
+
+// ========================================
+// 11. Set up event listeners and load data
+// ========================================
+document.getElementById("filter-input")
+  .addEventListener("input", debounce(applyFilterAndSort, 300));
+
+document.getElementById("sort-select")
+  .addEventListener("change", applyFilterAndSort);
+
+// Load favorites when the page is ready
+loadFavorites();</code></pre>
+      </div>
+
+      <p>
+        That is a lot of code! But look at how it is organized &mdash; each section has a clear purpose, and they work together like gears in a machine. Let us break down the most important parts.
+      </p>
+
+      <h3>Fetching Favorites from the API</h3>
+
+      <p>
+        The <code>loadFavorites()</code> function runs as soon as the page loads. It sends a <code>GET</code> request to <code>/api/favorites</code>, which returns a JSON array of all saved jobs from your MySQL database. The <code>async/await</code> syntax makes this asynchronous code read almost like synchronous code &mdash; the function pauses at <code>await fetch()</code> until the server responds, then continues with the data.
+      </p>
+
+      <p>
+        Notice the error handling with <code>try/catch</code>. If the server is down or the network fails, instead of the page silently breaking, the user sees a toast notification saying "Could not load favorites." This is defensive programming &mdash; always assume that network requests can fail.
+      </p>
+
+      <h3>Rendering Cards Dynamically</h3>
+
+      <p>
+        The <code>renderFavorites()</code> function takes an array of favorite objects and turns each one into a card on the page. It first checks if the array is empty &mdash; if so, it shows the empty state. Otherwise, it loops through each favorite and builds the HTML using string concatenation.
+      </p>
+
+      <p>
+        One critical detail: notice the <code>escapeHtml()</code> function. Every piece of user-generated or API-provided data is escaped before being inserted into the page. This prevents <strong>Cross-Site Scripting (XSS)</strong> attacks &mdash; a type of security vulnerability where malicious code could be injected through job titles or company names. Never insert raw user data into HTML without escaping it.
+      </p>
+
+      <h3>The Remove Flow</h3>
+
+      <p>
+        When the user clicks "Remove," the code does not immediately delete the favorite. Instead, it calls <code>confirmAndRemove()</code>, which shows a browser confirmation dialog asking "Remove [job title] from your favorites?" Only if the user clicks "OK" does it proceed to send the <code>DELETE</code> request. After a successful deletion, it updates the local array (so we do not need to re-fetch from the server), updates the badge count, re-renders the list, and shows a success toast.
+      </p>
+
+      <h3>Debounced Auto-Save for Notes</h3>
+
+      <p>
+        The notes textarea uses a technique called <strong>debouncing</strong>. Without debouncing, every single keystroke would send a network request to save the notes. If someone types "Applied Monday" (14 characters), that would be 14 separate API calls! Debouncing waits until the user <em>stops typing</em> for 800 milliseconds before sending the request. This dramatically reduces the number of API calls while still giving the user the feeling that their notes are saving automatically.
+      </p>
+
+      <div class="key-concept">
+        <h4>Key Concept: Debouncing</h4>
+        <p><strong>Debouncing</strong> is a technique that delays the execution of a function until a certain amount of time has passed since it was last called. If the function is called again before the delay expires, the timer resets. This is essential for performance when handling rapid user input like typing, scrolling, or resizing. In our case, we wait 800ms after the user stops typing before saving their notes to the server.</p>
+      </div>
+
+      <p>
+        Now let us see a working demo of the debounce pattern in action. Run the code below and type quickly in the input field. Watch how the "save" function only fires after you stop typing:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Debounce demo — type in the input to see it work
+
+function debounce(func, delay) {
+  let timer;
+  return function() {
+    clearTimeout(timer);
+    timer = setTimeout(func, delay);
+  };
+}
+
+// Simulate saving notes
+let saveCount = 0;
+function saveNotes(text) {
+  saveCount++;
+  console.log(
+    "Save #" + saveCount + ": Saved notes -> \"" + text + "\""
+  );
+}
+
+// Without debounce — fires on EVERY keystroke
+let keystrokeCount = 0;
+function onKeystroke(text) {
+  keystrokeCount++;
+  console.log("Keystroke #" + keystrokeCount + ": \"" + text + "\"");
+}
+
+// Create the debounced version (800ms delay)
+const debouncedSave = debounce(function() {
+  saveNotes("(your text here)");
+}, 800);
+
+// Simulate rapid typing: 5 keystrokes in quick succession
+console.log("--- Simulating 5 rapid keystrokes ---");
+onKeystroke("A");
+debouncedSave();
+onKeystroke("Ap");
+debouncedSave();
+onKeystroke("App");
+debouncedSave();
+onKeystroke("Appl");
+debouncedSave();
+onKeystroke("Apply");
+debouncedSave();
+
+console.log("--- Waiting 800ms for debounce... ---");
+console.log("(The save will fire once after the delay)");</code></pre>
+      </div>
+
+      <p>
+        Notice how there were 5 keystrokes but the debounced save only fires <em>once</em>, after the 800ms delay. In a real application, this means 5 keystrokes result in 1 network request instead of 5. That is a huge performance improvement, especially on mobile connections.
+      </p>
+
+      <!-- ==================== PART 3: NOTES PUT ENDPOINT ==================== -->
+      <h2>3. Adding the Notes PUT Endpoint</h2>
+
+      <p>
+        Your favorites JavaScript is ready to save notes, but the backend does not have an endpoint to receive them yet. You need to add a new method to your <code>FavoritesController</code> class that accepts a <code>PUT</code> request with the updated notes text.
+      </p>
+
+      <p>
+        Why <code>PUT</code> and not <code>POST</code>? In REST conventions, <code>POST</code> is used to <em>create</em> a new resource, while <code>PUT</code> is used to <em>update</em> an existing one. Since the favorite already exists in the database and we are just updating its notes field, <code>PUT</code> is the correct HTTP method.
+      </p>
+
+      <p>
+        Add this method to your <code>FavoritesController</code> class, alongside the existing <code>GET</code>, <code>POST</code>, and <code>DELETE</code> methods:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@PutMapping("/{id}/notes")
+public FavoriteJob updateNotes(@PathVariable Long id, @RequestBody Map&lt;String, String&gt; body) {
+    FavoriteJob job = repository.findById(id)
+        .orElseThrow(() -&gt; new RuntimeException("Favorite not found"));
+    job.setNotes(body.get("notes"));
+    return repository.save(job);
+}</code></pre>
+      </div>
+
+      <p>Let us break down every piece of this method:</p>
+
+      <ul>
+        <li><strong><code>@PutMapping("/{id}/notes")</code></strong> &mdash; This maps to <code>PUT /api/favorites/3/notes</code> (where <code>3</code> is the favorite's ID). The <code>{id}</code> is a <strong>path variable</strong> &mdash; a dynamic segment of the URL that Spring extracts automatically.</li>
+        <li><strong><code>@PathVariable Long id</code></strong> &mdash; Spring takes the <code>{id}</code> from the URL and passes it into the method as a <code>Long</code> value.</li>
+        <li><strong><code>@RequestBody Map&lt;String, String&gt; body</code></strong> &mdash; The request body is a JSON object like <code>{ "notes": "Applied on Monday" }</code>. Spring automatically converts it into a Java <code>Map</code> so you can access the notes with <code>body.get("notes")</code>.</li>
+        <li><strong><code>repository.findById(id)</code></strong> &mdash; This searches the database for a favorite with the given ID. It returns an <code>Optional</code> &mdash; Java's way of saying "this might or might not exist."</li>
+        <li><strong><code>.orElseThrow(...)</code></strong> &mdash; If the favorite does not exist (maybe it was already deleted), this throws an exception instead of returning <code>null</code>. This prevents confusing <code>NullPointerException</code> errors later.</li>
+        <li><strong><code>job.setNotes(...)</code></strong> &mdash; Updates the notes field on the Java object.</li>
+        <li><strong><code>repository.save(job)</code></strong> &mdash; Saves the updated object back to the database and returns it.</li>
+      </ul>
+
+      <p>
+        You also need to make sure your <code>FavoriteJob</code> entity has a <code>notes</code> field. If you did not add it in Lesson 26, add it now:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Add this field to your FavoriteJob entity class
+@Column(columnDefinition = "TEXT")
+private String notes;
+
+// Add getter and setter
+public String getNotes() { return notes; }
+public void setNotes(String notes) { this.notes = notes; }</code></pre>
+      </div>
+
+      <p>
+        The <code>@Column(columnDefinition = "TEXT")</code> annotation tells MySQL to use the <code>TEXT</code> type instead of the default <code>VARCHAR(255)</code>. This allows notes to be much longer than 255 characters &mdash; users might want to write detailed notes about why they are interested in a job, what they learned about the company, or reminders about interview preparation.
+      </p>
+
+      <div class="callout">
+        <strong>Remember from Lesson 26:</strong> After adding a new field to your entity, Spring Boot with <code>ddl-auto=update</code> will automatically add the new column to your database table the next time you restart the application. You do not need to write any SQL. This is the same mechanism that fixed the "table doesn't exist" error we debugged in the previous lesson.
+      </div>
+
+      <!-- ==================== PART 4: PREVENTING DUPLICATES ==================== -->
+      <h2>4. Preventing Duplicate Favorites</h2>
+
+      <p>
+        Right now, there is nothing stopping a user from clicking the star button on the same job ten times and creating ten duplicate entries in the database. That is a bug &mdash; and a common one. Let us fix it on both the backend and the frontend.
+      </p>
+
+      <h3>Backend: Check Before Saving</h3>
+
+      <p>
+        First, add a custom query method to your <code>FavoriteJobRepository</code>:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public interface FavoriteJobRepository
+    extends JpaRepository&lt;FavoriteJob, Long&gt; {
+
+    // Spring Data JPA generates the query from the method name!
+    boolean existsByJobId(String jobId);
+}</code></pre>
+      </div>
+
+      <p>
+        This is one of the most powerful features of Spring Data JPA. You do not write any SQL or implementation code. Spring reads the method name <code>existsByJobId</code> and automatically generates a query that checks if a row with that <code>jobId</code> exists. It returns <code>true</code> if found, <code>false</code> if not. The naming convention is the magic &mdash; <code>existsBy</code> + the field name (<code>JobId</code>).
+      </p>
+
+      <p>
+        Now update your <code>POST</code> endpoint to check for duplicates before saving:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>@PostMapping
+public ResponseEntity&lt;?&gt; addFavorite(@RequestBody FavoriteJob job) {
+    // Check if this job is already favorited
+    if (repository.existsByJobId(job.getJobId())) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(Map.of("error", "This job is already in your favorites"));
+    }
+
+    job.setSavedAt(new java.util.Date());
+    FavoriteJob saved = repository.save(job);
+    return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+}</code></pre>
+      </div>
+
+      <p>
+        There are several important changes here:
+      </p>
+
+      <ul>
+        <li><strong><code>ResponseEntity&lt;?&gt;</code></strong> &mdash; Instead of returning just <code>FavoriteJob</code>, we now return a <code>ResponseEntity</code>, which lets us control the HTTP status code. The <code>&lt;?&gt;</code> means the body can be any type (either a <code>FavoriteJob</code> on success or an error message on failure).</li>
+        <li><strong><code>HttpStatus.CONFLICT</code> (409)</strong> &mdash; This is the correct HTTP status code for "this resource already exists." It tells the frontend that the save failed because of a duplicate, not because of a server error.</li>
+        <li><strong><code>HttpStatus.CREATED</code> (201)</strong> &mdash; On success, we return 201 instead of the default 200. Status 201 specifically means "a new resource was created," which is semantically correct for a <code>POST</code> request.</li>
+      </ul>
+
+      <h3>Frontend: Show Filled Stars for Already-Favorited Jobs</h3>
+
+      <p>
+        On the search page, we should visually indicate which jobs have already been saved. Instead of showing an empty star for every job, we check which ones are already in favorites and show a filled star for those.
+      </p>
+
+      <p>
+        Add this logic to your search page JavaScript (the file that handles the search results):
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// Fetch the list of already-favorited job IDs
+async function getFavoritedJobIds() {
+  try {
+    const response = await fetch("/api/favorites");
+    const favorites = await response.json();
+    // Extract just the jobId from each favorite
+    return favorites.map(function(fav) { return fav.jobId; });
+  } catch (error) {
+    console.error("Could not load favorites:", error);
+    return [];
+  }
+}
+
+// When rendering search results, check each job
+async function renderSearchResults(jobs) {
+  const favoritedIds = await getFavoritedJobIds();
+
+  jobs.forEach(function(job) {
+    const isFavorited = favoritedIds.includes(job.job_id);
+
+    // Use filled star if already favorited, empty star if not
+    const starSymbol = isFavorited ? "&amp;#9733;" : "&amp;#9734;";
+    const starClass = isFavorited
+      ? "star-btn favorited"
+      : "star-btn";
+
+    // ... build the card HTML with the correct star ...
+  });
+}
+
+// When the star button is clicked
+function toggleFavorite(button, job) {
+  if (button.classList.contains("favorited")) {
+    showToast("This job is already in your favorites!", "info");
+    return; // Do not send a duplicate request
+  }
+
+  // ... save the favorite as before ...
+}</code></pre>
+      </div>
+
+      <p>
+        This approach checks the favorites list once when search results load, rather than checking each job individually. This is more efficient because it only makes one API call instead of potentially dozens.
+      </p>
+
+      <div class="key-concept">
+        <h4>Key Concept: Idempotency and Duplicate Prevention</h4>
+        <p>In software engineering, an operation is <strong>idempotent</strong> if performing it multiple times has the same effect as performing it once. For favorites, clicking the star button ten times should produce the same result as clicking it once &mdash; exactly one saved favorite. We achieve this by checking on the backend (<code>existsByJobId</code>) and on the frontend (checking for the <code>favorited</code> class). Defending against duplicates on <em>both</em> sides is a best practice &mdash; never rely on the frontend alone, because API calls can be made without a browser.</p>
+      </div>
+
+      <!-- ==================== PART 5: POLISH FEATURES ==================== -->
+      <h2>5. Polish Features</h2>
+
+      <p>
+        Your favorites page is fully functional now &mdash; users can view, remove, and take notes on saved jobs. But functional is not enough. The difference between a project and a <em>product</em> is polish. These finishing touches make the application feel professional and delightful to use.
+      </p>
+
+      <h3>5.1 Sorting Favorites</h3>
+
+      <p>
+        We already included sorting in our JavaScript with the <code>applyFilterAndSort()</code> function. The dropdown menu lets users sort by date saved (newest or oldest first), company name (A to Z), or job title (A to Z). Let us look at how the sort logic works:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Sorting demo — see how different sort methods work
+
+var jobs = [
+  { title: "Java Developer",   company: "Acme Corp",    savedAt: "2025-01-15" },
+  { title: "Frontend Intern",  company: "WebWorks",     savedAt: "2025-01-20" },
+  { title: "Backend Engineer", company: "DataFlow",     savedAt: "2025-01-10" },
+  { title: "QA Tester",        company: "Acme Corp",    savedAt: "2025-01-18" },
+  { title: "DevOps Analyst",   company: "CloudNine",    savedAt: "2025-01-22" }
+];
+
+function sortJobs(list, method) {
+  // Create a copy so we don't modify the original
+  var sorted = list.slice();
+
+  sorted.sort(function(a, b) {
+    switch (method) {
+      case "date-desc":
+        return new Date(b.savedAt) - new Date(a.savedAt);
+      case "date-asc":
+        return new Date(a.savedAt) - new Date(b.savedAt);
+      case "company":
+        return a.company.localeCompare(b.company);
+      case "title":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
+
+  return sorted;
+}
+
+console.log("=== Newest First ===");
+sortJobs(jobs, "date-desc").forEach(function(j) {
+  console.log(j.savedAt + " | " + j.title + " at " + j.company);
+});
+
+console.log("\n=== Company A-Z ===");
+sortJobs(jobs, "company").forEach(function(j) {
+  console.log(j.company + " | " + j.title);
+});
+
+console.log("\n=== Title A-Z ===");
+sortJobs(jobs, "title").forEach(function(j) {
+  console.log(j.title + " | " + j.company);
+});</code></pre>
+      </div>
+
+      <p>
+        The <code>.sort()</code> method takes a comparison function that receives two items (<code>a</code> and <code>b</code>) and returns a negative number if <code>a</code> should come first, a positive number if <code>b</code> should come first, or zero if they are equal. For dates, subtracting one <code>Date</code> from another gives the time difference in milliseconds. For strings, <code>localeCompare()</code> handles alphabetical comparison correctly, including special characters and case sensitivity.
+      </p>
+
+      <h3>5.2 Filtering Within Favorites</h3>
+
+      <p>
+        The filter input lets users search within their favorites. If you have saved 20 jobs and want to find the one at "TechCorp," you can type "tech" and the list instantly filters down to matching results. Our <code>applyFilterAndSort()</code> function handles this by combining the title, company, and location into one searchable string and checking if it includes the filter text.
+      </p>
+
+      <p>
+        The filter input itself is debounced with a 300ms delay &mdash; shorter than the notes debounce because filtering is a fast, local operation that does not involve network requests. We just do not want to re-render the entire list on every single keystroke.
+      </p>
+
+      <h3>5.3 Count Badge in Navigation</h3>
+
+      <p>
+        The favorites count badge in the navigation shows users how many jobs they have saved without needing to visit the favorites page. The <code>updateBadge()</code> function updates this number whenever favorites are loaded, added, or removed. When the count is zero, the badge is hidden entirely &mdash; showing "Favorites (0)" looks awkward.
+      </p>
+
+      <p>
+        To add this badge to the search page as well, include this snippet in your search page JavaScript:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// On the search page, update the favorites badge on load
+async function updateNavBadge() {
+  try {
+    const response = await fetch("/api/favorites");
+    const favorites = await response.json();
+    const badge = document.getElementById("fav-count-badge");
+    if (badge) {
+      badge.textContent = favorites.length;
+      badge.style.display = favorites.length &gt; 0
+        ? "inline-block"
+        : "none";
+    }
+  } catch (error) {
+    // Silently fail — the badge is not critical
+  }
+}
+
+updateNavBadge();</code></pre>
+      </div>
+
+      <h3>5.4 Smooth Animations</h3>
+
+      <p>
+        Animations make your application feel alive. When a card is added, it should gently fade in. When a card is removed, it should smoothly slide out. Here is the CSS you need:
+      </p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Favorite card animations */
+.favorite-card {
+  animation: fadeSlideIn 0.3s ease-out;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Class added before removing a card */
+.favorite-card.removing {
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+/* Toast notification animations */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-success { background-color: #16825d; }
+.toast-error   { background-color: #dc3545; }
+.toast-info    { background-color: #0d6efd; }
+
+/* Badge styles */
+.badge {
+  display: inline-block;
+  background-color: #dc3545;
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-left: 4px;
+  vertical-align: middle;
+}</code></pre>
+      </div>
+
+      <p>
+        To use the removing animation, update the <code>removeFavorite()</code> function to add the <code>.removing</code> class before actually removing the card from the DOM:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// Animate the card out before removing
+async function removeFavorite(id) {
+  // Find the card element and animate it out
+  const card = document.querySelector(
+    '.favorite-card[data-id="' + id + '"]'
+  );
+  if (card) {
+    card.classList.add("removing");
+    // Wait for the animation to finish (300ms)
+    await new Promise(function(resolve) {
+      setTimeout(resolve, 300);
+    });
+  }
+
+  // Then send the DELETE request and re-render
+  // ... rest of the remove logic ...
+}</code></pre>
+      </div>
+
+      <h3>5.5 Confirmation Dialog Before Removing</h3>
+
+      <p>
+        We already implemented this in our <code>confirmAndRemove()</code> function using the browser's built-in <code>confirm()</code> dialog. This is a simple but effective way to prevent accidental deletions. The dialog shows the job title so the user knows exactly what they are about to remove.
+      </p>
+
+      <p>
+        In a production application, you might replace the browser's built-in dialog with a custom modal that matches your design. But for now, <code>confirm()</code> works perfectly and is accessible out of the box.
+      </p>
+
+      <h3>5.6 Toast Notifications</h3>
+
+      <p>
+        Toast notifications are those small messages that slide in from the corner of the screen to confirm an action. Our <code>showToast()</code> function creates a temporary element, animates it into view, and automatically dismisses it after 3 seconds. We use three types:
+      </p>
+
+      <ul>
+        <li><strong>Success (green):</strong> "Job saved!" or "Notes saved!" or "Job removed from favorites."</li>
+        <li><strong>Error (red):</strong> "Could not load favorites. Please try again."</li>
+        <li><strong>Info (blue):</strong> "This job is already in your favorites!"</li>
+      </ul>
+
+      <p>
+        Notice how the <code>showToast()</code> function removes any existing toast before showing a new one. This prevents toasts from stacking up if the user performs several actions quickly.
+      </p>
+
+      <!-- ==================== PART 6: INTERACTIVE DEMO ==================== -->
+      <h2>6. Interactive Demo: Favorites Page Logic</h2>
+
+      <p>
+        Let us put it all together with an interactive demo. The code below simulates a complete favorites page with mock data &mdash; no server required. You can see how filtering, sorting, adding notes, and removing favorites all work together. Try modifying the mock data, changing the sort order, or filtering by company name:
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// ==========================================
+// Interactive Favorites Page Simulation
+// ==========================================
+
+// Mock data — pretend this came from the API
+var favorites = [
+  {
+    id: 1,
+    title: "Junior Java Developer",
+    company: "TechCorp Inc.",
+    location: "Lansing, MI",
+    salary: "$55,000 - $75,000",
+    savedAt: "2025-01-15T10:30:00",
+    notes: "Great company culture!"
+  },
+  {
+    id: 2,
+    title: "Frontend Developer Intern",
+    company: "WebWorks Studio",
+    location: "Detroit, MI",
+    salary: "$40,000 - $50,000",
+    savedAt: "2025-01-20T14:15:00",
+    notes: ""
+  },
+  {
+    id: 3,
+    title: "Backend Engineer",
+    company: "DataFlow Systems",
+    location: "Ann Arbor, MI",
+    salary: "$80,000 - $100,000",
+    savedAt: "2025-01-10T09:00:00",
+    notes: "Need 2 years experience"
+  },
+  {
+    id: 4,
+    title: "QA Test Analyst",
+    company: "Acme Solutions",
+    location: "Grand Rapids, MI",
+    salary: null,
+    savedAt: "2025-01-18T16:45:00",
+    notes: ""
+  }
+];
+
+// Render favorites to console (simulating DOM)
+function renderToConsole(list) {
+  if (list.length === 0) {
+    console.log("--- EMPTY STATE ---");
+    console.log("No saved jobs yet.");
+    console.log("Start searching for jobs!");
+    return;
+  }
+
+  console.log("--- MY SAVED JOBS (" + list.length + ") ---\n");
+  list.forEach(function(fav) {
+    var date = new Date(fav.savedAt).toLocaleDateString("en-US", {
+      month: "short", day: "numeric", year: "numeric"
+    });
+    var salary = fav.salary || "Salary not listed";
+    console.log(fav.title);
+    console.log("  Company:  " + fav.company);
+    console.log("  Location: " + fav.location);
+    console.log("  Salary:   " + salary);
+    console.log("  Saved:    " + date);
+    if (fav.notes) {
+      console.log("  Notes:    " + fav.notes);
+    }
+    console.log("  [View Listing] [Remove]");
+    console.log("");
+  });
+}
+
+// Sort function
+function sortFavorites(list, method) {
+  var sorted = list.slice();
+  sorted.sort(function(a, b) {
+    switch (method) {
+      case "date-desc":
+        return new Date(b.savedAt) - new Date(a.savedAt);
+      case "date-asc":
+        return new Date(a.savedAt) - new Date(b.savedAt);
+      case "company":
+        return a.company.localeCompare(b.company);
+      case "title":
+        return a.title.localeCompare(b.title);
+      default:
+        return 0;
+    }
+  });
+  return sorted;
+}
+
+// Filter function
+function filterFavorites(list, query) {
+  return list.filter(function(fav) {
+    var searchable = (
+      fav.title + " " + fav.company + " " + fav.location
+    ).toLowerCase();
+    return searchable.includes(query.toLowerCase());
+  });
+}
+
+// Demo: Show all favorites sorted by newest
+console.log("========================================");
+console.log("DEMO 1: All favorites (newest first)");
+console.log("========================================");
+renderToConsole(sortFavorites(favorites, "date-desc"));
+
+// Demo: Filter by "Lansing"
+console.log("========================================");
+console.log('DEMO 2: Filter by "Lansing"');
+console.log("========================================");
+renderToConsole(filterFavorites(favorites, "Lansing"));
+
+// Demo: Sort by company name
+console.log("========================================");
+console.log("DEMO 3: Sorted by company A-Z");
+console.log("========================================");
+renderToConsole(sortFavorites(favorites, "company"));
+
+// Demo: Remove a favorite
+console.log("========================================");
+console.log("DEMO 4: After removing ID 2");
+console.log("========================================");
+var afterRemove = favorites.filter(function(f) {
+  return f.id !== 2;
+});
+renderToConsole(sortFavorites(afterRemove, "date-desc"));
+
+// Demo: Empty state
+console.log("========================================");
+console.log("DEMO 5: Empty state (no favorites)");
+console.log("========================================");
+renderToConsole([]);</code></pre>
+      </div>
+
+      <!-- ==================== PART 7: END-TO-END TEST ==================== -->
+      <h2>7. Full End-to-End Test</h2>
+
+      <p>
+        Your application is complete! Now it is time to test the entire workflow from start to finish. An <strong>end-to-end test</strong> simulates exactly what a real user would do. Follow these steps carefully and make sure each one works before moving on:
+      </p>
+
+      <div class="callout">
+        <strong>Before you start testing:</strong> Make sure your Spring Boot application is running (<code>./mvnw spring-boot:run</code>), your MySQL database is accessible, and you have your API key configured. Open <code>http://localhost:8080</code> in your browser.
+      </div>
+
+      <h3>Step 1: Search for Jobs</h3>
+      <ol>
+        <li>Open the search page (<code>index.html</code>).</li>
+        <li>Type "Java developer Lansing" into the search box.</li>
+        <li>Click the Search button.</li>
+        <li>Verify that job cards appear with titles, companies, locations, and salary information.</li>
+        <li>Check the browser console (F12 &rarr; Console tab) for any errors. There should be none.</li>
+      </ol>
+
+      <h3>Step 2: Save a Job to Favorites</h3>
+      <ol>
+        <li>Click the star button on one of the job cards.</li>
+        <li>You should see a toast notification: "Job saved!"</li>
+        <li>The star should change from an empty outline to a filled star.</li>
+        <li>Click the same star again &mdash; you should see "This job is already in your favorites!" (not a duplicate save).</li>
+        <li>Save 2-3 more jobs from the results.</li>
+        <li>Check the favorites badge in the navigation &mdash; it should show the correct count.</li>
+      </ol>
+
+      <h3>Step 3: Navigate to the Favorites Page</h3>
+      <ol>
+        <li>Click the "Favorites" link in the navigation bar.</li>
+        <li>Your saved jobs should appear as cards with all their details.</li>
+        <li>The badge count should match the number of cards displayed.</li>
+        <li>If you saved zero jobs first, you should see the empty state message.</li>
+      </ol>
+
+      <h3>Step 4: Add Notes</h3>
+      <ol>
+        <li>Click into the "My Notes" textarea on one of the favorite cards.</li>
+        <li>Type something like "Applied on Monday, follow up Thursday."</li>
+        <li>Stop typing and wait about 1 second.</li>
+        <li>You should see a "Notes saved!" toast notification (the debounce fired).</li>
+        <li>Refresh the page (Ctrl+R or Cmd+R) &mdash; your notes should still be there (they were saved to the database).</li>
+      </ol>
+
+      <h3>Step 5: Sort and Filter</h3>
+      <ol>
+        <li>Use the sort dropdown to change the order &mdash; try "Company A-Z" and verify the cards reorder.</li>
+        <li>Type a company name into the filter input &mdash; only matching cards should appear.</li>
+        <li>Clear the filter &mdash; all cards should reappear.</li>
+      </ol>
+
+      <h3>Step 6: Remove a Favorite</h3>
+      <ol>
+        <li>Click the "Remove" button on one of the cards.</li>
+        <li>A confirmation dialog should appear with the job title.</li>
+        <li>Click "OK" to confirm.</li>
+        <li>The card should animate out smoothly.</li>
+        <li>A "Job removed from favorites" toast should appear.</li>
+        <li>The badge count should decrease by one.</li>
+        <li>Refresh the page &mdash; the removed job should not reappear.</li>
+      </ol>
+
+      <h3>Step 7: Test the Empty State</h3>
+      <ol>
+        <li>Remove all remaining favorites one by one.</li>
+        <li>After the last one is removed, the empty state should appear: "No saved jobs yet" with a link to the search page.</li>
+        <li>Click the link &mdash; it should take you back to the search page.</li>
+      </ol>
+
+      <h3>Step 8: Apply to a Real Job</h3>
+      <ol>
+        <li>Go back to the search page and save a job you are genuinely interested in.</li>
+        <li>Navigate to the favorites page.</li>
+        <li>Click "View Listing" on that job &mdash; it should open the original job posting in a new tab.</li>
+        <li>Read through the posting. If it is a real job you are qualified for, consider actually applying. You built a tool that helps you find and track jobs &mdash; use it!</li>
+      </ol>
+
+      <div class="key-concept">
+        <h4>Key Concept: End-to-End Testing</h4>
+        <p><strong>End-to-end (E2E) testing</strong> verifies that an entire application works correctly from the user's perspective. Unlike unit tests (which test individual functions) or integration tests (which test how components work together), E2E tests simulate real user workflows. In professional development teams, E2E tests are often automated using tools like Selenium, Cypress, or Playwright. For now, you are doing manual E2E testing &mdash; which is a perfectly valid and important skill. The goal is to catch bugs that only appear when all the pieces work together.</p>
+      </div>
+
+      <p>
+        If everything passed, take a moment to appreciate what you have built. Resumator is a <strong>full-stack web application</strong> with:
+      </p>
+
+      <ul>
+        <li>A <strong>Java Spring Boot backend</strong> with RESTful API endpoints</li>
+        <li>Integration with an <strong>external API</strong> (JSearch) for real job data</li>
+        <li>A <strong>MySQL database</strong> for persistent storage</li>
+        <li><strong>CRUD operations</strong> (Create, Read, Update, Delete) for favorites</li>
+        <li>A <strong>responsive frontend</strong> with search, favorites, sorting, and filtering</li>
+        <li><strong>Error handling</strong> on both the backend and frontend</li>
+        <li><strong>Polish features</strong> like animations, toasts, and confirmation dialogs</li>
+      </ul>
+
+      <p>
+        That is not a toy project. That is a real application built with real technologies used by real companies.
+      </p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="q27-1">
+        <p class="quiz-question">1. What is the purpose of debouncing the notes textarea?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q27-1" value="a"> It makes the textarea look smoother when the user types</label>
+          <label><input type="radio" name="q27-1" value="b"> It waits until the user stops typing before sending a save request to the server, reducing the number of API calls</label>
+          <label><input type="radio" name="q27-1" value="c"> It prevents the user from typing more than a certain number of characters</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! Debouncing delays the save request until the user stops typing for a specified amount of time (800ms in our case). Without debouncing, every single keystroke would trigger a network request to the server. If someone types "Applied Monday" (14 characters), that would be 14 separate API calls instead of just 1. Debouncing is a critical performance optimization for any feature that involves rapid user input combined with network requests.</div>
+      </div>
+
+      <div class="quiz" data-id="q27-2">
+        <p class="quiz-question">2. Why do we check <code>existsByJobId()</code> on the backend before saving a favorite, even though the frontend already prevents duplicate clicks?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q27-2" value="a"> Because the frontend check is faster and the backend check is slower</label>
+          <label><input type="radio" name="q27-2" value="b"> Because someone could bypass the frontend and send API requests directly (for example, using Postman or curl), so the backend must enforce the rule independently</label>
+          <label><input type="radio" name="q27-2" value="c"> Because the backend check uses less memory than the frontend check</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly right! The frontend is just a user interface &mdash; anyone with basic technical knowledge can bypass it entirely and send requests directly to your API. This is why you should <em>never</em> rely on frontend validation alone. The backend is the last line of defense. In security terms, the frontend provides <strong>user experience</strong> (friendly error messages, filled stars), while the backend provides <strong>data integrity</strong> (the database will never contain duplicates, no matter how the request was made).</div>
+      </div>
+
+      <div class="quiz" data-id="q27-3">
+        <p class="quiz-question">3. What HTTP status code should the server return when a user tries to save a job that is already in their favorites?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q27-3" value="a"> 200 OK</label>
+          <label><input type="radio" name="q27-3" value="b"> 404 Not Found</label>
+          <label><input type="radio" name="q27-3" value="c"> 409 Conflict</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! HTTP 409 Conflict is the appropriate status code when a request cannot be completed because it conflicts with the current state of the resource. In this case, the favorite already exists, so creating another one would be a conflict. Status 200 would be wrong because the save did not succeed. Status 404 would be wrong because the resource was found &mdash; that is the problem. Using correct HTTP status codes helps frontend code handle different error scenarios appropriately.</div>
+      </div>
+
+      <!-- ==================== LESSON SUMMARY ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>
+        Congratulations &mdash; you have just completed Resumator. Not "completed a tutorial." Not "followed along with a demo." You built a real, full-stack web application from scratch. Let us review everything you accomplished in this lesson:
+      </p>
+
+      <ul>
+        <li><strong>Built the favorites page</strong> (<code>favorites.html</code>) with a complete card layout, filter input, sort dropdown, and an empty state for when no favorites exist.</li>
+        <li><strong>Wrote the favorites JavaScript</strong> (<code>favorites.js</code>) that fetches data from the API, renders cards dynamically, handles remove actions, and auto-saves notes with debouncing.</li>
+        <li><strong>Added the PUT endpoint</strong> for notes, using <code>@PutMapping</code>, <code>@PathVariable</code>, and <code>@RequestBody</code> to update a specific favorite's notes in the database.</li>
+        <li><strong>Prevented duplicate favorites</strong> with <code>existsByJobId()</code> on the backend and filled-star indicators on the frontend.</li>
+        <li><strong>Polished the application</strong> with sorting (by date, company, title), filtering within favorites, a count badge in navigation, smooth CSS animations, confirmation dialogs, and toast notifications.</li>
+        <li><strong>Performed a full end-to-end test</strong> of the entire workflow: search, favorite, navigate, add notes, sort, filter, remove, and view listings.</li>
+      </ul>
+
+      <p>
+        Think back to Lesson 23 when you first planned this application on paper. At that point, "build a full-stack job search app" probably felt overwhelming. Now you have done it. You have written Java classes, Spring Boot controllers, MySQL queries, HTML pages, CSS styles, and JavaScript logic. You have debugged a real production error. You have implemented features that professional developers build every day &mdash; CRUD operations, API integration, debouncing, XSS prevention, and responsive design.
+      </p>
+
+      <p>
+        In the next and final lesson, we will review the entire Resumator journey, reflect on how far you have come, and talk about what comes next in your development career. But for now, take a moment to appreciate what you have built. You are not just learning to code &mdash; you <em>are</em> a coder.
+      </p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="27-completing-resumator">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/resumator/26-when-things-break.html" class="lesson-nav-btn">&larr; Previous: When Things Break</a>
+      <a href="/lessons/resumator/28-review-whats-next.html" class="lesson-nav-btn">Next: Review &amp; What's Next &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

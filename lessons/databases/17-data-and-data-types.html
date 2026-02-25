@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 17: Understanding Data &amp; Data Types — Coders Farm</title>
+  <meta name="description" content="Learn what data is, how databases store it, and why types matter">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="databases-17-data-and-data-types">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Data &amp; Data Types</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/17-data-and-data-types.html" role="menuitem">Lesson 17: Data &amp; Data Types</a>
+      <a href="/lessons/databases/18-relational-databases.html" role="menuitem">Lesson 18: Relational Databases</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Understanding Databases</a> / Data &amp; Data Types</p>
+      <p class="lesson-progress-indicator" data-track="databases" data-total="6" data-current="1">Lesson 1 of 6</p>
+      <h1>Understanding Data &amp; Data Types</h1>
+      <p style="color: var(--text-muted);">Estimated time: 1.5&ndash;2 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand what <strong>data</strong> really is and why every application revolves around it</li>
+          <li>See how a <strong>spreadsheet</strong> is the perfect mental model for understanding database tables</li>
+          <li>Learn the most common <strong>SQL data types</strong> &mdash; strings, numbers, decimals, booleans, dates, and more</li>
+          <li>Understand why <strong>choosing the right data type</strong> matters for accuracy, performance, and safety</li>
+          <li>Learn what <strong>NULL</strong> is, how it differs from zero and empty strings, and how to handle it</li>
+          <li>Avoid the most common <strong>beginner mistakes</strong> when designing database columns</li>
+          <li>Compare SQL data types to the <strong>Java types</strong> you already know from earlier lessons</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1: EVERYTHING IS DATA ==================== -->
+      <h2>1. Everything Is Data</h2>
+
+      <p>
+        Welcome to the Understanding Databases track! This is a new chapter in your journey, and it is going to change how you think about software. In the previous tracks, you built web pages with HTML and CSS, added interactivity with JavaScript, created a REST API with Spring Boot, and even connected your contact form to a SQLite database. You have already accomplished something remarkable. Now it is time to go deeper into the thing that sits at the heart of every application you have ever used: <strong>data</strong>.
+      </p>
+
+      <p>
+        Think about every application on your phone right now. What does Instagram actually do? It stores photos, captions, usernames, like counts, comments, and follower lists. What does a banking app do? It stores account numbers, balances, transaction histories, and dates. What does Google Maps do? It stores addresses, coordinates, business names, hours of operation, and reviews. Strip away the beautiful interfaces, the animations, and the clever features, and every application is doing the same three things: <strong>storing data</strong>, <strong>moving data</strong>, and <strong>displaying data</strong>.
+      </p>
+
+      <p>
+        That is not an oversimplification. That is genuinely how professional developers think about software. When a software team sits down to build a new feature, the very first question they ask is not "What should the button look like?" or "What color should the background be?" The first question is: <strong>"What data do we need?"</strong> Once you know what data you need, the rest of the application &mdash; the API endpoints, the frontend pages, the user interactions &mdash; flows naturally from that decision.
+      </p>
+
+      <p>
+        You already experienced this firsthand. In Lesson 13, when you built the contact form API, the first thing you did was define the <code>ContactMessage</code> class with fields for <code>id</code>, <code>name</code>, <code>email</code>, and <code>message</code>. That was you defining your data. Everything else &mdash; the controller, the endpoints, the JSON responses &mdash; was built around that data definition. In Lesson 14, when you added SQLite, you were solving a data problem: how to make the data persist after the server restarts.
+      </p>
+
+      <p>
+        In this track, you are going to learn how databases work from the ground up. Not just how to use them (you already did that with JPA and Hibernate), but how to <em>think</em> about them. How to design good database tables. How to choose the right types for your data. How to write SQL queries that ask exactly the right questions. By the end of this track, you will understand databases deeply enough to design and build the data layer for any application.
+      </p>
+
+      <p>
+        Let us start at the very beginning: what is data, and how do we organize it?
+      </p>
+
+      <!-- ==================== PART 2: SPREADSHEET METAPHOR ==================== -->
+      <h2>2. Databases Are Spreadsheets with Rules</h2>
+
+      <p>
+        If you have ever used Google Sheets or Microsoft Excel, you already understand 80% of how a database works. That might sound surprising, but it is true. A spreadsheet and a database table are structurally almost identical. The difference is that a database adds <strong>rules</strong> to keep the data clean, consistent, and reliable.
+      </p>
+
+      <p>
+        Let us start with what they have in common. Open a spreadsheet in your mind (or open a real one if you want to follow along). Imagine you are tracking contact form submissions. You would set it up like this:
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+            <th>message</th>
+            <th>submitted_at</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Maria Garcia</td>
+            <td>maria@example.com</td>
+            <td>Love the site! Great work.</td>
+            <td>2025-03-15 10:30:00</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>James Wilson</td>
+            <td>james.w@email.com</td>
+            <td>How do I sign up for classes?</td>
+            <td>2025-03-15 14:22:00</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Aisha Johnson</td>
+            <td>aisha.j@example.com</td>
+            <td>I would like to volunteer.</td>
+            <td>2025-03-16 09:05:00</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Look at that table. Every database concept has a spreadsheet equivalent:
+      </p>
+
+      <ul>
+        <li><strong>Columns</strong> are called <strong>fields</strong> (or <strong>attributes</strong>) in database language. Each column holds one specific type of information &mdash; the person's name, their email, their message. Just like in a spreadsheet, you label each column at the top so everyone knows what goes there.</li>
+        <li><strong>Rows</strong> are called <strong>records</strong> (or <strong>entries</strong>). Each row represents one complete item &mdash; one contact form submission, one user, one product. When Maria Garcia submits the contact form, her submission becomes one row in the table.</li>
+        <li><strong>Cells</strong> are called <strong>values</strong>. Each cell holds one specific piece of data &mdash; the intersection of a column and a row. Maria's name, Maria's email, Maria's message &mdash; each of those is one value.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>The Spreadsheet-to-Database Dictionary</h4>
+        <p><strong>Spreadsheet</strong> = <strong>Table</strong>. <strong>Column header</strong> = <strong>Field / Column</strong>. <strong>Row</strong> = <strong>Record</strong>. <strong>Cell</strong> = <strong>Value</strong>. If you can read a spreadsheet, you can understand a database table. They are the same idea.</p>
+      </div>
+
+      <p>
+        So if they are so similar, why do we need databases at all? Why not just use a spreadsheet? Great question. The answer is <strong>rules</strong>. A spreadsheet lets you put anything anywhere. You could type a phone number in the email column. You could leave the name blank. You could type "yesterday" in a date column. A spreadsheet does not care. It accepts whatever you give it.
+      </p>
+
+      <p>
+        A database is different. A database lets you define <strong>rules</strong> about what kind of data each column can hold. You can say: "The <code>email</code> column must always contain text, and it can never be empty." You can say: "The <code>id</code> column must contain a whole number, and every value must be unique." You can say: "The <code>submitted_at</code> column must contain a valid date and time." These rules are called <strong>constraints</strong>, and they are one of the most powerful features of a database. They prevent bad data from getting in, which means the data you get out is reliable.
+      </p>
+
+      <p>
+        Think about it this way: a spreadsheet is like a notebook where you can write anything. A database is like a well-designed form with labeled boxes, dropdown menus, and validation &mdash; it guides you to enter the right kind of data in the right place.
+      </p>
+
+      <p>
+        And the most fundamental rule you set for each column? Its <strong>data type</strong>.
+      </p>
+
+      <!-- ==================== PART 3: DATA TYPES IN DEPTH ==================== -->
+      <h2>3. Data Types: Telling the Database What to Expect</h2>
+
+      <p>
+        When you create a table in a database, you must tell the database what <strong>type</strong> of data each column will hold. Will it hold text? Numbers? Dates? True/false values? This is called the column's <strong>data type</strong>, and it is one of the most important decisions you make when designing a database.
+      </p>
+
+      <p>
+        If you completed the Java lessons, this concept should feel familiar. In Java, when you declare a variable, you specify its type: <code>String name</code>, <code>int age</code>, <code>double price</code>, <code>boolean isActive</code>. SQL data types work the same way &mdash; they tell the database what kind of value a column will store. The names are a little different, but the ideas are the same ones you already know.
+      </p>
+
+      <p>
+        Let us walk through each major data type, one at a time, with plenty of examples.
+      </p>
+
+      <!-- ===== STRING TYPES ===== -->
+      <h3>3.1 &mdash; Text: VARCHAR, CHAR, and TEXT</h3>
+
+      <p>
+        Text is probably the most common type of data in any application. Names, email addresses, descriptions, messages, addresses, usernames &mdash; all of these are text. In SQL, there are several types for storing text, and the most important one is <strong>VARCHAR</strong>.
+      </p>
+
+      <p>
+        <strong>VARCHAR</strong> stands for "variable-length character." It stores text up to a maximum length that you specify. For example, <code>VARCHAR(100)</code> means "this column can hold up to 100 characters of text." If someone enters a name that is only 10 characters long, the database only uses the space it needs &mdash; it does not waste space padding out to 100 characters. That is what "variable-length" means.
+      </p>
+
+      <p>
+        You might wonder: why set a limit at all? Why not just say "this column holds text" and leave it at that? The answer is <strong>protection</strong>. If you do not set a limit, someone (or some program) could submit a "name" that is 50 million characters long, consuming massive amounts of storage and potentially crashing your application. Setting a reasonable limit like <code>VARCHAR(100)</code> for a name or <code>VARCHAR(255)</code> for an email protects your database from unreasonable data.
+      </p>
+
+      <p>
+        <strong>CHAR</strong> is VARCHAR's stricter cousin. <code>CHAR(10)</code> means "this column always stores exactly 10 characters." If the actual text is shorter, the database pads it with spaces. CHAR is useful for fixed-length codes like state abbreviations (<code>CHAR(2)</code> for "MI", "OH", "CA") or zip codes (<code>CHAR(5)</code> for "48912"). But for most text, VARCHAR is the better choice because real-world text varies in length.
+      </p>
+
+      <p>
+        <strong>TEXT</strong> is for large, unrestricted text. It can hold thousands or even millions of characters. Use TEXT for things like blog post bodies, long descriptions, or message content where you do not want to impose a character limit. The trade-off is that TEXT columns are slightly less efficient for the database to search and sort compared to VARCHAR.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Text type examples in a CREATE TABLE statement
+CREATE TABLE users (
+    username    VARCHAR(50),     -- Up to 50 characters (usernames are short)
+    email       VARCHAR(255),    -- Up to 255 characters (standard for emails)
+    state_code  CHAR(2),         -- Exactly 2 characters ("MI", "OH", "CA")
+    bio         TEXT             -- Unlimited length (user biographies can be long)
+);</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Java comparison:</strong> In Java, all of these map to the <code>String</code> type. Java's <code>String</code> does not have a built-in length limit (it can hold billions of characters), so you handle length validation in your code. In SQL, the type itself enforces the length limit. When you used <code>private String name;</code> in your <code>ContactMessage</code> class in Lesson 13, the database equivalent would be something like <code>name VARCHAR(100)</code>.
+      </div>
+
+      <!-- ===== INTEGER TYPES ===== -->
+      <h3>3.2 &mdash; Whole Numbers: INT, BIGINT, and SMALLINT</h3>
+
+      <p>
+        Whole numbers (numbers without a decimal point) are used constantly in databases. User IDs, ages, quantities, counts, years &mdash; all of these are whole numbers. SQL gives you several integer types, and the difference between them is how big the numbers can get.
+      </p>
+
+      <p>
+        <strong>INT</strong> (also called <strong>INTEGER</strong>) is the standard choice. It can hold values from about &minus;2.1 billion to +2.1 billion. That is big enough for almost anything: user IDs, product quantities, page view counts, ages, years. When in doubt, use INT.
+      </p>
+
+      <p>
+        <strong>BIGINT</strong> is for truly enormous numbers. It can hold values up to about 9.2 quintillion (that is 9,200,000,000,000,000,000). You would use BIGINT for things like unique IDs on platforms with billions of records (think Twitter's tweet IDs or Facebook's user IDs), or for storing very large counts like total bytes transferred across a network.
+      </p>
+
+      <p>
+        <strong>SMALLINT</strong> is for smaller numbers, typically up to about 32,767. It uses less storage space than INT, so it is efficient for things like age (no one lives to 32,767), rating scores (1 through 5), or small quantities. If you know your numbers will always be small, SMALLINT saves a tiny bit of space &mdash; which adds up when you have millions of rows.
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>SQL Type</th>
+            <th>Range</th>
+            <th>Storage Size</th>
+            <th>Good For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>SMALLINT</code></td>
+            <td>&minus;32,768 to 32,767</td>
+            <td>2 bytes</td>
+            <td>Age, ratings, small counts</td>
+          </tr>
+          <tr>
+            <td><code>INT</code></td>
+            <td>&minus;2.1 billion to 2.1 billion</td>
+            <td>4 bytes</td>
+            <td>IDs, quantities, years, most numbers</td>
+          </tr>
+          <tr>
+            <td><code>BIGINT</code></td>
+            <td>&minus;9.2 quintillion to 9.2 quintillion</td>
+            <td>8 bytes</td>
+            <td>Huge IDs, massive counts</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Integer type examples
+CREATE TABLE products (
+    id              INT,           -- Product ID (standard integer)
+    quantity        INT,           -- How many are in stock
+    rating          SMALLINT,      -- Star rating 1-5 (small numbers)
+    total_views     BIGINT         -- Could grow very large on popular sites
+);</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Java comparison:</strong> SQL's <code>SMALLINT</code> maps to Java's <code>short</code>. SQL's <code>INT</code> maps to Java's <code>int</code>. SQL's <code>BIGINT</code> maps to Java's <code>long</code>. Remember the <code>private Long id;</code> field in your <code>ContactMessage</code> class? That used Java's <code>Long</code> (the wrapper class for <code>long</code>), which corresponds to SQL's <code>BIGINT</code>. The same concept, just different names in different languages.
+      </div>
+
+      <!-- ===== DECIMAL TYPES ===== -->
+      <h3>3.3 &mdash; Decimal Numbers: DECIMAL, FLOAT, and DOUBLE</h3>
+
+      <p>
+        Sometimes you need numbers with decimal points: prices ($19.99), temperatures (72.5), GPS coordinates (42.7325), percentages (85.7%). SQL has several types for decimal numbers, and choosing the right one <em>really</em> matters. This is one of the most important sections in this entire lesson, so please read it carefully.
+      </p>
+
+      <p>
+        <strong>DECIMAL</strong> (also called <strong>NUMERIC</strong>) stores exact decimal numbers. When you write <code>DECIMAL(10, 2)</code>, you are saying: "This number has up to 10 total digits, and 2 of them come after the decimal point." So <code>DECIMAL(10, 2)</code> can store values like <code>19.99</code>, <code>1234567.89</code>, or <code>0.50</code>. The key word here is <strong>exact</strong>. If you store <code>19.99</code> in a DECIMAL column, you get back exactly <code>19.99</code>. Not <code>19.989999999</code>. Not <code>19.990000001</code>. Exactly <code>19.99</code>.
+      </p>
+
+      <p>
+        <strong>FLOAT</strong> and <strong>DOUBLE</strong> store <em>approximate</em> decimal numbers. They use a clever encoding called "floating point" that lets them represent an enormous range of values (from incredibly tiny to astronomically large), but at the cost of precision. The computer stores these numbers in binary (base 2), and some decimal fractions &mdash; like 0.1 &mdash; cannot be represented exactly in binary. This leads to tiny rounding errors that accumulate over time.
+      </p>
+
+      <p>
+        This brings us to one of the most important rules in all of software development:
+      </p>
+
+      <div class="callout callout-warning">
+        <strong>Never use FLOAT or DOUBLE for money!</strong> Floating-point numbers have tiny rounding errors. If you store $19.99 as a FLOAT, the database might actually store it as $19.989999999999998. This might seem harmless, but those tiny errors add up. If you are processing thousands of financial transactions, FLOAT rounding errors can cause your books to be off by real dollars. Banks, stores, and every serious financial application use <code>DECIMAL</code> for money. Always. No exceptions.
+      </div>
+
+      <p>
+        So when <em>should</em> you use FLOAT or DOUBLE? They are fine for scientific measurements, sensor readings, GPS coordinates, and other values where tiny imprecision is acceptable. A temperature of 72.500000001 degrees is close enough. But $72.500000001 in someone's bank account is not close enough.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Decimal type examples
+CREATE TABLE order_items (
+    price       DECIMAL(10, 2),  -- Exact: $19.99 stays $19.99 (USE THIS FOR MONEY!)
+    tax_rate    DECIMAL(5, 4),   -- Exact: 0.0625 (6.25% tax rate)
+    weight_kg   FLOAT,           -- Approximate: 2.345 kg (close enough for shipping)
+    latitude    DOUBLE           -- Approximate: 42.732535 (GPS coordinates)
+);</code></pre>
+      </div>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>SQL Type</th>
+            <th>Precision</th>
+            <th>Good For</th>
+            <th>Bad For</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>DECIMAL(p, s)</code></td>
+            <td>Exact</td>
+            <td>Money, financial data, tax rates</td>
+            <td>Nothing &mdash; it is always safe, just slightly slower</td>
+          </tr>
+          <tr>
+            <td><code>FLOAT</code></td>
+            <td>Approximate (~7 digits)</td>
+            <td>Scientific data, sensor readings</td>
+            <td>Money, anything requiring exactness</td>
+          </tr>
+          <tr>
+            <td><code>DOUBLE</code></td>
+            <td>Approximate (~15 digits)</td>
+            <td>GPS coordinates, complex calculations</td>
+            <td>Money, anything requiring exactness</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <strong>Java comparison:</strong> SQL's <code>FLOAT</code> maps to Java's <code>float</code>. SQL's <code>DOUBLE</code> maps to Java's <code>double</code>. SQL's <code>DECIMAL</code> maps to Java's <code>BigDecimal</code> &mdash; a special class that handles exact decimal arithmetic. In Java, you would use <code>BigDecimal</code> for financial calculations for the exact same reason: <code>float</code> and <code>double</code> have rounding errors that are unacceptable for money.
+      </div>
+
+      <!-- ===== BOOLEAN ===== -->
+      <h3>3.4 &mdash; True or False: BOOLEAN</h3>
+
+      <p>
+        Sometimes data is a simple yes-or-no question. Is this user active? Has this order been shipped? Is this email address verified? Has the user agreed to the terms of service? These are all <strong>boolean</strong> values &mdash; they can only be <code>TRUE</code> or <code>FALSE</code>.
+      </p>
+
+      <p>
+        In SQL, the <strong>BOOLEAN</strong> type stores exactly that: true or false. Some databases (like MySQL) actually store booleans as tiny integers where 0 means false and 1 means true. Other databases (like PostgreSQL) have a proper <code>BOOLEAN</code> type. SQLite, the database you used in Lesson 14, stores booleans as integers (0 or 1). But regardless of how the database stores it internally, the concept is the same: the value is either true or false.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Boolean type examples
+CREATE TABLE users (
+    id              INT,
+    username        VARCHAR(50),
+    email           VARCHAR(255),
+    is_active       BOOLEAN,        -- Is this account currently active?
+    email_verified  BOOLEAN,        -- Has the user confirmed their email?
+    is_admin        BOOLEAN         -- Does this user have admin privileges?
+);</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Java comparison:</strong> SQL's <code>BOOLEAN</code> maps directly to Java's <code>boolean</code> (or its wrapper class <code>Boolean</code>). Same concept, same name, same idea. In Java you would write <code>private boolean isActive = true;</code> and in SQL you would store <code>TRUE</code> or <code>FALSE</code> (or <code>1</code> / <code>0</code>) in a BOOLEAN column.
+      </div>
+
+      <!-- ===== DATE / TIME TYPES ===== -->
+      <h3>3.5 &mdash; Dates and Times: DATE, DATETIME, and TIMESTAMP</h3>
+
+      <p>
+        Dates and times are everywhere in applications. When was this account created? When does the event start? When was the last login? When was this order placed? SQL provides several types for storing dates and times, and understanding the differences will save you many headaches.
+      </p>
+
+      <p>
+        <strong>DATE</strong> stores a calendar date with no time information. It holds a year, month, and day. The standard format is <code>YYYY-MM-DD</code>. For example: <code>2025-03-15</code> means March 15, 2025. Use DATE when you only care about the day, not the specific time &mdash; like a person's birthday, a project deadline, or an event date.
+      </p>
+
+      <p>
+        <strong>DATETIME</strong> (sometimes called <strong>TIMESTAMP</strong>, depending on the database) stores both a date and a time. The standard format is <code>YYYY-MM-DD HH:MM:SS</code>. For example: <code>2025-03-15 14:30:00</code> means March 15, 2025 at 2:30 PM. Use DATETIME when the exact time matters &mdash; like when an order was placed, when a user logged in, or when a message was submitted.
+      </p>
+
+      <p>
+        <strong>TIMESTAMP</strong> is similar to DATETIME but is often timezone-aware. It stores the date and time relative to UTC (Coordinated Universal Time), which is the global standard. This is important for applications used by people in different time zones. If someone in Lansing, Michigan (Eastern Time) submits a form at 2:00 PM, and someone in Los Angeles (Pacific Time) views it, the timestamp ensures both people see the correct time relative to their own location.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Date and time type examples
+CREATE TABLE events (
+    id              INT,
+    title           VARCHAR(200),
+    event_date      DATE,           -- 2025-03-15 (just the date, no time)
+    start_time      DATETIME,       -- 2025-03-15 14:30:00 (date and time)
+    created_at      TIMESTAMP       -- Automatically set when the row is created
+);
+
+-- Example values:
+-- event_date:  '2025-07-04'
+-- start_time:  '2025-07-04 18:00:00'
+-- created_at:  '2025-03-15 14:30:22'</code></pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>Best practice:</strong> Always store dates in the standard <code>YYYY-MM-DD</code> format. Do not store them as text like "March 15, 2025" or "03/15/2025". The standard format lets the database sort dates correctly (January comes before February, 2024 comes before 2025) and perform date calculations (like "find all orders from the last 30 days"). If you store dates as plain text, the database cannot do any of this.
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Java comparison:</strong> SQL's <code>DATE</code> maps to Java's <code>LocalDate</code>. SQL's <code>DATETIME</code> maps to Java's <code>LocalDateTime</code>. SQL's <code>TIMESTAMP</code> maps to Java's <code>Instant</code> or <code>ZonedDateTime</code>. If you used JPA in Lesson 14, you might remember annotating date fields with <code>@Temporal</code> or using <code>LocalDateTime</code> &mdash; those are the Java equivalents of what the database stores.
+      </div>
+
+      <!-- ===== BLOB ===== -->
+      <h3>3.6 &mdash; Binary Data: BLOB</h3>
+
+      <p>
+        <strong>BLOB</strong> stands for <strong>Binary Large Object</strong>. It is used to store raw binary data &mdash; things like images, PDF files, audio clips, or any other kind of file. Instead of storing text or numbers, a BLOB column stores the raw bytes of a file directly in the database.
+      </p>
+
+      <p>
+        In practice, most modern applications do <em>not</em> store large files directly in the database. Instead, they store the files on a file server or cloud storage service (like Amazon S3) and just store the <strong>URL or file path</strong> in the database as a VARCHAR. This approach is more efficient because databases are optimized for structured data (text, numbers, dates), not for serving large files.
+      </p>
+
+      <p>
+        That said, BLOBs are sometimes used for small binary data like user profile pictures (thumbnails), digital signatures, or encrypted tokens. You should know that BLOB exists, but you will not use it very often in typical web applications.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Rule of thumb:</strong> If the file is small (under a few kilobytes), storing it as a BLOB in the database might be fine. If the file is large (images, videos, documents), store the file on a file server and save just the URL in the database as a VARCHAR.
+      </div>
+
+      <!-- ===== SUMMARY TABLE ===== -->
+      <h3>3.7 &mdash; The Complete Data Type Reference</h3>
+
+      <p>
+        Here is a summary table that shows every data type we covered, what it stores, its Java equivalent, and when to use it. Bookmark this section &mdash; you will come back to it often as you design database tables.
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>SQL Type</th>
+            <th>What It Stores</th>
+            <th>Java Equivalent</th>
+            <th>Example Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>VARCHAR(n)</code></td>
+            <td>Text up to <em>n</em> characters</td>
+            <td><code>String</code></td>
+            <td>'Maria Garcia'</td>
+          </tr>
+          <tr>
+            <td><code>CHAR(n)</code></td>
+            <td>Fixed-length text of exactly <em>n</em> characters</td>
+            <td><code>String</code></td>
+            <td>'MI'</td>
+          </tr>
+          <tr>
+            <td><code>TEXT</code></td>
+            <td>Long, unlimited text</td>
+            <td><code>String</code></td>
+            <td>'A very long blog post...'</td>
+          </tr>
+          <tr>
+            <td><code>SMALLINT</code></td>
+            <td>Small whole numbers (&minus;32K to 32K)</td>
+            <td><code>short</code></td>
+            <td>25</td>
+          </tr>
+          <tr>
+            <td><code>INT</code></td>
+            <td>Whole numbers (&minus;2.1B to 2.1B)</td>
+            <td><code>int</code></td>
+            <td>48912</td>
+          </tr>
+          <tr>
+            <td><code>BIGINT</code></td>
+            <td>Very large whole numbers</td>
+            <td><code>long</code></td>
+            <td>9200000000000</td>
+          </tr>
+          <tr>
+            <td><code>DECIMAL(p, s)</code></td>
+            <td>Exact decimal numbers</td>
+            <td><code>BigDecimal</code></td>
+            <td>19.99</td>
+          </tr>
+          <tr>
+            <td><code>FLOAT</code></td>
+            <td>Approximate decimals (~7 digits)</td>
+            <td><code>float</code></td>
+            <td>72.5</td>
+          </tr>
+          <tr>
+            <td><code>DOUBLE</code></td>
+            <td>Approximate decimals (~15 digits)</td>
+            <td><code>double</code></td>
+            <td>42.732535</td>
+          </tr>
+          <tr>
+            <td><code>BOOLEAN</code></td>
+            <td>True or false</td>
+            <td><code>boolean</code></td>
+            <td>TRUE</td>
+          </tr>
+          <tr>
+            <td><code>DATE</code></td>
+            <td>Calendar date (no time)</td>
+            <td><code>LocalDate</code></td>
+            <td>'2025-03-15'</td>
+          </tr>
+          <tr>
+            <td><code>DATETIME</code></td>
+            <td>Date and time</td>
+            <td><code>LocalDateTime</code></td>
+            <td>'2025-03-15 14:30:00'</td>
+          </tr>
+          <tr>
+            <td><code>TIMESTAMP</code></td>
+            <td>Date and time (timezone-aware)</td>
+            <td><code>Instant</code></td>
+            <td>'2025-03-15 18:30:00+00'</td>
+          </tr>
+          <tr>
+            <td><code>BLOB</code></td>
+            <td>Raw binary data (files, images)</td>
+            <td><code>byte[]</code></td>
+            <td>(binary data)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ==================== PART 4: WHY TYPES MATTER ==================== -->
+      <h2>4. Why Data Types Matter</h2>
+
+      <p>
+        You might be thinking: "Okay, I get it. Numbers go in number columns and text goes in text columns. But does it really matter that much? Can I just make everything a VARCHAR and move on?" This is a totally fair question, and the answer is: <strong>no, you should not do that</strong>. Choosing the right data type matters enormously, for four important reasons.
+      </p>
+
+      <h3>4.1 &mdash; Data Integrity</h3>
+
+      <p>
+        The data type acts as a first line of defense against bad data. If you define a column as <code>INT</code>, the database will refuse to accept the value "hello" in that column. If you define a column as <code>DATE</code>, the database will reject "banana" because it is not a valid date. This means your data stays clean and reliable automatically, without you having to write validation code for every single value.
+      </p>
+
+      <p>
+        Imagine if your <code>age</code> column was a VARCHAR. Someone could enter "twenty-five" instead of <code>25</code>. Someone else could enter "old." Another person could enter "999." With an INT column, the database only accepts actual numbers. With a SMALLINT column, it only accepts numbers in the valid range. The data type enforces the rules for you.
+      </p>
+
+      <h3>4.2 &mdash; Storage Efficiency</h3>
+
+      <p>
+        Different data types use different amounts of storage space. A SMALLINT uses 2 bytes. An INT uses 4 bytes. A BIGINT uses 8 bytes. If you have a column for age and you use BIGINT instead of SMALLINT, you are using four times more storage than you need &mdash; for every single row in the table. That might not matter when you have 100 rows, but when you have 100 million rows, the wasted space adds up to hundreds of megabytes.
+      </p>
+
+      <p>
+        Storage efficiency also affects <strong>speed</strong>. The database has to read data from disk into memory to work with it. Smaller data means fewer disk reads, which means faster queries. Choosing appropriate types is not just about saving disk space &mdash; it is about making your application faster.
+      </p>
+
+      <h3>4.3 &mdash; Sorting and Comparisons</h3>
+
+      <p>
+        Data types determine how values are sorted and compared. This is a subtle but critical point. Consider the numbers 1, 2, 10, and 20. If you store them as integers, the database sorts them correctly: 1, 2, 10, 20. But if you store them as text (VARCHAR), the database sorts them alphabetically: "1", "10", "2", "20". That is because in alphabetical sorting, "10" comes before "2" (just like "ba" comes before "c"). This can cause extremely confusing bugs in your application.
+      </p>
+
+      <p>
+        The same problem applies to dates. If you store dates as text, the database cannot compare them correctly. Is "March 15, 2025" before or after "February 28, 2025"? With text, the database would sort by the first letter &mdash; "F" comes before "M" &mdash; which gives the wrong answer. With a proper DATE type, the database understands the calendar and sorts correctly.
+      </p>
+
+      <h3>4.4 &mdash; Validation and Business Logic</h3>
+
+      <p>
+        When you choose the right data type, you can take advantage of built-in database functions. You can use <code>SUM()</code> and <code>AVG()</code> on number columns to calculate totals and averages. You can use date functions to find "all orders from the last 7 days" or "all users who signed up this month." You can use comparison operators to find "all products priced under $20.00." None of these operations work correctly if you store everything as text.
+      </p>
+
+      <div class="key-concept">
+        <h4>Why Types Matter &mdash; The Bottom Line</h4>
+        <p>Choosing the right data type gives you four things: <strong>data integrity</strong> (bad data is rejected automatically), <strong>storage efficiency</strong> (your database uses space wisely), <strong>correct sorting</strong> (numbers and dates sort properly), and <strong>powerful operations</strong> (math, date calculations, and comparisons work correctly). Choosing the wrong type gives you bugs, wasted space, and data you cannot trust.</p>
+      </div>
+
+      <!-- ==================== PART 5: NULL ==================== -->
+      <h2>5. Understanding NULL &mdash; The Absence of Data</h2>
+
+      <p>
+        There is one more concept you need to understand before you can design database tables confidently, and it trips up almost every beginner. It is called <strong>NULL</strong>.
+      </p>
+
+      <p>
+        NULL means "no value." Not zero. Not an empty string. Not false. <strong>No value at all.</strong> It means the data is missing, unknown, or not applicable. Think of it as a blank cell in a spreadsheet &mdash; not a cell with a zero or a space in it, but a truly empty cell where no one has entered anything.
+      </p>
+
+      <p>
+        Here are some real-world examples of when data is legitimately NULL:
+      </p>
+
+      <ul>
+        <li>A user has not set a profile picture yet &mdash; their <code>profile_picture_url</code> is NULL.</li>
+        <li>An order has been placed but not yet shipped &mdash; the <code>shipped_date</code> is NULL.</li>
+        <li>A student has enrolled in a class but has not received a grade yet &mdash; their <code>grade</code> is NULL.</li>
+        <li>A contact form submission did not include a phone number (because the field was optional) &mdash; the <code>phone</code> is NULL.</li>
+      </ul>
+
+      <h3>NULL Is Not Zero and Not Empty</h3>
+
+      <p>
+        This is the part that confuses beginners, so let us be very clear about it. These are three completely different things:
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Value</th>
+            <th>Meaning</th>
+            <th>Example</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>0</code></td>
+            <td>The number zero &mdash; a real value that means "none" or "nothing counted"</td>
+            <td>A shopping cart with 0 items (we know the count; it is zero)</td>
+          </tr>
+          <tr>
+            <td><code>''</code> (empty string)</td>
+            <td>A text value that happens to have no characters</td>
+            <td>A user who cleared their bio field (they intentionally left it blank)</td>
+          </tr>
+          <tr>
+            <td><code>NULL</code></td>
+            <td>No value at all &mdash; unknown, missing, or not yet provided</td>
+            <td>A user who never visited the bio page (we do not know their bio)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        The difference matters. If a patient's blood pressure is <code>0</code>, that is a medical emergency. If it is <code>NULL</code>, it just means the nurse has not measured it yet. Very different situations. If an employee's salary is <code>0</code>, that means they are a volunteer. If it is <code>NULL</code>, it means we do not have their salary information on file. Same data column, completely different meanings.
+      </p>
+
+      <h3>IS NULL vs. = NULL</h3>
+
+      <p>
+        Here is a quirk of SQL that catches everyone the first time: you cannot use <code>=</code> to check for NULL. In SQL, <code>NULL = NULL</code> is not true. It is not false either. It is <strong>unknown</strong>. This sounds strange, but it makes logical sense: if two values are both unknown, you cannot say they are equal &mdash; they could be anything.
+      </p>
+
+      <p>
+        Instead, SQL provides special operators: <code>IS NULL</code> and <code>IS NOT NULL</code>.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- WRONG: This will NOT find rows where shipped_date is NULL
+SELECT * FROM orders WHERE shipped_date = NULL;
+
+-- CORRECT: Use IS NULL instead
+SELECT * FROM orders WHERE shipped_date IS NULL;
+
+-- Find all orders that HAVE been shipped (shipped_date is not NULL)
+SELECT * FROM orders WHERE shipped_date IS NOT NULL;</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>Remember:</strong> Never use <code>= NULL</code> or <code>!= NULL</code> in SQL. Always use <code>IS NULL</code> and <code>IS NOT NULL</code>. This is one of the most common SQL mistakes, and every programmer makes it at least once. Now you know to watch out for it.
+      </div>
+
+      <h3>Nullable vs. NOT NULL Columns</h3>
+
+      <p>
+        When you create a table, you can decide whether each column is allowed to contain NULL values or not. If a column is <strong>NOT NULL</strong>, the database will refuse to save a row that does not include a value for that column. If a column is <strong>nullable</strong> (the default in most databases), NULL values are allowed.
+      </p>
+
+      <p>
+        How do you decide? Think about whether the data is <strong>required</strong> or <strong>optional</strong>. A contact form must have a name and an email &mdash; those should be NOT NULL. But a phone number might be optional &mdash; that can be nullable. A user account must have a username &mdash; NOT NULL. But a middle name is optional &mdash; nullable.
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- NOT NULL means the column MUST have a value (required)
+-- No constraint means the column CAN be NULL (optional)
+
+CREATE TABLE contact_messages (
+    id          INT          NOT NULL,  -- Required: every message needs an ID
+    name        VARCHAR(100) NOT NULL,  -- Required: we must know who sent it
+    email       VARCHAR(255) NOT NULL,  -- Required: we need a way to reply
+    phone       VARCHAR(20),            -- Optional: not everyone shares their phone
+    message     TEXT         NOT NULL,  -- Required: the message itself
+    submitted_at TIMESTAMP  NOT NULL   -- Required: we record when it was sent
+);</code></pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>Best practice:</strong> Default to NOT NULL unless you have a specific reason for the data to be optional. It is easier to make a column nullable later than to deal with unexpected NULLs causing bugs in your application. Required data should always be NOT NULL.
+      </div>
+
+      <!-- ==================== PART 6: CHOOSING THE RIGHT TYPE ==================== -->
+      <h2>6. Choosing the Right Type: A Practical Walkthrough</h2>
+
+      <p>
+        Theory is great, but let us put it into practice. Remember the contact form you built in Lesson 13? Let us walk through every field and justify the data type choice, just like a professional developer would do when designing a database table. This is the thought process you should follow every time you create a new table.
+      </p>
+
+      <p>
+        Here is the original contact form from Lesson 13. It had fields for name, email, and message, and the <code>ContactMessage</code> class also had an <code>id</code> field. Let us now design the database table properly, thinking carefully about each type:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE contact_messages (
+    id           INTEGER      PRIMARY KEY AUTOINCREMENT,
+    name         VARCHAR(100) NOT NULL,
+    email        VARCHAR(255) NOT NULL,
+    message      TEXT         NOT NULL,
+    submitted_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+      </div>
+
+      <p>
+        Now let us justify every single choice:
+      </p>
+
+      <p>
+        <strong><code>id INTEGER PRIMARY KEY AUTOINCREMENT</code></strong> &mdash; The ID is a whole number that uniquely identifies each message. We use INTEGER because IDs are always whole numbers. PRIMARY KEY means this value must be unique for each row (no two messages can have the same ID). AUTOINCREMENT means the database will automatically assign the next number every time a new row is added &mdash; we do not have to manage this ourselves. Remember how in Lesson 13 you had a <code>nextId</code> counter that you incremented manually? AUTOINCREMENT does that automatically and more reliably.
+      </p>
+
+      <p>
+        <strong><code>name VARCHAR(100) NOT NULL</code></strong> &mdash; Names are text, so we use VARCHAR. We set a limit of 100 characters because no reasonable name is longer than that. (The longest name ever recorded is about 50 characters.) NOT NULL because every message must come from someone &mdash; an anonymous message without a name is not useful for a contact form.
+      </p>
+
+      <p>
+        <strong><code>email VARCHAR(255) NOT NULL</code></strong> &mdash; Email addresses are text. We use VARCHAR(255) because the email specification (RFC 5321) says that email addresses can be up to 254 characters long. We round up to 255, which is a common convention. NOT NULL because the whole point of a contact form is to let you reply, and you need an email address for that.
+      </p>
+
+      <p>
+        <strong><code>message TEXT NOT NULL</code></strong> &mdash; We use TEXT instead of VARCHAR because people might write long messages and we do not want to cut them off. There is no meaningful maximum length for a free-form message, so TEXT is the right choice. NOT NULL because a contact form submission without a message is pointless &mdash; what would you reply to?
+      </p>
+
+      <p>
+        <strong><code>submitted_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP</code></strong> &mdash; We need to know when each message was submitted, both for record-keeping and for sorting messages chronologically. DATETIME stores the date and time. NOT NULL because every message is submitted at a specific moment. DEFAULT CURRENT_TIMESTAMP means the database will automatically fill in the current date and time when a new row is inserted, so the application does not have to provide this value explicitly.
+      </p>
+
+      <div class="key-concept">
+        <h4>The Type Selection Checklist</h4>
+        <p>For every column, ask yourself four questions:</p>
+        <ol>
+          <li><strong>What kind of data is it?</strong> Text, number, date, true/false, or binary?</li>
+          <li><strong>How big can it get?</strong> Short text (VARCHAR), long text (TEXT), small number (SMALLINT), big number (BIGINT)?</li>
+          <li><strong>Does it need to be exact?</strong> Use DECIMAL for money, FLOAT/DOUBLE for approximate measurements.</li>
+          <li><strong>Is it required or optional?</strong> NOT NULL for required, nullable for optional.</li>
+        </ol>
+      </div>
+
+      <p>
+        Let us practice with one more example. Imagine you are building a table for an online store's product catalog:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE products (
+    id           INTEGER       PRIMARY KEY AUTOINCREMENT,
+    name         VARCHAR(200)  NOT NULL,       -- Product name: "Blue Running Shoes"
+    description  TEXT,                          -- Optional detailed description
+    price        DECIMAL(10,2) NOT NULL,        -- $49.99 — DECIMAL, never FLOAT!
+    quantity     INT           NOT NULL DEFAULT 0, -- How many in stock
+    weight_kg    FLOAT,                         -- 0.45 kg — approximate is fine
+    is_active    BOOLEAN       NOT NULL DEFAULT TRUE,  -- Is product visible?
+    created_at   DATETIME      NOT NULL DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+      </div>
+
+      <p>
+        Notice the thought behind each choice. The product name has a generous 200-character limit. The description uses TEXT because some products have very long descriptions, and it is nullable because not every product needs one. The price uses DECIMAL because money must be exact. The quantity uses INT with a default of 0. The weight uses FLOAT because approximate precision is fine for shipping calculations. And the is_active flag uses BOOLEAN so products can be hidden without being deleted.
+      </p>
+
+      <!-- ==================== PART 7: COMMON MISTAKES ==================== -->
+      <h2>7. Common Mistakes Beginners Make</h2>
+
+      <p>
+        Every developer makes these mistakes at least once. Learning about them now will save you hours of debugging later. Consider this section your "learn from other people's pain" guide.
+      </p>
+
+      <h3>Mistake 1: Using VARCHAR for Everything</h3>
+
+      <p>
+        This is the most common beginner mistake. "Why bother learning all these types? I will just make every column <code>VARCHAR(255)</code> and store everything as text." This seems convenient, but it causes serious problems:
+      </p>
+
+      <ul>
+        <li><strong>No automatic validation.</strong> If your age column is a VARCHAR, the database happily accepts "twenty-five", "old", "-7", or "banana" as valid ages.</li>
+        <li><strong>Wrong sorting.</strong> Numbers stored as text sort alphabetically: "1", "10", "2", "20" instead of 1, 2, 10, 20. Dates stored as text have the same problem.</li>
+        <li><strong>No math.</strong> You cannot calculate the average age, the total sales, or the sum of quantities if they are stored as text. You would have to convert them every time, which is slow and error-prone.</li>
+        <li><strong>Wasted space.</strong> The number <code>42</code> takes 4 bytes as an INT but 2+ bytes per character as VARCHAR, plus overhead. Multiply this by millions of rows.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <strong>The rule is simple:</strong> Use the type that matches the data. Numbers get number types. Dates get date types. True/false values get BOOLEAN. Text gets VARCHAR or TEXT. Let the database do its job.
+      </div>
+
+      <h3>Mistake 2: Using FLOAT for Money</h3>
+
+      <p>
+        We covered this earlier, but it is worth repeating because the consequences are so severe. Here is what happens when you use FLOAT for money:
+      </p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- BAD: Using FLOAT for money
+CREATE TABLE bad_orders (
+    total FLOAT  -- DO NOT DO THIS!
+);
+
+-- If you store 0.1 + 0.2 in a FLOAT column, you might get:
+-- 0.30000000000000004 instead of 0.3
+
+-- GOOD: Using DECIMAL for money
+CREATE TABLE good_orders (
+    total DECIMAL(10, 2)  -- Always exact: 0.1 + 0.2 = 0.30
+);</code></pre>
+      </div>
+
+      <p>
+        A single rounding error of a fraction of a cent might seem harmless. But if your application processes 10,000 transactions per day, those tiny errors accumulate. Over a year, your accounting could be off by hundreds or thousands of dollars. Financial auditors and regulatory agencies do not accept "floating-point rounding" as an excuse. Use DECIMAL for money. Always.
+      </p>
+
+      <h3>Mistake 3: No Length Limits on VARCHAR</h3>
+
+      <p>
+        Some databases let you create a VARCHAR column without specifying a maximum length. While this might work, it removes an important safety net. Without a length limit, a malicious user (or a buggy program) could submit a "name" that is 10 million characters long, consuming enormous amounts of storage and potentially causing performance problems.
+      </p>
+
+      <p>
+        Always specify a reasonable maximum length for VARCHAR columns:
+      </p>
+
+      <ul>
+        <li><code>VARCHAR(50)</code> for usernames</li>
+        <li><code>VARCHAR(100)</code> for names</li>
+        <li><code>VARCHAR(255)</code> for email addresses</li>
+        <li><code>VARCHAR(500)</code> for short descriptions or titles</li>
+        <li><code>TEXT</code> when you genuinely need unlimited length</li>
+      </ul>
+
+      <h3>Mistake 4: Storing Dates as Strings</h3>
+
+      <p>
+        Never store dates as <code>VARCHAR</code>. You might be tempted to store dates like "March 15, 2025" or "03/15/2025" because they look readable. But string dates cannot be sorted correctly, cannot be compared reliably (is "03/15/2025" before or after "12/01/2024"?), and cannot be used with date functions like "find all records from the last 30 days." Use DATE or DATETIME types, and always use the <code>YYYY-MM-DD</code> format.
+      </p>
+
+      <h3>Mistake 5: Making Everything Nullable</h3>
+
+      <p>
+        If you do not think carefully about which columns should allow NULL, you end up with a database full of missing data. Then your application has to check for NULL everywhere, your queries become more complex, and your reports have gaps. Decide upfront which fields are required (NOT NULL) and which are truly optional (nullable). When in doubt, make it NOT NULL.
+      </p>
+
+      <div class="key-concept">
+        <h4>The Five Deadly Sins of Data Types</h4>
+        <p>Avoid these five mistakes and you will be ahead of most beginner developers:</p>
+        <ol>
+          <li>Using VARCHAR for everything (use the correct type instead)</li>
+          <li>Using FLOAT for money (use DECIMAL instead)</li>
+          <li>Skipping length limits on VARCHAR (always set a reasonable max)</li>
+          <li>Storing dates as strings (use DATE or DATETIME instead)</li>
+          <li>Making everything nullable (use NOT NULL for required fields)</li>
+        </ol>
+      </div>
+
+      <!-- ==================== LESSON SUMMARY ==================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>
+        You just covered a lot of ground in this lesson, and every bit of it will serve you well as you continue through the Understanding Databases track. Let us recap the key ideas.
+      </p>
+
+      <p>
+        <strong>Everything is data.</strong> Every application you use &mdash; from social media to banking to maps &mdash; is fundamentally about storing, moving, and displaying data. When you design software, the data comes first. Everything else is built around it.
+      </p>
+
+      <p>
+        <strong>Databases are spreadsheets with rules.</strong> A database table is just like a spreadsheet: columns define the fields, rows are individual records, and cells hold values. The difference is that a database enforces rules about what kind of data can go in each column, keeping your data clean and reliable.
+      </p>
+
+      <p>
+        <strong>Data types tell the database what to expect.</strong> You learned about text types (VARCHAR, CHAR, TEXT), integer types (SMALLINT, INT, BIGINT), decimal types (DECIMAL, FLOAT, DOUBLE), BOOLEAN for true/false, DATE and DATETIME for dates and times, and BLOB for binary data. Each type has a specific purpose, and choosing the right one matters for integrity, efficiency, sorting, and functionality.
+      </p>
+
+      <p>
+        <strong>Never use FLOAT for money.</strong> This is worth repeating one more time. Use DECIMAL for any financial data. FLOAT and DOUBLE have tiny rounding errors that accumulate and cause real problems.
+      </p>
+
+      <p>
+        <strong>NULL is not zero and not empty.</strong> NULL means "no value" &mdash; the data is missing or unknown. Always use <code>IS NULL</code> and <code>IS NOT NULL</code> in SQL queries, never <code>= NULL</code>. Use NOT NULL constraints for required columns.
+      </p>
+
+      <p>
+        <strong>Choosing the right type is a skill.</strong> For every column, ask: What kind of data is it? How big can it get? Does it need to be exact? Is it required or optional? These four questions will guide you to the right type every time.
+      </p>
+
+      <p>
+        In the next lesson, you will learn about <strong>relational databases</strong> &mdash; how tables connect to each other using relationships, and why this is one of the most powerful ideas in all of computer science. You will see how a users table connects to an orders table, how one piece of data can reference another, and how this structure lets you model the real world in a database. See you there!
+      </p>
+
+      <!-- ==================== KNOWLEDGE CHECK ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q17-1">
+        <p class="quiz-question">1. You need to store the price of a product (like $29.99) in a database column. Which data type should you use?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q17-1" value="a"> FLOAT</label>
+          <label><input type="radio" name="q17-1" value="b"> VARCHAR(10)</label>
+          <label><input type="radio" name="q17-1" value="c"> DECIMAL(10, 2)</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! <code>DECIMAL(10, 2)</code> is the right choice for money because it stores exact decimal values. FLOAT would introduce tiny rounding errors (0.30000000000000004 instead of 0.30), which is unacceptable for financial data. VARCHAR would store the price as text, preventing you from doing math like calculating totals or averages. Always use DECIMAL for money.</div>
+      </div>
+
+      <div class="quiz" data-id="q17-2">
+        <p class="quiz-question">2. What is the correct way to find all rows where the <code>phone</code> column has no value in SQL?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q17-2" value="a"> <code>SELECT * FROM users WHERE phone = NULL</code></label>
+          <label><input type="radio" name="q17-2" value="b"> <code>SELECT * FROM users WHERE phone IS NULL</code></label>
+          <label><input type="radio" name="q17-2" value="c"> <code>SELECT * FROM users WHERE phone = ''</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! In SQL, you must use <code>IS NULL</code> to check for NULL values, not <code>= NULL</code>. The expression <code>phone = NULL</code> always evaluates to unknown (not true), so it would never return any rows. And <code>phone = ''</code> checks for an empty string, which is different from NULL &mdash; an empty string is a value (just an empty one), while NULL means no value at all.</div>
+      </div>
+
+      <div class="quiz" data-id="q17-3">
+        <p class="quiz-question">3. Why is storing numbers as VARCHAR (text) a bad idea?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q17-3" value="a"> Because VARCHAR columns cannot hold numbers at all</label>
+          <label><input type="radio" name="q17-3" value="b"> Because text-stored numbers sort incorrectly (1, 10, 2 instead of 1, 2, 10) and cannot be used in calculations</label>
+          <label><input type="radio" name="q17-3" value="c"> Because VARCHAR is slower than INT in all situations</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! When numbers are stored as text, they sort alphabetically instead of numerically. This means "10" comes before "2" (because "1" comes before "2" alphabetically), and "9" comes after "80". Additionally, you cannot use math functions like SUM, AVG, or comparisons like "greater than 100" on text columns without converting them first. VARCHAR <em>can</em> hold digit characters (option A is wrong), and while INT is generally more efficient, that is not the primary problem (option C is incomplete).</div>
+      </div>
+
+    </div>
+
+    <!-- Mark Complete -->
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="databases" data-lesson="17-data-and-data-types">Mark Complete</button>
+    </div>
+
+    <!-- Lesson Navigation -->
+    <div class="lesson-nav">
+      <a href="/lessons/java-spring/16-whats-next.html" class="lesson-nav-btn">&larr; Previous: What's Next</a>
+      <a href="/lessons/databases/18-relational-databases.html" class="lesson-nav-btn">Next: Relational Databases &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
