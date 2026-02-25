@@ -3,7 +3,7 @@
    Initialization and page routing
    ======================================== */
 
-const SITE_VERSION = '1.7';
+const SITE_VERSION = '1.8';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme first (prevents flash)
@@ -126,37 +126,27 @@ function initCheckForUpdates() {
     e.preventDefault();
     const origText = trigger.textContent;
     trigger.disabled = true;
-    trigger.textContent = 'Checking…';
+    trigger.textContent = 'Updating…';
 
     try {
+      // Unregister all service workers so the reload fetches from network
       if ('serviceWorker' in navigator) {
-        const reg = await navigator.serviceWorker.getRegistration();
-        if (reg) {
-          await reg.update();
-          const newWorker = reg.waiting || reg.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'activated') {
-                window.location.reload();
-              }
-            });
-            newWorker.postMessage({ type: 'SKIP_WAITING' });
-            setTimeout(() => window.location.reload(), 2000);
-            return;
-          }
-        }
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister()));
       }
 
-      // No SW or no update found — clear caches manually and reload
+      // Clear all SW caches
       if ('caches' in window) {
         const keys = await caches.keys();
         await Promise.all(keys.map(k => caches.delete(k)));
       }
+
+      // Reload — the page will re-register a fresh SW on load
       window.location.reload();
     } catch (err) {
       trigger.disabled = false;
       trigger.textContent = origText;
-      alert('Update check failed: ' + err.message);
+      alert('Update failed: ' + err.message);
     }
   });
 }
