@@ -33,7 +33,11 @@ const Narrator = (() => {
   let floatingEl = null;
   let playBtnEl = null;
   let keepAliveTimer = null;
+  let chunkWatchdog = null;
   let restarting = false; // guards against double-speak on cancel()
+
+  // Mobile detection — keepAlive pause/resume kills speech on mobile
+  var mobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
   // --- Feature detection ---
 
@@ -182,10 +186,13 @@ const Narrator = (() => {
     currentBlockElement = null;
   }
 
-  // --- Chrome workaround: speech synthesis stops after ~15s ---
+  // --- Desktop Chrome workaround: speech synthesis stops after ~15s ---
+  // On mobile, pause/resume kills speech — skip keepAlive entirely.
+  // Mobile relies on short chunks + watchdog instead.
 
   function startKeepAlive() {
     stopKeepAlive();
+    if (mobile) return;
     keepAliveTimer = setInterval(() => {
       if (speechSynthesis.speaking && !speechSynthesis.paused) {
         speechSynthesis.pause();
@@ -201,6 +208,13 @@ const Narrator = (() => {
     }
   }
 
+  function clearChunkWatchdog() {
+    if (chunkWatchdog) {
+      clearTimeout(chunkWatchdog);
+      chunkWatchdog = null;
+    }
+  }
+
   // --- Text chunking (mobile Chrome kills utterances after ~15s) ---
 
   function splitTextIntoChunks(text) {
@@ -210,11 +224,13 @@ const Narrator = (() => {
     if (!parts || parts.length <= 1) return [text];
 
     // Merge short consecutive sentences so we don't create too many
-    // utterances, but keep each chunk under ~200 chars for mobile safety.
+    // utterances. Mobile browsers need shorter chunks (~120 chars) to
+    // avoid silently stopping; desktop can handle ~200.
+    var maxLen = mobile ? 120 : 200;
     var chunks = [];
     var current = '';
     for (var i = 0; i < parts.length; i++) {
-      if (current.length + parts[i].length > 200 && current.length > 0) {
+      if (current.length + parts[i].length > maxLen && current.length > 0) {
         chunks.push(current);
         current = parts[i];
       } else {
@@ -255,6 +271,7 @@ const Narrator = (() => {
 
     function speakChunk(chunkIndex, charOffset) {
       if (chunkIndex >= chunks.length) {
+        clearChunkWatchdog();
         unwrapCurrentBlock();
         if (playing && !paused) {
           speakBlock(index + 1);
@@ -262,16 +279,30 @@ const Narrator = (() => {
         return;
       }
 
-      const chunkText = chunks[chunkIndex];
-      const utterance = new SpeechSynthesisUtterance(chunkText);
+      var chunkText = chunks[chunkIndex];
+      var utterance = new SpeechSynthesisUtterance(chunkText);
+      var chunkDone = false;
 
-      const voice = getPreferredVoice();
+      var voice = getPreferredVoice();
       if (voice) {
         utterance.voice = voice;
         saveVoice(voice.name);
       }
       utterance.rate = getSavedRate();
       utterance.pitch = 1;
+
+      // Advance to next chunk (de-duplicated callback for onend/onerror/watchdog)
+      function advanceChunk() {
+        if (chunkDone) return;
+        chunkDone = true;
+        clearChunkWatchdog();
+        if (restarting || !playing) return;
+        // Small delay between chunks on mobile to let the engine settle
+        var delay = mobile ? 150 : 0;
+        setTimeout(function () {
+          speakChunk(chunkIndex + 1, charOffset + chunkText.length);
+        }, delay);
+      }
 
       // Per-word highlighting via boundary events.
       // charOffset tracks where this chunk starts within the full block text
@@ -287,23 +318,36 @@ const Narrator = (() => {
         var match = currentWordMap.find(function (w) { return ci >= w.start && ci < w.end; });
         if (match) {
           match.span.classList.add('narrator-word-active');
-          match.span.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       };
 
-      utterance.onend = function () {
-        if (restarting) return;
-        speakChunk(chunkIndex + 1, charOffset + chunkText.length);
-      };
+      utterance.onend = advanceChunk;
 
       utterance.onerror = function (event) {
-        if (restarting) return;
         if (event.error === 'canceled' || event.error === 'interrupted') return;
         console.log('[Narrator] Speech error:', event.error);
-        speakChunk(chunkIndex + 1, charOffset + chunkText.length);
+        advanceChunk();
       };
 
+      clearChunkWatchdog();
       speechSynthesis.speak(utterance);
+
+      // Watchdog: if onend never fires (mobile silent failure), force-advance.
+      // Estimate duration: ~2.5 words/sec at rate 1. Use 3x as safety margin.
+      var words = chunkText.split(/\s+/).length;
+      var estimatedSec = words / (2.5 * (utterance.rate || 1));
+      var timeoutMs = Math.max(estimatedSec * 3, 10) * 1000;
+      chunkWatchdog = setTimeout(function () {
+        chunkWatchdog = null;
+        if (paused || restarting) return;
+        console.log('[Narrator] Watchdog: speech appears stuck, advancing');
+        speechSynthesis.cancel();
+        restarting = true;
+        setTimeout(function () {
+          restarting = false;
+          advanceChunk();
+        }, 50);
+      }, timeoutMs);
     }
 
     speakChunk(0, 0);
@@ -330,6 +374,7 @@ const Narrator = (() => {
     speechSynthesis.pause();
     paused = true;
     stopKeepAlive();
+    clearChunkWatchdog();
     updateFloatingUI();
     updatePlayButton();
   }
@@ -360,6 +405,7 @@ const Narrator = (() => {
     currentBlockIndex = -1;
     unwrapCurrentBlock();
     stopKeepAlive();
+    clearChunkWatchdog();
     hideFloating();
     updatePlayButton();
   }
@@ -390,6 +436,7 @@ const Narrator = (() => {
       const blockToRestart = currentBlockIndex;
       restarting = true;
       speechSynthesis.cancel();
+      clearChunkWatchdog();
       unwrapCurrentBlock();
       setTimeout(() => {
         restarting = false;
