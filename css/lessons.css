@@ -186,12 +186,27 @@
     font-size: var(--font-size-lg);
   }
 
+  .lesson-content pre {
+    font-size: 0.8rem;
+  }
+
   .lesson-table {
     font-size: 0.8rem;
+    display: block;
+    overflow-x: auto;
   }
 
   .lesson-table th,
   .lesson-table td {
     padding: var(--space-1) var(--space-2);
+  }
+
+  .key-concept,
+  .try-it {
+    padding: var(--space-3);
+  }
+
+  .learning-objectives {
+    padding: var(--space-3);
   }
 }
