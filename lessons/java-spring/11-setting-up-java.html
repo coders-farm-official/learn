@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 11: Setting Up Your Java Environment — Coders Farm</title>
+  <meta name="description" content="Install Java, choose an editor, and write your first Java program">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="java-spring-11-setting-up-java">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Setting Up Java</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/career/10-zero-to-employable.html" role="menuitem">Lesson 10: Career</a>
+      <a href="/lessons/java-spring/11-setting-up-java.html" role="menuitem">Lesson 11: Setting Up Java</a>
+      <a href="/lessons/java-spring/12-intro-to-spring-boot.html" role="menuitem">Lesson 12: Intro to Spring Boot</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Java &amp; Spring Boot</a> / Setting Up Your Java Environment</p>
+      <p class="lesson-progress-indicator" data-track="java-spring" data-total="6" data-current="1">Lesson 1 of 6</p>
+      <h1>Setting Up Your Java Environment</h1>
+      <p style="color: var(--text-muted);">Estimated time: 1.5&ndash;2 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand what Java is and why it matters in today's job market</li>
+          <li>Install the Java Development Kit (JDK) on your computer</li>
+          <li>Choose and set up a code editor for Java development</li>
+          <li>Write, compile, and run your first Java program</li>
+          <li>Understand basic Java syntax and how it differs from JavaScript</li>
+        </ul>
+      </div>
+
+      <!-- Part 1: What is Java? -->
+      <h2>Part 1: What is Java?</h2>
+
+      <p>Welcome to a brand-new chapter of your coding journey! If you have been following along with the earlier lessons in this course, you have already learned HTML, CSS, and JavaScript &mdash; the three core languages of the web. You have built web pages, styled them, and made them interactive. That is a huge accomplishment, and those skills will serve you well for your entire career.</p>
+
+      <p>Now we are going to learn a completely different programming language called <strong>Java</strong>. Before we go any further, let us address the single most common point of confusion for beginners:</p>
+
+      <div class="callout callout-warning"><strong>Important:</strong> Java and JavaScript are <em>completely different languages</em>. Despite the similar names, they have almost nothing in common. They were created by different people, at different companies, for different purposes. The name similarity is a historical accident &mdash; when JavaScript was created in 1995, the marketing team thought naming it after the already-popular Java language would attract more developers. It is widely considered one of the most confusing naming decisions in the history of technology. Think of it this way: the relationship between Java and JavaScript is like the relationship between "car" and "carpet" &mdash; they share a few letters, but that is where the similarity ends.</div>
+
+      <p>So what <em>is</em> Java? Java is a <strong>general-purpose programming language</strong> that was created by James Gosling at Sun Microsystems in 1995. It was designed from the ground up to be reliable, portable, and powerful enough to run everything from tiny embedded devices to massive enterprise systems. Today, Java is one of the most widely used programming languages in the world, consistently ranking in the top three alongside Python and JavaScript.</p>
+
+      <p>Java is <em>everywhere</em>, and you interact with it more often than you probably realize. Here are just a few places Java powers the technology around you:</p>
+
+      <ul>
+        <li><strong>Android apps</strong> &mdash; The majority of Android applications are built with Java (or its close relative, Kotlin, which runs on the same platform). If you have an Android phone, you are using Java-powered apps every day.</li>
+        <li><strong>Enterprise software</strong> &mdash; Large companies like banks, insurance companies, hospitals, and government agencies rely heavily on Java to run their critical backend systems. When you check your bank balance online, there is a good chance a Java application processed that request.</li>
+        <li><strong>Web servers</strong> &mdash; Many of the world's busiest websites use Java on the server side to handle millions of requests. Companies like Amazon, Google, Netflix, LinkedIn, and eBay all use Java extensively.</li>
+        <li><strong>Government systems</strong> &mdash; Right here in Michigan, state government agencies use Java-based systems for everything from tax processing to license plate renewals. The Michigan Department of Technology, Management &amp; Budget maintains many Java applications.</li>
+        <li><strong>Big data and scientific computing</strong> &mdash; Tools like Apache Hadoop and Apache Spark, which process enormous amounts of data, are written in Java.</li>
+      </ul>
+
+      <p>One of Java's most famous features is its <strong>platform independence</strong>, often described by the slogan <strong>"write once, run anywhere."</strong> Here is what that means: when you write a program in most languages, you compile it into instructions that only work on one specific type of computer. A program compiled for Windows will not run on a Mac, and vice versa. Java takes a different approach. When you compile a Java program, it does not get turned into instructions for a specific machine. Instead, it gets compiled into something called <strong>bytecode</strong> &mdash; a special intermediate format. That bytecode then runs on the <strong>Java Virtual Machine (JVM)</strong>, which is a program that acts like a translator between your bytecode and whatever computer it is running on.</p>
+
+      <div class="key-concept">
+        <h4>How Java Code Runs</h4>
+        <p>The journey from Java code to a running program has three steps:</p>
+        <ol>
+          <li><strong>You write</strong> Java source code in a <code>.java</code> file (human-readable text).</li>
+          <li><strong>The compiler (<code>javac</code>) translates</strong> your source code into <strong>bytecode</strong>, saved in a <code>.class</code> file.</li>
+          <li><strong>The JVM executes</strong> the bytecode on whatever operating system you are running &mdash; Windows, Mac, or Linux. The JVM handles all the platform-specific details for you.</li>
+        </ol>
+        <p>This is why Java is platform-independent: the same bytecode runs on any machine that has a JVM installed.</p>
+      </div>
+
+      <p>So why are <em>we</em> learning Java in this course? There are several important reasons, and they are all connected to your goal of becoming employable as a developer.</p>
+
+      <p>First, the <strong>job market</strong>. Java is one of the most in-demand programming languages for employment. If you search for developer jobs on Indeed, LinkedIn, or Glassdoor right now &mdash; especially here in the Lansing, Michigan area &mdash; you will find that a significant number of positions ask for Java experience. State government agencies, insurance companies like Auto-Owners and Jackson National Life, health systems like Sparrow and McLaren, and tech companies throughout the Greater Lansing region all hire Java developers. Learning Java opens doors that JavaScript alone cannot.</p>
+
+      <p>Second, we are going to use Java to learn <strong>Spring Boot</strong>, which is a powerful framework for building web applications and APIs. Spring Boot is to Java what React or Express is to JavaScript &mdash; it is the tool that makes Java practical and productive for building modern web services. Companies love Spring Boot because it lets developers build robust, scalable backend systems quickly. We will dive into Spring Boot in the next lesson.</p>
+
+      <p>Third, learning Java will make you a <strong>stronger programmer overall</strong>. Java is what is called a <strong>statically typed language</strong>, which means you have to declare what type of data a variable holds (a number, a string, a boolean, and so on). Coming from JavaScript, where you can put anything in any variable without declaring its type, this might feel strict at first. But that strictness is actually a superpower &mdash; Java catches many mistakes at compile time, <em>before</em> your program even runs. This discipline will make you think more carefully about your code and catch bugs earlier.</p>
+
+      <p>Let us take a quick look at how Java compares to what you already know. In the earlier lessons, you learned about three languages that work together in the browser: HTML defines structure, CSS defines style, and JavaScript defines behavior. All three of those languages run in the <strong>browser</strong> (the client side). Java, on the other hand, typically runs on the <strong>server side</strong> &mdash; the computer that receives requests from browsers and sends back responses. When you visit a website, your browser (running HTML, CSS, and JavaScript) talks to a server (which might be running Java). You are about to learn both halves of that conversation, which makes you a much more complete developer.</p>
+
+      <!-- Part 2: Installing Java (JDK) -->
+      <h2>Part 2: Installing the Java Development Kit (JDK)</h2>
+
+      <p>Before you can write and run Java programs, you need to install the <strong>Java Development Kit</strong>, commonly called the <strong>JDK</strong>. The JDK is a free software package that contains everything you need to develop Java applications. It includes two critical tools:</p>
+
+      <ul>
+        <li><strong><code>javac</code></strong> &mdash; The Java compiler. This is the program that reads your <code>.java</code> source files and translates them into bytecode (<code>.class</code> files).</li>
+        <li><strong><code>java</code></strong> &mdash; The Java runtime. This is the program that runs your compiled bytecode on the JVM.</li>
+      </ul>
+
+      <div class="callout callout-info"><strong>JDK vs JRE:</strong> You might see references to the <strong>JRE</strong> (Java Runtime Environment) online. The JRE only lets you <em>run</em> Java programs &mdash; it does not include the compiler, so you cannot <em>create</em> programs with it. The <strong>JDK</strong> includes everything the JRE has, <em>plus</em> the compiler and other development tools. As a developer, you always want the JDK. The good news is that starting with Java 11, Oracle stopped distributing the JRE separately, so when you install the JDK, you get everything you need.</div>
+
+      <p>We are going to install <strong>JDK 21</strong>, which is a <strong>Long-Term Support (LTS)</strong> release. LTS versions are supported with security updates and bug fixes for many years, which makes them the best choice for learning and for professional work. JDK 21 was released in September 2023 and will be supported through at least September 2028.</p>
+
+      <p>Choose the tab below that matches your operating system and run the command in your terminal (Command Prompt or PowerShell on Windows, Terminal on Mac or Linux):</p>
+
+      <div class="install-tabs">
+        <div class="install-tab-buttons">
+          <button class="install-tab-btn active" data-tab="windows">Windows</button>
+          <button class="install-tab-btn" data-tab="mac">Mac</button>
+          <button class="install-tab-btn" data-tab="linux">Linux</button>
+        </div>
+        <div class="install-tab-content active" data-tab="windows">
+          <code>winget install Oracle.JDK.21 --accept-package-agreements --accept-source-agreements</code>
+        </div>
+        <div class="install-tab-content" data-tab="mac">
+          <code>brew install openjdk@21</code>
+        </div>
+        <div class="install-tab-content" data-tab="linux">
+          <code>sudo apt install openjdk-21-jdk</code>
+        </div>
+      </div>
+
+      <div class="callout callout-tip"><strong>Windows users:</strong> The <code>winget</code> command comes built into Windows 10 (version 1809 and later) and Windows 11. If <code>winget</code> is not recognized, you can download it by installing "App Installer" from the Microsoft Store, or you can download the JDK directly from <a href="https://www.oracle.com/java/technologies/downloads/" target="_blank" rel="noopener">Oracle's website</a>. <strong>Mac users:</strong> If you do not have Homebrew installed yet, visit <a href="https://brew.sh" target="_blank" rel="noopener">brew.sh</a> and follow the one-line install instruction first. <strong>Linux users:</strong> The <code>apt</code> command works on Debian-based distributions like Ubuntu and Linux Mint. If you use Fedora, use <code>sudo dnf install java-21-openjdk-devel</code> instead.</div>
+
+      <p>After the installation finishes, you need to <strong>verify</strong> that Java was installed correctly. Open a <em>new</em> terminal window (this is important &mdash; the old terminal might not recognize the new commands yet) and run these two commands:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>java -version
+javac -version</code></pre>
+      </div>
+
+      <p>If everything is set up correctly, you should see output that includes the version number <strong>21</strong> (the exact minor version number may vary). For example, you might see something like <code>java version "21.0.2"</code> and <code>javac 21.0.2</code>. The specific minor version does not matter &mdash; what matters is that both commands work and show version 21.</p>
+
+      <p>If you see an error like <code>"java" is not recognized as an internal or external command</code> on Windows, or <code>command not found: java</code> on Mac or Linux, it means Java is either not installed or the system does not know where to find it. Here are some troubleshooting steps:</p>
+
+      <ul>
+        <li><strong>Close and reopen your terminal.</strong> This is the most common fix. After installing new software, your terminal needs to be restarted to pick up the new commands.</li>
+        <li><strong>Restart your computer.</strong> If closing the terminal does not work, a full restart often resolves the issue, especially on Windows.</li>
+        <li><strong>Check the PATH environment variable.</strong> The PATH is a list of directories your computer searches through when you type a command. Java's installation directory needs to be on this list. On Windows, you can search for "Environment Variables" in the Start menu, find "Path" under System Variables, and make sure Java's <code>bin</code> folder is listed (usually something like <code>C:\Program Files\Java\jdk-21\bin</code>). On Mac, if you used Homebrew, you may need to run <code>sudo ln -sfn /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-21.jdk</code> to create the necessary system links.</li>
+        <li><strong>Try reinstalling.</strong> If nothing else works, uninstall Java and install it again using the commands above.</li>
+      </ul>
+
+      <p>Do not move on to the next section until both <code>java -version</code> and <code>javac -version</code> work correctly. Having a working Java installation is the foundation for everything else in this lesson and the rest of the Java track.</p>
+
+      <!-- Part 3: Choosing a Code Editor -->
+      <h2>Part 3: Choosing a Code Editor</h2>
+
+      <p>Now that Java is installed, you need a good code editor to write your Java programs in. If you have been following this course from the beginning, you probably already have <strong>Visual Studio Code (VS Code)</strong> installed from the earlier web development lessons. The great news is that VS Code works wonderfully for Java development too &mdash; you just need to install one extension pack.</p>
+
+      <p>Open VS Code, click the <strong>Extensions</strong> icon in the left sidebar (it looks like four small squares), and search for <strong>"Extension Pack for Java"</strong> by Microsoft. Click <strong>Install</strong>. This single extension pack bundles together everything you need: Java language support, a debugger, test runner, project manager, and IntelliSense (smart code completion that suggests what to type as you write). Once it is installed, VS Code becomes a powerful Java development environment. You will see red underlines for errors, helpful auto-complete suggestions, and the ability to run Java programs directly from the editor.</p>
+
+      <p>If you want to explore other options, the most popular alternative is <strong>IntelliJ IDEA Community Edition</strong> by JetBrains. IntelliJ is a full-featured Integrated Development Environment (IDE) built specifically for Java. It is incredibly powerful and is what many professional Java developers use at work. The Community Edition is completely free. You can download it from <a href="https://www.jetbrains.com/idea/download/" target="_blank" rel="noopener">jetbrains.com/idea</a>. IntelliJ is heavier than VS Code &mdash; it uses more memory and takes longer to start up &mdash; but it provides deeper Java-specific features right out of the box.</p>
+
+      <p>For this course, we recommend <strong>sticking with VS Code</strong> since you are already familiar with it. It keeps things simple and avoids the learning curve of a new tool. You can always switch to IntelliJ later as you become more comfortable with Java. The code you write will be exactly the same regardless of which editor you use.</p>
+
+      <div class="callout callout-tip"><strong>Tip:</strong> Java development involves more files and more structure than the HTML, CSS, and JavaScript you have been writing. A good code editor is not optional &mdash; it is essential. Writing Java in a basic text editor like Notepad is technically possible but extremely painful. Your editor's features (error highlighting, auto-complete, easy file navigation) will save you enormous amounts of time and frustration. Make sure you have one set up before moving on.</div>
+
+      <!-- Part 4: Hello World in Java -->
+      <h2>Part 4: Your First Java Program &mdash; Hello World</h2>
+
+      <p>Every programming language has a tradition: the first program you write should simply print the words "Hello, World!" to the screen. It is a small program, but it proves that your entire development environment is working correctly &mdash; you can write code, compile it, and run it. Let us do this in Java.</p>
+
+      <p>Open your code editor and create a new file called <strong><code>HelloWorld.java</code></strong>. This file name matters &mdash; in Java, the file name <em>must</em> match the class name inside it (we will explain what a class is in a moment). Type the following code exactly as shown:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public class HelloWorld {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}</code></pre>
+      </div>
+
+      <p>That is your first Java program! If you are coming from JavaScript, your first reaction might be: "That is a <em>lot</em> of code just to print one line." And you are right &mdash; in JavaScript, you could accomplish the same thing with just <code>console.log("Hello, World!");</code>. Java requires more structure, and every piece of that structure has a purpose. Let us break it down line by line.</p>
+
+      <h3>Line 1: <code>public class HelloWorld {</code></h3>
+
+      <p>In Java, <em>all code</em> must live inside a <strong>class</strong>. A class is like a container that groups related code together. For now, think of it as a required wrapper around your program. The word <code>public</code> means this class is accessible from anywhere (we will explore access levels later in the course). The word <code>class</code> is the keyword that tells Java you are defining a class. <code>HelloWorld</code> is the name you are giving this class &mdash; and it <strong>must exactly match your file name</strong> (without the <code>.java</code> extension). The opening curly brace <code>{</code> marks the beginning of the class body.</p>
+
+      <h3>Line 2: <code>public static void main(String[] args) {</code></h3>
+
+      <p>This is the <strong>main method</strong> &mdash; the entry point of every Java program. When you run a Java program, the JVM looks for this exact method signature and starts executing from here. Let us break down each word:</p>
+
+      <ul>
+        <li><code>public</code> &mdash; This method is accessible from anywhere. The JVM needs to access it to start your program.</li>
+        <li><code>static</code> &mdash; This method belongs to the class itself, not to a specific instance of the class. Do not worry about what this means right now &mdash; we will cover it in detail when we learn about objects.</li>
+        <li><code>void</code> &mdash; This method does not return any value. It just does its work and finishes. Some methods give back a result (like a calculator returning an answer), but <code>main</code> does not.</li>
+        <li><code>main</code> &mdash; The name of the method. This exact name is required &mdash; the JVM specifically looks for a method called <code>main</code>.</li>
+        <li><code>String[] args</code> &mdash; This allows your program to accept input from the command line. You do not need to use it right now, but it must be there.</li>
+      </ul>
+
+      <div class="callout callout-info"><strong>Note:</strong> You do not need to memorize what every keyword in <code>public static void main(String[] args)</code> means right now. For the time being, just think of it as the magic incantation that tells Java "this is where my program starts." You will type it so many times that it will become second nature, and you will understand each piece more deeply as we progress through the course.</div>
+
+      <h3>Line 3: <code>System.out.println("Hello, World!");</code></h3>
+
+      <p>This is the line that actually <em>does</em> something &mdash; it prints the text "Hello, World!" to the console. Let us break this down too:</p>
+
+      <ul>
+        <li><code>System</code> &mdash; A built-in Java class that provides access to system-level operations.</li>
+        <li><code>out</code> &mdash; The standard output stream (think of it as the console).</li>
+        <li><code>println</code> &mdash; Short for "print line" &mdash; it prints the text and then moves to the next line.</li>
+        <li><code>"Hello, World!"</code> &mdash; The string (text) you want to print.</li>
+        <li><code>;</code> &mdash; Every statement in Java must end with a semicolon. This is not optional like it sometimes is in JavaScript.</li>
+      </ul>
+
+      <p>If you are thinking "Java's <code>System.out.println()</code> is like JavaScript's <code>console.log()</code>," you are exactly right! They serve the same purpose &mdash; outputting text so you can see it. Java's version is just longer to type.</p>
+
+      <h3>Lines 4 and 5: The Closing Braces</h3>
+
+      <p>The closing braces <code>}</code> on lines 4 and 5 close the <code>main</code> method and the <code>HelloWorld</code> class, respectively. Every opening brace <code>{</code> must have a matching closing brace <code>}</code>. Keeping track of braces is important in Java &mdash; a missing brace is one of the most common causes of compiler errors for beginners.</p>
+
+      <h3>Compiling and Running Your Program</h3>
+
+      <p>Now let us compile and run your program. Open your terminal, navigate to the folder where you saved <code>HelloWorld.java</code>, and run these two commands:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>javac HelloWorld.java
+java HelloWorld</code></pre>
+      </div>
+
+      <p>The first command, <code>javac HelloWorld.java</code>, runs the Java compiler. If your code has no errors, it will silently create a new file called <code>HelloWorld.class</code> in the same folder &mdash; that is the bytecode file. If there are errors, the compiler will print error messages telling you what went wrong and on which line. Read those messages carefully &mdash; they are usually very specific and helpful.</p>
+
+      <p>The second command, <code>java HelloWorld</code>, runs the compiled bytecode on the JVM. Notice that you use <code>javac</code> (Java Compiler) to compile, but just <code>java</code> to run. Also notice that you include the <code>.java</code> extension when compiling but <em>not</em> when running. If everything worked, you should see:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>Hello, World!</code></pre>
+      </div>
+
+      <p>Congratulations &mdash; you just wrote, compiled, and ran your first Java program! That might seem like a simple output, but a lot just happened under the hood: your source code was analyzed by the compiler, translated into bytecode, loaded onto the JVM, and executed. Every Java program you write for the rest of your career will follow this same compile-then-run process.</p>
+
+      <p>Let us compare the Hello World experience side by side to make the differences between Java and JavaScript crystal clear:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Step</th>
+            <th>JavaScript</th>
+            <th>Java</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Write the code</td>
+            <td><code>console.log("Hello, World!");</code></td>
+            <td>Requires a class and a main method wrapper</td>
+          </tr>
+          <tr>
+            <td>File name</td>
+            <td>Anything (e.g., <code>hello.js</code>)</td>
+            <td>Must match the class name (<code>HelloWorld.java</code>)</td>
+          </tr>
+          <tr>
+            <td>Compile step</td>
+            <td>None (interpreted directly)</td>
+            <td><code>javac HelloWorld.java</code></td>
+          </tr>
+          <tr>
+            <td>Run the program</td>
+            <td><code>node hello.js</code></td>
+            <td><code>java HelloWorld</code></td>
+          </tr>
+          <tr>
+            <td>Output method</td>
+            <td><code>console.log()</code></td>
+            <td><code>System.out.println()</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- Part 5: Java Basics -->
+      <h2>Part 5: Java Basics &mdash; A Quick Tour</h2>
+
+      <p>Now that you have your environment set up and have run your first program, let us take a quick tour of Java's basic syntax. Since you already know JavaScript, you have a huge head start &mdash; many of the concepts are the same, just with different syntax. The biggest difference you will notice is that Java requires you to <strong>declare the type</strong> of every variable.</p>
+
+      <h3>Variables with Types</h3>
+
+      <p>In JavaScript, you create variables with <code>let</code> or <code>const</code> and you can put any kind of value in them without telling JavaScript what type it is. JavaScript figures out the type on its own. Java works differently &mdash; you must <strong>explicitly declare the type</strong> of every variable when you create it. Here is how it looks:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public class VariableExamples {
+    public static void main(String[] args) {
+        // Integer (whole number)
+        int age = 25;
+
+        // Decimal number
+        double temperature = 72.5;
+
+        // Text
+        String name = "Maria";
+
+        // True or false
+        boolean isStudent = true;
+
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Temperature: " + temperature);
+        System.out.println("Is student: " + isStudent);
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us look at each of those types:</p>
+
+      <ul>
+        <li><strong><code>int</code></strong> &mdash; Stores whole numbers (integers) like <code>25</code>, <code>-10</code>, or <code>1000000</code>. Cannot hold decimals.</li>
+        <li><strong><code>double</code></strong> &mdash; Stores decimal numbers (also called floating-point numbers) like <code>72.5</code>, <code>3.14</code>, or <code>-0.001</code>. Use this whenever you need a decimal point.</li>
+        <li><strong><code>String</code></strong> &mdash; Stores text. Notice that <code>String</code> starts with a capital S &mdash; that is because <code>String</code> is technically a class, not a primitive type. Strings must be wrapped in double quotes in Java (single quotes are reserved for single characters).</li>
+        <li><strong><code>boolean</code></strong> &mdash; Stores either <code>true</code> or <code>false</code>. Same concept as in JavaScript, same name, same two values.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>Why Does Java Require Types?</h4>
+        <p>When you tell Java that a variable is an <code>int</code>, Java knows exactly how much memory to allocate and exactly what operations are valid. If you try to put text into an <code>int</code> variable, the compiler catches the mistake <em>immediately</em> &mdash; before you even run the program. In JavaScript, that same mistake might only show up when a user does something unexpected, causing your running application to crash. Java's type system is like a spell-checker for your code: it flags problems early, before they reach your users. This is called <strong>static typing</strong>, and it is one of the main reasons Java is trusted for building critical systems like banking software and medical records.</p>
+      </div>
+
+      <p>Here is a side-by-side comparison of how you declare the same variables in both languages:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// JavaScript (dynamically typed)
+// let age = 25;
+// let temperature = 72.5;
+// let name = "Maria";
+// let isStudent = true;
+
+// Java (statically typed)
+int age = 25;
+double temperature = 72.5;
+String name = "Maria";
+boolean isStudent = true;</code></pre>
+      </div>
+
+      <p>In JavaScript, <code>let</code> handles everything regardless of the value type. In Java, you replace <code>let</code> with the specific type: <code>int</code>, <code>double</code>, <code>String</code>, or <code>boolean</code>. Once you declare a variable as a certain type, it can <em>only</em> hold values of that type. You cannot put a string into an <code>int</code> variable &mdash; the compiler will refuse to compile your code.</p>
+
+      <h3>Basic Operations</h3>
+
+      <p>The good news is that basic math operations in Java look exactly like JavaScript. Addition, subtraction, multiplication, division, and the remainder operator all use the same symbols:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public class BasicMath {
+    public static void main(String[] args) {
+        int a = 20;
+        int b = 7;
+
+        System.out.println("Addition: " + (a + b));        // 27
+        System.out.println("Subtraction: " + (a - b));     // 13
+        System.out.println("Multiplication: " + (a * b));  // 140
+        System.out.println("Division: " + (a / b));        // 2 (integer division!)
+        System.out.println("Remainder: " + (a % b));       // 6
+
+        // For decimal division, use double
+        double x = 20.0;
+        double y = 7.0;
+        System.out.println("Decimal division: " + (x / y)); // 2.857142857142857
+    }
+}</code></pre>
+      </div>
+
+      <div class="callout callout-warning"><strong>Watch out for integer division!</strong> When you divide two <code>int</code> values in Java, the result is also an <code>int</code> &mdash; the decimal part gets thrown away. So <code>20 / 7</code> gives you <code>2</code>, not <code>2.857</code>. This is different from JavaScript, where all numbers are decimals by default. If you want decimal precision in Java, make sure at least one of the numbers is a <code>double</code> (like <code>20.0 / 7</code>).</div>
+
+      <h3>String Concatenation</h3>
+
+      <p>Just like JavaScript, you can join strings together using the <code>+</code> operator. You have already seen this in the examples above when we combined strings with variables in <code>System.out.println()</code>. Java is smart enough to convert numbers and booleans to strings automatically when you concatenate them with the <code>+</code> operator:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public class StringExamples {
+    public static void main(String[] args) {
+        String firstName = "Alex";
+        String lastName = "Johnson";
+        int age = 28;
+        String city = "Lansing";
+
+        // Concatenation with +
+        String fullName = firstName + " " + lastName;
+        System.out.println("Full name: " + fullName);
+
+        // Mixing strings and numbers
+        System.out.println(fullName + " is " + age + " years old.");
+        System.out.println("They live in " + city + ", Michigan.");
+
+        // Useful String methods
+        System.out.println("Uppercase: " + fullName.toUpperCase());
+        System.out.println("Lowercase: " + fullName.toLowerCase());
+        System.out.println("Name length: " + fullName.length());
+    }
+}</code></pre>
+      </div>
+
+      <p>Notice how similar the string methods are to JavaScript. Both languages have <code>.toUpperCase()</code>, <code>.toLowerCase()</code>, and <code>.length()</code> (though in JavaScript, <code>.length</code> is a property without parentheses, while in Java, <code>.length()</code> is a method with parentheses). If you already know these methods from JavaScript, you are in great shape &mdash; the concepts transfer directly.</p>
+
+      <h3>Java vs JavaScript: A Quick Reference</h3>
+
+      <p>Here is a summary table comparing the key syntax differences between the two languages. Keep this handy as you start writing Java &mdash; it will help you avoid the most common mistakes when switching between them:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>JavaScript</th>
+            <th>Java</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Variable declaration</td>
+            <td><code>let x = 10;</code></td>
+            <td><code>int x = 10;</code></td>
+          </tr>
+          <tr>
+            <td>Constant declaration</td>
+            <td><code>const x = 10;</code></td>
+            <td><code>final int x = 10;</code></td>
+          </tr>
+          <tr>
+            <td>String declaration</td>
+            <td><code>let s = "hello";</code> or <code>'hello'</code></td>
+            <td><code>String s = "hello";</code> (double quotes only)</td>
+          </tr>
+          <tr>
+            <td>Print to console</td>
+            <td><code>console.log("hi");</code></td>
+            <td><code>System.out.println("hi");</code></td>
+          </tr>
+          <tr>
+            <td>Type system</td>
+            <td>Dynamic (types checked at runtime)</td>
+            <td>Static (types checked at compile time)</td>
+          </tr>
+          <tr>
+            <td>Semicolons</td>
+            <td>Optional (auto-inserted)</td>
+            <td>Required (compiler error without them)</td>
+          </tr>
+          <tr>
+            <td>Code structure</td>
+            <td>Can write code anywhere</td>
+            <td>All code must be inside a class</td>
+          </tr>
+          <tr>
+            <td>Program entry point</td>
+            <td>Runs from top of file</td>
+            <td>Runs from <code>main</code> method</td>
+          </tr>
+          <tr>
+            <td>Compilation</td>
+            <td>Interpreted (no compile step)</td>
+            <td>Compiled with <code>javac</code>, then run with <code>java</code></td>
+          </tr>
+          <tr>
+            <td>Integer division</td>
+            <td><code>7 / 2 = 3.5</code></td>
+            <td><code>7 / 2 = 3</code> (truncates decimal)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Do not feel like you need to memorize all of this right now. The differences will become natural as you practice writing Java code. The most important things to remember are: always declare your variable types, always end statements with semicolons, and always put your code inside a class with a <code>main</code> method.</p>
+
+      <h3>Putting It All Together</h3>
+
+      <p>Let us finish with a slightly larger program that uses everything we have covered. Study this code and see how all the pieces fit together. Try typing it into your editor, compiling it, and running it yourself:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>public class AboutMe {
+    public static void main(String[] args) {
+        // Personal information
+        String name = "Your Name";
+        int age = 25;
+        String city = "Lansing";
+        String state = "Michigan";
+        boolean isLearningJava = true;
+
+        // Print a greeting
+        System.out.println("=== About Me ===");
+        System.out.println("Name: " + name);
+        System.out.println("Age: " + age);
+        System.out.println("Location: " + city + ", " + state);
+        System.out.println("Learning Java: " + isLearningJava);
+
+        // Do some calculations
+        int birthYear = 2025 - age;
+        System.out.println("Approximate birth year: " + birthYear);
+
+        int ageInMonths = age * 12;
+        System.out.println("Age in months: " + ageInMonths);
+
+        // String operations
+        System.out.println("Name in uppercase: " + name.toUpperCase());
+        System.out.println("Name length: " + name.length() + " characters");
+
+        System.out.println("=================");
+        System.out.println("Welcome to Coders Farm, " + name + "!");
+    }
+}</code></pre>
+      </div>
+
+      <p>Save this file as <code>AboutMe.java</code> (remember &mdash; the file name must match the class name). Replace <code>"Your Name"</code> with your actual name, update your age, and then compile and run it:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>javac AboutMe.java
+java AboutMe</code></pre>
+      </div>
+
+      <p>If everything compiles and runs without errors, and you see your personalized output in the terminal, you have successfully set up your Java environment and written real Java code. That is a major milestone. You now have all the tools you need to dive deeper into Java programming in the lessons ahead.</p>
+
+      <!-- Knowledge Check -->
+      <h2>Knowledge Check</h2>
+
+      <p>Let us make sure you have a solid understanding of the key concepts from this lesson. Give each question a try &mdash; you can review the lesson and try again as many times as you like.</p>
+
+      <div class="quiz" data-id="java-setup-q1">
+        <p class="quiz-question">1. What is the main difference between Java and JavaScript?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="java-setup-q1" value="a"> JavaScript is a newer version of Java</label>
+          <label><input type="radio" name="java-setup-q1" value="b"> Java runs in the browser and JavaScript runs on the server</label>
+          <label><input type="radio" name="java-setup-q1" value="c"> They are completely different languages that share a similar name by historical accident</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! Java and JavaScript are <strong>completely different languages</strong>. They were created by different people, at different companies, for different purposes. The similar name was a marketing decision from 1995 and has confused beginners ever since. Java is a statically typed, compiled language often used for enterprise and Android development, while JavaScript is a dynamically typed, interpreted language originally designed for web browsers.</div>
+      </div>
+
+      <div class="quiz" data-id="java-setup-q2">
+        <p class="quiz-question">2. What command compiles a Java file named <code>MyProgram.java</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="java-setup-q2" value="a"> <code>java MyProgram.java</code></label>
+          <label><input type="radio" name="java-setup-q2" value="b"> <code>javac MyProgram.java</code></label>
+          <label><input type="radio" name="java-setup-q2" value="c"> <code>compile MyProgram.java</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That is right! The <code>javac</code> command (Java Compiler) is what compiles your <code>.java</code> source file into bytecode. It produces a <code>.class</code> file that the JVM can execute. After compiling, you run the program with <code>java MyProgram</code> (without the <code>.java</code> extension). Remember: <code>javac</code> to compile, <code>java</code> to run.</div>
+      </div>
+
+      <div class="quiz" data-id="java-setup-q3">
+        <p class="quiz-question">3. Why does Java require you to declare variable types (like <code>int</code>, <code>String</code>, <code>boolean</code>)?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="java-setup-q3" value="a"> It is just an old-fashioned style choice that has no practical benefit</label>
+          <label><input type="radio" name="java-setup-q3" value="b"> It makes the code look more professional</label>
+          <label><input type="radio" name="java-setup-q3" value="c"> It catches type-related errors at compile time, before the program runs</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Exactly! Java's static type system catches many errors at <strong>compile time</strong> &mdash; before your program ever runs. If you accidentally try to store text in a number variable or perform math on a string, the compiler will immediately tell you. This prevents bugs from reaching your users and is one of the main reasons Java is trusted for building critical systems like banking software, medical records, and government applications.</div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>Outstanding work &mdash; you just completed a major setup lesson and took your first steps into Java programming! Here is everything you accomplished:</p>
+
+      <ul>
+        <li>You learned that <strong>Java and JavaScript are completely different languages</strong> &mdash; despite the similar name, they have different origins, different syntax, and different use cases.</li>
+        <li>You discovered that <strong>Java is everywhere</strong> &mdash; it powers Android apps, enterprise systems, banking software, government applications, and some of the world's busiest websites.</li>
+        <li>You understand how Java's <strong>compile-to-bytecode-to-JVM</strong> process works, enabling the "write once, run anywhere" capability.</li>
+        <li>You installed the <strong>JDK 21</strong> on your computer and verified it with <code>java -version</code> and <code>javac -version</code>.</li>
+        <li>You set up <strong>VS Code</strong> (or an alternative editor) with Java support.</li>
+        <li>You wrote, compiled, and ran your <strong>first Java program</strong> &mdash; HelloWorld.</li>
+        <li>You learned the basic structure every Java program needs: a <strong>class</strong>, a <strong>main method</strong>, and <strong>statements</strong> inside it.</li>
+        <li>You understand Java's <strong>type system</strong>: <code>int</code>, <code>double</code>, <code>String</code>, and <code>boolean</code> &mdash; and why declaring types catches bugs early.</li>
+        <li>You saw how Java syntax <strong>compares to JavaScript</strong> and now have a reference table to help you switch between them.</li>
+      </ul>
+
+      <p>In the next lesson, we will introduce <strong>Spring Boot</strong> &mdash; the framework that makes Java practical and powerful for building modern web applications and APIs. You will see how everything you just learned connects to building real-world backend services. See you there!</p>
+
+    </div>
+
+    <!-- Mark Complete -->
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="java-spring" data-lesson="11-setting-up-java">Mark Complete</button>
+    </div>
+
+    <!-- Lesson Navigation -->
+    <div class="lesson-nav">
+      <a href="/lessons/career/10-zero-to-employable.html" class="lesson-nav-btn">&larr; Previous: Your Path to Employment</a>
+      <a href="/lessons/java-spring/12-intro-to-spring-boot.html" class="lesson-nav-btn">Next: Intro to Spring Boot &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

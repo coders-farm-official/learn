@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 12: Intro to Spring Boot — Coders Farm</title>
+  <meta name="description" content="Create your first Spring Boot project and build your first API endpoint">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="java-spring-12-intro-to-spring-boot">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Intro to Spring Boot</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/java-spring/11-setting-up-java.html" role="menuitem">Lesson 11: Setting Up Java</a>
+      <a href="/lessons/java-spring/12-intro-to-spring-boot.html" role="menuitem">Lesson 12: Intro to Spring Boot</a>
+      <a href="/lessons/java-spring/13-contact-form-api.html" role="menuitem">Lesson 13: Contact Form API</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Java &amp; Spring Boot</a> / Intro to Spring Boot</p>
+      <p class="lesson-progress-indicator" data-track="java-spring" data-total="6" data-current="2">Lesson 2 of 6</p>
+      <h1>Intro to Spring Boot</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand what Spring Boot is and why it is popular</li>
+          <li>Create a new Spring Boot project using start.spring.io</li>
+          <li>Understand the project folder structure</li>
+          <li>Build and run your first REST endpoint</li>
+          <li>Understand the full request/response flow</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 ==================== -->
+      <h2>Part 1 &mdash; What is Spring Boot?</h2>
+
+      <p>
+        In the previous lesson, you installed Java and got comfortable running simple Java programs from the command line. That was an important first step. But if you have ever wondered how real companies like Netflix, Amazon, or your bank build the software that powers their websites and mobile apps, the answer often involves something called <strong>Spring Boot</strong>. In this lesson, you are going to learn what Spring Boot is, why developers love it, and &mdash; most importantly &mdash; you are going to build something with it yourself.
+      </p>
+
+      <p>
+        Before we talk about Spring Boot, let us quickly talk about the <strong>Spring Framework</strong>. Spring is a massive collection of tools and libraries for building Java applications. It was created back in 2003 to make Java development easier. Think of the Spring Framework as an enormous toolbox &mdash; it has a tool for virtually every job you could imagine: connecting to databases, sending emails, handling security, building web pages, and much more. The problem? That toolbox is <em>huge</em>. Setting up a Spring project from scratch used to require dozens of configuration files, and you had to manually tell Spring exactly how every piece should fit together. For beginners, it felt overwhelming.
+      </p>
+
+      <p>
+        That is where <strong>Spring Boot</strong> comes in. Spring Boot was released in 2014 to solve exactly this problem. It sits on top of the Spring Framework and handles all the tedious configuration for you automatically. Instead of spending hours writing setup files, you can have a working project in minutes. Spring Boot does not replace Spring &mdash; it makes Spring dramatically easier to use.
+      </p>
+
+      <p>
+        Here is an analogy that might help. Imagine you want to build a kitchen. Plain Java is like having access to raw materials &mdash; lumber, nails, pipes, and wire. You <em>can</em> build a kitchen, but you need to know carpentry, plumbing, and electrical work. The Spring Framework is like getting pre-cut lumber and labeled pipes &mdash; it helps, but you still need to figure out how everything connects. <strong>Spring Boot is like getting a prefab kitchen kit</strong> &mdash; the cabinets come pre-assembled, the pipes are pre-fitted, and the instructions say "just bolt it together." You still need to know what a kitchen is and how to use it, but the hard assembly work is done for you.
+      </p>
+
+      <p>
+        So why is Spring Boot so popular? Three big reasons:
+      </p>
+
+      <div class="key-concept">
+        <h4>Why Developers Love Spring Boot</h4>
+        <ol>
+          <li><strong>Convention over configuration.</strong> Spring Boot makes sensible default choices for you. Instead of configuring every detail yourself, you only need to change the settings where you disagree with the defaults. This saves an enormous amount of time.</li>
+          <li><strong>Embedded web server.</strong> Traditional Java web applications required you to install and configure a separate web server (like Apache Tomcat) on your computer. Spring Boot includes Tomcat built right into your project. When you run your application, the web server starts automatically. No extra installation needed.</li>
+          <li><strong>Starter dependencies.</strong> Need to build a web API? Just add the "Spring Web" starter, and Spring Boot pulls in everything you need. Need a database? Add the "Spring Data JPA" starter. These starters are pre-packaged bundles of libraries that work together, so you never have to hunt down individual pieces.</li>
+        </ol>
+      </div>
+
+      <p>
+        What kinds of things can you build with Spring Boot? Quite a lot, actually. The most common use cases include <strong>REST APIs</strong> (the backend services that mobile apps and websites talk to), <strong>web applications</strong> (full websites with server-rendered pages), and <strong>microservices</strong> (small, focused services that work together to form a larger system). Many of the apps you use every day have Spring Boot running behind the scenes.
+      </p>
+
+      <p>
+        Here is the exciting part: remember the contact form you built in the earlier web basics lessons? That form had HTML fields for a name, email, and message, and you probably used JavaScript to handle the front end. But when someone clicks "Submit," where does that data actually <em>go</em>? Right now, it goes nowhere &mdash; there is no server to receive it. Over the next few lessons, you are going to build a real backend server with Spring Boot that can receive that form data, process it, and send back a response. By the end of this track, your contact form will actually work end to end.
+      </p>
+
+      <p>
+        But we are getting ahead of ourselves. Today, we start small. You are going to create your very first Spring Boot project, understand how it is organized, and build a simple endpoint that responds when you visit a URL in your browser. This is the foundation that everything else will be built on.
+      </p>
+
+      <p>
+        One more thing before we dive in: you do <strong>not</strong> need to be a Java expert to follow along. If you completed the previous lesson and can write basic Java code (variables, methods, classes), you have enough knowledge. Spring Boot handles much of the complexity, and we will explain every new concept as it comes up. Let us get started.
+      </p>
+
+      <!-- ==================== PART 2 ==================== -->
+      <h2>Part 2 &mdash; Creating Your First Spring Boot Project</h2>
+
+      <p>
+        One of the best things about Spring Boot is that the team behind it built an incredible tool for generating new projects. It is called the <strong>Spring Initializr</strong>, and it lives at <a href="https://start.spring.io" target="_blank" rel="noopener">start.spring.io</a>. Think of it as a project generator &mdash; you tell it what kind of application you want to build, pick a few options, and it creates a ready-to-go project for you as a downloadable zip file. No manual setup required.
+      </p>
+
+      <p>
+        Open your web browser and navigate to <strong>start.spring.io</strong>. You will see a form with several options. Let us walk through each one carefully. Do not worry if some of these terms are unfamiliar &mdash; we will explain each one.
+      </p>
+
+      <p>
+        <strong>Project type:</strong> You will see two options &mdash; <em>Maven</em> and <em>Gradle</em>. Select <strong>Maven</strong>. Maven is a build tool for Java projects. It manages your project's dependencies (the external libraries your project uses) and handles compiling and running your code. Think of Maven as a project manager that keeps everything organized. We choose Maven because it is the most common choice for beginners and has excellent documentation.
+      </p>
+
+      <p>
+        <strong>Language:</strong> Select <strong>Java</strong>. Spring Boot also supports Kotlin and Groovy, but since we have been learning Java, we will stick with it.
+      </p>
+
+      <p>
+        <strong>Spring Boot version:</strong> Select the latest <strong>stable</strong> version. At the time of writing, this is 3.4.x. Avoid any version labeled "SNAPSHOT" or "M1" or "RC" &mdash; those are pre-release versions that might have bugs. The stable version (without any suffix) is the one you want.
+      </p>
+
+      <p>
+        <strong>Project Metadata:</strong> This section describes your project. Fill it in exactly like this:
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Field</th>
+            <th>Value</th>
+            <th>What It Means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Group</td>
+            <td><code>org.codersfarm</code></td>
+            <td>Your organization's identifier, written in reverse domain name format. This helps prevent naming conflicts with other projects around the world.</td>
+          </tr>
+          <tr>
+            <td>Artifact</td>
+            <td><code>contact-api</code></td>
+            <td>The name of your project. This becomes the name of the generated zip file and the project folder.</td>
+          </tr>
+          <tr>
+            <td>Name</td>
+            <td><code>contact-api</code></td>
+            <td>A human-readable name for your project. Usually the same as the artifact.</td>
+          </tr>
+          <tr>
+            <td>Description</td>
+            <td><code>Contact form API for Coders Farm</code></td>
+            <td>A short description of what this project does.</td>
+          </tr>
+          <tr>
+            <td>Package name</td>
+            <td><code>org.codersfarm.contactapi</code></td>
+            <td>The base Java package for your code. This is automatically generated from the Group and Artifact fields.</td>
+          </tr>
+          <tr>
+            <td>Packaging</td>
+            <td><code>Jar</code></td>
+            <td>The format of your final build output. Jar (Java Archive) is the standard for Spring Boot.</td>
+          </tr>
+          <tr>
+            <td>Java version</td>
+            <td><code>21</code></td>
+            <td>The version of Java your project will use. Select 21, which is the latest Long-Term Support (LTS) release.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        <strong>Dependencies:</strong> This is where you tell Spring Boot what features your project needs. On the right side of the page, click the <strong>"Add Dependencies"</strong> button (or press Ctrl+B). A search box will appear. Type <strong>"Spring Web"</strong> and select it from the list. This single dependency gives your project everything it needs to build web applications and REST APIs, including the embedded Tomcat web server.
+      </p>
+
+      <p>
+        For now, that is the only dependency we need. In future lessons, we will add more (like database support), but for today Spring Web is all we need to get started.
+      </p>
+
+      <p>
+        Double-check that everything looks correct, then click the big <strong>"Generate"</strong> button at the bottom of the page. Your browser will download a file called <code>contact-api.zip</code>. Find that file in your Downloads folder and unzip it. You should now have a folder called <code>contact-api</code>.
+      </p>
+
+      <p>
+        Now open this project in your code editor. If you are using <strong>VS Code</strong>, you can open a terminal, navigate to the folder, and type <code>code .</code> to open the entire project. If you are using <strong>IntelliJ IDEA</strong>, choose "Open" from the welcome screen and select the <code>contact-api</code> folder. IntelliJ will automatically detect that it is a Maven project and begin importing the dependencies. This might take a minute or two the first time as it downloads everything.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> The very first time you open a Spring Boot project, your IDE may need to download many files. This is normal. Maven is fetching all the libraries your project depends on and storing them in a local cache on your computer. Future projects will be faster because the libraries are already downloaded.
+      </div>
+
+      <!-- ==================== PART 3 ==================== -->
+      <h2>Part 3 &mdash; Understanding the Project Structure</h2>
+
+      <p>
+        Now that you have your project open in your editor, let us take a tour of the files and folders that Spring Initializr generated for you. Understanding this structure is important because every Spring Boot project follows the same layout. Once you learn it, you will feel at home in any Spring Boot project you encounter.
+      </p>
+
+      <p>
+        At the top level of your <code>contact-api</code> folder, you will see several files and directories. Let us go through the most important ones.
+      </p>
+
+      <p>
+        <strong><code>pom.xml</code></strong> &mdash; This is the most important configuration file in your project. POM stands for "Project Object Model," and this file tells Maven everything it needs to know about your project: its name, its version, and most critically, its <strong>dependencies</strong> (the external libraries it needs). If you have done any JavaScript development, think of <code>pom.xml</code> as the Java equivalent of <code>package.json</code>. When you selected "Spring Web" on start.spring.io, it added an entry to this file. Maven reads this file and automatically downloads all the required libraries for you.
+      </p>
+
+      <p>
+        <strong><code>src/main/java</code></strong> &mdash; This is where all of your Java source code lives. Inside this directory, you will find a folder structure that matches your package name: <code>org/codersfarm/contactapi/</code>. Every Java class you write for this project will go somewhere inside this directory. This is where you will spend most of your time.
+      </p>
+
+      <p>
+        <strong><code>src/main/resources</code></strong> &mdash; This directory holds configuration files and other non-Java resources. The most important file here is <code>application.properties</code> (or <code>application.yml</code>). This is where you configure your application's settings, like which port the web server should run on, database connection details, and other runtime options. Right now, this file is empty, and that is perfectly fine &mdash; Spring Boot's defaults work great out of the box.
+      </p>
+
+      <p>
+        <strong><code>src/test/java</code></strong> &mdash; This is where your test code goes. Spring Initializr even generated a basic test file for you. We will not focus on testing in this lesson, but it is good to know that Spring Boot projects have a dedicated place for tests right from the start.
+      </p>
+
+      <p>
+        <strong><code>mvnw</code> and <code>mvnw.cmd</code></strong> &mdash; These are the Maven Wrapper scripts. The <code>mvnw</code> file is for Mac and Linux, and <code>mvnw.cmd</code> is for Windows. These scripts let you run Maven commands without having Maven installed globally on your computer. The wrapper automatically downloads and uses the correct version of Maven for your project. This is extremely convenient and ensures everyone on a team uses the same Maven version.
+      </p>
+
+      <p>
+        Now let us look at the most important file in the entire project &mdash; the main application class. Open the file at <code>src/main/java/org/codersfarm/contactapi/ContactApiApplication.java</code>:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class ContactApiApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(ContactApiApplication.class, args);
+    }
+
+}</code></pre>
+      </div>
+
+      <p>
+        This tiny file is the <strong>entry point</strong> for your entire application. Let us break it down line by line.
+      </p>
+
+      <p>
+        The <code>package</code> line at the top declares which package this class belongs to. The two <code>import</code> statements bring in classes from the Spring Boot library that we need. Then we have the class declaration itself: <code>public class ContactApiApplication</code>. This is just a regular Java class with a <code>main</code> method &mdash; the same <code>main</code> method you have seen in every Java program.
+      </p>
+
+      <p>
+        The magic is in the <code>@SpringBootApplication</code> annotation sitting above the class. This single annotation does three important things behind the scenes: it enables <strong>auto-configuration</strong> (Spring Boot automatically sets up your application based on the dependencies you added), it enables <strong>component scanning</strong> (Spring Boot automatically finds and registers all of your classes that have special annotations), and it marks this class as a <strong>configuration source</strong>. You do not need to memorize all of that right now. Just remember: <code>@SpringBootApplication</code> is the annotation that tells Spring Boot "this is where my application starts, please set everything up for me."
+      </p>
+
+      <p>
+        Inside the <code>main</code> method, the single line <code>SpringApplication.run(ContactApiApplication.class, args)</code> starts the entire Spring Boot application. It boots up the embedded Tomcat web server, applies all the auto-configuration, scans for your code, and gets everything ready to handle web requests. All of that happens in one line.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>Key Insight:</strong> Annotations in Java are the <code>@</code> symbols you see above classes and methods (like <code>@SpringBootApplication</code>). They are special markers that provide extra information about your code. Spring Boot reads these annotations and uses them to automatically configure your application. You will see many more annotations throughout this track.
+      </div>
+
+      <!-- ==================== PART 4 ==================== -->
+      <h2>Part 4 &mdash; Your First Endpoint</h2>
+
+      <p>
+        Now it is time to build something you can actually see in your browser. You are going to create your first <strong>REST endpoint</strong> &mdash; a URL that your application responds to. When someone visits that URL, your application will send back a message. This is the fundamental building block of every web API.
+      </p>
+
+      <p>
+        In Spring Boot, you create endpoints by writing a special kind of class called a <strong>controller</strong>. A controller is a class whose job is to handle incoming web requests and send back responses. Think of it like a receptionist at an office &mdash; when a visitor (a web request) arrives, the receptionist (the controller) figures out what they need and gives them an answer (the response).
+      </p>
+
+      <p>
+        Create a new file inside the <code>src/main/java/org/codersfarm/contactapi/</code> folder and name it <code>HelloController.java</code>. Type the following code into that file:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class HelloController {
+
+    @GetMapping("/hello")
+    public String sayHello() {
+        return "Hello from Spring Boot!";
+    }
+
+}</code></pre>
+      </div>
+
+      <p>
+        This is just 13 lines of code, but there is a lot happening here. Let us go through every part.
+      </p>
+
+      <p>
+        <strong><code>@RestController</code></strong> &mdash; This annotation sits above the class declaration and tells Spring Boot two things. First, this class is a <strong>controller</strong> &mdash; it handles web requests. Second, the "Rest" part means that whatever your methods return will be sent directly as the response body. In other words, if your method returns a String, that exact string is what the person making the request will see. Without this annotation, Spring Boot would not know that this class is supposed to handle web traffic.
+      </p>
+
+      <p>
+        <strong><code>@GetMapping("/hello")</code></strong> &mdash; This annotation sits above the <code>sayHello</code> method and tells Spring Boot: "When someone sends a GET request to the path <code>/hello</code>, run this method." The word "GET" refers to the HTTP method &mdash; it is the same type of request your browser makes every time you visit a web page. The <code>"/hello"</code> part is the URL path. So when you combine your server address with this path, you get <code>http://localhost:8080/hello</code>.
+      </p>
+
+      <p>
+        <strong><code>public String sayHello()</code></strong> &mdash; This is a regular Java method. It takes no arguments and returns a String. Because this class is annotated with <code>@RestController</code>, Spring Boot will take whatever this method returns and send it back as the HTTP response. In this case, anyone who visits <code>/hello</code> will see the text "Hello from Spring Boot!" in their browser.
+      </p>
+
+      <div class="callout callout-warning">
+        <strong>Important:</strong> Make sure your <code>HelloController.java</code> file is in the <strong>same package</strong> as your <code>ContactApiApplication.java</code> file (or a sub-package of it). Spring Boot's component scanning starts at the package where <code>@SpringBootApplication</code> lives and scans downward. If your controller is in a completely different package, Spring Boot will not find it, and your endpoint will not work.
+      </div>
+
+      <p>
+        Now let us run the application and see it in action. Open a terminal and navigate to your project's root folder (the <code>contact-api</code> directory that contains the <code>pom.xml</code> file). Then run one of the following commands depending on your operating system:
+      </p>
+
+      <p><strong>Mac or Linux:</strong></p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>./mvnw spring-boot:run</code></pre>
+      </div>
+
+      <p><strong>Windows:</strong></p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>mvnw.cmd spring-boot:run</code></pre>
+      </div>
+
+      <p>
+        The first time you run this, it may take a minute or two. Maven needs to download dependencies and compile your code. You will see a lot of text scrolling in the terminal. Watch for a line near the end that says something like:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>Tomcat started on port 8080 (http) with context path '/'
+Started ContactApiApplication in 2.345 seconds</code></pre>
+      </div>
+
+      <p>
+        When you see that message, your application is running. The embedded Tomcat web server is live and listening for requests on port 8080. Now open your web browser and navigate to:
+      </p>
+
+      <p style="text-align: center; font-size: 1.25em;">
+        <strong><code>http://localhost:8080/hello</code></strong>
+      </p>
+
+      <p>
+        You should see the text <strong>"Hello from Spring Boot!"</strong> displayed in your browser. Congratulations &mdash; you have just built and run your first Spring Boot endpoint! That text came from your <code>sayHello()</code> method inside <code>HelloController.java</code>.
+      </p>
+
+      <p>
+        Let us take a moment to appreciate what just happened. You wrote a Java class with a single method, added two annotations, ran a command, and now you have a live web server responding to HTTP requests. No XML configuration files. No installing and configuring Tomcat separately. No complicated deployment steps. This is the power of Spring Boot.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> To stop the running application, go back to your terminal and press <strong>Ctrl+C</strong>. This shuts down the embedded Tomcat server. You will need to re-run the command each time you want to start the application again. (In a future lesson, we will look at tools that automatically restart the server when you change your code.)
+      </div>
+
+      <p>
+        Want to try something? While the application is still running, try visiting <code>http://localhost:8080/</code> (without the <code>/hello</code> path). You will see an error page that says "Whitelabel Error Page" with a 404 status. This is because you only defined one endpoint at <code>/hello</code>. Spring Boot does not know what to do with a request to <code>/</code>, so it returns a "Not Found" error. This is expected behavior and shows that your application is only responding to the routes you have explicitly defined.
+      </p>
+
+      <!-- ==================== PART 5 ==================== -->
+      <h2>Part 5 &mdash; How It All Connects</h2>
+
+      <p>
+        Now that you have seen it work, let us slow down and trace the complete journey of a request from your browser to your code and back. Understanding this flow is crucial because every single web application &mdash; whether it is a simple portfolio site or a massive e-commerce platform &mdash; follows this same basic pattern.
+      </p>
+
+      <div class="key-concept">
+        <h4>The Request/Response Flow</h4>
+        <ol>
+          <li><strong>You type a URL in your browser.</strong> When you enter <code>http://localhost:8080/hello</code> and press Enter, your browser creates an HTTP GET request and sends it to <code>localhost</code> (your own computer) on port <code>8080</code>.</li>
+          <li><strong>The embedded Tomcat server receives the request.</strong> Spring Boot's built-in Tomcat web server is listening on port 8080. It accepts the incoming request and passes it along to the Spring framework for processing.</li>
+          <li><strong>Spring routes the request to the correct controller.</strong> Spring looks at the request path (<code>/hello</code>) and the HTTP method (<code>GET</code>). It searches through all of your controller classes for a method annotated with <code>@GetMapping("/hello")</code>. It finds a match in your <code>HelloController</code> class.</li>
+          <li><strong>Your method runs.</strong> Spring calls the <code>sayHello()</code> method. The method executes and returns the String <code>"Hello from Spring Boot!"</code>.</li>
+          <li><strong>Spring sends the response back.</strong> Because the class is marked with <code>@RestController</code>, Spring takes the returned String, wraps it in an HTTP response with a 200 (OK) status code, and sends it back through Tomcat to your browser.</li>
+          <li><strong>Your browser displays the result.</strong> The browser receives the response and renders the text on screen. The entire round trip typically takes just a few milliseconds.</li>
+        </ol>
+      </div>
+
+      <p>
+        This six-step flow &mdash; request in, route to controller, execute method, response out &mdash; is the heartbeat of every Spring Boot application. Every feature you build in the future will be a variation of this pattern. Sometimes the method will read data from a database before returning. Sometimes it will accept data from the request body (like a contact form submission). Sometimes it will return JSON instead of plain text. But the underlying flow is always the same.
+      </p>
+
+      <p>
+        It is worth noting how much Spring Boot is doing for you behind the scenes. Without Spring Boot, you would have to manually configure Tomcat, write code to parse HTTP requests, set up a routing system, handle serialization, manage error responses, and much more. Spring Boot handles all of this automatically, letting you focus on the code that matters &mdash; your business logic inside the controller methods.
+      </p>
+
+      <p>
+        Let us put this in the context of what you are building. Remember the contact form from the web basics lessons? When a user fills out that form and clicks "Submit," the browser will send an HTTP POST request to your Spring Boot server. Your server will have a controller that receives the form data (name, email, message), validates it, stores it, and sends back a response confirming the submission. That is exactly the same pattern you just learned, just with a few more steps.
+      </p>
+
+      <p>
+        Right now, your <code>HelloController</code> only has one endpoint. But a real application will have many controllers, each responsible for a different part of your API. You might have a <code>ContactController</code> for handling contact form submissions, a <code>UserController</code> for managing user accounts, and so on. Spring Boot makes it easy to organize your code this way.
+      </p>
+
+      <p>
+        In the next lesson, you will take what you learned today and build something real: a <strong>Contact Form API</strong>. You will create an endpoint that accepts POST requests with JSON data, validates the input, and sends back a structured response. That is a huge step toward making your contact form fully functional. Everything you learned in this lesson &mdash; the project setup, the annotations, the request flow &mdash; is the foundation you will build on.
+      </p>
+
+      <div class="callout callout-info">
+        <strong>What to explore on your own:</strong> Before moving on, try adding a second endpoint to your <code>HelloController</code>. For example, add a method with <code>@GetMapping("/goodbye")</code> that returns <code>"Goodbye from Spring Boot!"</code>. Restart your application and visit <code>http://localhost:8080/goodbye</code> in your browser. Getting comfortable adding endpoints is the best practice you can do right now.
+      </div>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Quiz &mdash; Check Your Understanding</h2>
+
+      <div class="quiz-question" data-id="spring-intro-q1">
+        <p><strong>Question 1:</strong> What does Spring Boot provide that plain Java does not?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="spring-intro-q1" value="a"> A faster programming language</label>
+          <label><input type="radio" name="spring-intro-q1" value="b"> Auto-configuration and an embedded web server</label>
+          <label><input type="radio" name="spring-intro-q1" value="c"> A different syntax for writing Java code</label>
+          <label><input type="radio" name="spring-intro-q1" value="d"> A graphical user interface builder</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> Spring Boot provides auto-configuration (it automatically sets up your application based on your dependencies) and an embedded web server (Tomcat), so you do not need to install or configure these things yourself. Plain Java does not include any of these features out of the box.</p>
+        </div>
+      </div>
+
+      <div class="quiz-question" data-id="spring-intro-q2">
+        <p><strong>Question 2:</strong> What annotation marks a class as a REST API controller?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="spring-intro-q2" value="a"> @SpringBootApplication</label>
+          <label><input type="radio" name="spring-intro-q2" value="b"> @GetMapping</label>
+          <label><input type="radio" name="spring-intro-q2" value="c"> @RestController</label>
+          <label><input type="radio" name="spring-intro-q2" value="d"> @Controller</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: C.</strong> The <code>@RestController</code> annotation tells Spring Boot that this class handles incoming HTTP requests and that the return values of its methods should be sent directly as response bodies. This is what you use when building REST APIs.</p>
+        </div>
+      </div>
+
+      <div class="quiz-question" data-id="spring-intro-q3">
+        <p><strong>Question 3:</strong> What URL would you visit to see the output of <code>@GetMapping("/hello")</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="spring-intro-q3" value="a"> http://spring.io/hello</label>
+          <label><input type="radio" name="spring-intro-q3" value="b"> http://localhost:8080/hello</label>
+          <label><input type="radio" name="spring-intro-q3" value="c"> http://localhost:3000/hello</label>
+          <label><input type="radio" name="spring-intro-q3" value="d"> http://localhost:8080/GetMapping/hello</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> Spring Boot's embedded Tomcat server runs on port 8080 by default. The <code>@GetMapping("/hello")</code> annotation maps GET requests at the <code>/hello</code> path, so the full URL is <code>http://localhost:8080/hello</code>.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="java-spring" data-lesson="12-intro-to-spring-boot">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/java-spring/11-setting-up-java.html" class="lesson-nav-btn">&larr; Previous: Setting Up Java</a>
+      <a href="/lessons/java-spring/13-contact-form-api.html" class="lesson-nav-btn">Next: Building the Contact Form API &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
