@@ -112,8 +112,7 @@ const Quiz = (() => {
       answerEl.classList.add(isCorrect ? 'correct' : 'incorrect');
 
       if (!isCorrect) {
-        const originalText = answerEl.textContent;
-        answerEl.textContent = 'Not quite. ' + originalText;
+        answerEl.innerHTML = 'Not quite. ' + answerEl.innerHTML;
       }
     }
 
@@ -142,8 +141,7 @@ const Quiz = (() => {
       answerEl.classList.add('visible');
       answerEl.classList.add(wasCorrect ? 'correct' : 'incorrect');
       if (!wasCorrect) {
-        const originalText = answerEl.textContent;
-        answerEl.textContent = 'Not quite. ' + originalText;
+        answerEl.innerHTML = 'Not quite. ' + answerEl.innerHTML;
       }
     }
 
