@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v1';
+const CACHE_NAME = 'cf-cache-v2';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -24,7 +24,16 @@ const APP_SHELL = [
   '/js/quiz.js',
   '/js/lessons.js',
   '/assets/images/codersfarm-logo.svg',
-  '/manifest.json'
+  '/manifest.json',
+  '/lessons/career/manifest.json',
+  '/lessons/java-spring/manifest.json',
+  '/lessons/career/10-zero-to-employable.html',
+  '/lessons/java-spring/11-setting-up-java.html',
+  '/lessons/java-spring/12-intro-to-spring-boot.html',
+  '/lessons/java-spring/13-contact-form-api.html',
+  '/lessons/java-spring/14-adding-sqlite.html',
+  '/lessons/java-spring/15-validation-and-crud.html',
+  '/lessons/java-spring/16-whats-next.html'
 ];
 
 // Monaco Editor core files to pre-cache
