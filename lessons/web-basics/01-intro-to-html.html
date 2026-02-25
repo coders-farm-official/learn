@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro to HTML — Coders Farm</title>
+  <meta name="description" content="Learn what HTML is and create your first web page">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-01-intro-to-html">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Intro to HTML</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/01-intro-to-html.html" role="menuitem">Lesson 1: Intro to HTML</a>
+      <a href="/lessons/web-basics/02-html-elements.html" role="menuitem">Lesson 2: HTML Elements</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / Intro to HTML</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="1">Lesson 1 of 6</p>
+      <h1>Intro to HTML</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>What HTML is and why it matters</li>
+          <li>How web pages work in your browser</li>
+          <li>How HTML tags and elements are structured</li>
+          <li>The basic skeleton of every HTML document</li>
+          <li>How to write your very first "Hello World" web page</li>
+        </ul>
+      </div>
+
+      <!-- What is HTML? -->
+      <h2>What is HTML?</h2>
+
+      <p>Welcome to your very first coding lesson! We are thrilled to have you here. If you have never written a single line of code before, you are in exactly the right place. By the end of this lesson, you will have built your first web page &mdash; and that is something to be genuinely proud of.</p>
+
+      <p><strong>HTML</strong> stands for <strong>HyperText Markup Language</strong>. That sounds like a mouthful, so let us break it down:</p>
+
+      <ul>
+        <li><strong>HyperText</strong> means text that can link to other text. When you click a link on a website, that is hypertext in action.</li>
+        <li><strong>Markup</strong> means you are "marking up" plain text with special instructions that tell the browser how to display it &mdash; things like "this is a heading," "this is a paragraph," or "this is an image."</li>
+        <li><strong>Language</strong> simply means it is a standardized way of writing those instructions so that every browser understands them the same way.</li>
+      </ul>
+
+      <p>Here is a helpful way to think about it: imagine you are building a house. HTML is like the <strong>frame and structure</strong> of that house &mdash; the walls, the floors, the roof, the doorways. It does not handle the paint colors or the furniture arrangement (that is what CSS and JavaScript are for, which we will learn later). HTML defines <em>what</em> is on the page and how it is organized.</p>
+
+      <p>Every single website you have ever visited &mdash; Google, YouTube, Wikipedia, your favorite local Lansing restaurant's menu page &mdash; is built with HTML at its core. It is the universal foundation of the web, and learning it is the first step toward building anything online.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> You do not need to memorize everything right away. Coding is a skill you build over time through practice. Professional developers look things up constantly &mdash; and so will you. The goal right now is simply to understand the big ideas.</div>
+
+      <!-- What is a Web Page? -->
+      <h2>What is a Web Page?</h2>
+
+      <p>A web page is, at its heart, just a <strong>text file</strong>. That is it! There is nothing magical about it. It is a plain text file with a <code>.html</code> extension (like <code>index.html</code>) that your web browser &mdash; Chrome, Firefox, Safari, Edge &mdash; knows how to read and display visually.</p>
+
+      <p>When you type a web address into your browser and press Enter, your browser downloads that HTML text file from a server somewhere in the world. Then it reads through the HTML instructions and <strong>renders</strong> (draws) the page you see on your screen &mdash; the headings, paragraphs, images, links, and everything else.</p>
+
+      <p>You can actually peek behind the curtain on any website. Try this right now: go to any web page, right-click anywhere on the page, and select <strong>"View Page Source"</strong> (or press <kbd>Ctrl + U</kbd> on Windows or <kbd>Cmd + Option + U</kbd> on Mac). What you see is the raw HTML that makes that page work. It might look overwhelming right now, but by the end of this course, you will be able to read and understand much of it.</p>
+
+      <div class="callout callout-info"><strong>Note</strong> You will sometimes hear people say "HTML is not a programming language." Technically, that is true &mdash; it is a <em>markup</em> language, meaning it describes structure rather than performing calculations or logic. But do not let that discourage you. HTML is absolutely real coding, and it is the essential first skill every web developer learns.</div>
+
+      <!-- HTML Tags and Elements -->
+      <h2>HTML Tags and Elements</h2>
+
+      <p>HTML uses <strong>tags</strong> to tell the browser what each piece of content is. Tags are special keywords surrounded by angle brackets: <code>&lt;</code> and <code>&gt;</code>.</p>
+
+      <p>Most HTML tags come in <strong>pairs</strong> &mdash; an <strong>opening tag</strong> and a <strong>closing tag</strong>:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;p&gt;This is a paragraph.&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>Let us break that down:</p>
+
+      <ul>
+        <li><code>&lt;p&gt;</code> is the <strong>opening tag</strong>. It says, "Hey browser, a paragraph is starting here."</li>
+        <li><code>This is a paragraph.</code> is the <strong>content</strong> &mdash; the actual text displayed on the page.</li>
+        <li><code>&lt;/p&gt;</code> is the <strong>closing tag</strong>. Notice the forward slash <code>/</code> before the tag name. It says, "The paragraph ends here."</li>
+      </ul>
+
+      <p>Together, the opening tag + content + closing tag make up an <strong>HTML element</strong>. Think of tags as the bookends that surround your content.</p>
+
+      <p>Here are a few common tags you will see throughout this course:</p>
+
+      <ul>
+        <li><code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code> &mdash; Headings (h1 is the largest, h6 is the smallest)</li>
+        <li><code>&lt;p&gt;</code> &mdash; Paragraph</li>
+        <li><code>&lt;a&gt;</code> &mdash; A link (anchor)</li>
+        <li><code>&lt;img&gt;</code> &mdash; An image</li>
+        <li><code>&lt;ul&gt;</code> and <code>&lt;li&gt;</code> &mdash; An unordered (bulleted) list and its items</li>
+      </ul>
+
+      <p>Some tags are <strong>self-closing</strong>, meaning they do not need a closing tag because they do not wrap around content. For example, the image tag:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;img src="photo.jpg" alt="A description of the photo"&gt;</code></pre>
+      </div>
+
+      <p>The <code>&lt;img&gt;</code> tag does not have a <code>&lt;/img&gt;</code> closing tag &mdash; it stands on its own because it does not contain text content. Instead, it uses <strong>attributes</strong> (like <code>src</code> and <code>alt</code>) to provide information about the image.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Do not worry about memorizing every tag right now. We will introduce new tags gradually throughout the course. For now, just understand the pattern: opening tag, content, closing tag.</div>
+
+      <!-- Basic Document Structure -->
+      <h2>Basic Document Structure</h2>
+
+      <p>Every HTML page follows the same basic structure &mdash; a kind of skeleton that tells the browser what it is working with. Let us walk through each part:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="true">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;My First Page&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello!&lt;/h1&gt;
+  &lt;p&gt;Welcome to my page.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>Here is what each part does:</p>
+
+      <ul>
+        <li><code>&lt;!DOCTYPE html&gt;</code> &mdash; This is a declaration (not a tag) that tells the browser, "This document is written in modern HTML5." You put it at the very top of every HTML file. Think of it as a label on the outside of a package that says what is inside.</li>
+        <li><code>&lt;html lang="en"&gt;</code> &mdash; This is the root element that wraps everything on the page. The <code>lang="en"</code> attribute tells the browser the page is written in English, which helps screen readers and search engines.</li>
+        <li><code>&lt;head&gt;</code> &mdash; The head section contains information <em>about</em> the page that the user does not see directly. Things like the page title, links to stylesheets, and metadata go here. Think of it as the backstage area of a theater.</li>
+        <li><code>&lt;title&gt;</code> &mdash; This sets the text that appears in the browser tab. Try changing it in the example above and notice how it would affect what you see at the top of your browser.</li>
+        <li><code>&lt;body&gt;</code> &mdash; This is where all the <strong>visible content</strong> goes &mdash; everything the user actually sees on the page. Headings, paragraphs, images, links, and all other content live inside the body. This is the stage where the performance happens.</li>
+      </ul>
+
+      <div class="callout callout-info"><strong>Note</strong> Every HTML page you create throughout this course (and in your future career!) will start with this same basic skeleton. It is worth getting comfortable with it now. Before long, typing it out will feel as natural as writing your name.</div>
+
+      <!-- Your First "Hello World" Page -->
+      <h2>Your First "Hello World" Page</h2>
+
+      <p>Now it is your turn! A "Hello World" page is a time-honored tradition in programming &mdash; it is the simplest possible program or page you can create, and it proves that everything is working. Every developer started here, and now so do you.</p>
+
+      <p>Use the interactive editor below to build a complete HTML page. We have given you a starting point. Try the following:</p>
+
+      <ol>
+        <li>Change the text inside the <code>&lt;title&gt;</code> tag to something personal, like your name.</li>
+        <li>Change the heading text inside the <code>&lt;h1&gt;</code> tag.</li>
+        <li>Edit the paragraph text inside the <code>&lt;p&gt;</code> tag to say anything you like.</li>
+        <li>Try adding a second paragraph below the first one using another <code>&lt;p&gt;</code> tag.</li>
+        <li>Click <strong>Run</strong> to see your page come to life!</li>
+      </ol>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;Hello World&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Hello World!&lt;/h1&gt;
+  &lt;p&gt;This is my very first web page. I built this!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Do not be afraid to experiment! You cannot break anything here. Try changing the text, adding new lines, or even deleting parts to see what happens. Experimenting is one of the best ways to learn. If something goes wrong, you can always reload the page to start fresh.</div>
+
+      <p>Congratulations &mdash; you just built your first web page! That block of code you see above is real, valid HTML. Every website on the internet started from something just like this. Take a moment to appreciate what you just did. You told a computer exactly how to display content, and it listened. That is what coding is all about.</p>
+
+      <!-- Knowledge Check -->
+      <h2>Knowledge Check</h2>
+
+      <p>Let us see how much you picked up from this lesson. Do not worry &mdash; these are just for practice, and you can try as many times as you like.</p>
+
+      <div class="quiz" data-id="html-basics-q1">
+        <p class="quiz-question">1. What does HTML stand for?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-basics-q1" value="a"> Hyper Transfer Markup Language</label>
+          <label><input type="radio" name="html-basics-q1" value="b"> HyperText Markup Language</label>
+          <label><input type="radio" name="html-basics-q1" value="c"> High-Tech Modern Language</label>
+          <label><input type="radio" name="html-basics-q1" value="d"> Home Tool Markup Language</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! HTML stands for <strong>HyperText Markup Language</strong>. "HyperText" refers to text that links to other text, and "Markup Language" means it uses tags to describe the structure of content.</div>
+      </div>
+
+      <div class="quiz" data-id="html-basics-q2">
+        <p class="quiz-question">2. Which tag is used to define the visible content of a web page?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-basics-q2" value="a"> <code>&lt;head&gt;</code></label>
+          <label><input type="radio" name="html-basics-q2" value="b"> <code>&lt;title&gt;</code></label>
+          <label><input type="radio" name="html-basics-q2" value="c"> <code>&lt;body&gt;</code></label>
+          <label><input type="radio" name="html-basics-q2" value="d"> <code>&lt;html&gt;</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is right! The <code>&lt;body&gt;</code> tag contains everything the user can see on the page &mdash; headings, paragraphs, images, links, and more. The <code>&lt;head&gt;</code> tag holds behind-the-scenes information that is not displayed directly.</div>
+      </div>
+
+      <div class="quiz" data-id="html-basics-q3">
+        <p class="quiz-question">3. What is the correct way to close an HTML paragraph tag?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-basics-q3" value="a"> <code>&lt;p/&gt;</code></label>
+          <label><input type="radio" name="html-basics-q3" value="b"> <code>&lt;/p&gt;</code></label>
+          <label><input type="radio" name="html-basics-q3" value="c"> <code>&lt;p end&gt;</code></label>
+          <label><input type="radio" name="html-basics-q3" value="d"> <code>&lt;close p&gt;</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly! Closing tags use a forward slash before the tag name: <code>&lt;/p&gt;</code>. This tells the browser where the element ends. Remember the pattern: <code>&lt;tag&gt;</code> to open, <code>&lt;/tag&gt;</code> to close.</div>
+      </div>
+
+      <!-- Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>Great work making it through your first lesson! Here is a quick recap of what you learned:</p>
+
+      <ul>
+        <li><strong>HTML</strong> (HyperText Markup Language) is the standard language for creating web pages. It defines the structure and content of every page on the internet.</li>
+        <li>A <strong>web page</strong> is simply a text file with HTML instructions that a browser reads and displays.</li>
+        <li>HTML uses <strong>tags</strong> that come in pairs (opening and closing) to wrap around content and create <strong>elements</strong>.</li>
+        <li>Every HTML page has the same basic <strong>skeleton</strong>: a DOCTYPE declaration, an <code>&lt;html&gt;</code> root element, a <code>&lt;head&gt;</code> for metadata, and a <code>&lt;body&gt;</code> for visible content.</li>
+        <li>You built your very first <strong>Hello World</strong> web page &mdash; and that is a real accomplishment!</li>
+      </ul>
+
+      <p>In the next lesson, we will dive deeper into the most common HTML elements &mdash; headings, paragraphs, links, images, and lists &mdash; so you can start building pages with richer content. See you there!</p>
+
+    </div>
+
+    <!-- Mark Complete -->
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="01-intro-to-html">Mark Complete</button>
+    </div>
+
+    <!-- Lesson Navigation -->
+    <div class="lesson-nav">
+      <span class="lesson-nav-btn hidden"></span>
+      <a href="/lessons/web-basics/02-html-elements.html" class="lesson-nav-btn">Next: HTML Elements &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro to JavaScript — Coders Farm</title>
+  <meta name="description" content="Learn what JavaScript is, variables, data types, and console.log">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-05-intro-to-js">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">lt;/</text><text x="49" y="39" font-family="monospace" font-weight="700" font-size="11" fill="#4ec9b0">/<img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">gt;</text><text x="40" y="62" text-anchor="middle" font-family="-apple-system,sans-serif" font-weight="700" font-size="10" fill="#fff">CODERS</text><text x="40" y="73" text-anchor="middle" font-family="-apple-system,sans-serif" font-weight="700" font-size="10" fill="#4ec9b0">FARM</text></svg>
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Intro to JavaScript</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/04-css-selectors.html" role="menuitem">Lesson 4: CSS Selectors</a>
+      <a href="/lessons/web-basics/05-intro-to-js.html" role="menuitem">Lesson 5: Intro to JS</a>
+      <a href="/lessons/web-basics/06-js-basics.html" role="menuitem">Lesson 6: JS Basics</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / Intro to JavaScript</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="5">Lesson 5 of 6</p>
+      <h1>Intro to JavaScript</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>What JavaScript is and why it is the third essential language of the web</li>
+          <li>Where JavaScript runs and how to use the browser console</li>
+          <li>How to output messages with <code>console.log()</code></li>
+          <li>How to create variables with <code>let</code> and <code>const</code></li>
+          <li>The basic data types: strings, numbers, and booleans</li>
+          <li>How to work with strings and do simple math</li>
+          <li>How to write comments in your code</li>
+        </ul>
+      </div>
+
+      <!-- What is JavaScript? -->
+      <h2>What is JavaScript?</h2>
+
+      <p>Welcome to one of the most exciting lessons in this course &mdash; you are about to learn your first real <strong>programming language</strong>! Up to this point, you have been working with HTML and CSS. Those two languages are incredibly important, but they have a limitation: they can only <em>describe</em> things. HTML describes the structure of a page, and CSS describes how it looks. Neither one can actually <em>do</em> anything on its own.</p>
+
+      <p>That is where <strong>JavaScript</strong> comes in. JavaScript (often shortened to <strong>JS</strong>) is the third essential language of the web, and it is the one that brings your pages to life. Here is how the three languages work together:</p>
+
+      <ul>
+        <li><strong>HTML</strong> = <strong>Structure</strong> &mdash; The skeleton. It defines what is on the page: headings, paragraphs, images, buttons.</li>
+        <li><strong>CSS</strong> = <strong>Style</strong> &mdash; The skin and clothing. It controls how everything looks: colors, fonts, spacing, layout.</li>
+        <li><strong>JavaScript</strong> = <strong>Behavior</strong> &mdash; The muscles and brain. It makes things happen: clicking buttons, showing and hiding content, validating forms, loading new data, creating animations.</li>
+      </ul>
+
+      <p>Think about every interactive thing you have ever done on a website. Clicking a "Like" button on social media? JavaScript. A dropdown menu that opens when you hover over it? JavaScript. A form that tells you "Please enter a valid email address" before you submit it? JavaScript. A live chat widget in the bottom corner of a page? JavaScript. The autocomplete suggestions that appear as you type in a search bar? Also JavaScript.</p>
+
+      <p>Every modern website on the internet uses JavaScript. It is the most widely used programming language in the world, and learning it opens the door to building truly interactive, dynamic web experiences. This is where things get really fun.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Do not confuse JavaScript with Java &mdash; they are completely different languages! Despite the similar names, they have almost nothing in common. JavaScript was named during a time when Java was popular, and the creators thought the similar name would help with marketing. It is one of the most confusing naming decisions in tech history.</div>
+
+      <!-- Where JavaScript Runs -->
+      <h2>Where JavaScript Runs</h2>
+
+      <p>Here is something important to understand: unlike HTML and CSS, which simply describe things for the browser to display, JavaScript is a <strong>programming language</strong> that can actually <em>do</em> things. It can make decisions, perform calculations, remember information, respond to what the user does, and change the page in real time.</p>
+
+      <p>JavaScript runs right inside your <strong>web browser</strong> &mdash; the same program you use to visit websites every day. Chrome, Firefox, Safari, Edge &mdash; they all have a built-in JavaScript engine that reads and executes your code. This means you do not need to install anything special to start writing JavaScript. Your browser is already set up and ready to go.</p>
+
+      <p>Every browser also has a secret tool that developers use all the time: the <strong>browser console</strong>. The console is like a behind-the-scenes window where you can see messages from your JavaScript code, test out small pieces of code, and debug problems. You will be using it a lot in this lesson.</p>
+
+      <div class="callout callout-info"><strong>Note</strong> In the code editors throughout this lesson, when you click <strong>Run</strong>, your JavaScript output will appear in the <strong>Console tab</strong> of the output pane (not the Preview tab). Make sure to click on the Console tab after running your code to see the results!</div>
+
+      <!-- Your First JavaScript: console.log -->
+      <h2>Your First JavaScript: console.log</h2>
+
+      <p>Let us write your very first line of JavaScript! We are going to use a command called <code>console.log()</code>. This is the most fundamental tool in JavaScript &mdash; it lets you "print" or output a message so you can see it. Think of it as JavaScript's way of talking to you.</p>
+
+      <p>The word <code>console</code> refers to the browser console we just talked about, and <code>.log()</code> means "write this message to the console." You put whatever you want to display inside the parentheses.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Click <strong>Run</strong> below, then click the <strong>Console</strong> tab in the output area to see your message. After that, try changing the text inside the quotes to say something different &mdash; maybe your own name or a greeting!</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>console.log("Hello, Lansing!");</code></pre>
+        </div>
+      </div>
+
+      <p>Congratulations &mdash; you just ran your first JavaScript program! Let us break down what happened:</p>
+
+      <ul>
+        <li><code>console.log</code> &mdash; This is a built-in command that outputs a message.</li>
+        <li><code>(</code> and <code>)</code> &mdash; Parentheses wrap around the value you want to output.</li>
+        <li><code>"Hello, Lansing!"</code> &mdash; This is a <strong>string</strong> (text wrapped in quotes). We will learn more about strings soon.</li>
+        <li><code>;</code> &mdash; The semicolon marks the end of the statement, like a period at the end of a sentence.</li>
+      </ul>
+
+      <p>You can log multiple messages by writing multiple <code>console.log()</code> lines. Each one will appear on its own line in the console:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>console.log("Welcome to Coders Farm!");
+console.log("Today we are learning JavaScript.");
+console.log("This is going to be great!");</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> You will use <code>console.log()</code> constantly as a developer &mdash; not just for learning, but as a debugging tool. When something in your code is not working right, the first thing most developers do is add <code>console.log()</code> statements to figure out what is going on. It is your best friend.</div>
+
+      <!-- Variables -->
+      <h2>Variables</h2>
+
+      <p>Imagine you are filling out a name tag at a Coders Farm meetup. You write your name on the tag, and from that point on, anyone can look at the tag to know who you are. A <strong>variable</strong> in JavaScript works the same way &mdash; it is a <strong>labeled container</strong> that holds a value. You give it a name, put something inside it, and then you can use that name later to refer to the value.</p>
+
+      <p>In JavaScript, you create variables using two keywords: <code>let</code> and <code>const</code>.</p>
+
+      <h3><code>let</code> &mdash; A Variable That Can Change</h3>
+
+      <p>Use <code>let</code> when the value might need to change later. For example, a person's score in a game, the current temperature, or the number of items in a shopping cart &mdash; these can all change over time.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>let score = 0;
+console.log("Starting score:", score);
+
+score = 10;
+console.log("After earning points:", score);
+
+score = 25;
+console.log("After bonus round:", score);</code></pre>
+      </div>
+
+      <h3><code>const</code> &mdash; A Variable That Stays the Same</h3>
+
+      <p>Use <code>const</code> (short for "constant") when the value should <em>never</em> change after you set it. For example, a person's birthday, the number of days in a week, or the name of your city &mdash; these are fixed values.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>const city = "Lansing";
+const state = "Michigan";
+console.log("I live in " + city + ", " + state);
+
+// Try uncommenting the line below to see what happens:
+// city = "Detroit";</code></pre>
+      </div>
+
+      <p>If you uncomment that last line and click Run, you will see an error in the Console &mdash; JavaScript will not let you reassign a <code>const</code> variable. That is the whole point! It protects values that should not change.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> A good rule of thumb: start with <code>const</code> for everything. If you later realize you need to change the value, switch it to <code>let</code>. This habit helps you write safer, more predictable code. You will rarely need a value to change as often as you might think.</div>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Create your own variables below! Make a <code>const</code> for your name and a <code>let</code> for your favorite number. Log both to the console. Then change your favorite number and log it again.</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>const myName = "Your Name Here";
+let favoriteNumber = 7;
+
+console.log("My name is", myName);
+console.log("My favorite number is", favoriteNumber);
+
+// Now change favoriteNumber and log it again:
+favoriteNumber = 42;
+console.log("Actually, my new favorite number is", favoriteNumber);</code></pre>
+        </div>
+      </div>
+
+      <!-- Data Types -->
+      <h2>Data Types</h2>
+
+      <p>Not all values in JavaScript are the same. A person's name is different from their age, which is different from whether or not they are a student. JavaScript organizes values into different <strong>data types</strong>. Let us look at the three most important ones for beginners.</p>
+
+      <h3>Strings &mdash; Text</h3>
+
+      <p>A <strong>string</strong> is any piece of text. You create a string by wrapping text in quotes &mdash; either double quotes (<code>"hello"</code>) or single quotes (<code>'hello'</code>). Both work exactly the same way.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>let greeting = "Hello, world!";
+let name = 'Maria';
+let address = "123 Main Street, Lansing, MI";</code></pre>
+      </div>
+
+      <h3>Numbers</h3>
+
+      <p>A <strong>number</strong> is exactly what you would expect &mdash; a numeric value. Numbers do <em>not</em> use quotes. JavaScript handles both whole numbers (integers) and decimal numbers the same way.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>let age = 25;
+let temperature = 72.5;
+let population = 112644;  // Lansing's approximate population</code></pre>
+      </div>
+
+      <h3>Booleans &mdash; True or False</h3>
+
+      <p>A <strong>boolean</strong> is the simplest data type &mdash; it can only be one of two values: <code>true</code> or <code>false</code>. Booleans are incredibly useful for making decisions in your code (which we will explore in the next lesson).</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>let isStudent = true;
+let hasGraduated = false;
+let livesInMichigan = true;</code></pre>
+      </div>
+
+      <h3>Checking Types with <code>typeof</code></h3>
+
+      <p>JavaScript has a handy tool called <code>typeof</code> that tells you what type a value is. This is really useful when you are not sure what kind of data you are working with.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Run the code below and check the Console tab to see the type of each value. Then try adding your own variables and checking their types!</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>let name = "Maria";
+let age = 25;
+let isStudent = true;
+
+console.log(typeof name);       // "string"
+console.log(typeof age);        // "number"
+console.log(typeof isStudent);  // "boolean"
+
+// Two special types worth knowing about:
+let nothing = null;
+let notDefined;
+
+console.log(typeof nothing);     // "object" (a known quirk in JS!)
+console.log(typeof notDefined);  // "undefined"</code></pre>
+        </div>
+      </div>
+
+      <p>You might notice that <code>typeof null</code> says "object" instead of "null" &mdash; that is actually a famous bug in JavaScript that has existed since the very beginning of the language in 1995! It was never fixed because too many websites already depended on it. Do not worry about <code>null</code> and <code>undefined</code> too much right now &mdash; just know they exist and represent "empty" or "missing" values.</p>
+
+      <!-- String Operations -->
+      <h2>String Operations</h2>
+
+      <p>Strings are one of the data types you will work with most often, so let us learn some useful things you can do with them.</p>
+
+      <h3>Concatenation &mdash; Joining Strings Together</h3>
+
+      <p>You can join two or more strings together using the <code>+</code> operator. This is called <strong>concatenation</strong> (a fancy word that just means "putting things together").</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>let firstName = "Alex";
+let lastName = "Johnson";
+
+// Join them together with a space in between
+let fullName = firstName + " " + lastName;
+console.log(fullName);  // "Alex Johnson"
+
+// You can concatenate as many strings as you want
+console.log("Welcome, " + fullName + "! Glad you are here.");</code></pre>
+      </div>
+
+      <h3>Template Literals &mdash; A Better Way to Build Strings</h3>
+
+      <p>Concatenation with <code>+</code> works fine, but it can get messy when you have a lot of pieces to join. JavaScript has a cleaner way called <strong>template literals</strong>. Instead of regular quotes, you use <strong>backticks</strong> (<code>`</code>) &mdash; the key to the left of the number 1 on your keyboard. Inside a template literal, you can insert variables directly using <code>${variableName}</code>.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>let name = "Maria";
+let age = 28;
+let city = "Lansing";
+
+// With concatenation (the old way):
+console.log("My name is " + name + ", I am " + age + " years old, and I live in " + city + ".");
+
+// With template literals (the modern way):
+console.log(`My name is ${name}, I am ${age} years old, and I live in ${city}.`);</code></pre>
+      </div>
+
+      <p>Both lines produce the exact same output, but the template literal version is much easier to read and write. You will see template literals used constantly in modern JavaScript.</p>
+
+      <h3>Useful String Properties and Methods</h3>
+
+      <p>Strings come with built-in tools that let you do useful things. Here are two you will use often:</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Run the code below to see string properties and methods in action. Try changing the message to your own text and see how the results change!</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>let message = "Hello, Lansing!";
+
+// .length tells you how many characters are in the string
+console.log(message.length);  // 15
+
+// .toUpperCase() converts everything to capital letters
+console.log(message.toUpperCase());  // "HELLO, LANSING!"
+
+// .toLowerCase() converts everything to lowercase letters
+console.log(message.toLowerCase());  // "hello, lansing!"
+
+// You can chain them together with other operations
+let shout = message.toUpperCase();
+console.log(`${shout} has ${shout.length} characters.`);</code></pre>
+        </div>
+      </div>
+
+      <!-- Simple Math -->
+      <h2>Simple Math</h2>
+
+      <p>JavaScript is great at math. You can use it as a powerful calculator right in your code. Here are the basic math operators:</p>
+
+      <ul>
+        <li><code>+</code> &mdash; Addition</li>
+        <li><code>-</code> &mdash; Subtraction</li>
+        <li><code>*</code> &mdash; Multiplication</li>
+        <li><code>/</code> &mdash; Division</li>
+        <li><code>%</code> &mdash; Modulus (remainder after division)</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Run the code to see math in action. Try changing the numbers or adding your own calculations!</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>// Basic math operations
+console.log("Addition:", 10 + 5);        // 15
+console.log("Subtraction:", 20 - 8);     // 12
+console.log("Multiplication:", 6 * 7);   // 42
+console.log("Division:", 100 / 4);       // 25
+console.log("Remainder:", 17 % 5);       // 2
+
+// You can use variables in math too!
+let pricePerItem = 4.99;
+let quantity = 3;
+let total = pricePerItem * quantity;
+console.log(`${quantity} items at $${pricePerItem} each = $${total}`);
+
+// JavaScript follows the normal order of operations (PEMDAS)
+let result = 2 + 3 * 4;
+console.log("2 + 3 * 4 =", result);  // 14 (not 20!)
+
+// Use parentheses to change the order
+let result2 = (2 + 3) * 4;
+console.log("(2 + 3) * 4 =", result2);  // 20</code></pre>
+        </div>
+      </div>
+
+      <p>The <strong>modulus operator</strong> (<code>%</code>) might seem strange at first, but it is actually very useful. It gives you the <em>remainder</em> after dividing two numbers. For example, <code>17 % 5</code> equals <code>2</code> because 17 divided by 5 is 3 with a remainder of 2. Programmers use modulus for things like checking if a number is even or odd (<code>number % 2</code> equals 0 if the number is even).</p>
+
+      <!-- Comments -->
+      <h2>Comments</h2>
+
+      <p>As your code gets longer, it becomes important to leave notes for yourself (and for other people who might read your code). JavaScript lets you write <strong>comments</strong> &mdash; text that the computer completely ignores. Comments are only for humans to read.</p>
+
+      <p>There are two types of comments:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// This is a single-line comment.
+// Everything after // on the same line is ignored by JavaScript.
+
+let name = "Alex";  // You can also put comments at the end of a line
+
+/*
+  This is a multi-line comment.
+  It starts with /* and ends with the closing characters.
+  Everything between them is ignored.
+  Great for longer explanations!
+*/
+
+console.log("Comments do not appear in the output!");
+console.log("Only console.log messages show up here.");</code></pre>
+      </div>
+
+      <p>Good comments explain <em>why</em> you did something, not <em>what</em> you did. For example, <code>// Calculate the total price including Michigan sales tax</code> is a helpful comment. But <code>// Set x to 5</code> right above <code>let x = 5;</code> does not add any useful information &mdash; anyone can already see that from the code itself.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Comments are also a great way to temporarily "turn off" a line of code without deleting it. Just put <code>//</code> in front of the line and JavaScript will skip it. Developers call this "commenting out" a line. You already saw this trick earlier with the <code>const</code> reassignment example!</div>
+
+      <!-- Interactive Exercise -->
+      <h2>Interactive Exercise: Build a Greeting</h2>
+
+      <p>Time to put everything together! In this exercise, you will create variables for your name, age, and city, then use them to build and log a personalized greeting message. This combines variables, strings, template literals, and <code>console.log()</code> &mdash; all the key skills from this lesson.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Replace the placeholder values below with your own information, then click <strong>Run</strong> and check the <strong>Console</strong> tab to see your personalized greeting. Try adding more variables and making the greeting even more detailed!</p>
+        <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+          <pre><code>// Step 1: Create variables for your personal info
+const myName = "Your Name";
+let myAge = 25;
+const myCity = "Lansing";
+
+// Step 2: Log each piece of info
+console.log("Name:", myName);
+console.log("Age:", myAge);
+console.log("City:", myCity);
+
+// Step 3: Build a greeting using template literals
+let greeting = `Hi, my name is ${myName}. I am ${myAge} years old and I live in ${myCity}, Michigan!`;
+console.log(greeting);
+
+// Step 4: Try some fun extras!
+console.log(`My name has ${myName.length} letters.`);
+console.log(`In 10 years, I will be ${myAge + 10} years old.`);
+console.log(greeting.toUpperCase());</code></pre>
+        </div>
+      </div>
+
+      <p>If your console shows all the messages with your personalized info, you just completed your first real JavaScript program! That is a genuinely big deal &mdash; be proud of yourself.</p>
+
+      <!-- Knowledge Check -->
+      <h2>Knowledge Check</h2>
+
+      <p>Let us see how well you absorbed the material. Give each question a try &mdash; there is no pressure, and you can review the lesson and try again as many times as you like.</p>
+
+      <div class="quiz" data-id="js5-q1">
+        <p class="quiz-question">1. What is the role of JavaScript on a web page?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js5-q1" value="a"> It defines the structure of the page</label>
+          <label><input type="radio" name="js5-q1" value="b"> It styles and colors the page</label>
+          <label><input type="radio" name="js5-q1" value="c"> It adds behavior and interactivity to the page</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! HTML handles structure, CSS handles style, and <strong>JavaScript handles behavior and interactivity</strong>. It is the language that makes web pages respond to user actions, perform calculations, and update content dynamically.</div>
+      </div>
+
+      <div class="quiz" data-id="js5-q2">
+        <p class="quiz-question">2. What is the difference between <code>let</code> and <code>const</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js5-q2" value="a"> <code>let</code> is for numbers and <code>const</code> is for strings</label>
+          <label><input type="radio" name="js5-q2" value="b"> <code>let</code> creates a variable that can be reassigned; <code>const</code> creates one that cannot</label>
+          <label><input type="radio" name="js5-q2" value="c"> They are exactly the same and can be used interchangeably</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That is right! <code>let</code> creates a variable whose value can be changed (reassigned) later, while <code>const</code> creates a variable whose value is fixed and cannot be reassigned. Both can hold any data type &mdash; the difference is about whether the value can change, not what type of value it holds.</div>
+      </div>
+
+      <div class="quiz" data-id="js5-q3">
+        <p class="quiz-question">3. What will <code>console.log(typeof 42)</code> output?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js5-q3" value="a"> <code>"string"</code></label>
+          <label><input type="radio" name="js5-q3" value="b"> <code>"integer"</code></label>
+          <label><input type="radio" name="js5-q3" value="c"> <code>"number"</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Exactly! The <code>typeof</code> operator returns <code>"number"</code> for any numeric value, whether it is a whole number like 42 or a decimal like 3.14. JavaScript does not distinguish between integers and decimals &mdash; they are all just "number."</div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>Amazing work &mdash; you just took your first steps into the world of programming! Here is everything you learned in this lesson:</p>
+
+      <ul>
+        <li><strong>JavaScript</strong> is the third language of the web. HTML provides structure, CSS provides style, and JS provides <strong>behavior and interactivity</strong>.</li>
+        <li>JavaScript runs in the <strong>browser</strong>, and you can see its output in the <strong>browser console</strong>.</li>
+        <li><code>console.log()</code> is how you <strong>output messages</strong> &mdash; it is your go-to tool for seeing what your code is doing.</li>
+        <li><strong>Variables</strong> are labeled containers for values. Use <code>let</code> for values that can change and <code>const</code> for values that should stay the same.</li>
+        <li>The three core <strong>data types</strong> are <strong>strings</strong> (text in quotes), <strong>numbers</strong> (numeric values without quotes), and <strong>booleans</strong> (<code>true</code> or <code>false</code>).</li>
+        <li>You can join strings with <code>+</code> (concatenation) or use <strong>template literals</strong> with backticks and <code>${}</code> for cleaner string building.</li>
+        <li>Strings have useful built-in tools like <code>.length</code>, <code>.toUpperCase()</code>, and <code>.toLowerCase()</code>.</li>
+        <li>JavaScript handles <strong>math</strong> with <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, and <code>%</code>, and follows the standard order of operations.</li>
+        <li><strong>Comments</strong> (<code>//</code> and <code>/* */</code>) let you leave notes in your code that JavaScript ignores.</li>
+      </ul>
+
+      <p>In the next lesson, we will build on these fundamentals and dive into JavaScript basics like conditionals (making decisions in your code), functions (reusable blocks of code), and working with the DOM (using JavaScript to actually change things on the page). You are off to a great start &mdash; see you there!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="05-intro-to-js">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/web-basics/04-css-selectors.html" class="lesson-nav-btn">&larr; Previous: CSS Selectors &amp; Layout</a>
+      <a href="/lessons/web-basics/06-js-basics.html" class="lesson-nav-btn">Next: JavaScript Basics &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links"><li><a href="https://github.com/coders-farm-official">GitHub</a></li><li><a href="https://codersfarm.org">codersfarm.org</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

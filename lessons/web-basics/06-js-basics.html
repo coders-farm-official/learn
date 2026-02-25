@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JavaScript Basics — Coders Farm</title>
+  <meta name="description" content="Learn functions, conditionals, and DOM manipulation with JavaScript">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-06-js-basics">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">lt;/</text><text x="49" y="39" font-family="monospace" font-weight="700" font-size="11" fill="#4ec9b0">/<img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">gt;</text><text x="40" y="62" text-anchor="middle" font-family="-apple-system,sans-serif" font-weight="700" font-size="10" fill="#fff">CODERS</text><text x="40" y="73" text-anchor="middle" font-family="-apple-system,sans-serif" font-weight="700" font-size="10" fill="#4ec9b0">FARM</text></svg>
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">JavaScript Basics</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/05-intro-to-js.html" role="menuitem">Lesson 5: Intro to JS</a>
+      <a href="/lessons/web-basics/06-js-basics.html" role="menuitem">Lesson 6: JS Basics</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / JavaScript Basics</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="6">Lesson 6 of 6</p>
+      <h1>JavaScript Basics</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>How to write <strong>functions</strong> — reusable blocks of code that you can call whenever you need them</li>
+          <li>How to use <strong>conditionals</strong> (<code>if</code>, <code>else if</code>, <code>else</code>) to make your code make decisions</li>
+          <li>What the <strong>DOM</strong> (Document Object Model) is and how JavaScript uses it to interact with your HTML page</li>
+          <li>How to use <strong>document.querySelector</strong> to find and select elements on the page</li>
+          <li>How to <strong>change content, styles, and HTML</strong> dynamically with JavaScript</li>
+          <li>How to use <strong>addEventListener</strong> to respond to user actions like clicks and key presses</li>
+          <li>How to build a <strong>fully interactive mini-project</strong> that combines HTML, CSS, and JavaScript together</li>
+        </ul>
+      </div>
+
+      <p>Welcome to the final lesson of the Web Basics track! You have come a long way. In Lesson 5 you got your first taste of JavaScript — variables, data types, and printing messages to the console. Now it is time to level up. In this lesson you will learn how to write functions, make decisions with conditionals, and — most exciting of all — use JavaScript to actually change what appears on your web page. By the end, you will build a small interactive project that brings together everything you have learned across all six lessons. Let's go!</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 1: Functions                     -->
+      <!-- ======================================== -->
+      <h2>1. Functions: Reusable Blocks of Code</h2>
+
+      <p>Imagine you work at a coffee shop in Lansing and every time a customer walks in, you say "Welcome to the shop!" You do not re-learn how to say that greeting each time — you just <em>do</em> it automatically. A <strong>function</strong> in JavaScript works the same way. It is a named block of code that you write once and can use over and over again.</p>
+
+      <p>Here is how you create a function:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>function greet(name) {
+  return "Hello, " + name + "!";
+}</code></pre>
+      </div>
+
+      <p>Let's break that down:</p>
+
+      <ul>
+        <li><strong><code>function</code></strong> — This keyword tells JavaScript you are creating a function.</li>
+        <li><strong><code>greet</code></strong> — This is the name of the function. You choose the name.</li>
+        <li><strong><code>(name)</code></strong> — This is a <strong>parameter</strong>. It is like a placeholder. When you call the function, you pass in an actual value that takes the parameter's place.</li>
+        <li><strong><code>return</code></strong> — This sends a value back to wherever the function was called. Think of it as the function's answer.</li>
+      </ul>
+
+      <p>To <strong>call</strong> (use) the function, you write its name followed by parentheses with the value you want to pass in:</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Run the code below, then try changing the name inside the parentheses to your own name. Try calling <code>greet</code> multiple times with different names!</p>
+      </div>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>function greet(name) {
+  return "Hello, " + name + "!";
+}
+
+console.log(greet("Lansing"));
+console.log(greet("Maria"));
+console.log(greet("Coders Farm"));</code></pre>
+      </div>
+
+      <p>Functions can have <strong>multiple parameters</strong> too. Here is a function that adds two numbers together:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>function add(a, b) {
+  return a + b;
+}
+
+console.log(add(5, 3));
+console.log(add(100, 250));</code></pre>
+      </div>
+
+      <h3>Arrow Functions (A Shortcut)</h3>
+
+      <p>JavaScript also has a shorter way to write functions called <strong>arrow functions</strong>. They do the same thing but use less code. Here is the <code>greet</code> function written as an arrow function:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>const greet = (name) =&gt; "Hello, " + name + "!";</code></pre>
+      </div>
+
+      <p>The <code>=&gt;</code> symbol (called an "arrow") replaces the <code>function</code> keyword. For short, simple functions this is very convenient. You will see arrow functions everywhere in modern JavaScript. For now, just know they exist — you can stick with regular functions while you are learning.</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 2: Conditionals                  -->
+      <!-- ======================================== -->
+      <h2>2. Conditionals: Making Decisions</h2>
+
+      <p>So far, our code runs every line from top to bottom. But what if you want your code to <em>make a choice</em>? That is what <strong>conditionals</strong> are for. They let you say: "If this condition is true, do one thing. Otherwise, do something else."</p>
+
+      <p>The basic pattern looks like this:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>if (condition) {
+  // do this if the condition is true
+} else {
+  // do this if the condition is false
+}</code></pre>
+      </div>
+
+      <p>You can also chain multiple conditions with <code>else if</code>:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>if (temperature &gt; 90) {
+  console.log("It is hot outside!");
+} else if (temperature &gt; 60) {
+  console.log("Nice weather today.");
+} else {
+  console.log("Better grab a jacket!");
+}</code></pre>
+      </div>
+
+      <h3>Comparison Operators</h3>
+
+      <p>Inside the parentheses of an <code>if</code> statement, you use <strong>comparison operators</strong> to compare values:</p>
+
+      <ul>
+        <li><code>===</code> — equals (strict equality — checks both value and type)</li>
+        <li><code>!==</code> — not equals</li>
+        <li><code>&gt;</code> — greater than</li>
+        <li><code>&lt;</code> — less than</li>
+        <li><code>&gt;=</code> — greater than or equal to</li>
+        <li><code>&lt;=</code> — less than or equal to</li>
+      </ul>
+
+      <h3>Logical Operators</h3>
+
+      <p>You can combine conditions using <strong>logical operators</strong>:</p>
+
+      <ul>
+        <li><code>&amp;&amp;</code> — AND (both conditions must be true)</li>
+        <li><code>||</code> — OR (at least one condition must be true)</li>
+        <li><code>!</code> — NOT (flips true to false and false to true)</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>The function below checks if someone is old enough to vote in the United States (you must be 18 or older). Try changing the age value and running the code. What happens when you enter 18? What about 17?</p>
+      </div>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>function canVote(age) {
+  if (age &gt;= 18) {
+    return "Yes, you can vote!";
+  } else {
+    return "Not yet — you need to be 18.";
+  }
+}
+
+console.log(canVote(21));
+console.log(canVote(15));
+console.log(canVote(18));</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Why <code>===</code> instead of <code>==</code>?</strong> In JavaScript, <code>==</code> does "loose" comparison and can give surprising results (for example, <code>"5" == 5</code> is true). The triple equals <code>===</code> checks both the value <em>and</em> the type, which is safer and more predictable. Always use <code>===</code> as a beginner.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 3: The DOM                       -->
+      <!-- ======================================== -->
+      <h2>3. The DOM: Connecting JavaScript to HTML</h2>
+
+      <p>Here is where things get really exciting. So far, we have been using <code>console.log</code> to see our output. But JavaScript can do much more than print messages to a hidden console. It can actually <strong>reach into your web page and change it</strong>.</p>
+
+      <p>How? Through something called the <strong>DOM</strong>, which stands for <strong>Document Object Model</strong>.</p>
+
+      <p>When your browser loads an HTML page, it does not just display the text. It reads through all of your HTML and builds a <strong>tree of objects</strong> — a structured representation of every element on the page. That tree is the DOM. Every heading, paragraph, button, image, and link becomes an object in the tree that JavaScript can find, read, and change.</p>
+
+      <p>Think of it like this: your HTML file is like the blueprint of a house. The DOM is the actual house that the browser builds from that blueprint. JavaScript is the homeowner who can walk through the house, rearrange the furniture, repaint the walls, and add new rooms.</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 4: document.querySelector        -->
+      <!-- ======================================== -->
+      <h2>4. Selecting Elements with document.querySelector</h2>
+
+      <p>Before you can change something on the page, you need to <strong>find it</strong>. The most common way to select an element is with <code>document.querySelector()</code>. This method takes a CSS selector (just like the ones you learned in Lesson 4!) and returns the first matching element.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// Select by tag name
+document.querySelector("h1");
+
+// Select by class name (use a dot, just like CSS)
+document.querySelector(".my-class");
+
+// Select by ID (use a hash, just like CSS)
+document.querySelector("#my-id");</code></pre>
+      </div>
+
+      <p>Notice something familiar? The selectors are <em>exactly the same</em> as what you used in CSS. Your CSS knowledge is already paying off!</p>
+
+      <p>There is also <code>document.getElementById()</code>, which is a shortcut for selecting by ID:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// These two do the same thing:
+document.querySelector("#my-id");
+document.getElementById("my-id");</code></pre>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 5: Changing Content              -->
+      <!-- ======================================== -->
+      <h2>5. Changing Content on the Page</h2>
+
+      <p>Once you have selected an element, you can change it. Here are the three most important properties for changing what appears on the page:</p>
+
+      <ul>
+        <li><strong><code>.textContent</code></strong> — Changes the text inside an element. This is the safest option for plain text.</li>
+        <li><strong><code>.innerHTML</code></strong> — Changes the HTML inside an element. Use this when you want to insert tags like <code>&lt;strong&gt;</code> or <code>&lt;em&gt;</code>.</li>
+        <li><strong><code>.style</code></strong> — Changes the CSS styles of an element directly. For example, <code>element.style.color = "red";</code> changes the text color to red.</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>The example below shows all three in action. Run it to see the heading change. Then try modifying the JavaScript to change the text, HTML, or styles to something different!</p>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h1 id="demo-heading"&gt;I am the original heading.&lt;/h1&gt;
+&lt;p id="demo-text"&gt;I am the original paragraph.&lt;/p&gt;
+
+&lt;script&gt;
+// Change the text of the heading
+document.getElementById("demo-heading").textContent = "I was changed by JavaScript!";
+
+// Change the HTML inside the paragraph
+document.getElementById("demo-text").innerHTML = "Now I have &lt;strong&gt;bold text&lt;/strong&gt; and &lt;em&gt;italic text&lt;/em&gt;!";
+
+// Change the style of the heading
+document.getElementById("demo-heading").style.color = "#16825d";
+document.getElementById("demo-heading").style.fontSize = "28px";
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Style property names:</strong> In CSS you write <code>font-size</code> with a hyphen. In JavaScript you write <code>fontSize</code> using camelCase (no hyphen, capitalize the second word). So <code>background-color</code> becomes <code>backgroundColor</code>, and <code>border-radius</code> becomes <code>borderRadius</code>.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 6: addEventListener              -->
+      <!-- ======================================== -->
+      <h2>6. addEventListener: Responding to User Actions</h2>
+
+      <p>Changing elements when the page loads is useful, but the real magic happens when you respond to <strong>what the user does</strong>. When someone clicks a button, presses a key, or moves their mouse, the browser creates an <strong>event</strong>. You can use <code>addEventListener</code> to tell JavaScript: "When this event happens on this element, run this function."</p>
+
+      <p>Here is the basic pattern:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>element.addEventListener("click", function() {
+  // code to run when the element is clicked
+});</code></pre>
+      </div>
+
+      <p>The first argument is the <strong>event type</strong> (like <code>"click"</code>, <code>"keydown"</code>, or <code>"mouseover"</code>). The second argument is a <strong>function</strong> that runs when that event happens. This is how every interactive website works — from social media "like" buttons to shopping cart "add to cart" buttons.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Click the button in the preview to see it in action. Then try changing the message or adding a second button that does something different!</p>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h2 id="message"&gt;Click the button below!&lt;/h2&gt;
+&lt;button id="myBtn" style="padding: 10px 24px; font-size: 16px; cursor: pointer;"&gt;Click Me&lt;/button&gt;
+
+&lt;script&gt;
+var clickCount = 0;
+
+document.getElementById("myBtn").addEventListener("click", function() {
+  clickCount = clickCount + 1;
+  document.getElementById("message").textContent = "You clicked " + clickCount + " time(s)!";
+});
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 7: Capstone Interactive Exercise -->
+      <!-- ======================================== -->
+      <h2>7. Interactive Exercise: Make a Button That Changes Text</h2>
+
+      <p>This is the <strong>capstone exercise</strong> for the entire Web Basics track! You are going to combine HTML, CSS, and JavaScript into one interactive project. The goal: create a page with a heading and a button. When the user clicks the button, the heading's text and color change.</p>
+
+      <p>This exercise brings together everything you have learned across all six lessons:</p>
+
+      <ul>
+        <li><strong>HTML</strong> (Lessons 1-2) — the structure of the heading and button</li>
+        <li><strong>CSS</strong> (Lessons 3-4) — the styling and layout</li>
+        <li><strong>JavaScript</strong> (Lessons 5-6) — the interactivity and logic</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Run the code below and click the button to see it work. Then try these challenges:</p>
+        <ul>
+          <li>Change the colors to your favorites.</li>
+          <li>Add a second button that resets the heading back to its original text and color.</li>
+          <li>Make the button change the background color of the entire page.</li>
+          <li>Add a counter that shows how many times the button has been clicked.</li>
+        </ul>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 40px;
+    background-color: #f9f9f9;
+  }
+  #main-heading {
+    font-size: 32px;
+    color: #333;
+    transition: all 0.3s ease;
+  }
+  .action-btn {
+    padding: 12px 32px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    background-color: #16825d;
+    color: white;
+    cursor: pointer;
+    margin: 8px;
+  }
+  .action-btn:hover {
+    background-color: #12694b;
+  }
+  #click-counter {
+    margin-top: 16px;
+    font-size: 14px;
+    color: #777;
+  }
+&lt;/style&gt;
+
+&lt;h1 id="main-heading"&gt;Welcome to Coders Farm!&lt;/h1&gt;
+&lt;button class="action-btn" id="change-btn"&gt;Change the Heading&lt;/button&gt;
+&lt;button class="action-btn" id="reset-btn"&gt;Reset&lt;/button&gt;
+&lt;p id="click-counter"&gt;Clicks: 0&lt;/p&gt;
+
+&lt;script&gt;
+var clicks = 0;
+var heading = document.getElementById("main-heading");
+var changeBtn = document.getElementById("change-btn");
+var resetBtn = document.getElementById("reset-btn");
+var counter = document.getElementById("click-counter");
+
+var messages = [
+  "You are a coder now!",
+  "JavaScript is awesome!",
+  "Keep building cool things!",
+  "Lansing's newest developer!",
+  "HTML + CSS + JS = Magic!"
+];
+
+var colors = ["#e74c3c", "#3498db", "#9b59b6", "#e67e22", "#16825d"];
+
+changeBtn.addEventListener("click", function() {
+  clicks = clicks + 1;
+  var index = (clicks - 1) % messages.length;
+  heading.textContent = messages[index];
+  heading.style.color = colors[index];
+  counter.textContent = "Clicks: " + clicks;
+});
+
+resetBtn.addEventListener("click", function() {
+  heading.textContent = "Welcome to Coders Farm!";
+  heading.style.color = "#333";
+  clicks = 0;
+  counter.textContent = "Clicks: 0";
+});
+&lt;/script&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Congratulations!</strong> If you can read the code above and understand how the HTML structure, CSS styles, and JavaScript event listeners work together, you have a solid foundation in web development. This is exactly how real websites are built — just on a larger scale.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 8: Course Wrap-Up                -->
+      <!-- ======================================== -->
+      <h2>8. Course Wrap-Up: You Did It!</h2>
+
+      <p>Take a moment to feel proud of yourself. You have just completed the entire <strong>Web Basics</strong> track at Coders Farm! When you started Lesson 1, you may have never written a single line of code. Now look at what you know:</p>
+
+      <ul>
+        <li><strong>Lesson 1 — Intro to HTML:</strong> You learned that HTML is the structure of every web page. You wrote your first tags, created headings, paragraphs, and links.</li>
+        <li><strong>Lesson 2 — HTML Elements:</strong> You went deeper into HTML with lists, images, tables, forms, and semantic elements that give your pages meaning.</li>
+        <li><strong>Lesson 3 — Intro to CSS:</strong> You discovered how CSS controls the visual appearance of your pages — colors, fonts, sizes, and backgrounds.</li>
+        <li><strong>Lesson 4 — CSS Selectors &amp; Layout:</strong> You mastered targeting specific elements with selectors, understood the box model, and used Flexbox to create professional layouts.</li>
+        <li><strong>Lesson 5 — Intro to JavaScript:</strong> You took your first steps with JavaScript — variables, data types, strings, numbers, and the console.</li>
+        <li><strong>Lesson 6 — JavaScript Basics (this lesson!):</strong> You learned functions, conditionals, the DOM, and how to make truly interactive web pages.</li>
+      </ul>
+
+      <p>That is a <em>real</em> skill set. HTML, CSS, and JavaScript are the three core technologies that power every website on the internet — from simple personal blogs to massive platforms like Google, YouTube, and Amazon. You now understand the fundamentals of all three.</p>
+
+      <h3>What Comes Next?</h3>
+
+      <p>This is just the beginning of your coding journey. Here are some ideas to keep growing:</p>
+
+      <ul>
+        <li><strong>Practice, practice, practice.</strong> The best way to get better at coding is to build things. Try creating a personal website, a to-do list app, or a simple calculator.</li>
+        <li><strong>View source on websites you like.</strong> Right-click any web page and choose "View Page Source" or "Inspect" to see the HTML, CSS, and JavaScript behind it. You will recognize so much of what you see now!</li>
+        <li><strong>Stay connected with Coders Farm.</strong> Come to our meetups, ask questions, and help others who are just starting out. Teaching is one of the best ways to learn.</li>
+        <li><strong>Coming soon: Java &amp; Spring Boot track!</strong> If you want to learn how to build powerful back-end applications and APIs, our Java &amp; Spring Boot track is on the way. Stay tuned!</li>
+      </ul>
+
+      <p>Remember: every expert was once a beginner. You have already taken the hardest step — starting. Keep going, keep building, and keep being curious. The Lansing coding community is cheering for you!</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 9: Quiz                          -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="js6-q1">
+        <p class="quiz-question">1. What does the <code>return</code> keyword do inside a function?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js6-q1" value="a"> It prints a message to the screen</label>
+          <label><input type="radio" name="js6-q1" value="b"> It sends a value back to wherever the function was called</label>
+          <label><input type="radio" name="js6-q1" value="c"> It creates a new variable</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! The <code>return</code> keyword sends a value back from the function to the code that called it. For example, if you write <code>var result = add(3, 5);</code>, the <code>return</code> statement inside <code>add</code> is what gives <code>result</code> its value of 8. It does not print anything — that is what <code>console.log</code> is for.</div>
+      </div>
+
+      <div class="quiz" data-id="js6-q2">
+        <p class="quiz-question">2. Which method do you use to select an HTML element by its CSS selector in JavaScript?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js6-q2" value="a"> <code>document.querySelector()</code></label>
+          <label><input type="radio" name="js6-q2" value="b"> <code>document.selectElement()</code></label>
+          <label><input type="radio" name="js6-q2" value="c"> <code>document.findCSS()</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="a">That's right! <code>document.querySelector()</code> lets you pass in any CSS selector — a tag name, a class with a dot, or an ID with a hash — and it returns the first matching element from the page. The other options are made up and do not exist in JavaScript.</div>
+      </div>
+
+      <div class="quiz" data-id="js6-q3">
+        <p class="quiz-question">3. What does <code>addEventListener("click", function() { ... })</code> do?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="js6-q3" value="a"> It immediately runs the function when the page loads</label>
+          <label><input type="radio" name="js6-q3" value="b"> It runs the function every time the element is clicked</label>
+          <label><input type="radio" name="js6-q3" value="c"> It changes the text of the element to "click"</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! <code>addEventListener</code> waits for a specific event (in this case, a "click") and then runs the function you provide. It does not run immediately — it waits until the user actually clicks the element. This is the foundation of making interactive web pages!</div>
+      </div>
+
+      <p>Wonderful work finishing the final lesson and the entire Web Basics track! You now have a real foundation in web development. Save your projects, share them with friends, and keep coding. We cannot wait to see what you build next!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="06-js-basics">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/web-basics/05-intro-to-js.html" class="lesson-nav-btn">&larr; Previous: Intro to JavaScript</a>
+      <a href="/" class="lesson-nav-btn">Back to Course Catalog &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links"><li><a href="https://github.com/coders-farm-official">GitHub</a></li><li><a href="https://codersfarm.org">codersfarm.org</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

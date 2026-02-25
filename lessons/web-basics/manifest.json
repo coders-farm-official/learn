@@ -1,0 +1,45 @@
+{
+  "id": "web-basics",
+  "title": "Web Development Basics",
+  "description": "Learn HTML, CSS, and JavaScript from scratch. Build your first web pages and bring them to life with interactivity.",
+  "icon": "code",
+  "order": 1,
+  "lessons": [
+    {
+      "id": "01-intro-to-html",
+      "title": "Intro to HTML",
+      "file": "01-intro-to-html.html",
+      "description": "What is HTML and how web pages work"
+    },
+    {
+      "id": "02-html-elements",
+      "title": "HTML Elements",
+      "file": "02-html-elements.html",
+      "description": "Headings, paragraphs, links, images, and lists"
+    },
+    {
+      "id": "03-intro-to-css",
+      "title": "Intro to CSS",
+      "file": "03-intro-to-css.html",
+      "description": "Styling your web pages with CSS"
+    },
+    {
+      "id": "04-css-selectors",
+      "title": "CSS Selectors & Layout",
+      "file": "04-css-selectors.html",
+      "description": "Selectors, box model, and flexbox layout"
+    },
+    {
+      "id": "05-intro-to-js",
+      "title": "Intro to JavaScript",
+      "file": "05-intro-to-js.html",
+      "description": "Variables, data types, and console output"
+    },
+    {
+      "id": "06-js-basics",
+      "title": "JavaScript Basics",
+      "file": "06-js-basics.html",
+      "description": "Functions, conditionals, and DOM manipulation"
+    }
+  ]
+}

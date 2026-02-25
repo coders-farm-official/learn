@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HTML Elements — Coders Farm</title>
+  <meta name="description" content="Learn about headings, paragraphs, links, images, and lists in HTML">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-02-html-elements">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">HTML Elements</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/01-intro-to-html.html" role="menuitem">Lesson 1: Intro to HTML</a>
+      <a href="/lessons/web-basics/02-html-elements.html" role="menuitem">Lesson 2: HTML Elements</a>
+      <a href="/lessons/web-basics/03-intro-to-css.html" role="menuitem">Lesson 3: Intro to CSS</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / HTML Elements</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="2">Lesson 2 of 6</p>
+      <h1>HTML Elements</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>How to use headings (<code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>) to organize your content</li>
+          <li>How to create paragraphs and line breaks</li>
+          <li>How to add links that connect pages together</li>
+          <li>How to display images and write good alt text for accessibility</li>
+          <li>How to build ordered and unordered lists, including nested lists</li>
+          <li>How elements nest inside one another and why proper nesting matters</li>
+          <li>How to combine everything into a personal bio page</li>
+        </ul>
+      </div>
+
+      <!-- Headings -->
+      <h2 id="headings">Headings</h2>
+
+      <p>Welcome back! In the last lesson, you learned about the basic structure of an HTML document and built your very first web page. Now it is time to fill that page with real content. We are going to learn the most common HTML elements you will use every single day as a web developer.</p>
+
+      <p>Let us start with <strong>headings</strong>. Headings are like the titles and subtitles in a book or a newspaper. They break your content into sections and tell both the reader and the browser what each section is about.</p>
+
+      <p>HTML gives you six levels of headings, from <code>&lt;h1&gt;</code> (the biggest and most important) down to <code>&lt;h6&gt;</code> (the smallest). Here is what they all look like:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h1&gt;Heading Level 1 &mdash; Page Title&lt;/h1&gt;
+&lt;h2&gt;Heading Level 2 &mdash; Main Section&lt;/h2&gt;
+&lt;h3&gt;Heading Level 3 &mdash; Subsection&lt;/h3&gt;
+&lt;h4&gt;Heading Level 4 &mdash; Sub-subsection&lt;/h4&gt;
+&lt;h5&gt;Heading Level 5 &mdash; Minor Heading&lt;/h5&gt;
+&lt;h6&gt;Heading Level 6 &mdash; Smallest Heading&lt;/h6&gt;</code></pre>
+      </div>
+
+      <p>Click <strong>Run</strong> above to see all six heading levels rendered in the browser. Notice how each level gets progressively smaller.</p>
+
+      <p>Here are the important rules for using headings well:</p>
+
+      <ul>
+        <li><strong>Use only one <code>&lt;h1&gt;</code> per page.</strong> Think of it as the main title of your page &mdash; like the headline of a newspaper article. Every page should have exactly one.</li>
+        <li><strong>Do not skip levels.</strong> After an <code>&lt;h1&gt;</code>, use <code>&lt;h2&gt;</code> for the next section, then <code>&lt;h3&gt;</code> for subsections within that. Jumping from <code>&lt;h1&gt;</code> straight to <code>&lt;h4&gt;</code> confuses both readers and search engines.</li>
+        <li><strong>Use headings for structure, not for size.</strong> If you want text to be bigger or bolder, that is a job for CSS (which we will learn in the next lesson). Headings should reflect the logical outline of your content.</li>
+      </ul>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Think of headings like an outline for a school paper. Your <code>&lt;h1&gt;</code> is the title, your <code>&lt;h2&gt;</code> tags are the main sections (Introduction, Body, Conclusion), and <code>&lt;h3&gt;</code> tags are the subtopics within those sections. If your heading structure makes sense as an outline, you are doing it right.</div>
+
+      <!-- Paragraphs -->
+      <h2 id="paragraphs">Paragraphs and Line Breaks</h2>
+
+      <p>The <code>&lt;p&gt;</code> tag is your bread and butter in HTML. It creates a <strong>paragraph</strong> &mdash; a block of text with some space above and below it. You already used it in Lesson 1, and you will use it constantly from now on.</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;p&gt;This is my first paragraph. The browser will display it as a block of text with some breathing room around it.&lt;/p&gt;
+
+&lt;p&gt;This is a second paragraph. Notice how the browser automatically adds space between paragraphs, making your content easier to read.&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>One thing that surprises beginners: the browser <strong>ignores extra spaces and line breaks</strong> inside your HTML. Even if you press Enter ten times between two words in your code, the browser will display them right next to each other. This is called <strong>whitespace collapsing</strong>.</p>
+
+      <p>So how do you force a line break within a paragraph? You use the <code>&lt;br&gt;</code> tag. It is a <strong>self-closing</strong> tag (no closing tag needed) that simply says "start a new line right here."</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;p&gt;
+  Roses are red,&lt;br&gt;
+  Violets are blue,&lt;br&gt;
+  HTML is awesome,&lt;br&gt;
+  And so are you!
+&lt;/p&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Use <code>&lt;br&gt;</code> sparingly. It is great for things like poems, song lyrics, or addresses where line breaks are part of the content. But for separating chunks of text into distinct ideas, use separate <code>&lt;p&gt;</code> tags instead &mdash; that is what they are designed for.</div>
+
+      <!-- Links -->
+      <h2 id="links">Links</h2>
+
+      <p>Links are what make the web a <em>web</em>. They let you connect one page to another, creating the interconnected network of information we all use every day. Without links, every web page would be an island with no way to reach other pages.</p>
+
+      <p>You create a link with the <code>&lt;a&gt;</code> tag (the "a" stands for <strong>anchor</strong>). The key ingredient is the <code>href</code> attribute, which tells the browser <em>where</em> the link should go:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;p&gt;Visit the &lt;a href="https://www.lansing.org"&gt;City of Lansing&lt;/a&gt; website to learn about our community.&lt;/p&gt;
+
+&lt;p&gt;You can also link to other pages on your own site: &lt;a href="/lessons/web-basics/01-intro-to-html.html"&gt;go back to Lesson 1&lt;/a&gt;.&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>Let us break down how this works:</p>
+
+      <ul>
+        <li><code>&lt;a&gt;</code> is the opening tag that starts the link.</li>
+        <li><code>href="..."</code> is an <strong>attribute</strong> &mdash; a piece of extra information attached to the tag. The <code>href</code> (short for "hypertext reference") tells the browser the URL or path to navigate to when someone clicks the link.</li>
+        <li>The text between the opening and closing tags &mdash; like "City of Lansing" &mdash; is called the <strong>link text</strong>. This is what the user sees and clicks on.</li>
+        <li><code>&lt;/a&gt;</code> closes the link.</li>
+      </ul>
+
+      <p>You can also create links that jump to a specific section on the <em>same</em> page. These are called <strong>anchor links</strong> or <strong>same-page links</strong>. You give the target section an <code>id</code> attribute, and then link to it with a <code>#</code> symbol:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;!-- This link jumps to the section below --&gt;
+&lt;p&gt;&lt;a href="#my-hobbies"&gt;Jump to my hobbies&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Here is some content in between...&lt;/p&gt;
+&lt;p&gt;More content here to create some space...&lt;/p&gt;
+
+&lt;!-- This is the target section --&gt;
+&lt;h2 id="my-hobbies"&gt;My Hobbies&lt;/h2&gt;
+&lt;p&gt;I enjoy hiking along the River Trail in Lansing!&lt;/p&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Always write descriptive link text. Instead of "click here" or "read more," write something like "read our guide to HTML headings." This helps everyone understand where the link leads &mdash; especially people using screen readers, who may navigate the page by jumping between links.</div>
+
+      <!-- Images -->
+      <h2 id="images">Images</h2>
+
+      <p>A web page without images would be pretty plain. The <code>&lt;img&gt;</code> tag lets you display pictures, photos, diagrams, and any other visual content on your page.</p>
+
+      <p>The <code>&lt;img&gt;</code> tag is <strong>self-closing</strong> &mdash; it does not have a closing tag because it does not wrap around text content. Instead, it uses attributes to specify what image to show:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;img src="https://placehold.co/400x200" alt="A placeholder image showing the dimensions 400 by 200 pixels"&gt;</code></pre>
+      </div>
+
+      <p>Here is what those attributes mean:</p>
+
+      <ul>
+        <li><code>src</code> (source) &mdash; The URL or file path of the image you want to display. This is <strong>required</strong>. Without it, the browser has no idea what image to show.</li>
+        <li><code>alt</code> (alternative text) &mdash; A text description of the image. This is <strong>extremely important</strong> for several reasons:</li>
+      </ul>
+
+      <ol>
+        <li><strong>Accessibility:</strong> People who use screen readers (software that reads web pages aloud) rely on alt text to understand what an image shows. Without it, they have no idea what the image is.</li>
+        <li><strong>Broken images:</strong> If the image fails to load (bad internet connection, wrong file path), the browser shows the alt text instead so the user still knows what was supposed to be there.</li>
+        <li><strong>Search engines:</strong> Search engines like Google cannot "see" images. They use the alt text to understand what an image is about, which can help your page appear in search results.</li>
+      </ol>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Write alt text as if you are describing the image to a friend over the phone. Be specific and concise. Instead of <code>alt="image"</code> or <code>alt="photo"</code>, write something like <code>alt="Golden retriever puppy playing in a park"</code>. If an image is purely decorative and adds no information, you can use an empty alt attribute: <code>alt=""</code>.</div>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>The editor below has an image tag. Try changing the <code>alt</code> text to something more descriptive. Then try changing the dimensions in the URL (replace <code>400x200</code> with <code>300x300</code>) and click <strong>Run</strong> to see the difference.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;img src="https://placehold.co/400x200" alt="A sample placeholder image"&gt;
+
+&lt;p&gt;The image above is a placeholder. In a real website, you would use a path to an actual photo or graphic.&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <!-- Lists -->
+      <h2 id="lists">Lists</h2>
+
+      <p>Lists are everywhere on the web &mdash; navigation menus, recipes, to-do apps, product features, step-by-step instructions. HTML gives you two main types of lists:</p>
+
+      <h3>Unordered Lists</h3>
+
+      <p>An <strong>unordered list</strong> displays items with bullet points. Use it when the order of the items does not matter. You create one with <code>&lt;ul&gt;</code> (unordered list) and put each item inside an <code>&lt;li&gt;</code> (list item) tag:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h3&gt;Things I Love About Lansing&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;The River Trail along the Grand River&lt;/li&gt;
+  &lt;li&gt;Michigan State University campus&lt;/li&gt;
+  &lt;li&gt;The farmers market downtown&lt;/li&gt;
+  &lt;li&gt;Impression 5 Science Center&lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+      </div>
+
+      <h3>Ordered Lists</h3>
+
+      <p>An <strong>ordered list</strong> numbers the items automatically. Use it when the order <em>does</em> matter &mdash; like steps in a recipe or rankings. You create one with <code>&lt;ol&gt;</code> (ordered list):</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h3&gt;How to Make a Web Page&lt;/h3&gt;
+&lt;ol&gt;
+  &lt;li&gt;Open a text editor&lt;/li&gt;
+  &lt;li&gt;Write your HTML code&lt;/li&gt;
+  &lt;li&gt;Save the file with a .html extension&lt;/li&gt;
+  &lt;li&gt;Open the file in your web browser&lt;/li&gt;
+  &lt;li&gt;Celebrate your creation!&lt;/li&gt;
+&lt;/ol&gt;</code></pre>
+      </div>
+
+      <h3>Nested Lists</h3>
+
+      <p>You can put a list <em>inside</em> another list to create sub-items. This is called a <strong>nested list</strong>. To nest a list, place a new <code>&lt;ul&gt;</code> or <code>&lt;ol&gt;</code> <em>inside</em> an <code>&lt;li&gt;</code> element:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h3&gt;My Favorite Foods&lt;/h3&gt;
+&lt;ul&gt;
+  &lt;li&gt;Fruits
+    &lt;ul&gt;
+      &lt;li&gt;Apples&lt;/li&gt;
+      &lt;li&gt;Blueberries&lt;/li&gt;
+      &lt;li&gt;Cherries (Michigan grown!)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Vegetables
+    &lt;ul&gt;
+      &lt;li&gt;Carrots&lt;/li&gt;
+      &lt;li&gt;Sweet corn&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Snacks
+    &lt;ul&gt;
+      &lt;li&gt;Better Made chips&lt;/li&gt;
+      &lt;li&gt;Mackinac Island fudge&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Notice that the nested <code>&lt;ul&gt;</code> goes <em>inside</em> the <code>&lt;li&gt;</code>, not after it. This is proper nesting &mdash; and it is important for your page to work correctly. We will talk more about nesting in the next section.</div>
+
+      <!-- Nesting Elements -->
+      <h2 id="nesting">Nesting Elements</h2>
+
+      <p>As you build more complex pages, you will constantly put elements <em>inside</em> other elements. This is called <strong>nesting</strong>, and getting it right is one of the most important skills in HTML.</p>
+
+      <p>Think of nesting like stacking boxes. A small box goes inside a bigger box, which goes inside an even bigger box. The rule is simple: <strong>the last element you open must be the first one you close.</strong></p>
+
+      <p>Here is an example of <strong>correct nesting</strong>:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;p&gt;I am learning &lt;strong&gt;HTML&lt;/strong&gt; at Coders Farm.&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>The <code>&lt;strong&gt;</code> tag opens <em>inside</em> the <code>&lt;p&gt;</code> and closes <em>inside</em> the <code>&lt;p&gt;</code>. Everything is tidy and contained.</p>
+
+      <p>Now here is <strong>incorrect nesting</strong> (do NOT do this):</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- WRONG! Do not do this --&gt;
+&lt;p&gt;I am learning &lt;strong&gt;HTML&lt;/p&gt;&lt;/strong&gt;</code></pre>
+      </div>
+
+      <p>See the problem? The <code>&lt;p&gt;</code> tag closes before the <code>&lt;strong&gt;</code> tag, even though <code>&lt;strong&gt;</code> was opened inside <code>&lt;p&gt;</code>. The tags are overlapping instead of nesting properly. Browsers will try to fix this for you, but the results can be unpredictable.</p>
+
+      <p>A good way to visualize proper nesting is through <strong>indentation</strong>. Each time you nest an element inside another, indent it with two spaces:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;ul&gt;
+  &lt;li&gt;
+    &lt;a href="https://www.lansing.org"&gt;
+      &lt;strong&gt;City of Lansing&lt;/strong&gt;
+    &lt;/a&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</code></pre>
+      </div>
+
+      <p>With proper indentation, you can clearly see which elements are inside which. If the closing tags line up with their opening tags, your nesting is correct.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> A handy rule of thumb: if you imagine drawing lines connecting each opening tag to its closing tag, none of the lines should cross. If they cross, your nesting is wrong. Keep your code indented and this will rarely be a problem.</div>
+
+      <!-- Interactive Exercise -->
+      <h2 id="exercise">Interactive Exercise: Build a Personal Bio Page</h2>
+
+      <p>Now it is time to put everything together! In the editor below, you are going to build a simple personal bio page using all the elements you just learned &mdash; headings, paragraphs, links, images, and lists.</p>
+
+      <p>We have given you some starter code with comments that guide you through what to add. Fill in the blanks, replace the placeholder text with your own information, and click <strong>Run</strong> to see your page come to life.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Complete the bio page below. Here is your checklist:</p>
+        <ol>
+          <li>Add your name as the main heading (<code>&lt;h1&gt;</code>)</li>
+          <li>Write a short paragraph introducing yourself</li>
+          <li>Add a section heading (<code>&lt;h2&gt;</code>) for your hobbies</li>
+          <li>Create an unordered list with at least three hobbies</li>
+          <li>Add a link to a website you enjoy</li>
+          <li>Bonus: Try adding a nested list inside one of your hobbies</li>
+        </ol>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;About Me&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;!-- Step 1: Add your name as a main heading --&gt;
+  &lt;h1&gt;Your Name Here&lt;/h1&gt;
+
+  &lt;!-- Step 2: Write a paragraph about yourself --&gt;
+  &lt;p&gt;Hi! My name is [your name] and I live in Lansing, Michigan. I am learning to code at Coders Farm and I am excited to build my first web pages!&lt;/p&gt;
+
+  &lt;!-- Step 3: Add a section heading for hobbies --&gt;
+  &lt;h2&gt;My Hobbies&lt;/h2&gt;
+
+  &lt;!-- Step 4: Create an unordered list of hobbies --&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Reading books&lt;/li&gt;
+    &lt;li&gt;Hiking the River Trail&lt;/li&gt;
+    &lt;li&gt;Cooking new recipes&lt;/li&gt;
+    &lt;!-- Add more hobbies here! --&gt;
+  &lt;/ul&gt;
+
+  &lt;!-- Step 5: Add a paragraph with a link --&gt;
+  &lt;h2&gt;A Website I Like&lt;/h2&gt;
+  &lt;p&gt;One of my favorite websites is &lt;a href="https://www.michigantrails.org"&gt;Michigan Trails&lt;/a&gt; because I love exploring nature.&lt;/p&gt;
+
+  &lt;!-- Bonus: Try adding an image! --&gt;
+  &lt;img src="https://placehold.co/300x200" alt="A placeholder for my photo"&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+        </div>
+      </div>
+
+      <p>Fantastic work! If you completed the exercise above, you have just built a real web page that uses headings, paragraphs, lists, links, and an image. That is a big step forward from where you were just one lesson ago. Take a moment to feel good about that &mdash; you earned it.</p>
+
+      <!-- Knowledge Check -->
+      <h2>Knowledge Check</h2>
+
+      <p>Let us test what you learned. Give these questions a try &mdash; do not worry if you do not get them all right the first time. You can always scroll back up to review.</p>
+
+      <div class="quiz" data-id="html-elements-q1">
+        <p class="quiz-question">1. Which heading tag should you use for the main title of a page?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-elements-q1" value="a"> <code>&lt;h6&gt;</code></label>
+          <label><input type="radio" name="html-elements-q1" value="b"> <code>&lt;h1&gt;</code></label>
+          <label><input type="radio" name="html-elements-q1" value="c"> <code>&lt;heading&gt;</code></label>
+          <label><input type="radio" name="html-elements-q1" value="d"> <code>&lt;title&gt;</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! <code>&lt;h1&gt;</code> is the highest-level heading and should be used for the main title of a page. You should have only one <code>&lt;h1&gt;</code> per page. The <code>&lt;title&gt;</code> tag, by contrast, sets the text in the browser tab and lives inside the <code>&lt;head&gt;</code> section, not in the visible body content.</div>
+      </div>
+
+      <div class="quiz" data-id="html-elements-q2">
+        <p class="quiz-question">2. What does the <code>alt</code> attribute do in an <code>&lt;img&gt;</code> tag?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-elements-q2" value="a"> It changes the size of the image</label>
+          <label><input type="radio" name="html-elements-q2" value="b"> It adds a border around the image</label>
+          <label><input type="radio" name="html-elements-q2" value="c"> It provides a text description of the image for accessibility and when the image cannot load</label>
+          <label><input type="radio" name="html-elements-q2" value="d"> It makes the image a link</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is right! The <code>alt</code> attribute provides alternative text that describes the image. Screen readers read this text aloud for visually impaired users, it displays when an image fails to load, and search engines use it to understand image content. Always include meaningful alt text on your images.</div>
+      </div>
+
+      <div class="quiz" data-id="html-elements-q3">
+        <p class="quiz-question">3. Which of the following is an example of correct nesting?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="html-elements-q3" value="a"> <code>&lt;p&gt;Hello &lt;strong&gt;world&lt;/p&gt;&lt;/strong&gt;</code></label>
+          <label><input type="radio" name="html-elements-q3" value="b"> <code>&lt;p&gt;Hello &lt;strong&gt;world&lt;/strong&gt;&lt;/p&gt;</code></label>
+          <label><input type="radio" name="html-elements-q3" value="c"> <code>&lt;strong&gt;&lt;p&gt;Hello world&lt;/strong&gt;&lt;/p&gt;</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly! In option B, the <code>&lt;strong&gt;</code> tag opens and closes entirely <em>within</em> the <code>&lt;p&gt;</code> tag. The elements nest cleanly inside each other like boxes. In option A, the tags overlap &mdash; the <code>&lt;p&gt;</code> closes before <code>&lt;strong&gt;</code>, which is incorrect.</div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>You covered a lot of ground in this lesson. Here is a quick recap of everything you learned:</p>
+
+      <ul>
+        <li><strong>Headings</strong> (<code>&lt;h1&gt;</code> through <code>&lt;h6&gt;</code>) organize your content into sections. Use one <code>&lt;h1&gt;</code> per page and do not skip levels.</li>
+        <li><strong>Paragraphs</strong> (<code>&lt;p&gt;</code>) hold blocks of text. Use <code>&lt;br&gt;</code> for line breaks within a paragraph, but prefer separate <code>&lt;p&gt;</code> tags for distinct ideas.</li>
+        <li><strong>Links</strong> (<code>&lt;a href="..."&gt;</code>) connect pages together. The <code>href</code> attribute specifies the destination, and the text between the tags is what the user clicks.</li>
+        <li><strong>Images</strong> (<code>&lt;img src="..." alt="..."&gt;</code>) display visual content. Always include descriptive <code>alt</code> text for accessibility.</li>
+        <li><strong>Unordered lists</strong> (<code>&lt;ul&gt;</code>) display bullet points, and <strong>ordered lists</strong> (<code>&lt;ol&gt;</code>) display numbered items. Each item uses the <code>&lt;li&gt;</code> tag. Lists can be nested inside other lists.</li>
+        <li><strong>Proper nesting</strong> means closing elements in the opposite order from how you opened them. If it opens inside, it must close inside.</li>
+      </ul>
+
+      <p>With these elements in your toolkit, you can already build meaningful, well-structured web pages. In the next lesson, we will learn CSS &mdash; the language that lets you add colors, fonts, spacing, and visual style to everything you have built so far. Your pages are about to get a whole lot more beautiful!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="02-html-elements">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/web-basics/01-intro-to-html.html" class="lesson-nav-btn">&larr; Previous: Intro to HTML</a>
+      <a href="/lessons/web-basics/03-intro-to-css.html" class="lesson-nav-btn">Next: Intro to CSS &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links"><li><a href="https://github.com/coders-farm-official">GitHub</a></li><li><a href="https://codersfarm.org">codersfarm.org</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
