@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (page === 'catalog') {
     initCatalog();
+    initSideQuests();
   } else if (page === 'lesson') {
     // Initialize lesson features
     Lessons.init();
@@ -97,6 +98,97 @@ function initCatalog() {
           alert('Failed to import: ' + err.message);
         });
     });
+  }
+}
+
+function initSideQuests() {
+  const CORE_TRACKS = {
+    'web-basics': 6,
+    'career': 1,
+    'java-spring': 6,
+    'databases': 6,
+    'resumator': 8
+  };
+  const TOTAL_CORE = 30;
+  const SQ_STORAGE_KEY = 'cf-sq-progress';
+
+  function getSQProgress() {
+    try {
+      return JSON.parse(localStorage.getItem(SQ_STORAGE_KEY)) || {};
+    } catch { return {}; }
+  }
+
+  function countCompletedCoreLessons() {
+    const progress = Progress.getAll();
+    let count = 0;
+    for (const trackId of Object.keys(CORE_TRACKS)) {
+      const trackData = progress[trackId] || {};
+      count += Object.values(trackData).filter(l => l.completed).length;
+    }
+    return count;
+  }
+
+  function areAllCoreLessonsComplete() {
+    const progress = Progress.getAll();
+    for (const [trackId, total] of Object.entries(CORE_TRACKS)) {
+      const trackData = progress[trackId] || {};
+      const completed = Object.values(trackData).filter(l => l.completed).length;
+      if (completed < total) return false;
+    }
+    return true;
+  }
+
+  const unlocked = areAllCoreLessonsComplete();
+  const sqProgress = getSQProgress();
+  const cards = document.querySelectorAll('.side-quest-card');
+  let sqCompleted = 0;
+
+  cards.forEach(card => {
+    const questId = card.getAttribute('data-quest-id');
+
+    // Check if completed
+    if (sqProgress[questId] && sqProgress[questId].completed) {
+      sqCompleted++;
+      const badge = document.createElement('div');
+      badge.className = 'sq-completed-badge';
+      badge.innerHTML = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+      card.appendChild(badge);
+    }
+
+    if (unlocked) {
+      const wasLocked = card.classList.contains('locked');
+      card.classList.remove('locked');
+      card.classList.add('unlocked');
+      if (wasLocked) {
+        card.classList.add('just-unlocked');
+        setTimeout(() => card.classList.remove('just-unlocked'), 1500);
+      }
+    } else {
+      card.classList.add('locked');
+      card.classList.remove('unlocked');
+      card.removeAttribute('href');
+    }
+  });
+
+  // Update header
+  const header = document.getElementById('side-quests-header');
+  if (header) {
+    if (unlocked) {
+      header.textContent = 'Side Quests';
+    } else {
+      const completed = countCompletedCoreLessons();
+      header.innerHTML = 'Side Quests <span class="sq-progress">' + completed + '/' + TOTAL_CORE + ' core lessons complete</span>';
+    }
+  }
+
+  // Update completed count
+  const countEl = document.getElementById('sq-completed-count');
+  if (countEl) {
+    if (sqCompleted > 0 || unlocked) {
+      countEl.textContent = sqCompleted + '/10 Side Quests Completed';
+    } else {
+      countEl.textContent = 'Complete all 30 core lessons to unlock';
+    }
   }
 }
 

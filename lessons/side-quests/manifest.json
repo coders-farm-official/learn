@@ -1,0 +1,104 @@
+{
+  "sideQuests": [
+    {
+      "category": "Build Something New",
+      "quests": [
+        {
+          "id": "discord-bot",
+          "title": "Build a Discord Bot",
+          "icon": "\ud83e\udd16",
+          "teaser": "Build a bot that lives in your Discord server and responds to commands \u2014 powered by your Java skills.",
+          "file": "build-something-new/discord-bot.html",
+          "estimatedTime": "4-5 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "encryption-hashing",
+          "title": "Encryption & Hashing Lab",
+          "icon": "\ud83d\udd10",
+          "teaser": "How does your password actually get stored? Crack hashes, encrypt messages, and see why security matters.",
+          "file": "build-something-new/encryption-hashing.html",
+          "estimatedTime": "3-4 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "multiplayer-quiz",
+          "title": "Build a Multiplayer Quiz Game",
+          "icon": "\ud83c\udfae",
+          "teaser": "Real-time WebSockets, live scoreboards, and a game you can actually play at Coders Farm meetups.",
+          "file": "build-something-new/multiplayer-quiz.html",
+          "estimatedTime": "5-6 hours",
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "android-app",
+          "title": "Android App from Your API",
+          "icon": "\ud83d\udcf1",
+          "teaser": "Turn your Spring Boot backend into a real Android app. Your API, your data, now on your phone.",
+          "file": "build-something-new/android-app.html",
+          "estimatedTime": "6-8 hours",
+          "difficulty": "Advanced"
+        },
+        {
+          "id": "linux-basics",
+          "title": "Linux Basics for Developers",
+          "icon": "\ud83d\udc27",
+          "teaser": "Every server runs Linux. Learn to navigate, manage files, and feel at home in the terminal.",
+          "file": "build-something-new/linux-basics.html",
+          "estimatedTime": "3-4 hours",
+          "difficulty": "Beginner"
+        }
+      ]
+    },
+    {
+      "category": "Supercharge Resumator",
+      "quests": [
+        {
+          "id": "apply-tracker",
+          "title": "Apply Tracker",
+          "icon": "\ud83d\udccb",
+          "teaser": "Drag-and-drop Kanban board to track your applications: Applied \u2192 Interview \u2192 Offer. Like Trello, but yours.",
+          "file": "supercharge-resumator/apply-tracker.html",
+          "estimatedTime": "5-6 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "resume-tailor",
+          "title": "Resume Tailor",
+          "icon": "\u2728",
+          "teaser": "Paste a job description, get AI-powered suggestions to customize your resume for that exact role.",
+          "file": "supercharge-resumator/resume-tailor.html",
+          "estimatedTime": "4-5 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "salary-heatmap",
+          "title": "Salary Heatmap",
+          "icon": "\ud83d\udcb0",
+          "teaser": "Visualize salary data from your saved jobs. See what developers earn across cities, roles, and companies.",
+          "file": "supercharge-resumator/salary-heatmap.html",
+          "estimatedTime": "4-5 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "email-alerts",
+          "title": "Email Alerts",
+          "icon": "\ud83d\udce7",
+          "teaser": "Set up saved searches that run automatically and email you new matches. Your app works while you sleep.",
+          "file": "supercharge-resumator/email-alerts.html",
+          "estimatedTime": "4-5 hours",
+          "difficulty": "Intermediate"
+        },
+        {
+          "id": "interview-prep",
+          "title": "Interview Prep Mode",
+          "icon": "\ud83c\udfaf",
+          "teaser": "Click any saved job and get AI-generated practice interview questions tailored to that role.",
+          "file": "supercharge-resumator/interview-prep.html",
+          "estimatedTime": "3-4 hours",
+          "difficulty": "Intermediate"
+        }
+      ]
+    }
+  ]
+}
