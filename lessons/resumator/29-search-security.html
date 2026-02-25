@@ -558,7 +558,9 @@ public List&lt;Job&gt; searchLocal(@RequestParam @Size(max = 200) String keyword
       <p>You also need the <code>@Validated</code> annotation on your controller class for the <code>@Size</code> constraint to be enforced:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>@RestController
+        <pre><code>package com.example.resumator.controller;
+
+@RestController
 @RequestMapping("/api/jobs")
 @Validated  // Enables method-level validation
 public class JobController {

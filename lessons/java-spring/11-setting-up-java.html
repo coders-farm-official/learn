@@ -195,7 +195,9 @@ javac -version</code></pre>
       <p>Open your code editor and create a new file called <strong><code>HelloWorld.java</code></strong>. This file name matters &mdash; in Java, the file name <em>must</em> match the class name inside it (we will explain what a class is in a moment). Type the following code exactly as shown:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>public class HelloWorld {
+        <pre><code>package org.codersfarm.learn;
+
+public class HelloWorld {
     public static void main(String[] args) {
         System.out.println("Hello, World!");
     }
@@ -204,11 +206,15 @@ javac -version</code></pre>
 
       <p>That is your first Java program! If you are coming from JavaScript, your first reaction might be: "That is a <em>lot</em> of code just to print one line." And you are right &mdash; in JavaScript, you could accomplish the same thing with just <code>console.log("Hello, World!");</code>. Java requires more structure, and every piece of that structure has a purpose. Let us break it down line by line.</p>
 
-      <h3>Line 1: <code>public class HelloWorld {</code></h3>
+      <h3>Line 1: <code>package org.codersfarm.learn;</code></h3>
+
+      <p>The very first line of every Java file is the <strong>package declaration</strong>. A package is like a folder that organizes your Java classes &mdash; similar to how you organize files into directories on your computer. The package name <code>org.codersfarm.learn</code> tells Java that this class belongs to that group. Every Java file you create should start with a package declaration. When you compile with <code>javac -d .</code>, Java automatically creates the matching folder structure (<code>org/codersfarm/learn/</code>) for you.</p>
+
+      <h3>Line 3: <code>public class HelloWorld {</code></h3>
 
       <p>In Java, <em>all code</em> must live inside a <strong>class</strong>. A class is like a container that groups related code together. For now, think of it as a required wrapper around your program. The word <code>public</code> means this class is accessible from anywhere (we will explore access levels later in the course). The word <code>class</code> is the keyword that tells Java you are defining a class. <code>HelloWorld</code> is the name you are giving this class &mdash; and it <strong>must exactly match your file name</strong> (without the <code>.java</code> extension). The opening curly brace <code>{</code> marks the beginning of the class body.</p>
 
-      <h3>Line 2: <code>public static void main(String[] args) {</code></h3>
+      <h3>Line 4: <code>public static void main(String[] args) {</code></h3>
 
       <p>This is the <strong>main method</strong> &mdash; the entry point of every Java program. When you run a Java program, the JVM looks for this exact method signature and starts executing from here. Let us break down each word:</p>
 
@@ -222,7 +228,7 @@ javac -version</code></pre>
 
       <div class="callout callout-info"><strong>Note:</strong> You do not need to memorize what every keyword in <code>public static void main(String[] args)</code> means right now. For the time being, just think of it as the magic incantation that tells Java "this is where my program starts." You will type it so many times that it will become second nature, and you will understand each piece more deeply as we progress through the course.</div>
 
-      <h3>Line 3: <code>System.out.println("Hello, World!");</code></h3>
+      <h3>Line 5: <code>System.out.println("Hello, World!");</code></h3>
 
       <p>This is the line that actually <em>does</em> something &mdash; it prints the text "Hello, World!" to the console. Let us break this down too:</p>
 
@@ -236,22 +242,22 @@ javac -version</code></pre>
 
       <p>If you are thinking "Java's <code>System.out.println()</code> is like JavaScript's <code>console.log()</code>," you are exactly right! They serve the same purpose &mdash; outputting text so you can see it. Java's version is just longer to type.</p>
 
-      <h3>Lines 4 and 5: The Closing Braces</h3>
+      <h3>Lines 6 and 7: The Closing Braces</h3>
 
-      <p>The closing braces <code>}</code> on lines 4 and 5 close the <code>main</code> method and the <code>HelloWorld</code> class, respectively. Every opening brace <code>{</code> must have a matching closing brace <code>}</code>. Keeping track of braces is important in Java &mdash; a missing brace is one of the most common causes of compiler errors for beginners.</p>
+      <p>The closing braces <code>}</code> on lines 6 and 7 close the <code>main</code> method and the <code>HelloWorld</code> class, respectively. Every opening brace <code>{</code> must have a matching closing brace <code>}</code>. Keeping track of braces is important in Java &mdash; a missing brace is one of the most common causes of compiler errors for beginners.</p>
 
       <h3>Compiling and Running Your Program</h3>
 
       <p>Now let us compile and run your program. Open your terminal, navigate to the folder where you saved <code>HelloWorld.java</code>, and run these two commands:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>javac HelloWorld.java
-java HelloWorld</code></pre>
+        <pre><code>javac -d . HelloWorld.java
+java org.codersfarm.learn.HelloWorld</code></pre>
       </div>
 
-      <p>The first command, <code>javac HelloWorld.java</code>, runs the Java compiler. If your code has no errors, it will silently create a new file called <code>HelloWorld.class</code> in the same folder &mdash; that is the bytecode file. If there are errors, the compiler will print error messages telling you what went wrong and on which line. Read those messages carefully &mdash; they are usually very specific and helpful.</p>
+      <p>The first command, <code>javac -d . HelloWorld.java</code>, runs the Java compiler. The <code>-d .</code> flag tells the compiler to create the proper folder structure for the package &mdash; it will automatically create an <code>org/codersfarm/learn/</code> directory and place the compiled <code>HelloWorld.class</code> file inside it. If your code has no errors, it will do this silently. If there are errors, the compiler will print error messages telling you what went wrong and on which line. Read those messages carefully &mdash; they are usually very specific and helpful.</p>
 
-      <p>The second command, <code>java HelloWorld</code>, runs the compiled bytecode on the JVM. Notice that you use <code>javac</code> (Java Compiler) to compile, but just <code>java</code> to run. Also notice that you include the <code>.java</code> extension when compiling but <em>not</em> when running. If everything worked, you should see:</p>
+      <p>The second command, <code>java org.codersfarm.learn.HelloWorld</code>, runs the compiled bytecode on the JVM. Notice that you use <code>javac</code> (Java Compiler) to compile, but just <code>java</code> to run. You also need to use the <strong>fully qualified class name</strong> &mdash; the package name followed by the class name, separated by dots. If everything worked, you should see:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
         <pre><code>Hello, World!</code></pre>
@@ -283,12 +289,12 @@ java HelloWorld</code></pre>
           <tr>
             <td>Compile step</td>
             <td>None (interpreted directly)</td>
-            <td><code>javac HelloWorld.java</code></td>
+            <td><code>javac -d . HelloWorld.java</code></td>
           </tr>
           <tr>
             <td>Run the program</td>
             <td><code>node hello.js</code></td>
-            <td><code>java HelloWorld</code></td>
+            <td><code>java org.codersfarm.learn.HelloWorld</code></td>
           </tr>
           <tr>
             <td>Output method</td>
@@ -308,7 +314,9 @@ java HelloWorld</code></pre>
       <p>In JavaScript, you create variables with <code>let</code> or <code>const</code> and you can put any kind of value in them without telling JavaScript what type it is. JavaScript figures out the type on its own. Java works differently &mdash; you must <strong>explicitly declare the type</strong> of every variable when you create it. Here is how it looks:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>public class VariableExamples {
+        <pre><code>package org.codersfarm.learn;
+
+public class VariableExamples {
     public static void main(String[] args) {
         // Integer (whole number)
         int age = 25;
@@ -367,7 +375,9 @@ boolean isStudent = true;</code></pre>
       <p>The good news is that basic math operations in Java look exactly like JavaScript. Addition, subtraction, multiplication, division, and the remainder operator all use the same symbols:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>public class BasicMath {
+        <pre><code>package org.codersfarm.learn;
+
+public class BasicMath {
     public static void main(String[] args) {
         int a = 20;
         int b = 7;
@@ -393,7 +403,9 @@ boolean isStudent = true;</code></pre>
       <p>Just like JavaScript, you can join strings together using the <code>+</code> operator. You have already seen this in the examples above when we combined strings with variables in <code>System.out.println()</code>. Java is smart enough to convert numbers and booleans to strings automatically when you concatenate them with the <code>+</code> operator:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>public class StringExamples {
+        <pre><code>package org.codersfarm.learn;
+
+public class StringExamples {
     public static void main(String[] args) {
         String firstName = "Alex";
         String lastName = "Johnson";
@@ -474,7 +486,7 @@ boolean isStudent = true;</code></pre>
           <tr>
             <td>Compilation</td>
             <td>Interpreted (no compile step)</td>
-            <td>Compiled with <code>javac</code>, then run with <code>java</code></td>
+            <td>Compiled with <code>javac -d .</code>, then run with <code>java</code></td>
           </tr>
           <tr>
             <td>Integer division</td>
@@ -491,7 +503,9 @@ boolean isStudent = true;</code></pre>
       <p>Let us finish with a slightly larger program that uses everything we have covered. Study this code and see how all the pieces fit together. Try typing it into your editor, compiling it, and running it yourself:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>public class AboutMe {
+        <pre><code>package org.codersfarm.learn;
+
+public class AboutMe {
     public static void main(String[] args) {
         // Personal information
         String name = "Your Name";
@@ -527,8 +541,8 @@ boolean isStudent = true;</code></pre>
       <p>Save this file as <code>AboutMe.java</code> (remember &mdash; the file name must match the class name). Replace <code>"Your Name"</code> with your actual name, update your age, and then compile and run it:</p>
 
       <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
-        <pre><code>javac AboutMe.java
-java AboutMe</code></pre>
+        <pre><code>javac -d . AboutMe.java
+java org.codersfarm.learn.AboutMe</code></pre>
       </div>
 
       <p>If everything compiles and runs without errors, and you see your personalized output in the terminal, you have successfully set up your Java environment and written real Java code. That is a major milestone. You now have all the tools you need to dive deeper into Java programming in the lessons ahead.</p>
