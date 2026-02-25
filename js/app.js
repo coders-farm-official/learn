@@ -3,7 +3,7 @@
    Initialization and page routing
    ======================================== */
 
-const SITE_VERSION = '1.16';
+const SITE_VERSION = '1.17';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme first (prevents flash)
