@@ -24,6 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
     initInstallTabs();
   }
 
+  // Available on every page
+  initCheckForUpdates();
+
   // Register service worker
   registerServiceWorker();
 });
@@ -100,47 +103,49 @@ function initCatalog() {
     });
   }
 
-  // Check for updates (clear caches, keep progress)
-  const updateBtn = document.getElementById('check-updates');
-  if (updateBtn) {
-    updateBtn.addEventListener('click', async () => {
-      updateBtn.disabled = true;
-      updateBtn.textContent = 'Checking…';
+}
 
-      try {
-        if ('serviceWorker' in navigator) {
-          const reg = await navigator.serviceWorker.getRegistration();
-          if (reg) {
-            await reg.update();
-            // If a new SW is waiting, tell it to activate
-            const newWorker = reg.waiting || reg.installing;
-            if (newWorker) {
-              newWorker.addEventListener('statechange', () => {
-                if (newWorker.state === 'activated') {
-                  window.location.reload();
-                }
-              });
-              newWorker.postMessage({ type: 'SKIP_WAITING' });
-              // Fallback reload in case statechange already fired
-              setTimeout(() => window.location.reload(), 2000);
-              return;
-            }
+function initCheckForUpdates() {
+  const trigger = document.getElementById('check-updates');
+  if (!trigger) return;
+
+  trigger.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const origText = trigger.textContent;
+    trigger.disabled = true;
+    trigger.textContent = 'Checking…';
+
+    try {
+      if ('serviceWorker' in navigator) {
+        const reg = await navigator.serviceWorker.getRegistration();
+        if (reg) {
+          await reg.update();
+          const newWorker = reg.waiting || reg.installing;
+          if (newWorker) {
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'activated') {
+                window.location.reload();
+              }
+            });
+            newWorker.postMessage({ type: 'SKIP_WAITING' });
+            setTimeout(() => window.location.reload(), 2000);
+            return;
           }
         }
-
-        // No SW or no update found — clear caches manually and reload
-        if ('caches' in window) {
-          const keys = await caches.keys();
-          await Promise.all(keys.map(k => caches.delete(k)));
-        }
-        window.location.reload();
-      } catch (err) {
-        updateBtn.disabled = false;
-        updateBtn.textContent = 'Check for Updates';
-        alert('Update check failed: ' + err.message);
       }
-    });
-  }
+
+      // No SW or no update found — clear caches manually and reload
+      if ('caches' in window) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k)));
+      }
+      window.location.reload();
+    } catch (err) {
+      trigger.disabled = false;
+      trigger.textContent = origText;
+      alert('Update check failed: ' + err.message);
+    }
+  });
 }
 
 function initSideQuests() {
