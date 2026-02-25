@@ -33,6 +33,7 @@ const Narrator = (() => {
   let floatingEl = null;
   let playBtnEl = null;
   let keepAliveTimer = null;
+  let restarting = false; // guards against double-speak on cancel()
 
   // --- Feature detection ---
 
@@ -254,6 +255,7 @@ const Narrator = (() => {
 
     // Advance to the next block when this one finishes
     utterance.onend = () => {
+      if (restarting) return;
       unwrapCurrentBlock();
       if (playing && !paused) {
         speakBlock(index + 1);
@@ -261,6 +263,7 @@ const Narrator = (() => {
     };
 
     utterance.onerror = (event) => {
+      if (restarting) return;
       // 'canceled' and 'interrupted' are expected when user stops/skips
       if (event.error === 'canceled' || event.error === 'interrupted') return;
       console.log('[Narrator] Speech error:', event.error);
@@ -300,11 +303,21 @@ const Narrator = (() => {
 
   function resumePlayback() {
     if (!playing || !paused) return;
-    speechSynthesis.resume();
     paused = false;
+
+    // Chrome bug: speechSynthesis.resume() silently fails after a long
+    // pause. Cancel and re-speak the current block instead.
+    var blockToRestart = currentBlockIndex;
+    restarting = true;
+    speechSynthesis.cancel();
+    unwrapCurrentBlock();
     startKeepAlive();
     updateFloatingUI();
     updatePlayButton();
+    setTimeout(function () {
+      restarting = false;
+      if (playing) speakBlock(blockToRestart);
+    }, 50);
   }
 
   function stopPlayback() {
@@ -342,9 +355,11 @@ const Narrator = (() => {
     // Restart current block at the new speed
     if (playing) {
       const blockToRestart = currentBlockIndex;
+      restarting = true;
       speechSynthesis.cancel();
       unwrapCurrentBlock();
       setTimeout(() => {
+        restarting = false;
         if (playing) speakBlock(blockToRestart);
       }, 50);
     }
