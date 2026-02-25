@@ -846,6 +846,73 @@
   padding: 0 var(--space-1);
 }
 
+/* What to Expect — collapsible details */
+.expect-details {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-surface);
+}
+
+.expect-summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-3) var(--space-4);
+  margin-bottom: 0;
+  user-select: none;
+}
+
+.expect-summary::-webkit-details-marker {
+  display: none;
+}
+
+.expect-summary::after {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-right: 2px solid var(--text-muted);
+  border-bottom: 2px solid var(--text-muted);
+  transform: rotate(-45deg);
+  transition: transform var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.expect-details[open] .expect-summary::after {
+  transform: rotate(45deg);
+}
+
+.expect-body {
+  padding: 0 var(--space-4) var(--space-4);
+}
+
+.expect-body h3 {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  color: var(--text-primary);
+}
+
+.expect-body ul {
+  padding-left: var(--space-4);
+  margin-bottom: 0;
+}
+
+.expect-body li {
+  margin-bottom: var(--space-2);
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+.expect-body p {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .card-grid {
