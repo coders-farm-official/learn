@@ -1,0 +1,25 @@
+{
+  "name": "Coders Farm",
+  "short_name": "CodersFarm",
+  "description": "Free civic technology education for the Lansing, Michigan community. Learn HTML, CSS, JavaScript, and more.",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#1e1e1e",
+  "background_color": "#1e1e1e",
+  "lang": "en",
+  "categories": ["education"],
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
