@@ -1,0 +1,495 @@
+/* ========================================
+   Coders Farm — Narrator
+   Text-to-speech with word highlighting
+   Uses the Web Speech API (fully offline)
+   ======================================== */
+
+const Narrator = (() => {
+  const STORAGE_KEY_VOICE = 'cf-narrator-voice';
+  const STORAGE_KEY_RATE = 'cf-narrator-rate';
+
+  // Elements to skip when extracting readable content
+  const SKIP_SELECTORS = [
+    'pre', '.code-editor-wrapper', '.quiz', '.try-it',
+    '.mark-complete-section', '.lesson-nav', 'script', 'style',
+    '.narrator-play-wrapper', '.install-tabs', '.architecture-diagram',
+    '.error-display'
+  ];
+
+  // Block-level elements that contain readable text directly
+  const BLOCK_TAGS = ['P', 'H2', 'H3', 'H4', 'H5', 'H6', 'LI', 'BLOCKQUOTE', 'TD', 'TH', 'DT', 'DD', 'FIGCAPTION'];
+
+  // Container elements to recurse into
+  const CONTAINER_TAGS = ['UL', 'OL', 'DIV', 'SECTION', 'TABLE', 'TBODY', 'THEAD', 'TR', 'DL', 'FIGURE'];
+
+  // State
+  let playing = false;
+  let paused = false;
+  let blocks = [];
+  let currentBlockIndex = -1;
+  let currentWordMap = null;
+  let currentOriginalHTML = null;
+  let currentBlockElement = null;
+  let floatingEl = null;
+  let playBtnEl = null;
+  let keepAliveTimer = null;
+
+  // --- Feature detection ---
+
+  function isSupported() {
+    return 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+  }
+
+  // --- Preferences (localStorage with try-catch) ---
+
+  function getSavedVoice() {
+    try { return localStorage.getItem(STORAGE_KEY_VOICE); }
+    catch (e) { return null; }
+  }
+
+  function saveVoice(voiceName) {
+    try { localStorage.setItem(STORAGE_KEY_VOICE, voiceName); }
+    catch (e) { /* ignore */ }
+  }
+
+  function getSavedRate() {
+    try {
+      const r = parseFloat(localStorage.getItem(STORAGE_KEY_RATE));
+      return isNaN(r) ? 1 : r;
+    } catch (e) { return 1; }
+  }
+
+  function saveRate(rate) {
+    try { localStorage.setItem(STORAGE_KEY_RATE, String(rate)); }
+    catch (e) { /* ignore */ }
+  }
+
+  function getPreferredVoice() {
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) return null;
+
+    // Try the user's saved preference first
+    const savedName = getSavedVoice();
+    if (savedName) {
+      const found = voices.find(v => v.name === savedName);
+      if (found) return found;
+    }
+
+    // Fall back to a good English voice
+    const english = voices.filter(v => v.lang.startsWith('en'));
+    const preferred = english.find(v => v.localService && v.default) ||
+                      english.find(v => v.default) ||
+                      english.find(v => v.localService) ||
+                      english[0];
+    return preferred || voices[0];
+  }
+
+  // --- Content extraction ---
+
+  function shouldSkip(el) {
+    return SKIP_SELECTORS.some(sel => el.matches && el.matches(sel));
+  }
+
+  function hasBlockChildren(el) {
+    return Array.from(el.children).some(child =>
+      BLOCK_TAGS.includes(child.tagName) || CONTAINER_TAGS.includes(child.tagName)
+    );
+  }
+
+  function extractReadableBlocks() {
+    const container = document.querySelector('.lesson-content');
+    if (!container) return [];
+
+    const result = [];
+
+    function walk(parent) {
+      for (const child of parent.children) {
+        if (shouldSkip(child)) continue;
+
+        const tag = child.tagName;
+        const isBlock = BLOCK_TAGS.includes(tag);
+        const isContainer = CONTAINER_TAGS.includes(tag);
+
+        if (isBlock) {
+          const text = child.textContent.trim();
+          if (text.length > 0) {
+            result.push(child);
+          }
+        } else if (isContainer) {
+          // If this container has block-level children, recurse into them.
+          // Otherwise treat the container itself as a readable leaf.
+          if (hasBlockChildren(child)) {
+            walk(child);
+          } else {
+            const text = child.textContent.trim();
+            if (text.length > 0) {
+              result.push(child);
+            }
+          }
+        }
+      }
+    }
+
+    walk(container);
+    return result;
+  }
+
+  // --- Word wrapping for per-word highlighting ---
+
+  function wrapWordsInElement(element) {
+    const originalHTML = element.innerHTML;
+    const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT);
+    const textNodes = [];
+    while (walker.nextNode()) textNodes.push(walker.currentNode);
+
+    let charOffset = 0;
+    const wordMap = [];
+
+    textNodes.forEach(textNode => {
+      const text = textNode.textContent;
+      const parts = text.split(/(\S+)/);
+      const fragment = document.createDocumentFragment();
+
+      parts.forEach(part => {
+        if (!part) return;
+        if (/^\s+$/.test(part)) {
+          fragment.appendChild(document.createTextNode(part));
+          charOffset += part.length;
+        } else {
+          const span = document.createElement('span');
+          span.className = 'narrator-word';
+          span.textContent = part;
+          fragment.appendChild(span);
+          wordMap.push({ span: span, start: charOffset, end: charOffset + part.length });
+          charOffset += part.length;
+        }
+      });
+
+      textNode.parentNode.replaceChild(fragment, textNode);
+    });
+
+    return { originalHTML, wordMap };
+  }
+
+  function unwrapCurrentBlock() {
+    if (currentBlockElement && currentOriginalHTML !== null) {
+      currentBlockElement.innerHTML = currentOriginalHTML;
+      currentBlockElement.classList.remove('narrator-block-active');
+    }
+    currentWordMap = null;
+    currentOriginalHTML = null;
+    currentBlockElement = null;
+  }
+
+  // --- Chrome workaround: speech synthesis stops after ~15s ---
+
+  function startKeepAlive() {
+    stopKeepAlive();
+    keepAliveTimer = setInterval(() => {
+      if (speechSynthesis.speaking && !speechSynthesis.paused) {
+        speechSynthesis.pause();
+        speechSynthesis.resume();
+      }
+    }, 10000);
+  }
+
+  function stopKeepAlive() {
+    if (keepAliveTimer) {
+      clearInterval(keepAliveTimer);
+      keepAliveTimer = null;
+    }
+  }
+
+  // --- Playback engine ---
+
+  function speakBlock(index) {
+    if (index >= blocks.length) {
+      stopPlayback();
+      return;
+    }
+
+    currentBlockIndex = index;
+    const element = blocks[index];
+
+    unwrapCurrentBlock();
+
+    // Scroll the block into view
+    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Wrap all text nodes into per-word spans for highlighting
+    const { originalHTML, wordMap } = wrapWordsInElement(element);
+    currentOriginalHTML = originalHTML;
+    currentWordMap = wordMap;
+    currentBlockElement = element;
+    element.classList.add('narrator-block-active');
+
+    // Build the utterance from the element's full text
+    const text = element.textContent;
+    const utterance = new SpeechSynthesisUtterance(text);
+
+    const voice = getPreferredVoice();
+    if (voice) {
+      utterance.voice = voice;
+      saveVoice(voice.name);
+    }
+    utterance.rate = getSavedRate();
+    utterance.pitch = 1;
+
+    // Per-word highlighting via boundary events
+    utterance.onboundary = (event) => {
+      if (event.name !== 'word') return;
+      if (!currentWordMap) return;
+
+      // Clear previous highlight
+      currentWordMap.forEach(w => w.span.classList.remove('narrator-word-active'));
+
+      // Find the word span that matches this character index
+      const ci = event.charIndex;
+      const match = currentWordMap.find(w => ci >= w.start && ci < w.end);
+      if (match) {
+        match.span.classList.add('narrator-word-active');
+        match.span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    };
+
+    // Advance to the next block when this one finishes
+    utterance.onend = () => {
+      unwrapCurrentBlock();
+      if (playing && !paused) {
+        speakBlock(index + 1);
+      }
+    };
+
+    utterance.onerror = (event) => {
+      // 'canceled' and 'interrupted' are expected when user stops/skips
+      if (event.error === 'canceled' || event.error === 'interrupted') return;
+      console.log('[Narrator] Speech error:', event.error);
+      unwrapCurrentBlock();
+      if (playing && !paused) {
+        speakBlock(index + 1);
+      }
+    };
+
+    speechSynthesis.speak(utterance);
+    updateFloatingUI();
+  }
+
+  function startPlayback() {
+    speechSynthesis.cancel();
+    blocks = extractReadableBlocks();
+    if (blocks.length === 0) return;
+
+    playing = true;
+    paused = false;
+    currentBlockIndex = 0;
+
+    startKeepAlive();
+    showFloating();
+    updatePlayButton();
+    speakBlock(0);
+  }
+
+  function pausePlayback() {
+    if (!playing) return;
+    speechSynthesis.pause();
+    paused = true;
+    stopKeepAlive();
+    updateFloatingUI();
+    updatePlayButton();
+  }
+
+  function resumePlayback() {
+    if (!playing || !paused) return;
+    speechSynthesis.resume();
+    paused = false;
+    startKeepAlive();
+    updateFloatingUI();
+    updatePlayButton();
+  }
+
+  function stopPlayback() {
+    speechSynthesis.cancel();
+    playing = false;
+    paused = false;
+    currentBlockIndex = -1;
+    unwrapCurrentBlock();
+    stopKeepAlive();
+    hideFloating();
+    updatePlayButton();
+  }
+
+  function togglePlayPause() {
+    if (!playing) {
+      startPlayback();
+    } else if (paused) {
+      resumePlayback();
+    } else {
+      pausePlayback();
+    }
+  }
+
+  // --- Speed control ---
+
+  const RATES = [0.8, 1, 1.2, 1.5, 2];
+
+  function cycleRate() {
+    const current = getSavedRate();
+    const idx = RATES.indexOf(current);
+    const next = RATES[(idx + 1) % RATES.length];
+    saveRate(next);
+    updateFloatingUI();
+
+    // Restart current block at the new speed
+    if (playing) {
+      const blockToRestart = currentBlockIndex;
+      speechSynthesis.cancel();
+      unwrapCurrentBlock();
+      setTimeout(() => {
+        if (playing) speakBlock(blockToRestart);
+      }, 50);
+    }
+  }
+
+  // --- UI: Play button in the lesson header ---
+
+  function createPlayButton() {
+    const header = document.querySelector('.lesson-header');
+    if (!header) return;
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'narrator-play-wrapper';
+
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary narrator-play-btn';
+    btn.setAttribute('aria-label', 'Listen to this lesson');
+    btn.innerHTML =
+      '<svg class="narrator-icon narrator-icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+        '<polygon points="5 3 19 12 5 21 5 3"/>' +
+      '</svg>' +
+      '<svg class="narrator-icon narrator-icon-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">' +
+        '<line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/>' +
+      '</svg>' +
+      '<span class="narrator-play-label">Listen to this lesson</span>';
+
+    btn.addEventListener('click', togglePlayPause);
+    wrapper.appendChild(btn);
+    header.appendChild(wrapper);
+    playBtnEl = btn;
+  }
+
+  function updatePlayButton() {
+    if (!playBtnEl) return;
+
+    const playIcon = playBtnEl.querySelector('.narrator-icon-play');
+    const pauseIcon = playBtnEl.querySelector('.narrator-icon-pause');
+    const label = playBtnEl.querySelector('.narrator-play-label');
+
+    if (playing && !paused) {
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = '';
+      label.textContent = 'Pause';
+    } else if (playing && paused) {
+      playIcon.style.display = '';
+      pauseIcon.style.display = 'none';
+      label.textContent = 'Resume';
+    } else {
+      playIcon.style.display = '';
+      pauseIcon.style.display = 'none';
+      label.textContent = 'Listen to this lesson';
+    }
+  }
+
+  // --- UI: Floating controls (appear after play is pressed) ---
+
+  function createFloatingControls() {
+    const el = document.createElement('div');
+    el.className = 'narrator-float';
+    el.setAttribute('role', 'region');
+    el.setAttribute('aria-label', 'Narrator controls');
+
+    el.innerHTML =
+      '<button class="narrator-float-btn narrator-float-pause" aria-label="Pause narration">' +
+        '<svg class="narrator-icon narrator-fp-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none">' +
+          '<polygon points="5 3 19 12 5 21 5 3"/>' +
+        '</svg>' +
+        '<svg class="narrator-icon narrator-fp-pause" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<line x1="6" y1="4" x2="6" y2="20"/><line x1="18" y1="4" x2="18" y2="20"/>' +
+        '</svg>' +
+      '</button>' +
+      '<button class="narrator-float-btn narrator-float-stop" aria-label="Stop narration">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+          '<rect x="6" y="6" width="12" height="12" rx="1"/>' +
+        '</svg>' +
+      '</button>' +
+      '<button class="narrator-float-btn narrator-float-rate" aria-label="Change playback speed">' +
+        '<span class="narrator-rate-label">1x</span>' +
+      '</button>' +
+      '<span class="narrator-float-progress"></span>';
+
+    el.querySelector('.narrator-float-pause').addEventListener('click', togglePlayPause);
+    el.querySelector('.narrator-float-stop').addEventListener('click', stopPlayback);
+    el.querySelector('.narrator-float-rate').addEventListener('click', cycleRate);
+
+    document.body.appendChild(el);
+    floatingEl = el;
+  }
+
+  function showFloating() {
+    if (floatingEl) floatingEl.classList.add('visible');
+  }
+
+  function hideFloating() {
+    if (floatingEl) floatingEl.classList.remove('visible');
+  }
+
+  function updateFloatingUI() {
+    if (!floatingEl) return;
+
+    // Toggle pause/play icon
+    const fpPlay = floatingEl.querySelector('.narrator-fp-play');
+    const fpPause = floatingEl.querySelector('.narrator-fp-pause');
+    const pauseBtn = floatingEl.querySelector('.narrator-float-pause');
+
+    if (paused) {
+      fpPlay.style.display = '';
+      fpPause.style.display = 'none';
+      pauseBtn.setAttribute('aria-label', 'Resume narration');
+    } else {
+      fpPlay.style.display = 'none';
+      fpPause.style.display = '';
+      pauseBtn.setAttribute('aria-label', 'Pause narration');
+    }
+
+    // Update rate display
+    const rateLabel = floatingEl.querySelector('.narrator-rate-label');
+    rateLabel.textContent = getSavedRate() + 'x';
+
+    // Update progress counter
+    const progress = floatingEl.querySelector('.narrator-float-progress');
+    if (blocks.length > 0) {
+      progress.textContent = (currentBlockIndex + 1) + ' / ' + blocks.length;
+    }
+  }
+
+  // --- Initialization ---
+
+  function init() {
+    if (!isSupported()) return;
+
+    // Trigger voice list loading (some browsers load asynchronously)
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.addEventListener('voiceschanged', () => {});
+    }
+    speechSynthesis.getVoices();
+
+    createPlayButton();
+    createFloatingControls();
+
+    // Stop narration if the user navigates away
+    window.addEventListener('beforeunload', () => {
+      if (playing) stopPlayback();
+    });
+  }
+
+  return { init };
+})();
