@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coders Farm — Learn Civic Technology</title>
+  <meta name="description" content="Free coding education for the Lansing, Michigan community. Learn HTML, CSS, JavaScript, and more.">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body data-page="catalog">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- Navigation -->
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="80" height="80" rx="16" fill="#16825d"/>
+            <text x="50%" y="44" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="28" fill="#fff">CF</text>
+          </svg>
+          Coders Farm
+        </a>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/01-intro-to-html.html" role="menuitem">Web Basics</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <!-- Hero -->
+    <section class="hero">
+      <svg class="hero-logo" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect width="80" height="80" rx="16" fill="#16825d"/>
+        <text x="50%" y="44" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="28" fill="#fff">CF</text>
+      </svg>
+      <h1>Coders Farm</h1>
+      <p class="tagline">Free civic technology education for the Lansing community</p>
+      <p class="hero-sub">Learn to code from scratch. No experience needed. All in your browser.</p>
+    </section>
+
+    <!-- Course Catalog -->
+    <section class="section" aria-label="Course catalog">
+      <h2 class="section-title">Courses</h2>
+      <div class="card-grid">
+
+        <!-- Web Basics Track -->
+        <div class="card track-card" data-track-id="web-basics" data-total-lessons="6">
+          <div class="track-card-header">
+            <div class="track-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Web Development Basics</h3>
+              <p class="track-desc">Learn HTML, CSS, and JavaScript from scratch. Build your first web pages and bring them to life with interactivity.</p>
+            </div>
+          </div>
+          <div class="track-meta">
+            <span>6 lessons</span>
+            <span class="progress-text">0 / 6 lessons</span>
+          </div>
+          <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="track-card-footer">
+            <a href="/lessons/web-basics/01-intro-to-html.html" class="btn btn-primary track-btn">Start Learning</a>
+          </div>
+        </div>
+
+        <!-- Java Spring Track (Coming Soon) -->
+        <div class="card track-card" style="opacity: 0.7;">
+          <div class="track-card-header">
+            <div class="track-icon" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+              </svg>
+            </div>
+            <div>
+              <h3>Java &amp; Spring Boot</h3>
+              <p class="track-desc">Learn Java programming and build web applications with Spring Boot. Build APIs that power real civic tech projects.</p>
+            </div>
+          </div>
+          <div class="track-meta">
+            <span>Coming soon</span>
+          </div>
+          <div class="track-card-footer">
+            <span class="btn btn-secondary" style="pointer-events: none;">Coming Soon</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Progress Management -->
+    <section class="section" aria-label="Progress management">
+      <h2 class="section-title">Your Progress</h2>
+      <p>Your progress is saved locally in your browser. Use the buttons below to transfer your progress between devices.</p>
+      <div class="data-management">
+        <button id="export-progress" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export Progress
+        </button>
+        <button id="import-progress" class="btn btn-secondary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          Import Progress
+        </button>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="about-section" aria-label="About Coders Farm">
+      <h2>About Coders Farm</h2>
+      <p>Coders Farm is a nonprofit dedicated to civic technology education in the Lansing, Michigan area. We believe that everyone should have access to the skills needed to build technology that serves their community.</p>
+      <p>Our curriculum is designed for complete beginners — no prior coding experience required. All courses are free, run entirely in your browser, and can even work offline once loaded.</p>
+      <p>Whether you want to build websites, create apps for local organizations, or explore a career in tech, Coders Farm is here to help you grow.</p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">
+        &copy; 2025 Coders Farm. Open source education for Lansing.
+      </div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+  "id": "java-spring",
+  "title": "Java & Spring Boot",
+  "description": "Learn Java programming and build web applications with Spring Boot. Coming soon!",
+  "icon": "coffee",
+  "order": 2,
+  "comingSoon": true,
+  "lessons": []
+}
