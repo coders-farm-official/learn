@@ -19,8 +19,8 @@ document.addEventListener('DOMContentLoaded', () => {
   } else if (page === 'lesson') {
     // Initialize lesson features
     Lessons.init();
-    Quiz.initAll();
-    Editor.initAll();
+    if (typeof Quiz !== 'undefined') Quiz.initAll();
+    if (typeof Editor !== 'undefined') Editor.initAll();
     if (typeof Narrator !== 'undefined') Narrator.init();
     initInstallTabs();
   }
