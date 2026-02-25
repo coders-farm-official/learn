@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v3';
+const CACHE_NAME = 'cf-cache-v5';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -47,7 +47,20 @@ const APP_SHELL = [
   '/lessons/resumator/25-search-interface.html',
   '/lessons/resumator/26-when-things-break.html',
   '/lessons/resumator/27-completing-resumator.html',
-  '/lessons/resumator/28-review-whats-next.html'
+  '/lessons/resumator/28-api-tracking-thymeleaf.html',
+  '/lessons/resumator/29-search-security.html',
+  '/lessons/resumator/30-review-whats-next.html',
+  '/lessons/side-quests/manifest.json',
+  '/lessons/side-quests/build-something-new/discord-bot.html',
+  '/lessons/side-quests/build-something-new/encryption-hashing.html',
+  '/lessons/side-quests/build-something-new/multiplayer-quiz.html',
+  '/lessons/side-quests/build-something-new/android-app.html',
+  '/lessons/side-quests/build-something-new/linux-basics.html',
+  '/lessons/side-quests/supercharge-resumator/apply-tracker.html',
+  '/lessons/side-quests/supercharge-resumator/resume-tailor.html',
+  '/lessons/side-quests/supercharge-resumator/salary-heatmap.html',
+  '/lessons/side-quests/supercharge-resumator/email-alerts.html',
+  '/lessons/side-quests/supercharge-resumator/interview-prep.html'
 ];
 
 // Monaco Editor core files to pre-cache

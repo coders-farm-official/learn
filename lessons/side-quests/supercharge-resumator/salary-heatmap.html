@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Salary Heatmap — Coders Farm</title>
+  <meta name="description" content="Visualize salary data from your saved jobs with Chart.js — see what developers earn across cities, roles, and companies">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-salary-heatmap">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Salary Heatmap</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Salary Heatmap</p>
+      <h1>Salary Heatmap</h1>
+      <p style="color: var(--text-muted);">Estimated time: 4&ndash;5 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>Write JPQL aggregate queries to compute salary statistics from your jobs database</li>
+          <li>Build Spring Boot REST endpoints that return aggregated salary data</li>
+          <li>Add Chart.js to your project via CDN and create four distinct chart types</li>
+          <li>Build a responsive analytics dashboard page with interactive visualizations</li>
+          <li>Handle missing and incomplete salary data gracefully</li>
+          <li>Develop data literacy &mdash; understanding what your charts actually represent</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — YOUR DATA IS VALUABLE ==================== -->
+      <h2>1. Your Data is Valuable</h2>
+
+      <p>You have been building the Resumator for weeks now. Every time you searched for jobs, every time you saved a favorite, every time you browsed through results &mdash; data was accumulating in your database. Your <code>jobs</code> table is not just a list of search results anymore. It is a <strong>dataset</strong>. And datasets tell stories.</p>
+
+      <p>Think about what is sitting in that table right now. Hundreds, maybe thousands of job listings. Each one has a title, a company name, a city, a state, and &mdash; for many of them &mdash; a salary range. You have been collecting this data through your normal usage of the application, and now it is time to do something with it.</p>
+
+      <p>What do software developers actually earn in Austin versus San Francisco? Which job titles command the highest salaries? Which companies are hiring the most? How have salary ranges changed over the weeks you have been collecting data? These are real questions, and your database has real answers. You just need to extract them and present them visually.</p>
+
+      <p>That is exactly what you are going to build in this side quest: a <strong>salary analytics dashboard</strong> that turns your raw job data into interactive, visual charts. By the end, you will have a page in your Resumator that looks like something out of a professional analytics tool &mdash; and every number on it comes from data you collected yourself.</p>
+
+      <p>This side quest spans the full stack. You will write JPQL aggregate queries on the backend, build REST endpoints in your Spring Boot controller, add the Chart.js library via CDN on the frontend, and write JavaScript to fetch data and render four different chart types. Along the way, you will also grapple with a question that most tutorials never address: what do your charts actually <em>mean</em> when the underlying data is incomplete?</p>
+
+      <div class="callout callout-info">
+        <strong>Why visualization matters</strong>
+        A table with 500 rows of salary data is useful but overwhelming. A bar chart that instantly shows you "Austin pays $95K average, San Francisco pays $135K average" communicates the same information in a fraction of a second. Visualization is not decoration &mdash; it is a fundamentally different way of understanding data. It lets your brain's pattern recognition do the heavy lifting instead of forcing you to scan numbers one by one.
+      </div>
+
+      <!-- ==================== PART 2 — CHOOSING A CHART LIBRARY ==================== -->
+      <h2>2. Choosing a Chart Library</h2>
+
+      <p>You could build charts from scratch using raw HTML canvas or SVG elements. People do this. It is also an enormous amount of work for results that will almost certainly look worse than what a library can give you. In professional development, choosing the right library is a skill in itself. You want something that is well-documented, actively maintained, flexible enough for your needs, and not so complex that you spend more time learning the library than building your feature.</p>
+
+      <p>For this side quest, you are going to use <strong>Chart.js</strong>. Here is why:</p>
+
+      <ul>
+        <li><strong>Simple API</strong> &mdash; you create a chart by passing a configuration object to a constructor. No complicated initialization rituals.</li>
+        <li><strong>Well-documented</strong> &mdash; the official documentation is excellent, with examples for every chart type and every option.</li>
+        <li><strong>Beginner-friendly</strong> &mdash; you can get a chart rendering in under 20 lines of JavaScript. The learning curve is gentle.</li>
+        <li><strong>Responsive by default</strong> &mdash; charts automatically resize when the browser window changes size.</li>
+        <li><strong>Built-in interactivity</strong> &mdash; hover tooltips, click handlers, and animations work out of the box.</li>
+      </ul>
+
+      <p>You already know how to add external libraries via CDN &mdash; you did it with Monaco Editor earlier in the course. Chart.js works the same way. You include a single <code>&lt;script&gt;</code> tag, and the library is available globally. No npm install, no build step, no bundler configuration.</p>
+
+      <div class="callout callout-info">
+        <strong>Other chart libraries worth knowing about</strong>
+        Chart.js is not the only option. <strong>D3.js</strong> is the most powerful and flexible charting library, but it has a steep learning curve and requires you to build everything from primitives. <strong>Apache ECharts</strong> is popular in enterprise applications with complex requirements. <strong>Recharts</strong> is designed specifically for React applications. <strong>Plotly</strong> is excellent for scientific and statistical visualizations. For this project, Chart.js gives you the best balance of power and simplicity. As you grow as a developer, you will encounter these other libraries in different contexts.
+      </div>
+
+      <p>Chart.js supports several chart types that are perfect for salary data analysis:</p>
+
+      <ul>
+        <li><strong>Bar chart</strong> &mdash; ideal for comparing values across categories (salary by city, salary by role)</li>
+        <li><strong>Horizontal bar chart</strong> &mdash; same as a bar chart but rotated, which works better when category labels are long (like job titles)</li>
+        <li><strong>Doughnut chart</strong> &mdash; great for showing proportions and distributions (jobs by state, jobs by category)</li>
+        <li><strong>Line chart</strong> &mdash; perfect for showing trends over time (average salary over the weeks you have been collecting data)</li>
+      </ul>
+
+      <p>You are going to use all four of these in your dashboard.</p>
+
+      <!-- ==================== PART 3 — BACKEND AGGREGATION ENDPOINTS ==================== -->
+      <h2>3. Backend Aggregation Endpoints</h2>
+
+      <p>Before you can visualize anything, you need the data in a format that Chart.js can consume. Right now, your database has raw job listings &mdash; individual rows with individual salary values. What your charts need are <strong>aggregated</strong> results: averages, counts, and groupings. You need to ask the database questions like "What is the average salary for each city?" and get back a concise result set instead of thousands of individual rows.</p>
+
+      <p>This is where <strong>JPQL aggregate queries</strong> come in. JPQL (Java Persistence Query Language) looks a lot like SQL, but it operates on your Java entities instead of raw database tables. You can use functions like <code>AVG()</code>, <code>COUNT()</code>, <code>MIN()</code>, and <code>MAX()</code> combined with <code>GROUP BY</code> to aggregate your data at the database level &mdash; which is vastly more efficient than loading every row into Java and doing the math there.</p>
+
+      <p>Create a new repository interface called <code>JobAnalyticsRepository</code>. This will hold all of your aggregate queries:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.repository;
+
+import com.example.resumator.model.Job;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import java.util.List;
+
+public interface JobAnalyticsRepository extends JpaRepository&lt;Job, Long&gt; {
+
+    // Average salary by city (top 10 cities by job count)
+    @Query(&quot;SELECT j.jobCity, AVG(j.jobMinSalary), AVG(j.jobMaxSalary), COUNT(j) &quot; +
+           &quot;FROM Job j &quot; +
+           &quot;WHERE j.jobCity IS NOT NULL AND j.jobMinSalary IS NOT NULL &quot; +
+           &quot;GROUP BY j.jobCity &quot; +
+           &quot;ORDER BY COUNT(j) DESC&quot;)
+    List&lt;Object[]&gt; findAverageSalaryByCity();
+
+    // Average salary by role keyword (extracted from job title)
+    @Query(&quot;SELECT &quot; +
+           &quot;CASE &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%senior%' THEN 'Senior' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%lead%' THEN 'Lead' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%principal%' THEN 'Principal' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%staff%' THEN 'Staff' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%junior%' THEN 'Junior' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%entry%' THEN 'Entry Level' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%intern%' THEN 'Intern' &quot; +
+           &quot;  ELSE 'Mid Level' &quot; +
+           &quot;END, &quot; +
+           &quot;AVG(j.jobMinSalary), AVG(j.jobMaxSalary), COUNT(j) &quot; +
+           &quot;FROM Job j &quot; +
+           &quot;WHERE j.jobMinSalary IS NOT NULL &quot; +
+           &quot;GROUP BY &quot; +
+           &quot;CASE &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%senior%' THEN 'Senior' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%lead%' THEN 'Lead' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%principal%' THEN 'Principal' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%staff%' THEN 'Staff' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%junior%' THEN 'Junior' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%entry%' THEN 'Entry Level' &quot; +
+           &quot;  WHEN LOWER(j.jobTitle) LIKE '%intern%' THEN 'Intern' &quot; +
+           &quot;  ELSE 'Mid Level' &quot; +
+           &quot;END &quot; +
+           &quot;ORDER BY AVG(j.jobMaxSalary) DESC&quot;)
+    List&lt;Object[]&gt; findAverageSalaryByRole();
+
+    // Top employers by number of job listings
+    @Query(&quot;SELECT j.employerName, COUNT(j), &quot; +
+           &quot;AVG(j.jobMinSalary), AVG(j.jobMaxSalary) &quot; +
+           &quot;FROM Job j &quot; +
+           &quot;WHERE j.employerName IS NOT NULL &quot; +
+           &quot;GROUP BY j.employerName &quot; +
+           &quot;ORDER BY COUNT(j) DESC&quot;)
+    List&lt;Object[]&gt; findTopEmployers();
+
+    // Average salary over time (grouped by saved week)
+    @Query(&quot;SELECT FUNCTION('DATE_FORMAT', j.savedAt, '%Y-%u'), &quot; +
+           &quot;AVG(j.jobMinSalary), AVG(j.jobMaxSalary), COUNT(j) &quot; +
+           &quot;FROM Job j &quot; +
+           &quot;WHERE j.jobMinSalary IS NOT NULL AND j.savedAt IS NOT NULL &quot; +
+           &quot;GROUP BY FUNCTION('DATE_FORMAT', j.savedAt, '%Y-%u') &quot; +
+           &quot;ORDER BY FUNCTION('DATE_FORMAT', j.savedAt, '%Y-%u') ASC&quot;)
+    List&lt;Object[]&gt; findSalaryOverTime();
+
+    // Jobs count by state
+    @Query(&quot;SELECT j.jobState, COUNT(j) &quot; +
+           &quot;FROM Job j &quot; +
+           &quot;WHERE j.jobState IS NOT NULL &quot; +
+           &quot;GROUP BY j.jobState &quot; +
+           &quot;ORDER BY COUNT(j) DESC&quot;)
+    List&lt;Object[]&gt; findJobCountByState();
+}</code></pre>
+      </div>
+
+      <p>Let us break down what each of these queries does. The <code>findAverageSalaryByCity</code> query groups all jobs by their city, then calculates the average minimum salary, average maximum salary, and total count for each city. The <code>WHERE</code> clause filters out jobs that have no city or no salary data &mdash; you cannot calculate an average of nothing. The <code>ORDER BY COUNT(j) DESC</code> sorts the results so the cities with the most job listings appear first.</p>
+
+      <p>The <code>findAverageSalaryByRole</code> query is more interesting. There is no "role level" column in your database &mdash; you have to extract it from the job title. The <code>CASE</code> expression examines the title and categorizes it: if the title contains "senior," it is classified as "Senior." If it contains "lead," it is "Lead." And so on. This is a common real-world pattern &mdash; deriving categories from unstructured text data.</p>
+
+      <div class="callout callout-warning">
+        <strong>Handling missing salary data</strong>
+        Not every job listing includes salary information. Some employers choose not to disclose it. Your queries use <code>WHERE j.jobMinSalary IS NOT NULL</code> to exclude jobs without salary data from the calculations. This is critical &mdash; including null values would skew your averages or cause errors. Later in the frontend, you will also want to show users how many jobs <em>have</em> salary data versus how many do not, so they understand the sample size behind each chart.
+      </div>
+
+      <p>Now you need a controller to expose these queries as REST endpoints. Create <code>AnalyticsController.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="true" data-runnable="false">
+        <pre><code>package com.example.resumator.controller;
+
+import com.example.resumator.repository.JobAnalyticsRepository;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.*;
+
+@RestController
+@RequestMapping(&quot;/api/analytics&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+public class AnalyticsController {
+
+    private final JobAnalyticsRepository analyticsRepo;
+
+    public AnalyticsController(JobAnalyticsRepository analyticsRepo) {
+        this.analyticsRepo = analyticsRepo;
+    }
+
+    @GetMapping(&quot;/salary-by-city&quot;)
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getSalaryByCity() {
+        List&lt;Object[]&gt; results = analyticsRepo.findAverageSalaryByCity();
+        List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+        int limit = Math.min(results.size(), 10);
+        for (int i = 0; i &lt; limit; i++) {
+            Object[] row = results.get(i);
+            Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+            entry.put(&quot;city&quot;, row[0]);
+            entry.put(&quot;avgMinSalary&quot;, row[1] != null ? Math.round((Double) row[1]) : 0);
+            entry.put(&quot;avgMaxSalary&quot;, row[2] != null ? Math.round((Double) row[2]) : 0);
+            entry.put(&quot;jobCount&quot;, row[3]);
+            data.add(entry);
+        }
+
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(&quot;/salary-by-role&quot;)
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getSalaryByRole() {
+        List&lt;Object[]&gt; results = analyticsRepo.findAverageSalaryByRole();
+        List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+        for (Object[] row : results) {
+            Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+            entry.put(&quot;role&quot;, row[0]);
+            entry.put(&quot;avgMinSalary&quot;, row[1] != null ? Math.round((Double) row[1]) : 0);
+            entry.put(&quot;avgMaxSalary&quot;, row[2] != null ? Math.round((Double) row[2]) : 0);
+            entry.put(&quot;jobCount&quot;, row[3]);
+            data.add(entry);
+        }
+
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(&quot;/top-employers&quot;)
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getTopEmployers() {
+        List&lt;Object[]&gt; results = analyticsRepo.findTopEmployers();
+        List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+        int limit = Math.min(results.size(), 15);
+        for (int i = 0; i &lt; limit; i++) {
+            Object[] row = results.get(i);
+            Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+            entry.put(&quot;employer&quot;, row[0]);
+            entry.put(&quot;jobCount&quot;, row[1]);
+            entry.put(&quot;avgMinSalary&quot;, row[2] != null ? Math.round((Double) row[2]) : 0);
+            entry.put(&quot;avgMaxSalary&quot;, row[3] != null ? Math.round((Double) row[3]) : 0);
+            data.add(entry);
+        }
+
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(&quot;/salary-over-time&quot;)
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getSalaryOverTime() {
+        List&lt;Object[]&gt; results = analyticsRepo.findSalaryOverTime();
+        List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+        for (Object[] row : results) {
+            Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+            entry.put(&quot;week&quot;, row[0]);
+            entry.put(&quot;avgMinSalary&quot;, row[1] != null ? Math.round((Double) row[1]) : 0);
+            entry.put(&quot;avgMaxSalary&quot;, row[2] != null ? Math.round((Double) row[2]) : 0);
+            entry.put(&quot;jobCount&quot;, row[3]);
+            data.add(entry);
+        }
+
+        return ResponseEntity.ok(data);
+    }
+
+    @GetMapping(&quot;/jobs-by-state&quot;)
+    public ResponseEntity&lt;List&lt;Map&lt;String, Object&gt;&gt;&gt; getJobsByState() {
+        List&lt;Object[]&gt; results = analyticsRepo.findJobCountByState();
+        List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+        int limit = Math.min(results.size(), 12);
+        for (int i = 0; i &lt; limit; i++) {
+            Object[] row = results.get(i);
+            Map&lt;String, Object&gt; entry = new LinkedHashMap&lt;&gt;();
+            entry.put(&quot;state&quot;, row[0]);
+            entry.put(&quot;jobCount&quot;, row[1]);
+            data.add(entry);
+        }
+
+        return ResponseEntity.ok(data);
+    }
+}</code></pre>
+      </div>
+
+      <p>Notice the pattern: each endpoint calls a repository method, transforms the raw <code>Object[]</code> results into clean <code>Map</code> objects with descriptive keys, and returns them as JSON. The frontend will receive data that looks like this:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>[
+  { &quot;city&quot;: &quot;Austin&quot;, &quot;avgMinSalary&quot;: 85000, &quot;avgMaxSalary&quot;: 125000, &quot;jobCount&quot;: 47 },
+  { &quot;city&quot;: &quot;San Francisco&quot;, &quot;avgMinSalary&quot;: 110000, &quot;avgMaxSalary&quot;: 165000, &quot;jobCount&quot;: 38 },
+  { &quot;city&quot;: &quot;New York&quot;, &quot;avgMinSalary&quot;: 95000, &quot;avgMaxSalary&quot;: 145000, &quot;jobCount&quot;: 35 }
+]</code></pre>
+      </div>
+
+      <p>Clean, predictable JSON that Chart.js can consume directly. Notice how each endpoint also limits the results &mdash; <code>salary-by-city</code> returns the top 10, <code>top-employers</code> returns the top 15, <code>jobs-by-state</code> returns the top 12. This keeps the charts readable. A bar chart with 200 bars is useless. A bar chart with 10 bars tells a clear story.</p>
+
+      <div class="callout callout-info">
+        <strong>Why transform Object[] into Map?</strong>
+        JPQL aggregate queries return <code>List&lt;Object[]&gt;</code> &mdash; each row is an array of raw objects. If you returned these directly, the JSON would be meaningless arrays like <code>["Austin", 85000, 125000, 47]</code>. By converting each row to a Map with named keys, the frontend gets self-describing data. This is a small amount of extra work in the controller that makes the frontend code dramatically cleaner and easier to maintain.
+      </div>
+
+      <p>One important detail about the <code>salary-over-time</code> endpoint: it uses <code>FUNCTION('DATE_FORMAT', j.savedAt, '%Y-%u')</code> to group jobs by the year and week number they were saved. This is a MySQL-specific function called through JPQL's generic <code>FUNCTION()</code> syntax. The format <code>'%Y-%u'</code> produces strings like <code>"2025-14"</code> (year 2025, week 14). Grouping by week smooths out the daily noise &mdash; if you grouped by day, you might have some days with 1 job and other days with 20, making the chart erratic. Weekly grouping gives you a cleaner trend line while still showing meaningful change over time.</p>
+
+      <p>Also notice the <code>Math.round()</code> calls in the controller. Salary averages often produce values like <code>95432.17647058824</code>. Nobody needs that many decimal places for a salary chart. Rounding to the nearest whole number at the backend level means the frontend receives clean integers, and you do not have to worry about formatting precision issues in JavaScript.</p>
+
+      <div class="callout callout-warning">
+        <strong>Testing your endpoints before building the frontend</strong>
+        Before writing any Chart.js code, test your endpoints directly. Open your browser and navigate to <code>http://localhost:8080/api/analytics/salary-by-city</code>. You should see a JSON array. If you see an empty array <code>[]</code>, your database might not have any jobs with salary data yet &mdash; go back to the search page and run some searches to populate data. If you see a 500 error, check the Spring Boot console for the stack trace. Testing endpoints independently before connecting them to the frontend is a professional habit that saves enormous debugging time.
+      </div>
+
+      <!-- ==================== PART 4 — BUILDING THE DASHBOARD PAGE ==================== -->
+      <h2>4. Building the Dashboard Page</h2>
+
+      <p>Now comes the exciting part &mdash; building the actual analytics page. You need a new route in your Resumator application that serves a dashboard with canvas elements for each chart. First, you will need to add Chart.js via CDN and create the page structure. Then you will write the JavaScript that fetches data from your endpoints and renders it.</p>
+
+      <p>If your Resumator uses Thymeleaf templates, create a new file called <code>analytics.html</code> in your <code>templates</code> folder. If you are serving static HTML, create it in your <code>static</code> folder. Either way, the content is the same. Here is the HTML structure for your dashboard:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Salary Analytics — Resumator&lt;/title&gt;
+    &lt;!-- Chart.js via CDN — same pattern as Monaco Editor --&gt;
+    &lt;script src=&quot;https://cdn.jsdelivr.net/npm/chart.js&quot;&gt;&lt;/script&gt;
+    &lt;style&gt;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            padding: 2rem;
+        }
+        .dashboard-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .dashboard-header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        .dashboard-header p { color: #666; }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 1.5rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .chart-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .chart-card h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        .chart-card .chart-subtitle {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 1rem;
+        }
+        .chart-card canvas { width: 100% !important; }
+        .data-notice {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #fff3cd;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            color: #664d03;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .loading-spinner {
+            text-align: center;
+            padding: 3rem;
+            color: #888;
+            font-size: 1.1rem;
+        }
+        @media (max-width: 600px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            body { padding: 1rem; }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;div class=&quot;dashboard-header&quot;&gt;
+        &lt;h1&gt;Salary Analytics&lt;/h1&gt;
+        &lt;p&gt;Insights from your collected job data&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;dashboard-grid&quot;&gt;
+        &lt;div class=&quot;chart-card&quot;&gt;
+            &lt;h3&gt;Average Salary by City&lt;/h3&gt;
+            &lt;p class=&quot;chart-subtitle&quot;&gt;Top 10 cities by number of listings&lt;/p&gt;
+            &lt;canvas id=&quot;salaryByCityChart&quot;&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;chart-card&quot;&gt;
+            &lt;h3&gt;Average Salary by Role Level&lt;/h3&gt;
+            &lt;p class=&quot;chart-subtitle&quot;&gt;Based on keywords in job titles&lt;/p&gt;
+            &lt;canvas id=&quot;salaryByRoleChart&quot;&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;chart-card&quot;&gt;
+            &lt;h3&gt;Jobs by State&lt;/h3&gt;
+            &lt;p class=&quot;chart-subtitle&quot;&gt;Distribution across top states&lt;/p&gt;
+            &lt;canvas id=&quot;jobsByStateChart&quot;&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;chart-card&quot;&gt;
+            &lt;h3&gt;Salary Trends Over Time&lt;/h3&gt;
+            &lt;p class=&quot;chart-subtitle&quot;&gt;Weekly average from your collected data&lt;/p&gt;
+            &lt;canvas id=&quot;salaryOverTimeChart&quot;&gt;&lt;/canvas&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;data-notice&quot;&gt;
+        These charts reflect only jobs with reported salary data.
+        Not all listings include salaries — your actual dataset may be larger.
+    &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>The layout uses CSS Grid with <code>auto-fit</code> and <code>minmax</code> to create a responsive grid that automatically adjusts from two columns on a desktop to a single column on a phone. Each chart lives inside a <code>.chart-card</code> with a white background, rounded corners, and a subtle shadow. The <code>&lt;canvas&gt;</code> elements are where Chart.js will render the actual charts &mdash; the library draws directly onto the HTML canvas element.</p>
+
+      <p>Now here is the JavaScript that brings it all to life. This is where your endpoints meet Chart.js. Add this script at the bottom of the page, right before the closing <code>&lt;/body&gt;</code> tag:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Color palettes for our charts
+const COLORS = {
+    blue: ['#3b82f6', '#60a5fa', '#93c5fd', '#bfdbfe', '#dbeafe',
+           '#2563eb', '#1d4ed8', '#1e40af', '#1e3a8a', '#172554'],
+    warm: ['#f59e0b', '#f97316', '#ef4444', '#ec4899', '#a855f7',
+           '#6366f1', '#3b82f6', '#06b6d4', '#10b981', '#84cc16'],
+    green: '#10b981',
+    red: '#ef4444',
+    purple: '#8b5cf6'
+};
+
+// Utility: format salary as $XXk
+function formatSalary(value) {
+    if (!value || value === 0) return '$0';
+    return '$' + Math.round(value / 1000) + 'k';
+}
+
+// Store chart instances so we can update/destroy them later
+const charts = {};
+
+// ============================================
+// Chart 1: Average Salary by City (Bar Chart)
+// ============================================
+async function renderSalaryByCity() {
+    try {
+        const response = await fetch('/api/analytics/salary-by-city');
+        const data = await response.json();
+
+        if (data.length === 0) {
+            document.getElementById('salaryByCityChart')
+                .parentElement.innerHTML += '&lt;p&gt;No salary data available yet.&lt;/p&gt;';
+            return;
+        }
+
+        const labels = data.map(d =&gt; d.city);
+        const minSalaries = data.map(d =&gt; d.avgMinSalary);
+        const maxSalaries = data.map(d =&gt; d.avgMaxSalary);
+        const midSalaries = data.map((d, i) =&gt;
+            Math.round((minSalaries[i] + maxSalaries[i]) / 2));
+
+        const ctx = document.getElementById('salaryByCityChart').getContext('2d');
+        charts.salaryByCity = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Avg Min Salary',
+                        data: minSalaries,
+                        backgroundColor: '#3b82f680',
+                        borderColor: '#3b82f6',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Midpoint',
+                        data: midSalaries,
+                        backgroundColor: '#8b5cf680',
+                        borderColor: '#8b5cf6',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Avg Max Salary',
+                        data: maxSalaries,
+                        backgroundColor: '#10b98180',
+                        borderColor: '#10b981',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const count = data[idx].jobCount;
+                                return context.dataset.label + ': ' +
+                                       formatSalary(context.raw) +
+                                       ' (' + count + ' jobs)';
+                            }
+                        }
+                    },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatSalary(value);
+                            }
+                        }
+                    },
+                    x: {
+                        ticks: { maxRotation: 45, minRotation: 0 }
+                    }
+                },
+                onClick: function(event, elements) {
+                    if (elements.length &gt; 0) {
+                        const index = elements[0].index;
+                        const city = data[index].city;
+                        console.log('Clicked city:', city);
+                        highlightCity(city);
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to load salary by city:', error);
+    }
+}
+
+// ==========================================================
+// Chart 2: Average Salary by Role (Horizontal Bar Chart)
+// ==========================================================
+async function renderSalaryByRole() {
+    try {
+        const response = await fetch('/api/analytics/salary-by-role');
+        const data = await response.json();
+
+        if (data.length === 0) return;
+
+        const labels = data.map(d =&gt; d.role);
+        const minSalaries = data.map(d =&gt; d.avgMinSalary);
+        const maxSalaries = data.map(d =&gt; d.avgMaxSalary);
+
+        const ctx = document.getElementById('salaryByRoleChart').getContext('2d');
+        charts.salaryByRole = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Avg Min Salary',
+                        data: minSalaries,
+                        backgroundColor: '#f59e0b80',
+                        borderColor: '#f59e0b',
+                        borderWidth: 1
+                    },
+                    {
+                        label: 'Avg Max Salary',
+                        data: maxSalaries,
+                        backgroundColor: '#ef444480',
+                        borderColor: '#ef4444',
+                        borderWidth: 1
+                    }
+                ]
+            },
+            options: {
+                indexAxis: 'y',   // This makes it a horizontal bar chart
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const count = data[idx].jobCount;
+                                return context.dataset.label + ': ' +
+                                       formatSalary(context.raw) +
+                                       ' (' + count + ' jobs)';
+                            }
+                        }
+                    },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    x: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return formatSalary(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to load salary by role:', error);
+    }
+}
+
+// ============================================
+// Chart 3: Jobs by State (Doughnut Chart)
+// ============================================
+async function renderJobsByState() {
+    try {
+        const response = await fetch('/api/analytics/jobs-by-state');
+        const data = await response.json();
+
+        if (data.length === 0) return;
+
+        const labels = data.map(d =&gt; d.state);
+        const counts = data.map(d =&gt; d.jobCount);
+
+        const ctx = document.getElementById('jobsByStateChart').getContext('2d');
+        charts.jobsByState = new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: counts,
+                    backgroundColor: COLORS.warm,
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const total = counts.reduce((a, b) =&gt; a + b, 0);
+                                const pct = ((context.raw / total) * 100).toFixed(1);
+                                return context.label + ': ' +
+                                       context.raw + ' jobs (' + pct + '%)';
+                            }
+                        }
+                    },
+                    legend: {
+                        position: 'right',
+                        labels: { boxWidth: 12, padding: 8 }
+                    }
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to load jobs by state:', error);
+    }
+}
+
+// ============================================
+// Chart 4: Salary Over Time (Line Chart)
+// ============================================
+async function renderSalaryOverTime() {
+    try {
+        const response = await fetch('/api/analytics/salary-over-time');
+        const data = await response.json();
+
+        if (data.length === 0) return;
+
+        const labels = data.map(d =&gt; 'Week ' + d.week.split('-')[1]);
+        const minSalaries = data.map(d =&gt; d.avgMinSalary);
+        const maxSalaries = data.map(d =&gt; d.avgMaxSalary);
+        const midSalaries = data.map((d, i) =&gt;
+            Math.round((minSalaries[i] + maxSalaries[i]) / 2));
+
+        const ctx = document.getElementById('salaryOverTimeChart').getContext('2d');
+        charts.salaryOverTime = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Avg Max Salary',
+                        data: maxSalaries,
+                        borderColor: '#10b981',
+                        backgroundColor: '#10b98120',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 7
+                    },
+                    {
+                        label: 'Midpoint',
+                        data: midSalaries,
+                        borderColor: '#8b5cf6',
+                        backgroundColor: '#8b5cf620',
+                        fill: false,
+                        tension: 0.3,
+                        borderDash: [5, 5],
+                        pointRadius: 3,
+                        pointHoverRadius: 6
+                    },
+                    {
+                        label: 'Avg Min Salary',
+                        data: minSalaries,
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f620',
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 7
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        callbacks: {
+                            label: function(context) {
+                                const idx = context.dataIndex;
+                                const count = data[idx].jobCount;
+                                return context.dataset.label + ': ' +
+                                       formatSalary(context.raw) +
+                                       ' (' + count + ' jobs that week)';
+                            }
+                        }
+                    },
+                    legend: { position: 'top' }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return formatSalary(value);
+                            }
+                        }
+                    }
+                },
+                interaction: {
+                    mode: 'nearest',
+                    axis: 'x',
+                    intersect: false
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Failed to load salary over time:', error);
+    }
+}
+
+// ============================================
+// Cross-chart interaction: highlight a city
+// ============================================
+function highlightCity(city) {
+    // Log the filter action — in a full implementation,
+    // this would re-query the backend with a city filter
+    // and update all other charts to show only that city's data
+    console.log('Filter all charts by city:', city);
+
+    // Visual feedback: update the page header
+    const header = document.querySelector('.dashboard-header p');
+    if (header) {
+        header.textContent = 'Filtered by: ' + city +
+                             ' (click outside chart to reset)';
+        header.style.color = '#3b82f6';
+        header.style.fontWeight = 'bold';
+    }
+}
+
+// ============================================
+// Initialize all charts on page load
+// ============================================
+document.addEventListener('DOMContentLoaded', function() {
+    renderSalaryByCity();
+    renderSalaryByRole();
+    renderJobsByState();
+    renderSalaryOverTime();
+});</code></pre>
+      </div>
+
+      <p>That is a lot of JavaScript, so let us walk through the key patterns you are using.</p>
+
+      <p><strong>The <code>async/await</code> pattern:</strong> Each render function is marked <code>async</code> and uses <code>await fetch()</code> to call your backend endpoints. This is the modern way to make HTTP requests in JavaScript. The <code>await</code> keyword pauses the function until the response arrives, then <code>response.json()</code> converts the response body from JSON text into a JavaScript object. If anything goes wrong, the <code>try/catch</code> block catches the error and logs it to the console instead of crashing the entire page.</p>
+
+      <p><strong>The Chart.js constructor:</strong> Every chart follows the same pattern: get the canvas context with <code>getContext('2d')</code>, then create a <code>new Chart(ctx, config)</code>. The config object has three main sections: <code>type</code> (what kind of chart), <code>data</code> (the labels and datasets), and <code>options</code> (how the chart looks and behaves). Once you understand this pattern, you can create any chart type by changing these three sections.</p>
+
+      <p><strong>Custom tooltips:</strong> The <code>tooltip.callbacks.label</code> function lets you control exactly what appears when the user hovers over a data point. Instead of just showing the raw number, you format it as a salary with the <code>formatSalary</code> helper and include the job count so users understand the sample size behind each data point.</p>
+
+      <p><strong>The horizontal bar trick:</strong> Notice that the salary-by-role chart uses <code>type: 'bar'</code> with <code>indexAxis: 'y'</code>. This is how Chart.js creates horizontal bar charts. Instead of a separate chart type, you simply tell it to swap the axes. This works better for role labels because "Senior Software Engineer" is too long to display nicely on a vertical axis.</p>
+
+      <p><strong>Storing chart instances:</strong> The line <code>charts.salaryByCity = new Chart(ctx, {...})</code> saves a reference to each chart in a global <code>charts</code> object. This is not just good housekeeping &mdash; it is essential for any interactive dashboard. When you need to update a chart (because the user clicked a filter) or destroy it (before re-rendering with new data), you need a handle to the existing instance. Without these references, you would have no way to manipulate charts after their initial creation.</p>
+
+      <p><strong>Empty state handling:</strong> Each render function checks <code>if (data.length === 0)</code> before attempting to create a chart. This prevents Chart.js from rendering an empty chart with no bars, no slices, and no lines &mdash; which would look broken rather than empty. When your database is fresh and has not accumulated much data yet, these checks ensure the dashboard degrades gracefully instead of showing confusing blank canvases.</p>
+
+      <!-- ==================== PART 5 — MAKING CHARTS INTERACTIVE ==================== -->
+      <h2>5. Making Charts Interactive</h2>
+
+      <p>Static charts are useful, but interactive charts are <strong>powerful</strong>. When users can hover, click, and explore the data, they discover insights they would never find by just looking at a static image. Chart.js gives you several interactivity features out of the box, and you have already started using some of them. Let us go deeper.</p>
+
+      <p><strong>Click to filter:</strong> Look at the <code>onClick</code> handler in the salary-by-city chart. When the user clicks a bar, the handler extracts which city was clicked and calls <code>highlightCity()</code>. In a production dashboard, this would trigger a cascade: re-query the backend with a city filter and update every other chart to show only data for that city. The implementation above is a starting point &mdash; it logs the click and updates the header. Extending it to filter all charts is your challenge.</p>
+
+      <p><strong>Hover tooltips with exact values:</strong> Every chart has custom tooltip callbacks that display formatted salary values and job counts. The tooltip <code>mode: 'index'</code> in the line chart means that hovering over any point in a given week shows all three datasets (min, mid, max) simultaneously, so the user can compare them without moving the mouse. The <code>intersect: false</code> setting means the tooltip appears when the mouse is near a point, not just directly on it &mdash; much easier to use.</p>
+
+      <p><strong>Toggle min/max/midpoint:</strong> Chart.js legends are interactive by default. Click on "Avg Min Salary" in the legend, and that dataset disappears from the chart. Click it again, and it comes back. This lets users toggle between seeing the full salary range, just the minimum, just the maximum, or just the midpoint. You did not have to write any code for this &mdash; Chart.js includes it automatically.</p>
+
+      <div class="callout callout-info">
+        <strong>Taking interactivity further</strong>
+        If you want to extend the cross-chart filtering, here is the approach: store the current filter state in a global variable. When the user clicks a city bar, set the filter, then re-fetch all endpoints with a query parameter like <code>/api/analytics/salary-by-role?city=Austin</code>. On the backend, modify your queries to accept an optional city parameter and add it to the <code>WHERE</code> clause. Destroy the existing chart instances (<code>charts.salaryByRole.destroy()</code>) and re-render them with the filtered data. Add a "Clear filter" button that resets everything. This pattern &mdash; click to filter, re-query, re-render &mdash; is how professional dashboards like Tableau and Metabase work under the hood.
+      </div>
+
+      <p>The doughnut chart also has a useful built-in behavior: hovering over a slice pulls it slightly outward and shows the percentage. Your custom tooltip adds the exact job count and percentage calculation, so users see both the absolute number and the relative proportion.</p>
+
+      <p>For the line chart, the <code>tension: 0.3</code> setting creates smooth curves instead of sharp angles between data points. The <code>fill: true</code> setting adds a semi-transparent area under the line, making it easier to see the range between min and max salaries. The dashed midpoint line (<code>borderDash: [5, 5]</code>) visually distinguishes it from the solid min and max lines without adding clutter.</p>
+
+      <p><strong>Responsive behavior:</strong> Chart.js charts are responsive by default. When you resize your browser window, the charts automatically redraw at the new size. The CSS Grid layout handles the overall page responsiveness &mdash; on a wide screen you see two charts side by side, on a narrow screen they stack vertically. The <code>@media (max-width: 600px)</code> breakpoint in the dashboard CSS forces a single-column layout on mobile devices, and each chart card stretches to fill the full width of the screen. This combination of CSS Grid responsiveness and Chart.js canvas responsiveness means your dashboard works well on everything from a 27-inch monitor to an iPhone without any additional JavaScript.</p>
+
+      <div class="key-concept">
+        <h4>The Destroy-and-Recreate Pattern</h4>
+        <p>When you need to update a chart with new data (for example, after applying a city filter), you cannot just change the data and hope the chart updates. You need to call <code>chart.destroy()</code> to tear down the existing canvas rendering, then create a brand new <code>Chart</code> instance with the new data. This is why the code stores chart instances in the global <code>charts</code> object &mdash; so you can access them later when you need to destroy and recreate them. Forgetting to destroy a chart before creating a new one on the same canvas is a common bug that causes memory leaks and visual glitches.</p>
+      </div>
+
+      <!-- ==================== PART 6 — DATA QUALITY DISCUSSION ==================== -->
+      <h2>6. The Story Your Data Tells (and Doesn't Tell)</h2>
+
+      <p>You now have a working analytics dashboard. It looks professional. The charts are interactive. The data comes from real job listings. But before you start making career decisions based on these numbers, we need to have an honest conversation about <strong>data quality</strong>.</p>
+
+      <p><strong>Not all jobs include salary information.</strong> Of the hundreds of jobs in your database, only a portion have salary data. When you see "Average Salary in Austin: $95K," that average is calculated from maybe 30 out of 200 Austin jobs. The other 170 jobs might pay more, might pay less &mdash; you do not know because the salary was not listed. Your chart is showing the truth, but it is the truth about a <em>subset</em> of the data, not the whole picture.</p>
+
+      <div class="callout callout-warning">
+        <strong>Selection bias in salary data</strong>
+        There is a pattern in which jobs list salaries and which do not. Government jobs and large corporations are more likely to publish salary ranges because of pay transparency laws. Startups and smaller companies are less likely to. This means your "average salary" might be skewed toward certain types of employers. The chart is not wrong &mdash; but the sample it draws from is not random.
+      </div>
+
+      <p><strong>Wild salary ranges create noisy averages.</strong> Some job listings have salary ranges like "$40,000 &mdash; $120,000." That is an $80,000 range, which is essentially meaningless. Is this a junior position paying $40K or a senior position paying $120K? When you average the minimum and maximum across many such jobs, the noise partially cancels out, but individual outliers can still skew the results. One job listing with a maximum salary of $500,000 can pull up the average for an entire city.</p>
+
+      <p><strong>Your data reflects your searches, not the full market.</strong> This is the most subtle and important point. Your database contains jobs that <em>you</em> searched for. If you searched mostly for "Java Developer in Austin," then your data is heavily weighted toward Java jobs in Austin. The charts might show Austin as the most common city and Java as the most common skill &mdash; but that is because you searched for those things, not because the job market is actually concentrated there. This is called <strong>self-selection bias</strong>, and it affects every dataset that is collected through user behavior rather than random sampling.</p>
+
+      <div class="key-concept">
+        <h4>Data Literacy</h4>
+        <p>Data literacy means understanding not just what a chart shows, but what it <em>does not</em> show. It means asking: "Where did this data come from? How complete is it? What biases might be present? What conclusions can I safely draw, and what conclusions would be overreaching?" A chart can tell a completely true story from incomplete data &mdash; and that is not a flaw, it is the nature of all data analysis. Every dataset has boundaries. Every visualization has limitations. The skill is knowing where those boundaries are and communicating them honestly.</p>
+      </div>
+
+      <p>This is why your dashboard includes the data notice at the bottom: "These charts reflect only jobs with reported salary data." That one sentence is not a disclaimer &mdash; it is an act of intellectual honesty. It tells anyone looking at your dashboard that the numbers are real but the picture is incomplete. Professional data scientists spend enormous effort on this kind of communication. Now you know why.</p>
+
+      <p>None of this makes your dashboard less valuable. It is still the best view you have of the salary landscape for the jobs you have been searching for. It still reveals patterns &mdash; like which cities tend to pay more, or which role levels command higher salaries &mdash; that are genuinely useful for your job search. You just need to hold those insights with the right amount of confidence: "Based on the data I have collected, it appears that..." instead of "The market definitively shows that..."</p>
+
+      <p>That nuance &mdash; the difference between what data suggests and what it proves &mdash; is one of the most important things you can learn as a developer. You will encounter it every time you build analytics features, every time you interpret A/B test results, and every time someone shows you a chart in a meeting and tries to convince you of something. The ability to look at a visualization and ask "What is this <em>not</em> showing me?" is a superpower.</p>
+
+      <p>Consider adding a small "Data Summary" section to your dashboard that shows: <strong>Total jobs in database: 487. Jobs with salary data: 142 (29%).</strong> Two numbers. But those two numbers transform how someone reads every chart on the page. They go from thinking "this is the salary market" to understanding "this is a 29% sample of the jobs I searched for." That context makes the dashboard more honest <em>and</em> more useful, because now the reader knows exactly how much to trust the patterns they see.</p>
+
+      <p>This is a skill that extends far beyond this side quest. Every time you build a feature that shows numbers to users &mdash; whether it is an analytics dashboard, a reporting tool, or even a simple counter on a homepage &mdash; you should ask yourself: "What context does the reader need to interpret this number correctly?" The answer is almost always more than you think. Providing that context is not extra work. It is part of the work.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="sq-heatmap-1">
+        <p class="quiz-question">1. Why do the JPQL aggregate queries include <code>WHERE j.jobMinSalary IS NOT NULL</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-heatmap-1" value="a"> Because null values would cause a NullPointerException in the Java controller code</label>
+          <label><input type="radio" name="sq-heatmap-1" value="b"> Because including jobs without salary data would make the AVG() calculation meaningless &mdash; you cannot average unknown values, and it would skew the results</label>
+          <label><input type="radio" name="sq-heatmap-1" value="c"> Because Chart.js cannot render null values and would crash</label>
+          <label><input type="radio" name="sq-heatmap-1" value="d"> Because MySQL requires all WHERE clauses to filter out nulls</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly right. SQL <code>AVG()</code> actually does skip null values on its own, but including rows with no salary data in the grouping would inflate the job count without contributing to the average. More importantly, the resulting aggregation would misrepresent the data &mdash; showing a city has 200 jobs in the salary analysis when only 30 of them actually reported salaries. Filtering nulls in the WHERE clause ensures that every job counted in the results genuinely contributed salary data to the calculation.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-heatmap-2">
+        <p class="quiz-question">2. In Chart.js, what does setting <code>indexAxis: 'y'</code> on a bar chart accomplish?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-heatmap-2" value="a"> It inverts the Y-axis so the highest values appear at the bottom</label>
+          <label><input type="radio" name="sq-heatmap-2" value="b"> It converts the bar chart into a horizontal bar chart, with categories on the Y-axis and values on the X-axis</label>
+          <label><input type="radio" name="sq-heatmap-2" value="c"> It adds a second Y-axis for dual-scale charts</label>
+          <label><input type="radio" name="sq-heatmap-2" value="d"> It groups the bars by their Y-axis index instead of their X-axis label</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct. Setting <code>indexAxis: 'y'</code> on a <code>type: 'bar'</code> chart flips its orientation so that the category labels appear along the Y-axis and the value bars extend horizontally along the X-axis. This is especially useful when labels are long (like job titles), because horizontal bars give text labels more room to display without overlapping or being truncated. In Chart.js v3+, this replaced the old <code>type: 'horizontalBar'</code> from v2.</div>
+      </div>
+
+      <div class="quiz" data-id="sq-heatmap-3">
+        <p class="quiz-question">3. Your salary dashboard shows that "Austin averages $95K" based on 30 jobs out of 200 total Austin listings. A friend says, "So Austin developers make $95K." What is the most important limitation to point out?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-heatmap-3" value="a"> Chart.js rounds numbers, so the real average might be $94,500 or $95,500</label>
+          <label><input type="radio" name="sq-heatmap-3" value="b"> The average only reflects jobs that reported salary data &mdash; 170 out of 200 jobs did not include a salary, and those unlisted salaries could change the average significantly</label>
+          <label><input type="radio" name="sq-heatmap-3" value="c"> The data only includes jobs from the JSearch API, not from all job boards</label>
+          <label><input type="radio" name="sq-heatmap-3" value="d"> The dashboard was built with Chart.js which is not suitable for production analytics</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That is the key insight. When only 30 out of 200 jobs report salary data, the average is based on a 15% sample that is not randomly selected. Jobs that list salaries tend to be from larger companies or in states with pay transparency laws. The 170 jobs without listed salaries might pay very differently. The $95K average is a true number calculated from real data, but it represents a subset, not the full market. This is exactly the kind of data literacy that distinguishes someone who can build charts from someone who can interpret them responsibly.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>When you are finished, you should have a working analytics dashboard at <code>/analytics</code> in your Resumator application. The page should display four or more interactive Chart.js visualizations:</p>
+
+      <ul>
+        <li>A <strong>bar chart</strong> showing average salary by city for the top 10 cities in your database</li>
+        <li>A <strong>horizontal bar chart</strong> showing average salary by role level (Senior, Mid, Junior, etc.)</li>
+        <li>A <strong>doughnut chart</strong> showing the distribution of jobs across states</li>
+        <li>A <strong>line chart</strong> showing how average salaries have trended over the weeks you have collected data</li>
+      </ul>
+
+      <p>Each chart should have hover tooltips displaying exact values and job counts. The Chart.js legend toggles should allow showing and hiding individual datasets. Clicking a bar in the city chart should trigger a cross-chart filter action (at minimum, a console log and visual indicator; at best, a full re-query and re-render of all charts). The page should be responsive, working on both desktop and mobile screens.</p>
+
+      <p>Beyond the code, you should understand the data quality limitations discussed in Part 6. You should be able to explain to someone why the numbers in your charts are true but incomplete, and what biases are present in your self-collected dataset. That understanding is as much a part of this deliverable as the code itself.</p>
+
+      <div class="callout callout-info">
+        <strong>Stretch goals</strong>
+        If you finish the core dashboard and want to push further, here are ideas that would make your analytics page truly impressive. Add a <strong>summary bar</strong> at the top of the dashboard showing headline stats: total jobs in database, jobs with salary data, highest average city, and most common role level. Add a <strong>date range filter</strong> that lets users select "last 7 days," "last 30 days," or "all time" and re-renders all charts with the filtered data. Add a <strong>fifth chart</strong> &mdash; maybe a radar chart comparing salary, job count, and number of employers across the top 5 cities, giving a multi-dimensional view of each market. Or add an <strong>export button</strong> that downloads the current chart as a PNG image using Chart.js's built-in <code>toBase64Image()</code> method. Each of these stretch goals teaches you a new skill while making the dashboard genuinely more useful.
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="salary-heatmap">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
