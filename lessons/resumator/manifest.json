@@ -1,0 +1,51 @@
+{
+  "id": "resumator",
+  "title": "Building Resumator",
+  "description": "Build a full-stack job search application with Spring Boot, JSearch API, and MySQL",
+  "icon": "rocket",
+  "order": 5,
+  "lessons": [
+    {
+      "id": "23-project-planning-setup",
+      "title": "Resumator — Project Planning & Setup",
+      "file": "23-project-planning-setup.html",
+      "description": "Plan the architecture and set up the Spring Boot project",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "24-job-search-api",
+      "title": "Integrating the Job Search API",
+      "file": "24-job-search-api.html",
+      "description": "Connect to JSearch API and build the search endpoint",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "25-search-interface",
+      "title": "Building the Search Interface",
+      "file": "25-search-interface.html",
+      "description": "Create the frontend search page with job cards",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "26-when-things-break",
+      "title": "The Favorites Feature — When Things Break",
+      "file": "26-when-things-break.html",
+      "description": "Build favorites, encounter a real error, and fix it",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "27-completing-resumator",
+      "title": "Completing Resumator",
+      "file": "27-completing-resumator.html",
+      "description": "Build the favorites page and polish the application",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "28-review-whats-next",
+      "title": "Review, Reflect & What's Next",
+      "file": "28-review-whats-next.html",
+      "description": "Celebrate your journey and plan what comes next",
+      "estimatedTime": "1-1.5 hours"
+    }
+  ]
+}

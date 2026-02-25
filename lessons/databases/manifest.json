@@ -1,0 +1,51 @@
+{
+  "id": "databases",
+  "title": "Understanding Databases",
+  "description": "Master data types, relational and NoSQL databases, legacy systems, and set up MySQL",
+  "icon": "database",
+  "order": 4,
+  "lessons": [
+    {
+      "id": "17-data-and-data-types",
+      "title": "Understanding Data & Data Types",
+      "file": "17-data-and-data-types.html",
+      "description": "Learn what data is, how databases store it, and why types matter",
+      "estimatedTime": "1.5-2 hours"
+    },
+    {
+      "id": "18-relational-databases",
+      "title": "Relational Databases — Thinking in Spreadsheets",
+      "file": "18-relational-databases.html",
+      "description": "Tables, relationships, SQL queries, and schema design",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "19-non-relational-databases",
+      "title": "Non-Relational Databases — Thinking in Documents",
+      "file": "19-non-relational-databases.html",
+      "description": "MongoDB, Redis, and when to choose NoSQL",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "20-legacy-databases",
+      "title": "Legacy Databases — Where It All Started",
+      "file": "20-legacy-databases.html",
+      "description": "The history and career impact of legacy database systems",
+      "estimatedTime": "1.5-2 hours"
+    },
+    {
+      "id": "21-modern-database-landscape",
+      "title": "The Modern Database Landscape",
+      "file": "21-modern-database-landscape.html",
+      "description": "MySQL, PostgreSQL, MongoDB, Redis, and choosing the right tool",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "22-setting-up-mysql",
+      "title": "Setting Up MySQL on Your Machine",
+      "file": "22-setting-up-mysql.html",
+      "description": "Install MySQL Server and Workbench, create your first database",
+      "estimatedTime": "1.5-2 hours"
+    }
+  ]
+}
