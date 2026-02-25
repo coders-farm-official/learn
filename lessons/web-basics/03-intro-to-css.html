@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro to CSS — Coders Farm</title>
+  <meta name="description" content="Learn what CSS is and how to style your web pages">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-03-intro-to-css">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="80" height="80" rx="16" fill="#16825d"/><text x="50%" y="44" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="28" fill="#fff">CF</text></svg>
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Intro to CSS</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/02-html-elements.html" role="menuitem">Lesson 2: HTML Elements</a>
+      <a href="/lessons/web-basics/03-intro-to-css.html" role="menuitem">Lesson 3: Intro to CSS</a>
+      <a href="/lessons/web-basics/04-css-selectors.html" role="menuitem">Lesson 4: CSS Selectors</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / Intro to CSS</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="3">Lesson 3 of 6</p>
+      <h1>Intro to CSS</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>What CSS is and why every web page needs it</li>
+          <li>Three different ways to add CSS to your HTML</li>
+          <li>How CSS syntax works &mdash; selectors, properties, and values</li>
+          <li>Essential styling properties like color, font-size, margin, and padding</li>
+          <li>How to use named colors, hex codes, and rgb() to set colors</li>
+          <li>How to style a complete bio page with CSS</li>
+        </ul>
+      </div>
+
+      <!-- What is CSS? -->
+      <h2>What is CSS?</h2>
+
+      <p>Welcome back! In Lessons 1 and 2, you learned how to build web pages with HTML &mdash; adding headings, paragraphs, links, images, and lists. But if you have been looking at your pages so far, you might have noticed they look pretty plain. Black text on a white background, default fonts, everything shoved to the left side of the screen. That is about to change.</p>
+
+      <p><strong>CSS</strong> stands for <strong>Cascading Style Sheets</strong>. If that sounds fancy, do not worry &mdash; let us break it down:</p>
+
+      <ul>
+        <li><strong>Cascading</strong> means styles can layer on top of each other, with later rules overriding earlier ones (more on this in future lessons).</li>
+        <li><strong>Style</strong> means it controls how things <em>look</em> &mdash; colors, fonts, spacing, layout, and more.</li>
+        <li><strong>Sheets</strong> simply refers to the files or blocks of code where you write your styles.</li>
+      </ul>
+
+      <p>Here is the analogy that makes it click for most beginners: if HTML is the <strong>skeleton</strong> of your web page &mdash; the bones, the structure, the framework &mdash; then CSS is the <strong>skin, hair, and clothing</strong>. It is everything that makes the page look the way it does. HTML says <em>"there is a heading here."</em> CSS says <em>"that heading should be dark blue, 32 pixels tall, centered on the page, and have some space below it."</em></p>
+
+      <p>Without CSS, every website on the internet would look like a plain text document from the 1990s. CSS is what transforms raw structure into something beautiful, readable, and professional. Every polished website you have ever visited &mdash; from the Michigan State University homepage to your favorite Lansing coffee shop's site &mdash; uses CSS to look the way it does.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> You do not need to be an artist or a designer to use CSS. Most of what you will learn is practical and straightforward: making text readable, spacing things out nicely, and choosing good colors. You will build your eye for design naturally over time.</div>
+
+      <!-- How CSS Connects to HTML -->
+      <h2>How CSS Connects to HTML</h2>
+
+      <p>CSS does not work on its own &mdash; it needs HTML to style. There are three ways to connect CSS to your HTML, and each has its own use case. Let us walk through all three.</p>
+
+      <h3>1. Inline Styles (the <code>style</code> Attribute)</h3>
+
+      <p>You can add CSS directly to any HTML element using the <code>style</code> attribute. The styles go right inside the opening tag:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;h1 style="color: red; font-size: 36px;"&gt;I am a red heading!&lt;/h1&gt;
+&lt;p style="color: green;"&gt;And I am a green paragraph.&lt;/p&gt;</code></pre>
+      </div>
+
+      <p><strong>Pros:</strong> Quick and easy for testing a single change. You see exactly which element is affected.</p>
+      <p><strong>Cons:</strong> It gets messy fast. If you have 20 paragraphs and you want them all green, you would need to add <code>style="color: green;"</code> to every single one. That is a lot of repetitive typing, and if you ever want to change the color, you would have to update all 20 places. Not fun!</p>
+
+      <h3>2. Internal Styles (a <code>&lt;style&gt;</code> Tag in the Head)</h3>
+
+      <p>A better approach is to put your CSS inside a <code>&lt;style&gt;</code> tag in the <code>&lt;head&gt;</code> section of your HTML document. This lets you write rules that apply to every matching element on the page at once:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;Internal Styles&lt;/title&gt;
+  &lt;style&gt;
+    h1 {
+      color: darkblue;
+      font-size: 32px;
+    }
+    p {
+      color: gray;
+      font-size: 18px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;Welcome to My Page&lt;/h1&gt;
+  &lt;p&gt;This paragraph is styled from the head.&lt;/p&gt;
+  &lt;p&gt;So is this one &mdash; both are gray automatically!&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p><strong>Pros:</strong> Much cleaner than inline styles. You write a rule once and it applies everywhere. Great for single-page projects and for learning.</p>
+      <p><strong>Cons:</strong> The styles only apply to that one HTML file. If your website has 10 pages and you want them all to look the same, you would need to copy the same <code>&lt;style&gt;</code> block into every page.</p>
+
+      <h3>3. External Stylesheet (a Separate <code>.css</code> File)</h3>
+
+      <p>The most professional approach is to write your CSS in a completely separate file (like <code>styles.css</code>) and link to it from your HTML using a <code>&lt;link&gt;</code> tag:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!-- In your HTML file --&gt;
+&lt;head&gt;
+  &lt;link rel="stylesheet" href="styles.css"&gt;
+&lt;/head&gt;</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* In your styles.css file */
+h1 {
+  color: darkblue;
+  font-size: 32px;
+}
+p {
+  color: gray;
+  font-size: 18px;
+}</code></pre>
+      </div>
+
+      <p><strong>Pros:</strong> This is the industry standard. One CSS file can style your entire website &mdash; all 10, 100, or 1,000 pages. Change a color in one place and it updates everywhere. Your HTML stays clean and focused on content.</p>
+      <p><strong>Cons:</strong> Requires managing a separate file, which adds a tiny bit of complexity when you are just getting started.</p>
+
+      <div class="callout callout-info"><strong>Note</strong> For the exercises in this lesson, we will use <strong>internal styles</strong> (the <code>&lt;style&gt;</code> tag) because it lets us keep everything in one file for easy practice. As you build real projects, you will transition to external stylesheets.</div>
+
+      <!-- CSS Syntax -->
+      <h2>CSS Syntax</h2>
+
+      <p>Every CSS rule follows the same predictable pattern. Once you learn this pattern, you can write any style you want. Here is the structure:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>selector {
+  property: value;
+}</code></pre>
+      </div>
+
+      <p>Let us break down each part:</p>
+
+      <ul>
+        <li><strong>Selector</strong> &mdash; This tells the browser <em>which</em> HTML element(s) you want to style. For example, <code>h1</code> targets all <code>&lt;h1&gt;</code> headings, and <code>p</code> targets all paragraphs.</li>
+        <li><strong>Property</strong> &mdash; This is <em>what</em> you want to change about the element. For example, <code>color</code> changes the text color, and <code>font-size</code> changes how big the text is.</li>
+        <li><strong>Value</strong> &mdash; This is the specific setting you want to apply. For example, <code>blue</code> for the color, or <code>24px</code> for the font size.</li>
+      </ul>
+
+      <p>Notice the punctuation: curly braces <code>{ }</code> wrap around all the styles for a selector, a colon <code>:</code> separates the property from the value, and a semicolon <code>;</code> ends each declaration. These little details matter &mdash; if you forget a semicolon or a closing brace, your styles might not work.</p>
+
+      <p>Here is a real example that puts it all together:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  h1 {
+    color: tomato;
+    font-size: 36px;
+    text-align: center;
+  }
+&lt;/style&gt;
+&lt;h1&gt;Styled with CSS!&lt;/h1&gt;</code></pre>
+      </div>
+
+      <p>In this example, the <strong>selector</strong> is <code>h1</code>. Inside the curly braces, we have three <strong>declarations</strong>: the text color is set to tomato (a warm reddish-orange), the font size is 36 pixels, and the text is centered on the page. Try changing the values above and clicking Run to see what happens!</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> You can include as many property-value pairs as you want inside a single rule. Just make sure each one ends with a semicolon. Think of the semicolon as the period at the end of a sentence &mdash; it tells the browser, "I am done with this instruction, move on to the next one."</div>
+
+      <!-- Basic Properties -->
+      <h2>Basic CSS Properties</h2>
+
+      <p>Now that you understand the syntax, let us explore some of the most useful CSS properties. These are the ones you will use on almost every page you build.</p>
+
+      <h3><code>color</code> &mdash; Text Color</h3>
+
+      <p>The <code>color</code> property changes the color of text inside an element. Despite the generic name, it only affects <em>text</em> color, not the background.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Change the color value below to different color names like <code>purple</code>, <code>teal</code>, <code>orangered</code>, or <code>navy</code>. Click Run after each change to see the result.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  p { color: crimson; }
+&lt;/style&gt;
+&lt;p&gt;This text is styled with the color property.&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h3><code>background-color</code> &mdash; Background Color</h3>
+
+      <p>The <code>background-color</code> property changes the background behind an element. You can apply it to any element &mdash; headings, paragraphs, even the entire <code>body</code>.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Try changing the background color to <code>lightyellow</code>, <code>lavender</code>, or <code>mintcream</code>. You can also change the text color to make sure it is still readable against the background.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  p {
+    background-color: lightblue;
+    color: darkblue;
+    padding: 12px;
+  }
+&lt;/style&gt;
+&lt;p&gt;This paragraph has a light blue background!&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h3><code>font-size</code> &mdash; Text Size</h3>
+
+      <p>The <code>font-size</code> property controls how big or small text appears. The most common unit for beginners is <code>px</code> (pixels). A typical paragraph on the web uses a font size between 16px and 20px.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Try changing the font-size value to <code>12px</code>, <code>24px</code>, <code>48px</code>, or even <code>72px</code> to see how it scales.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  p { font-size: 28px; }
+&lt;/style&gt;
+&lt;p&gt;How big am I?&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h3><code>font-family</code> &mdash; Font Style</h3>
+
+      <p>The <code>font-family</code> property lets you change the actual typeface of your text. You can specify multiple fonts separated by commas &mdash; the browser will use the first one it can find, and fall back to the next if that font is not available.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Try replacing the font-family value with <code>"Times New Roman", serif</code> or <code>"Courier New", monospace</code> to see different font styles.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  p {
+    font-family: Georgia, serif;
+    font-size: 20px;
+  }
+&lt;/style&gt;
+&lt;p&gt;This text is displayed in the Georgia font.&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h3><code>text-align</code> &mdash; Text Alignment</h3>
+
+      <p>The <code>text-align</code> property controls whether text sits on the left, in the center, or on the right side of its container. The most common values are <code>left</code>, <code>center</code>, and <code>right</code>.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Change the text-align value to <code>left</code>, <code>center</code>, or <code>right</code> to move the text around.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  h1 { text-align: center; }
+  p { text-align: right; }
+&lt;/style&gt;
+&lt;h1&gt;Centered Heading&lt;/h1&gt;
+&lt;p&gt;This paragraph is right-aligned.&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <h3><code>padding</code> and <code>margin</code> &mdash; Spacing</h3>
+
+      <p>These two properties control the space around elements, but they work differently:</p>
+
+      <ul>
+        <li><strong><code>padding</code></strong> is the space <em>inside</em> the element, between the content and the element's border. Think of it like the cushioning inside a picture frame.</li>
+        <li><strong><code>margin</code></strong> is the space <em>outside</em> the element, between the element and its neighbors. Think of it like the gap between two picture frames hanging on a wall.</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Experiment with different padding and margin values. Try <code>0px</code>, <code>20px</code>, <code>40px</code>, or <code>60px</code>. Watch how the spacing changes inside and outside the boxes.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  .box-one {
+    background-color: lightcoral;
+    color: white;
+    padding: 20px;
+    margin: 10px;
+  }
+  .box-two {
+    background-color: steelblue;
+    color: white;
+    padding: 40px;
+    margin: 10px;
+  }
+&lt;/style&gt;
+&lt;div class="box-one"&gt;Box One: 20px padding&lt;/div&gt;
+&lt;div class="box-two"&gt;Box Two: 40px padding&lt;/div&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Remembering the difference between padding and margin trips up a lot of beginners. Here is a simple trick: <strong>padding</strong> is like wearing a puffy jacket &mdash; it makes <em>you</em> bigger. <strong>Margin</strong> is like standing farther away from other people &mdash; it adds space between you and everything else.</div>
+
+      <!-- Colors in CSS -->
+      <h2>Colors in CSS</h2>
+
+      <p>CSS gives you several ways to describe colors. Let us look at the three most common methods.</p>
+
+      <h3>1. Named Colors</h3>
+
+      <p>CSS recognizes about 140 named colors that you can use by simply typing their name. You have already seen a few like <code>red</code>, <code>blue</code>, and <code>tomato</code>. Some other fun ones include <code>coral</code>, <code>slategray</code>, <code>mediumseagreen</code>, <code>gold</code>, and <code>rebeccapurple</code>.</p>
+
+      <h3>2. Hex Codes</h3>
+
+      <p>Hex codes give you much more precise control over color. They start with a <code>#</code> followed by six characters (digits 0-9 and letters a-f). The six characters represent the amounts of <strong>red</strong>, <strong>green</strong>, and <strong>blue</strong> mixed together:</p>
+
+      <ul>
+        <li><code>#ff0000</code> &mdash; Full red, no green, no blue = <strong>red</strong></li>
+        <li><code>#00ff00</code> &mdash; No red, full green, no blue = <strong>green</strong></li>
+        <li><code>#0000ff</code> &mdash; No red, no green, full blue = <strong>blue</strong></li>
+        <li><code>#000000</code> &mdash; No red, no green, no blue = <strong>black</strong></li>
+        <li><code>#ffffff</code> &mdash; Full red, full green, full blue = <strong>white</strong></li>
+      </ul>
+
+      <h3>3. rgb() Function</h3>
+
+      <p>The <code>rgb()</code> function works the same way as hex codes but uses regular numbers from 0 to 255 for each color channel. For example, <code>rgb(255, 0, 0)</code> is red, <code>rgb(0, 128, 0)</code> is a medium green, and <code>rgb(70, 130, 180)</code> is steel blue.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Play with the colors below! Try changing the hex code, using a named color, or switching to an rgb() value. Some ideas to try: <code>#e74c3c</code>, <code>rgb(46, 204, 113)</code>, <code>darkorchid</code>, <code>#3498db</code>.</p>
+        <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+          <pre><code>&lt;style&gt;
+  .named {
+    color: tomato;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  .hex {
+    color: #2ecc71;
+    font-size: 22px;
+    font-weight: bold;
+  }
+  .rgb {
+    color: rgb(52, 152, 219);
+    font-size: 22px;
+    font-weight: bold;
+  }
+&lt;/style&gt;
+&lt;p class="named"&gt;Named color: tomato&lt;/p&gt;
+&lt;p class="hex"&gt;Hex code: #2ecc71&lt;/p&gt;
+&lt;p class="rgb"&gt;RGB: rgb(52, 152, 219)&lt;/p&gt;</code></pre>
+        </div>
+      </div>
+
+      <div class="callout callout-info"><strong>Note</strong> You do not need to memorize hex codes or RGB values. Professional developers use color-picker tools all the time. The important thing is that you understand the three formats so you can recognize them and use them when you see them in tutorials or documentation.</div>
+
+      <!-- Interactive Exercise: Style a Bio Page -->
+      <h2>Interactive Exercise: Style a Bio Page</h2>
+
+      <p>Time to put everything together! Remember the bio page structure from Lesson 2? We are going to take that plain HTML and transform it with CSS. This is where things get really satisfying &mdash; you will see a plain, boring page come to life right before your eyes.</p>
+
+      <p>The editor below has a complete bio page with an internal stylesheet already started. Here is your challenge:</p>
+
+      <ol>
+        <li>Read through the CSS that is already there to understand what it does.</li>
+        <li>Try changing the <code>background-color</code> of the body to a different color.</li>
+        <li>Change the heading color from <code>#2c3e50</code> to something more vibrant, like <code>tomato</code> or <code>#e74c3c</code>.</li>
+        <li>Adjust the <code>font-size</code> on the paragraph to make it bigger or smaller.</li>
+        <li>Try adding <code>text-align: center;</code> to the <code>h1</code> rule.</li>
+        <li>Experiment! Change anything you like and click Run to see the result.</li>
+      </ol>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;title&gt;My Bio Page&lt;/title&gt;
+  &lt;style&gt;
+    body {
+      background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+      margin: 0;
+    }
+    h1 {
+      color: #2c3e50;
+      font-size: 36px;
+    }
+    h2 {
+      color: #16825d;
+      font-size: 24px;
+    }
+    p {
+      color: #333333;
+      font-size: 18px;
+      line-height: 1.6;
+    }
+    ul {
+      color: #555555;
+      font-size: 17px;
+    }
+    a {
+      color: #2980b9;
+    }
+    .bio-header {
+      background-color: #2c3e50;
+      color: white;
+      padding: 20px;
+      text-align: center;
+      margin: -30px -30px 20px -30px;
+    }
+    .bio-header h1 {
+      color: white;
+      margin: 0;
+    }
+    .bio-section {
+      background-color: white;
+      padding: 20px;
+      margin-bottom: 15px;
+    }
+  &lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="bio-header"&gt;
+    &lt;h1&gt;Jane Doe&lt;/h1&gt;
+    &lt;p&gt;Web Developer in Training &mdash; Lansing, MI&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="bio-section"&gt;
+    &lt;h2&gt;About Me&lt;/h2&gt;
+    &lt;p&gt;Hi there! I am learning to code at Coders Farm. I am excited about building websites and creating things that people can use on the internet.&lt;/p&gt;
+  &lt;/div&gt;
+
+  &lt;div class="bio-section"&gt;
+    &lt;h2&gt;My Hobbies&lt;/h2&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Reading about technology&lt;/li&gt;
+      &lt;li&gt;Exploring the River Trail&lt;/li&gt;
+      &lt;li&gt;Visiting the Lansing City Market&lt;/li&gt;
+      &lt;li&gt;Learning to code!&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+
+  &lt;div class="bio-section"&gt;
+    &lt;h2&gt;Contact&lt;/h2&gt;
+    &lt;p&gt;Find me on &lt;a href="https://github.com"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Do not be afraid to break things! If your changes make something look weird, that is actually great &mdash; it means you are learning what each property does. You can always undo your changes or reload the page to start over. The best way to learn CSS is to experiment freely.</div>
+
+      <!-- Knowledge Check -->
+      <h2>Knowledge Check</h2>
+
+      <p>Let us test what you have learned so far. These questions are just for practice &mdash; take your time and try as many times as you like.</p>
+
+      <div class="quiz" data-id="css3-q1">
+        <p class="quiz-question">1. What does CSS stand for?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css3-q1" value="a"> Computer Style Sheets</label>
+          <label><input type="radio" name="css3-q1" value="b"> Cascading Style Sheets</label>
+          <label><input type="radio" name="css3-q1" value="c"> Creative Styling System</label>
+          <label><input type="radio" name="css3-q1" value="d"> Coded Style Syntax</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! CSS stands for <strong>Cascading Style Sheets</strong>. "Cascading" refers to how styles layer and override each other, "Style" means it controls visual appearance, and "Sheets" refers to the files where styles are written.</div>
+      </div>
+
+      <div class="quiz" data-id="css3-q2">
+        <p class="quiz-question">2. Which CSS property would you use to change the background color of an element?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css3-q2" value="a"> <code>color</code></label>
+          <label><input type="radio" name="css3-q2" value="b"> <code>bg-color</code></label>
+          <label><input type="radio" name="css3-q2" value="c"> <code>background-color</code></label>
+          <label><input type="radio" name="css3-q2" value="d"> <code>fill-color</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is right! The <code>background-color</code> property sets the background color of an element. Be careful not to confuse it with <code>color</code>, which only changes the <em>text</em> color.</div>
+      </div>
+
+      <div class="quiz" data-id="css3-q3">
+        <p class="quiz-question">3. What is the correct CSS syntax for making all paragraphs red?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css3-q3" value="a"> <code>p = color: red;</code></label>
+          <label><input type="radio" name="css3-q3" value="b"> <code>p { color: red; }</code></label>
+          <label><input type="radio" name="css3-q3" value="c"> <code>&lt;p style="red"&gt;</code></label>
+          <label><input type="radio" name="css3-q3" value="d"> <code>p (color = red)</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly! CSS uses the pattern <code>selector { property: value; }</code>. The selector (<code>p</code>) targets the element, curly braces wrap the declarations, and each declaration uses a colon between the property and value, ending with a semicolon.</div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>Fantastic work &mdash; you just took a huge step forward! Here is a recap of everything you learned in this lesson:</p>
+
+      <ul>
+        <li><strong>CSS</strong> (Cascading Style Sheets) controls how HTML elements <em>look</em> on the page &mdash; it is the skin, hair, and clothing to HTML's skeleton.</li>
+        <li>There are <strong>three ways</strong> to add CSS to HTML: inline styles (quick but messy), internal stylesheets (great for learning), and external stylesheets (the professional standard).</li>
+        <li>CSS follows a simple <strong>syntax</strong>: <code>selector { property: value; }</code> &mdash; pick an element, choose what to change, and set the value.</li>
+        <li>You learned essential <strong>properties</strong>: <code>color</code>, <code>background-color</code>, <code>font-size</code>, <code>font-family</code>, <code>text-align</code>, <code>padding</code>, and <code>margin</code>.</li>
+        <li>CSS colors can be expressed as <strong>named colors</strong> (like <code>tomato</code>), <strong>hex codes</strong> (like <code>#ff6347</code>), or <strong>rgb() values</strong> (like <code>rgb(255, 99, 71)</code>).</li>
+        <li>You styled a complete <strong>bio page</strong> with CSS, transforming plain HTML into something that actually looks good.</li>
+      </ul>
+
+      <p>In the next lesson, we will explore CSS selectors in more depth &mdash; learning how to target specific elements on a page so you can style exactly what you want, exactly how you want it. See you there!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="03-intro-to-css">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/web-basics/02-html-elements.html" class="lesson-nav-btn">&larr; Previous: HTML Elements</a>
+      <a href="/lessons/web-basics/04-css-selectors.html" class="lesson-nav-btn">Next: CSS Selectors &amp; Layout &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links"><li><a href="https://github.com/coders-farm-official">GitHub</a></li><li><a href="https://codersfarm.org">codersfarm.org</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

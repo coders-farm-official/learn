@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Selectors &amp; Layout — Coders Farm</title>
+  <meta name="description" content="Learn CSS selectors, the box model, and flexbox layout">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="web-basics-04-css-selectors">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="80" height="80" rx="16" fill="#16825d"/><text x="50%" y="44" text-anchor="middle" font-family="-apple-system, sans-serif" font-weight="700" font-size="28" fill="#fff">CF</text></svg>
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">CSS Selectors &amp; Layout</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/web-basics/03-intro-to-css.html" role="menuitem">Lesson 3: Intro to CSS</a>
+      <a href="/lessons/web-basics/04-css-selectors.html" role="menuitem">Lesson 4: CSS Selectors</a>
+      <a href="/lessons/web-basics/05-intro-to-js.html" role="menuitem">Lesson 5: Intro to JS</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Web Basics</a> / CSS Selectors &amp; Layout</p>
+      <p class="lesson-progress-indicator" data-track="web-basics" data-total="6" data-current="4">Lesson 4 of 6</p>
+      <h1>CSS Selectors &amp; Layout</h1>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>How to target specific HTML elements using <strong>element selectors</strong>, <strong>class selectors</strong>, and <strong>ID selectors</strong></li>
+          <li>How to combine selectors to style elements with precision</li>
+          <li>What the <strong>CSS Box Model</strong> is and how padding, border, and margin affect every element on the page</li>
+          <li>How to use <strong>Flexbox</strong> to create modern, flexible page layouts</li>
+          <li>How to build a real card layout using everything you learn in this lesson</li>
+        </ul>
+      </div>
+
+      <p>Welcome back! In Lesson 3 you learned how CSS can change the colors, fonts, and appearance of your HTML. Now it is time to go deeper. In this lesson you will learn <em>how to target exactly the elements you want to style</em> and <em>how to control where things appear on the page</em>. These two skills together are what make you feel like a real web designer. Let's dive in!</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 1: Element Selectors             -->
+      <!-- ======================================== -->
+      <h2>1. Element Selectors</h2>
+
+      <p>The simplest kind of CSS selector is the <strong>element selector</strong> (sometimes called a "type selector"). You just write the name of the HTML tag you want to style — no special symbols needed.</p>
+
+      <p>For example, if you want every paragraph on your page to have dark gray text, you write:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>p {
+  color: #333;
+}</code></pre>
+      </div>
+
+      <p>That rule says: "Find every <code>&lt;p&gt;</code> element on the page and set its text color to dark gray." Here are a few more examples:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>h1 {
+  font-size: 32px;
+  font-weight: bold;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f9f9f9;
+}</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Note:</strong> Element selectors style <em>every</em> instance of that tag on the page. If you have ten paragraphs, they will all get the same style. That is great for setting up a consistent look, but sometimes you need more control. That is where classes and IDs come in.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 2: Class Selectors               -->
+      <!-- ======================================== -->
+      <h2>2. Class Selectors</h2>
+
+      <p>A <strong>class selector</strong> lets you style only the elements that have a specific <code>class</code> attribute. In your CSS, you write a dot (<code>.</code>) followed by the class name.</p>
+
+      <p>First, add a <code>class</code> attribute to the HTML elements you want to target:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;p class="highlight"&gt;This paragraph stands out.&lt;/p&gt;
+&lt;p&gt;This paragraph is normal.&lt;/p&gt;
+&lt;p class="highlight"&gt;This one stands out too!&lt;/p&gt;</code></pre>
+      </div>
+
+      <p>Then, in your CSS, target that class with a dot:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>.highlight {
+  background-color: yellow;
+  font-weight: bold;
+}</code></pre>
+      </div>
+
+      <p>Only the two paragraphs with <code>class="highlight"</code> will get the yellow background. The middle paragraph stays unchanged.</p>
+
+      <p>The best thing about classes is that they are <strong>reusable</strong>. You can put the same class on as many elements as you like — paragraphs, headings, divs, links — and they will all share that style. Think of a class like a sticker you can place on any element that says "style me this way."</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>In the editor below, add the class <code>fancy</code> to the second paragraph, then click Run to see it change. Try adding it to the heading too!</p>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  .fancy {
+    color: purple;
+    font-style: italic;
+    border-left: 4px solid purple;
+    padding-left: 12px;
+  }
+&lt;/style&gt;
+
+&lt;h2&gt;My Favorite Things&lt;/h2&gt;
+&lt;p class="fancy"&gt;I love learning to code.&lt;/p&gt;
+&lt;p&gt;Lansing has great coffee shops.&lt;/p&gt;
+&lt;p&gt;The river trail is beautiful in fall.&lt;/p&gt;</code></pre>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 3: ID Selectors                  -->
+      <!-- ======================================== -->
+      <h2>3. ID Selectors</h2>
+
+      <p>An <strong>ID selector</strong> uses the hash symbol (<code>#</code>) followed by the ID name. IDs work a lot like classes, but with one important rule: <strong>each ID can only be used once per page</strong>.</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;h1 id="page-title"&gt;Welcome to Coders Farm&lt;/h1&gt;</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>#page-title {
+  color: #16825d;
+  text-align: center;
+}</code></pre>
+      </div>
+
+      <p>So when should you use an ID versus a class?</p>
+
+      <ul>
+        <li>Use a <strong>class</strong> when you want to style <em>multiple</em> elements the same way (buttons, cards, highlighted text).</li>
+        <li>Use an <strong>ID</strong> when you want to style <em>one unique</em> element (the main page title, a specific navigation bar, a particular section).</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Tip for beginners:</strong> When in doubt, use a class. Classes are more flexible and reusable. Most professional developers use classes for almost all their styling and reserve IDs for special cases like JavaScript hooks or anchor links.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 4: Combining Selectors           -->
+      <!-- ======================================== -->
+      <h2>4. Combining Selectors</h2>
+
+      <p>Once you are comfortable with element, class, and ID selectors, you can combine them for more precise targeting.</p>
+
+      <h3>Descendant Selectors</h3>
+
+      <p>A <strong>descendant selector</strong> targets an element that is <em>inside</em> another element. You write the outer selector, then a space, then the inner selector:</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* Only style links that are inside a nav element */
+nav a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Only style paragraphs inside a div with class "card" */
+.card p {
+  font-size: 14px;
+  line-height: 1.6;
+}</code></pre>
+      </div>
+
+      <p>This is incredibly useful. It means you can have links in your navigation bar styled differently from links in your main content, even though they are all <code>&lt;a&gt;</code> tags.</p>
+
+      <h3>Multiple Classes</h3>
+
+      <p>An element can have more than one class. Just separate them with a space in the <code>class</code> attribute:</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;button class="btn btn-primary"&gt;Sign Up&lt;/button&gt;
+&lt;button class="btn btn-danger"&gt;Delete&lt;/button&gt;</code></pre>
+      </div>
+
+      <p>Here, both buttons share the <code>btn</code> class (which might set the font size, padding, and border radius), but each also has a second class that sets its own color. This pattern is used everywhere in professional web development.</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 5: The Box Model                 -->
+      <!-- ======================================== -->
+      <h2>5. The CSS Box Model</h2>
+
+      <p>Here is one of the most important ideas in all of CSS: <strong>every single element on a web page is a rectangular box</strong>. Whether it is a heading, a paragraph, an image, or a button — the browser treats it as a box. Understanding how these boxes work is the key to controlling your page layout.</p>
+
+      <p>Every box has four layers, from the inside out:</p>
+
+      <ol>
+        <li><strong>Content</strong> — The actual stuff inside the element: your text, your image, your button label. This is the innermost layer.</li>
+        <li><strong>Padding</strong> — A layer of transparent space <em>between the content and the border</em>. Think of it like the foam padding inside a shipping box that keeps the item safe.</li>
+        <li><strong>Border</strong> — A visible (or invisible) line that wraps around the padding. Think of it as the cardboard walls of the shipping box itself.</li>
+        <li><strong>Margin</strong> — A layer of transparent space <em>outside the border</em>. This pushes other elements away. Think of it as the empty space you leave between boxes when you stack them on a shelf.</li>
+      </ol>
+
+      <p>Imagine you are mailing a gift to a friend in Lansing:</p>
+      <ul>
+        <li>The <strong>gift</strong> is the content.</li>
+        <li>The <strong>bubble wrap</strong> around the gift is the padding.</li>
+        <li>The <strong>cardboard box</strong> itself is the border.</li>
+        <li>The <strong>space between your box and the next box</strong> on the shelf is the margin.</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Play with the padding, border, and margin values below. Change the numbers and click Run to see how each layer affects the box. Try setting padding to <code>0px</code>, then to <code>40px</code>. See the difference!</p>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  .box-demo {
+    background-color: #e0f5ec;
+    color: #1a3a2a;
+    padding: 20px;
+    border: 4px solid #16825d;
+    margin: 16px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+  }
+  .box-demo-small {
+    background-color: #ffeeba;
+    color: #6b5900;
+    padding: 8px;
+    border: 2px dashed #d4a017;
+    margin: 16px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+&lt;/style&gt;
+
+&lt;div class="box-demo"&gt;
+  I have 20px of padding, a 4px green border, and 16px of margin.
+&lt;/div&gt;
+&lt;div class="box-demo-small"&gt;
+  I have 8px of padding, a 2px dashed border, and 16px of margin.
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Pro tip:</strong> Add <code>box-sizing: border-box;</code> to your elements. By default, padding and border are added <em>on top of</em> the width you set. With <code>border-box</code>, the padding and border are included <em>inside</em> the width, which makes sizing much more predictable. Most professional projects set this on every element with <code>* { box-sizing: border-box; }</code>.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 6: Introduction to Flexbox       -->
+      <!-- ======================================== -->
+      <h2>6. Introduction to Flexbox</h2>
+
+      <p>Now for the exciting part: <strong>Flexbox</strong> (short for "Flexible Box Layout") is the modern way to arrange elements on a web page. Before Flexbox existed, laying out a page was surprisingly difficult. Flexbox makes it straightforward and even fun.</p>
+
+      <p>To use Flexbox, you set <code>display: flex;</code> on a <strong>parent container</strong>. The children of that container then become "flex items" that you can arrange in rows, columns, and more.</p>
+
+      <h3>The Basics</h3>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>.container {
+  display: flex;
+}</code></pre>
+      </div>
+
+      <p>That single line changes everything. By default, all children of <code>.container</code> will line up in a <strong>horizontal row</strong> instead of stacking vertically.</p>
+
+      <h3>Key Flexbox Properties</h3>
+
+      <p>Here are the most important Flexbox properties you will use. All of these go on the <strong>parent container</strong> (the element with <code>display: flex</code>):</p>
+
+      <ul>
+        <li><strong><code>flex-direction</code></strong> — Controls the direction items flow. Use <code>row</code> for left-to-right (the default) or <code>column</code> for top-to-bottom.</li>
+        <li><strong><code>justify-content</code></strong> — Controls how items are spaced along the <em>main axis</em> (left-to-right if direction is row). Common values: <code>flex-start</code>, <code>center</code>, <code>space-between</code>, <code>space-around</code>.</li>
+        <li><strong><code>align-items</code></strong> — Controls how items are aligned along the <em>cross axis</em> (top-to-bottom if direction is row). Common values: <code>flex-start</code>, <code>center</code>, <code>stretch</code>.</li>
+        <li><strong><code>gap</code></strong> — Adds space between flex items without needing margins. For example, <code>gap: 16px;</code> puts 16 pixels of space between each item.</li>
+        <li><strong><code>flex-wrap</code></strong> — By default, flex items try to fit on one line. Set <code>flex-wrap: wrap;</code> to let items wrap to the next line when they run out of room.</li>
+      </ul>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Edit the CSS below to experiment with Flexbox. Try changing <code>justify-content</code> to <code>space-between</code> or <code>center</code>. Change <code>flex-direction</code> to <code>column</code>. Change the <code>gap</code> value. Click Run after each change!</p>
+      </div>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  .flex-demo {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
+  }
+  .flex-item {
+    background-color: #16825d;
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: bold;
+  }
+&lt;/style&gt;
+
+&lt;div class="flex-demo"&gt;
+  &lt;div class="flex-item"&gt;Item 1&lt;/div&gt;
+  &lt;div class="flex-item"&gt;Item 2&lt;/div&gt;
+  &lt;div class="flex-item"&gt;Item 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 7: Interactive Exercise           -->
+      <!-- ======================================== -->
+      <h2>7. Interactive Exercise: Create a Card Layout</h2>
+
+      <p>Time to put it all together! Cards are one of the most common patterns on the web. You see them on social media feeds, product listings, blog pages, and more. A "card" is simply a box that groups related content together — usually with a title, some text, and maybe a button.</p>
+
+      <p>In this exercise you will build a row of three cards using everything you have learned: class selectors, the box model, and Flexbox. The editor below has a working example. Read through the code, then try making changes:</p>
+
+      <ul>
+        <li>Change the card colors or border styles.</li>
+        <li>Add a fourth card.</li>
+        <li>Change <code>justify-content</code> to <code>space-between</code> or <code>center</code>.</li>
+        <li>Try adding <code>flex-wrap: wrap;</code> to the container and making the cards wider.</li>
+      </ul>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+  }
+
+  /* Flex container for the cards */
+  .card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+
+  /* Each card uses class selectors and the box model */
+  .card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    padding: 24px;
+    width: 220px;
+  }
+
+  .card h3 {
+    margin-top: 0;
+    color: #16825d;
+  }
+
+  .card p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+  }
+
+  .card .btn {
+    display: inline-block;
+    background-color: #16825d;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+  }
+&lt;/style&gt;
+
+&lt;div class="card-container"&gt;
+  &lt;div class="card"&gt;
+    &lt;h3&gt;HTML Basics&lt;/h3&gt;
+    &lt;p&gt;Learn the building blocks of every web page. Tags, elements, and structure.&lt;/p&gt;
+    &lt;a href="#" class="btn"&gt;Start Learning&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="card"&gt;
+    &lt;h3&gt;CSS Styling&lt;/h3&gt;
+    &lt;p&gt;Make your pages beautiful with colors, fonts, and layouts.&lt;/p&gt;
+    &lt;a href="#" class="btn"&gt;Start Learning&lt;/a&gt;
+  &lt;/div&gt;
+
+  &lt;div class="card"&gt;
+    &lt;h3&gt;JavaScript&lt;/h3&gt;
+    &lt;p&gt;Add interactivity and logic to bring your web pages to life.&lt;/p&gt;
+    &lt;a href="#" class="btn"&gt;Start Learning&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>You did it!</strong> If you can read the code above and understand how the class selectors, box model properties (padding, border, border-radius), and Flexbox (display: flex, gap, flex-wrap, justify-content) all work together, you are well on your way to building real websites. This exact pattern is used on millions of websites around the world.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 8: Quick Recap                   -->
+      <!-- ======================================== -->
+      <h2>Quick Recap</h2>
+
+      <p>Let's review what you learned in this lesson:</p>
+
+      <ul>
+        <li><strong>Element selectors</strong> (like <code>p</code> or <code>h1</code>) style every instance of a tag.</li>
+        <li><strong>Class selectors</strong> (like <code>.highlight</code>) style only elements with that class. They are reusable.</li>
+        <li><strong>ID selectors</strong> (like <code>#page-title</code>) style one unique element per page.</li>
+        <li><strong>Descendant selectors</strong> (like <code>nav a</code>) target elements nested inside other elements.</li>
+        <li>The <strong>Box Model</strong> says every element is a box with content, padding, border, and margin.</li>
+        <li><strong>Flexbox</strong> uses <code>display: flex</code> on a container to arrange its children in rows or columns with properties like <code>justify-content</code>, <code>align-items</code>, and <code>gap</code>.</li>
+      </ul>
+
+      <!-- ======================================== -->
+      <!-- SECTION 9: Quiz                          -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="css4-q1">
+        <p class="quiz-question">1. Which CSS selector targets only elements that have <code>class="warning"</code>?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css4-q1" value="a"> <code>warning { }</code></label>
+          <label><input type="radio" name="css4-q1" value="b"> <code>.warning { }</code></label>
+          <label><input type="radio" name="css4-q1" value="c"> <code>#warning { }</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! A class selector starts with a dot (<code>.</code>). So <code>.warning</code> targets elements with <code>class="warning"</code>. Without the dot, it would look for a <code>&lt;warning&gt;</code> HTML tag (which does not exist). The <code>#</code> symbol is for IDs, not classes.</div>
+      </div>
+
+      <div class="quiz" data-id="css4-q2">
+        <p class="quiz-question">2. In the CSS Box Model, which layer sits directly between the content and the border?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css4-q2" value="a"> Margin</label>
+          <label><input type="radio" name="css4-q2" value="b"> Border</label>
+          <label><input type="radio" name="css4-q2" value="c"> Padding</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! Padding is the space between the content and the border. Remember the shipping analogy: padding is the bubble wrap between your gift (content) and the cardboard box (border). Margin is on the <em>outside</em> of the border.</div>
+      </div>
+
+      <div class="quiz" data-id="css4-q3">
+        <p class="quiz-question">3. Which CSS property do you add to a container to activate Flexbox layout?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="css4-q3" value="a"> <code>flex-direction: row;</code></label>
+          <label><input type="radio" name="css4-q3" value="b"> <code>display: flex;</code></label>
+          <label><input type="radio" name="css4-q3" value="c"> <code>justify-content: center;</code></label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! <code>display: flex;</code> is the property that turns an element into a flex container. The other properties like <code>flex-direction</code> and <code>justify-content</code> control <em>how</em> flex items are arranged, but they only work after you have activated Flexbox with <code>display: flex;</code>.</div>
+      </div>
+
+      <p>Great work completing this lesson! You now have the tools to select exactly the elements you want to style, understand how every element is a box with layers, and arrange elements on the page using Flexbox. In the next lesson, we will start learning JavaScript to add real interactivity to your pages. See you there!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="web-basics" data-lesson="04-css-selectors">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/web-basics/03-intro-to-css.html" class="lesson-nav-btn">&larr; Previous: Intro to CSS</a>
+      <a href="/lessons/web-basics/05-intro-to-js.html" class="lesson-nav-btn">Next: Intro to JavaScript &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links"><li><a href="https://github.com/coders-farm-official">GitHub</a></li><li><a href="https://codersfarm.org">codersfarm.org</a></li></ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
