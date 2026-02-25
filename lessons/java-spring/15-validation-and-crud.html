@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 15: Validation, Error Handling &amp; CRUD — Coders Farm</title>
+  <meta name="description" content="Add input validation, error handling, and full CRUD operations to your API">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="java-spring-15-validation-and-crud">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Validation &amp; CRUD</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/java-spring/14-adding-sqlite.html" role="menuitem">Lesson 14: Adding SQLite</a>
+      <a href="/lessons/java-spring/15-validation-and-crud.html" role="menuitem">Lesson 15: Validation &amp; CRUD</a>
+      <a href="/lessons/java-spring/16-whats-next.html" role="menuitem">Lesson 16: What's Next</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Java &amp; Spring Boot</a> / Validation, Error Handling &amp; CRUD</p>
+      <p class="lesson-progress-indicator" data-track="java-spring" data-total="6" data-current="5">Lesson 5 of 6</p>
+      <h1>Expanding Your API &mdash; Validation, Error Handling &amp; CRUD</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Add input validation with Java annotations</li>
+          <li>Handle errors gracefully with consistent responses</li>
+          <li>Understand HTTP status codes</li>
+          <li>Build full CRUD (Create, Read, Update, Delete) endpoints</li>
+          <li>Build a simple admin page to manage messages</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — INPUT VALIDATION ==================== -->
+      <h2>Part 1 &mdash; Input Validation</h2>
+
+      <p>
+        Your contact form API is working. People can submit their name, email, and message, and Spring Boot saves everything to your SQLite database. That is a huge accomplishment. But there is a problem &mdash; a serious one. Right now, your API will happily accept <em>anything</em>. Someone could submit an empty form with no name, no email, and no message, and your application would save that blank record to the database without complaint. Someone could type "asdfghjkl" into the email field, and your application would store it as if it were a real email address. Someone could submit a message that is just a single space character, and it would go right into the database.
+      </p>
+
+      <p>
+        This is not just an annoyance &mdash; it is a real problem. Imagine you are a business owner checking the messages people have sent through your contact form. You open your admin dashboard and see a dozen entries with blank names, garbage email addresses, and empty messages. You cannot respond to any of them. The database is cluttered with useless data. And if you tried to send a reply to "not-an-email," your email server would bounce it back with an error.
+      </p>
+
+      <p>
+        The solution is <strong>input validation</strong> &mdash; checking that the data someone sends meets certain rules <em>before</em> you save it. If the data does not meet the rules, you reject the request and tell the user exactly what they need to fix. This is a fundamental practice in professional software development. Every application you use &mdash; from Gmail to Amazon to Instagram &mdash; validates input before processing it.
+      </p>
+
+      <p>
+        You might be thinking, "Can't I just validate on the frontend? I already have JavaScript checking the form before it submits." And yes, frontend validation is great for user experience &mdash; it gives instant feedback without waiting for a server response. But frontend validation is <strong>not enough</strong> on its own. Anyone with basic technical knowledge can bypass your frontend entirely. They could use a tool like Postman or curl to send requests directly to your API, completely skipping your HTML form and its JavaScript validation. That is why you always need <strong>server-side validation</strong> too. The rule of thumb is: validate on the frontend for user experience, validate on the backend for security.
+      </p>
+
+      <p>
+        Java and Spring Boot make server-side validation remarkably easy through something called the <strong>Jakarta Validation API</strong> (previously known as "Bean Validation"). Instead of writing a bunch of <code>if</code> statements to check each field manually, you simply add <strong>annotations</strong> to your entity class, and Spring Boot handles the rest automatically. These annotations are like little labels you attach to each field that say "this field must not be blank" or "this field must be a valid email address."
+      </p>
+
+      <p>
+        Before you can use these validation annotations, you need to add one more dependency to your project. Open your <code>pom.xml</code> file and add the following inside the <code>&lt;dependencies&gt;</code> section, right next to your other dependencies:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-validation&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>
+        This is the Spring Boot Validation starter. It pulls in the Jakarta Validation library and everything Spring Boot needs to automatically validate incoming requests. After adding this dependency, make sure to reload your Maven project (in IntelliJ, click the small Maven refresh icon; in VS Code, run <code>./mvnw dependency:resolve</code> in the terminal).
+      </p>
+
+      <p>
+        Now let us update your <code>ContactMessage</code> entity class to include validation annotations. In the previous lesson, your entity had simple fields with no rules attached. We are going to add three annotations: <code>@NotBlank</code>, <code>@Email</code>, and <code>@Size</code>. Each one enforces a different kind of rule. Here is the updated entity:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
+@Entity
+public class ContactMessage {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Name is required")
+    private String name;
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Please provide a valid email address")
+    private String email;
+
+    @NotBlank(message = "Message is required")
+    @Size(min = 10, message = "Message must be at least 10 characters")
+    private String message;
+
+    private boolean read = false;
+
+    // Default constructor required by JPA
+    public ContactMessage() {}
+
+    // Getters and setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getMessage() { return message; }
+    public void setMessage(String message) { this.message = message; }
+
+    public boolean isRead() { return read; }
+    public void setRead(boolean read) { this.read = read; }
+}</code></pre>
+      </div>
+
+      <p>
+        Let us walk through each validation annotation so you understand exactly what it does. <code>@NotBlank(message = "Name is required")</code> checks that the <code>name</code> field is not <code>null</code>, not an empty string (<code>""</code>), and not just whitespace (like <code>"   "</code>). If someone submits a form without filling in their name, this annotation catches it. The <code>message</code> parameter inside the parentheses is the error message that will be included in the response when validation fails &mdash; it tells the user exactly what went wrong.
+      </p>
+
+      <p>
+        The <code>email</code> field has two annotations stacked on top of each other. <code>@NotBlank</code> ensures the field is not empty, and <code>@Email</code> checks that the value looks like a valid email address (it contains an <code>@</code> symbol and a domain). You can stack as many validation annotations as you need on a single field. They all must pass for the field to be considered valid. If someone submits "hello" as their email, <code>@Email</code> will reject it because "hello" is not a valid email format.
+      </p>
+
+      <p>
+        The <code>message</code> field also has two annotations. <code>@NotBlank</code> ensures it is not empty, and <code>@Size(min = 10)</code> enforces a minimum length of 10 characters. This prevents someone from submitting a message like "hi" or "ok" &mdash; messages that are too short to be meaningful. You could also set a <code>max</code> value if you wanted to limit how long messages can be (for example, <code>@Size(min = 10, max = 1000)</code>).
+      </p>
+
+      <p>
+        Notice that we also added a new <code>read</code> field with a default value of <code>false</code>. This boolean field will track whether an admin has read each message. We will use this later when we build the full CRUD operations. For now, just know that every new message starts as "unread."
+      </p>
+
+      <p>
+        Adding annotations to the entity is only half the job. You also need to tell your controller to <em>actually check</em> the annotations when a request comes in. You do this by adding the <code>@Valid</code> annotation to the method parameter in your controller. Here is the updated POST endpoint:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/contact")
+@CrossOrigin(origins = "*")
+public class ContactController {
+
+    private final ContactMessageRepository repository;
+
+    public ContactController(ContactMessageRepository repository) {
+        this.repository = repository;
+    }
+
+    // CREATE — submit a new message
+    @PostMapping
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; submitMessage(
+            @Valid @RequestBody ContactMessage message) {
+        repository.save(message);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of("status", "Message received! Thank you, "
+                        + message.getName() + "."));
+    }
+
+    // READ ALL — get all messages
+    @GetMapping
+    public List&lt;ContactMessage&gt; getAllMessages() {
+        return repository.findAll();
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        The critical change is the <code>@Valid</code> annotation placed right before <code>@RequestBody ContactMessage message</code>. This tiny keyword tells Spring Boot: "Before you run this method, check all the validation annotations on the <code>ContactMessage</code> object. If <em>any</em> of them fail, do not run the method at all &mdash; reject the request immediately." Without <code>@Valid</code>, Spring Boot would completely ignore your <code>@NotBlank</code>, <code>@Email</code>, and <code>@Size</code> annotations. The entity would look like it has validation rules, but nothing would actually enforce them. This is a common mistake beginners make, so remember: <strong>annotations on the entity define the rules, <code>@Valid</code> on the controller enforces them</strong>.
+      </p>
+
+      <p>
+        Now restart your Spring Boot application and test it. Try sending a POST request to <code>http://localhost:8080/api/contact</code> with an empty JSON body like <code>{}</code>. Instead of saving a blank record, Spring Boot will now reject the request with a <code>400 Bad Request</code> status and return error details listing every field that failed validation. Try sending <code>{"name": "Alice", "email": "not-an-email", "message": "Hi"}</code> and you will get errors for both the invalid email and the too-short message. Your API is now much more robust &mdash; it only accepts data that meets your rules.
+      </p>
+
+      <!-- ==================== PART 2 — ERROR HANDLING ==================== -->
+      <h2>Part 2 &mdash; Error Handling</h2>
+
+      <p>
+        Now that your API validates input, let us talk about what happens when validation fails. If you tested the validation in the previous section, you probably noticed that the error response Spring Boot returns by default is... not great. It is a massive blob of JSON that includes internal details like the full Java class name, a timestamp in a format nobody wants to read, and a generic "Bad Request" message. It looks something like this:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Default Spring Boot error response (ugly and unhelpful)
+{
+    "timestamp": "2025-01-15T14:23:45.123+00:00",
+    "status": 400,
+    "error": "Bad Request",
+    "path": "/api/contact"
+}</code></pre>
+      </div>
+
+      <p>
+        This default response has several problems. First, it does not tell the user <em>which</em> fields failed or <em>why</em>. If someone submits a form with three errors, they have no idea what to fix. Second, it can expose internal details about your application that you do not want outsiders to see. In a production application, you never want to leak information about your internal structure, class names, or stack traces &mdash; that information could help an attacker understand how to exploit your system.
+      </p>
+
+      <p>
+        What we want instead is a <strong>clean, consistent, helpful</strong> error response. Something like this:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// What we WANT our error responses to look like
+{
+    "error": "Validation failed",
+    "details": [
+        "Name is required",
+        "Please provide a valid email address",
+        "Message must be at least 10 characters"
+    ]
+}</code></pre>
+      </div>
+
+      <p>
+        This is much better. The user can see exactly what went wrong and knows exactly what to fix. The response uses a consistent format &mdash; every error response from your API will always have an <code>"error"</code> field with a summary and a <code>"details"</code> array with specific messages. Consistency matters because the frontend code that consumes your API can rely on the response always having the same shape.
+      </p>
+
+      <p>
+        To achieve this, Spring Boot provides a powerful feature called <code>@ControllerAdvice</code>. A class annotated with <code>@ControllerAdvice</code> acts as a <strong>global exception handler</strong> &mdash; it catches errors from <em>any</em> controller in your entire application and lets you decide exactly how to respond. Think of it like a safety net under a trapeze artist. No matter which controller throws an error, the <code>@ControllerAdvice</code> class catches it and transforms it into a clean response.
+      </p>
+
+      <p>
+        Before we write the code, let us quickly review the most important HTTP status codes. When your server sends a response, it always includes a <strong>status code</strong> &mdash; a three-digit number that tells the client whether the request succeeded or failed, and why. You have already seen some of these, but here is a reference table you will use constantly as a developer:
+      </p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Status Code</th>
+            <th>Name</th>
+            <th>What It Means</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>200</code></td>
+            <td>OK</td>
+            <td>The request succeeded. This is the most common response for successful GET requests.</td>
+          </tr>
+          <tr>
+            <td><code>201</code></td>
+            <td>Created</td>
+            <td>The request succeeded and a new resource was created. Used after successful POST requests (like submitting a contact form).</td>
+          </tr>
+          <tr>
+            <td><code>400</code></td>
+            <td>Bad Request</td>
+            <td>The server could not understand the request because the data was invalid. This is what you return when validation fails.</td>
+          </tr>
+          <tr>
+            <td><code>404</code></td>
+            <td>Not Found</td>
+            <td>The requested resource does not exist. For example, asking for message #999 when it does not exist.</td>
+          </tr>
+          <tr>
+            <td><code>500</code></td>
+            <td>Internal Server Error</td>
+            <td>Something went wrong on the server. This is a catch-all for unexpected errors &mdash; bugs in your code, database failures, etc.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>
+        Status codes in the <strong>200 range</strong> mean success. Codes in the <strong>400 range</strong> mean the <em>client</em> made a mistake (bad input, unauthorized, resource not found). Codes in the <strong>500 range</strong> mean the <em>server</em> made a mistake (bugs, crashes, database down). This distinction is important: a 400-level error says "you did something wrong," while a 500-level error says "we messed up."
+      </p>
+
+      <p>
+        Now let us build the global exception handler. Create a new file called <code>GlobalExceptionHandler.java</code> in the same package as your other classes:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    // Handle validation errors (400 Bad Request)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleValidationErrors(
+            MethodArgumentNotValidException ex) {
+
+        List&lt;String&gt; details = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -&gt; error.getDefaultMessage())
+                .toList();
+
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("error", "Validation failed");
+        response.put("details", details);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
+    }
+
+    // Handle all other unexpected errors (500 Internal Server Error)
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; handleGeneralErrors(
+            Exception ex) {
+
+        Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+        response.put("error", "Something went wrong on our end");
+        response.put("details", List.of(
+                "Please try again later or contact support."));
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(response);
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        Let us break this class down piece by piece. The <code>@ControllerAdvice</code> annotation at the top of the class tells Spring Boot: "This class provides global error handling for all controllers." You do not need to register it anywhere or wire it up manually &mdash; Spring Boot automatically finds it through component scanning, just like it finds your controllers.
+      </p>
+
+      <p>
+        The first method, <code>handleValidationErrors</code>, is annotated with <code>@ExceptionHandler(MethodArgumentNotValidException.class)</code>. This tells Spring Boot: "Whenever a <code>MethodArgumentNotValidException</code> is thrown anywhere in the application, run this method instead of using the default error handling." A <code>MethodArgumentNotValidException</code> is the specific exception that Spring throws when <code>@Valid</code> detects that the incoming data fails validation. Inside the method, we extract all the error messages from the exception object using <code>ex.getBindingResult().getFieldErrors()</code>. This gives us a list of every field that failed, and we pull out each field's custom error message (the ones you wrote in the <code>@NotBlank</code> and <code>@Size</code> annotations). We then build a clean JSON response with an <code>"error"</code> summary and a <code>"details"</code> array.
+      </p>
+
+      <p>
+        The second method, <code>handleGeneralErrors</code>, is the safety net. It catches <code>Exception.class</code> &mdash; the parent of all exceptions in Java. If anything goes wrong that is <em>not</em> a validation error (a database crash, a null pointer, a file not found), this method catches it. Notice that we intentionally do <strong>not</strong> include the actual exception message in the response. Why? Because internal error messages could contain database table names, file paths, or other technical details that you do not want to expose to end users. Instead, we return a friendly, generic message. In a real application, you would also log the actual exception details to a log file so developers can investigate later.
+      </p>
+
+      <p>
+        Both methods return a <code>ResponseEntity</code>. This is a Spring class that gives you full control over the HTTP response, including the status code, headers, and body. <code>ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response)</code> says "send a 400 status code with this JSON body." This is how you control exactly what the client receives.
+      </p>
+
+      <p>
+        Restart your application and test the validation again. Now when you submit invalid data, you will get the clean, helpful error response format we designed. Every error from your API &mdash; whether it is a validation failure, a missing resource, or an unexpected crash &mdash; will follow the same consistent pattern. Frontend developers working with your API will love this because they can write one piece of error-handling code that works for every endpoint.
+      </p>
+
+      <div class="callout callout-tip">
+        <strong>Tip:</strong> In a production application, you would add more specific exception handlers. For example, you might handle <code>HttpMessageNotReadableException</code> (which occurs when someone sends malformed JSON) with a message like "Invalid JSON format. Please check your request body." The more specific your error messages are, the easier your API is to use.
+      </div>
+
+      <!-- ==================== PART 3 — FULL CRUD OPERATIONS ==================== -->
+      <h2>Part 3 &mdash; Full CRUD Operations</h2>
+
+      <p>
+        So far, your API can do two things: <strong>create</strong> a new contact message (POST) and <strong>read</strong> all messages (GET). That is a good start, but a real application needs more. What if you want to look at one specific message? What if you want to mark a message as read? What if you want to delete a spam message? These operations are so common in software development that they have a name: <strong>CRUD</strong>.
+      </p>
+
+      <p>
+        CRUD stands for <strong>Create, Read, Update, Delete</strong> &mdash; the four fundamental operations you can perform on any piece of data. Almost every application you have ever used is built on CRUD. When you post a tweet, that is <em>Create</em>. When you scroll your feed, that is <em>Read</em>. When you edit a tweet (or a profile), that is <em>Update</em>. When you delete a tweet, that is <em>Delete</em>. An online store lets you create orders, read product listings, update your cart, and delete items from your wishlist. CRUD is everywhere.
+      </p>
+
+      <p>
+        In REST APIs, each CRUD operation maps to a specific HTTP method:
+      </p>
+
+      <div class="key-concept">
+        <h4>CRUD and HTTP Methods</h4>
+        <ul>
+          <li><strong>Create</strong> &rarr; <code>POST /api/contact</code> &mdash; Submit a new message</li>
+          <li><strong>Read (all)</strong> &rarr; <code>GET /api/contact</code> &mdash; Get all messages</li>
+          <li><strong>Read (one)</strong> &rarr; <code>GET /api/contact/{id}</code> &mdash; Get a single message by its ID</li>
+          <li><strong>Update</strong> &rarr; <code>PUT /api/contact/{id}</code> &mdash; Update an existing message</li>
+          <li><strong>Delete</strong> &rarr; <code>DELETE /api/contact/{id}</code> &mdash; Delete a message</li>
+        </ul>
+      </div>
+
+      <p>
+        Notice the <code>{id}</code> in the URLs above. This is called a <strong>path variable</strong> &mdash; it is a placeholder that gets replaced with an actual value when you make a request. For example, <code>GET /api/contact/3</code> means "get the message with ID 3." Path variables let you target a specific resource instead of getting all resources at once. Spring Boot makes it easy to capture these values using the <code>@PathVariable</code> annotation, which we will see in the code below.
+      </p>
+
+      <p>
+        We already have Create and Read All from previous lessons. Let us add the remaining three operations. First, the <strong>Read One</strong> endpoint &mdash; getting a single message by its ID:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// READ ONE — get a single message by ID
+@GetMapping("/{id}")
+public ResponseEntity&lt;?&gt; getMessageById(@PathVariable Long id) {
+    return repository.findById(id)
+            .map(message -&gt; ResponseEntity.ok(message))
+            .orElse(ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build());
+}</code></pre>
+      </div>
+
+      <p>
+        Let us break this down. The <code>@GetMapping("/{id}")</code> annotation maps GET requests to <code>/api/contact/5</code>, <code>/api/contact/42</code>, or any other number. The <code>{id}</code> part in the path becomes a variable. The <code>@PathVariable Long id</code> parameter tells Spring Boot: "Take whatever value is in the <code>{id}</code> position of the URL and pass it to this method as a <code>Long</code> called <code>id</code>." So if someone requests <code>/api/contact/5</code>, the <code>id</code> variable will have the value <code>5</code>.
+      </p>
+
+      <p>
+        Inside the method, <code>repository.findById(id)</code> asks the database to find a message with that ID. This method returns an <code>Optional</code> &mdash; a Java class that represents "there might be a value here, or there might not." If the message exists, <code>.map(message -&gt; ResponseEntity.ok(message))</code> wraps it in a 200 OK response and sends it back. If the message does not exist, <code>.orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build())</code> returns a 404 Not Found response. This is proper REST behavior &mdash; when someone asks for a resource that does not exist, you tell them it was not found.
+      </p>
+
+      <p>
+        Next, the <strong>Update</strong> endpoint. This lets you modify an existing message. The most common use case for our contact form is marking a message as "read" after an admin has seen it:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// UPDATE — update an existing message
+@PutMapping("/{id}")
+public ResponseEntity&lt;?&gt; updateMessage(
+        @PathVariable Long id,
+        @Valid @RequestBody ContactMessage updatedMessage) {
+
+    return repository.findById(id)
+            .map(existing -&gt; {
+                existing.setName(updatedMessage.getName());
+                existing.setEmail(updatedMessage.getEmail());
+                existing.setMessage(updatedMessage.getMessage());
+                existing.setRead(updatedMessage.isRead());
+                repository.save(existing);
+                return ResponseEntity.ok(existing);
+            })
+            .orElse(ResponseEntity
+                    .status(HttpStatus.NOT_FOUND)
+                    .build());
+}</code></pre>
+      </div>
+
+      <p>
+        The <code>@PutMapping("/{id}")</code> annotation maps HTTP PUT requests to this method. PUT is the standard HTTP method for updating a resource. The method takes two parameters: the <code>id</code> from the URL path and the updated message data from the request body. Notice that <code>@Valid</code> is on the request body here too &mdash; even when updating, we still validate the input. We do not want someone to update a message with an empty name or an invalid email.
+      </p>
+
+      <p>
+        The logic follows the same pattern as Read One: find the message by ID, and if it exists, update its fields and save it. The <code>repository.save(existing)</code> call works for both creating new records and updating existing ones &mdash; if the object already has an ID, JPA knows to perform an UPDATE instead of an INSERT. If the message with the given ID does not exist, we return a 404.
+      </p>
+
+      <p>
+        Finally, the <strong>Delete</strong> endpoint:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// DELETE — remove a message
+@DeleteMapping("/{id}")
+public ResponseEntity&lt;?&gt; deleteMessage(@PathVariable Long id) {
+    if (repository.existsById(id)) {
+        repository.deleteById(id);
+        return ResponseEntity.ok(
+                Map.of("status", "Message deleted successfully"));
+    }
+    return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(Map.of("error", "Message not found"));
+}</code></pre>
+      </div>
+
+      <p>
+        The <code>@DeleteMapping("/{id}")</code> annotation maps HTTP DELETE requests. The logic is straightforward: first check if a message with that ID exists using <code>repository.existsById(id)</code>. If it does, delete it and return a success message. If it does not, return a 404 error. We check for existence first because calling <code>deleteById</code> on a non-existent ID would silently do nothing, which could confuse the frontend &mdash; the client would think the deletion succeeded even though there was nothing to delete.
+      </p>
+
+      <p>
+        Now let us put it all together. Here is the complete <code>ContactController</code> with all five CRUD endpoints:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package org.codersfarm.contactapi;
+
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+@RestController
+@RequestMapping("/api/contact")
+@CrossOrigin(origins = "*")
+public class ContactController {
+
+    private final ContactMessageRepository repository;
+
+    public ContactController(ContactMessageRepository repository) {
+        this.repository = repository;
+    }
+
+    // CREATE — submit a new message
+    @PostMapping
+    public ResponseEntity&lt;Map&lt;String, String&gt;&gt; submitMessage(
+            @Valid @RequestBody ContactMessage message) {
+        repository.save(message);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(Map.of("status", "Message received! Thank you, "
+                        + message.getName() + "."));
+    }
+
+    // READ ALL — get all messages
+    @GetMapping
+    public List&lt;ContactMessage&gt; getAllMessages() {
+        return repository.findAll();
+    }
+
+    // READ ONE — get a single message by ID
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;?&gt; getMessageById(@PathVariable Long id) {
+        return repository.findById(id)
+                .map(message -&gt; ResponseEntity.ok(message))
+                .orElse(ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .build());
+    }
+
+    // UPDATE — update an existing message
+    @PutMapping("/{id}")
+    public ResponseEntity&lt;?&gt; updateMessage(
+            @PathVariable Long id,
+            @Valid @RequestBody ContactMessage updatedMessage) {
+        return repository.findById(id)
+                .map(existing -&gt; {
+                    existing.setName(updatedMessage.getName());
+                    existing.setEmail(updatedMessage.getEmail());
+                    existing.setMessage(updatedMessage.getMessage());
+                    existing.setRead(updatedMessage.isRead());
+                    repository.save(existing);
+                    return ResponseEntity.ok(existing);
+                })
+                .orElse(ResponseEntity
+                        .status(HttpStatus.NOT_FOUND)
+                        .build());
+    }
+
+    // DELETE — remove a message
+    @DeleteMapping("/{id}")
+    public ResponseEntity&lt;?&gt; deleteMessage(@PathVariable Long id) {
+        if (repository.existsById(id)) {
+            repository.deleteById(id);
+            return ResponseEntity.ok(
+                    Map.of("status", "Message deleted successfully"));
+        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", "Message not found"));
+    }
+}</code></pre>
+      </div>
+
+      <p>
+        Look at what you have built. Five endpoints covering every CRUD operation, with input validation on the create and update routes, proper HTTP status codes, and clean error responses. This is exactly the kind of API that professional developers build every day. The patterns you are learning here &mdash; <code>@PathVariable</code> for targeting specific resources, <code>ResponseEntity</code> for controlling status codes, <code>@Valid</code> for enforcing data rules &mdash; are used in virtually every Spring Boot project in the real world.
+      </p>
+
+      <p>
+        To test these endpoints, you can use a tool like <strong>Postman</strong> or <strong>curl</strong> from the command line. Here are some example curl commands:
+      </p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># Create a new message
+curl -X POST http://localhost:8080/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice","email":"alice@example.com","message":"Hello, this is a test message!"}'
+
+# Get all messages
+curl http://localhost:8080/api/contact
+
+# Get message with ID 1
+curl http://localhost:8080/api/contact/1
+
+# Update message with ID 1 (mark as read)
+curl -X PUT http://localhost:8080/api/contact/1 \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Alice","email":"alice@example.com","message":"Hello, this is a test message!","read":true}'
+
+# Delete message with ID 1
+curl -X DELETE http://localhost:8080/api/contact/1</code></pre>
+      </div>
+
+      <div class="callout callout-info">
+        <strong>Key Insight:</strong> Notice how each endpoint uses a different HTTP method (GET, POST, PUT, DELETE) but the same base URL (<code>/api/contact</code>). This is the REST convention &mdash; the HTTP method tells the server <em>what action</em> to perform, and the URL tells it <em>which resource</em> to perform it on. The same URL can do different things depending on the method used to access it.
+      </div>
+
+      <!-- ==================== PART 4 — CONNECTING TO THE FRONTEND ==================== -->
+      <h2>Part 4 &mdash; Connecting to the Frontend</h2>
+
+      <p>
+        You have built a powerful API with validation, error handling, and full CRUD operations. But so far, the only way to interact with it has been through tools like curl or Postman. Let us bring it to life by building a simple <strong>admin dashboard</strong> &mdash; a web page that lets you view all submitted messages, mark them as read, and delete them. This is exactly the kind of internal tool that businesses build to manage the data coming through their contact forms.
+      </p>
+
+      <p>
+        The admin dashboard will use plain JavaScript with the <code>fetch()</code> API &mdash; the same techniques you learned in earlier web lessons. It will make HTTP requests to your Spring Boot API and display the results. This is the full-stack connection in action: your HTML form sends data to the backend, the backend validates and stores it, and now the admin dashboard reads it back.
+      </p>
+
+      <p>
+        The code below is a working admin dashboard. It fetches all messages from your API, displays each one with its read status, and provides buttons to mark messages as read or delete them. You can run it right here in the browser to see the console output. Of course, for the fetch requests to actually work, your Spring Boot server needs to be running on <code>localhost:8080</code>. If it is not running, you will see an error message explaining that.
+      </p>
+
+      <p>
+        Take a moment to read through the code before running it. Notice how each function uses a different HTTP method &mdash; <code>GET</code> for loading, <code>PUT</code> for updating, and <code>DELETE</code> for removing. These map directly to the endpoints you just built in your controller. The frontend and backend are speaking the same language.
+      </p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Simple Admin Dashboard
+// Run this while your Spring Boot server is running!
+
+const API_URL = 'http://localhost:8080/api/contact';
+
+// Fetch and display all messages
+async function loadMessages() {
+  try {
+    const response = await fetch(API_URL);
+    const messages = await response.json();
+
+    if (messages.length === 0) {
+      console.log('No messages yet. Submit some through your contact form!');
+      return;
+    }
+
+    console.log('=== Contact Messages ===\n');
+    messages.forEach(msg => {
+      const status = msg.read ? '[Read]' : '[New]';
+      console.log(`${status} #${msg.id} - ${msg.name} (${msg.email})`);
+      console.log(`  "${msg.message}"`);
+      console.log('---');
+    });
+
+    console.log(`\nTotal: ${messages.length} message(s)`);
+  } catch (error) {
+    console.log('Error: ' + error.message);
+    console.log('Make sure your Spring Boot server is running!');
+  }
+}
+
+// Mark a message as read
+async function markAsRead(id) {
+  try {
+    // First, get the current message
+    const getResponse = await fetch(`${API_URL}/${id}`);
+    if (!getResponse.ok) {
+      console.log(`Message #${id} not found.`);
+      return;
+    }
+    const message = await getResponse.json();
+
+    // Update it with read = true
+    message.read = true;
+    const putResponse = await fetch(`${API_URL}/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(message)
+    });
+
+    if (putResponse.ok) {
+      console.log(`Message #${id} marked as read!`);
+    } else {
+      console.log(`Failed to update message #${id}.`);
+    }
+  } catch (error) {
+    console.log('Error: ' + error.message);
+  }
+}
+
+// Delete a message
+async function deleteMessage(id) {
+  try {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE'
+    });
+
+    if (response.ok) {
+      const result = await response.json();
+      console.log(result.status);
+    } else {
+      console.log(`Message #${id} not found.`);
+    }
+  } catch (error) {
+    console.log('Error: ' + error.message);
+  }
+}
+
+// Run the dashboard
+loadMessages();</code></pre>
+      </div>
+
+      <p>
+        Let us walk through the key parts of this code. The <code>loadMessages()</code> function sends a GET request to <code>/api/contact</code>, which triggers your <code>getAllMessages()</code> controller method. It receives an array of message objects, loops through each one, and prints the status (read or new), the ID, the sender's name and email, and the message content. This is the "Read All" part of CRUD in action.
+      </p>
+
+      <p>
+        The <code>markAsRead(id)</code> function demonstrates the Update operation. It first fetches the existing message with a GET request (so it has all the current field values), sets the <code>read</code> property to <code>true</code>, and then sends the entire updated object back with a PUT request. Remember, your PUT endpoint expects a complete, valid <code>ContactMessage</code> object because <code>@Valid</code> is on that parameter. You cannot just send <code>{"read": true}</code> &mdash; you need to include all the required fields (name, email, message) to pass validation.
+      </p>
+
+      <p>
+        The <code>deleteMessage(id)</code> function sends a DELETE request to <code>/api/contact/{id}</code>. If the message exists, it gets deleted and the server returns a success message. If it does not exist, the server returns a 404, and the function tells you the message was not found. Clean and straightforward.
+      </p>
+
+      <p>
+        To try the full workflow, start your Spring Boot server, then use the contact form (or curl) to submit a few test messages. Come back to this editor and run the code to see your messages displayed. Then try changing the last line from <code>loadMessages()</code> to <code>markAsRead(1)</code> and run it again to mark the first message as read. Change it to <code>deleteMessage(1)</code> to delete it. Finally, change it back to <code>loadMessages()</code> to confirm the changes took effect. You are interacting with your database through JavaScript &mdash; this is full-stack development.
+      </p>
+
+      <p>
+        In a real application, you would build this admin dashboard as a proper HTML page with styled buttons and a table layout, rather than printing to the console. But the underlying JavaScript is exactly the same &mdash; <code>fetch()</code> with different HTTP methods. The console approach lets you focus on the logic without worrying about HTML and CSS right now.
+      </p>
+
+      <div class="callout callout-warning">
+        <strong>Important:</strong> The <code>@CrossOrigin(origins = "*")</code> annotation on your controller is what allows the browser-based JavaScript to talk to your Spring Boot server. Without it, the browser would block the requests due to <strong>CORS</strong> (Cross-Origin Resource Sharing) security rules. The <code>"*"</code> means "allow requests from any origin." This is fine for development, but in production you would restrict it to your specific domain (like <code>@CrossOrigin(origins = "https://yoursite.com")</code>).
+      </div>
+
+      <!-- ==================== PART 5 — REVIEWING THE FULL STACK ==================== -->
+      <h2>Part 5 &mdash; Reviewing the Full Stack</h2>
+
+      <p>
+        Take a step back and appreciate what you have built over the last several lessons. You started with nothing but a blank HTML file and the desire to learn. Now you have a <strong>fully functional full-stack application</strong>. Let us trace the entire journey of a contact form submission, from the moment a user clicks "Submit" to the moment an admin reads the message:
+      </p>
+
+      <div class="key-concept">
+        <h4>The Full-Stack Flow</h4>
+        <ol>
+          <li><strong>HTML form</strong> &mdash; The user types their name, email, and message into a form you built with HTML and CSS.</li>
+          <li><strong>JavaScript fetch()</strong> &mdash; When they click "Submit," your JavaScript gathers the form data, converts it to JSON, and sends a POST request to your API.</li>
+          <li><strong>Spring Boot controller</strong> &mdash; Your <code>ContactController</code> receives the request and the <code>@Valid</code> annotation triggers input validation.</li>
+          <li><strong>Jakarta Validation</strong> &mdash; The <code>@NotBlank</code>, <code>@Email</code>, and <code>@Size</code> annotations check every field. If anything is invalid, the <code>GlobalExceptionHandler</code> sends back a clean error response.</li>
+          <li><strong>JPA Repository</strong> &mdash; If validation passes, <code>repository.save()</code> stores the message in your SQLite database.</li>
+          <li><strong>SQLite database</strong> &mdash; The message is persisted to disk. It will survive server restarts and will be there tomorrow, next week, and next year.</li>
+          <li><strong>Response</strong> &mdash; The server sends back a 201 Created response, confirming the message was saved. Your frontend JavaScript displays a success message to the user.</li>
+          <li><strong>Admin dashboard</strong> &mdash; Later, an admin loads the dashboard, which fetches all messages from the API and displays them. They can mark messages as read or delete spam.</li>
+        </ol>
+      </div>
+
+      <p>
+        This is a <strong>production-quality pattern</strong>. The same architecture &mdash; frontend form, REST API, validation, database storage, admin dashboard &mdash; is used by companies of every size, from startups to Fortune 500 corporations. The specific technologies might differ (React instead of plain HTML, PostgreSQL instead of SQLite, Kubernetes instead of running locally), but the pattern is identical. You have learned the fundamentals that transfer to any technology stack.
+      </p>
+
+      <p>
+        You also now have a solid understanding of concepts that many developers struggle with: the HTTP request/response cycle, REST conventions, JSON data exchange, server-side validation, error handling with proper status codes, and CRUD operations with a relational database. These are not just Spring Boot concepts &mdash; they are universal software engineering concepts that apply whether you are building in Java, Python, JavaScript, Go, or any other language.
+      </p>
+
+      <p>
+        You have built something genuinely impressive. A few lessons ago, you were writing your first <code>Hello from Spring Boot!</code> endpoint. Now you have a validated, database-backed REST API with full CRUD operations and a frontend that talks to it. That is real software engineering. In the next and final lesson, we will look at where to go from here &mdash; how to deploy your application, what to learn next, and how to continue growing as a developer.
+      </p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Quiz &mdash; Check Your Understanding</h2>
+
+      <div class="quiz" data-id="crud-q1">
+        <p class="quiz-question">1. What annotation tells Spring to validate the incoming request body?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="crud-q1" value="a"> @NotBlank</label>
+          <label><input type="radio" name="crud-q1" value="b"> @Validated</label>
+          <label><input type="radio" name="crud-q1" value="c"> @Valid</label>
+          <label><input type="radio" name="crud-q1" value="d"> @RequestBody</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: C.</strong> The <code>@Valid</code> annotation is placed before the <code>@RequestBody</code> parameter in your controller method. It tells Spring Boot to check all the validation annotations (<code>@NotBlank</code>, <code>@Email</code>, <code>@Size</code>, etc.) on the incoming object before running the method. Without <code>@Valid</code>, the validation annotations on your entity are ignored.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="crud-q2">
+        <p class="quiz-question">2. What HTTP status code means "the resource was not found"?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="crud-q2" value="a"> 200</label>
+          <label><input type="radio" name="crud-q2" value="b"> 400</label>
+          <label><input type="radio" name="crud-q2" value="c"> 404</label>
+          <label><input type="radio" name="crud-q2" value="d"> 500</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: C.</strong> A <code>404 Not Found</code> status code tells the client that the resource they requested does not exist. For example, if someone sends a GET request to <code>/api/contact/999</code> and there is no message with ID 999, your API should return a 404. Status codes in the 400 range indicate that the client made an error.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="crud-q3">
+        <p class="quiz-question">3. What does CRUD stand for?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="crud-q3" value="a"> Connect, Retrieve, Upload, Download</label>
+          <label><input type="radio" name="crud-q3" value="b"> Create, Read, Update, Delete</label>
+          <label><input type="radio" name="crud-q3" value="c"> Copy, Read, Undo, Deploy</label>
+          <label><input type="radio" name="crud-q3" value="d"> Create, Run, Update, Debug</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: B.</strong> CRUD stands for <strong>Create, Read, Update, Delete</strong> &mdash; the four fundamental operations for managing data. In REST APIs, these map to HTTP methods: POST (Create), GET (Read), PUT (Update), and DELETE (Delete). Almost every application you use is built on these four operations.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="java-spring" data-lesson="15-validation-and-crud">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/java-spring/14-adding-sqlite.html" class="lesson-nav-btn">&larr; Previous: Adding SQLite</a>
+      <a href="/lessons/java-spring/16-whats-next.html" class="lesson-nav-btn">Next: What's Next &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

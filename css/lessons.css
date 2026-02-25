@@ -175,6 +175,133 @@
   font-size: 0.85em;
 }
 
+/* Checklist (for career lesson) */
+.checklist {
+  list-style: none;
+  padding-left: 0;
+  margin: var(--space-3) 0;
+}
+
+.checklist li {
+  padding-left: var(--space-5);
+  position: relative;
+  margin-bottom: var(--space-2);
+  line-height: 1.7;
+}
+
+.checklist li::before {
+  content: '\2610';
+  position: absolute;
+  left: 0;
+  font-size: 1.2em;
+  color: var(--accent);
+}
+
+/* Blockquote for motivational framing */
+.lesson-content blockquote {
+  margin: var(--space-4) 0;
+  padding: var(--space-3) var(--space-4);
+  border-left: 4px solid var(--accent);
+  background-color: var(--bg-surface);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.lesson-content blockquote p:last-child {
+  margin-bottom: 0;
+}
+
+/* Comparison cards (resume before/after) */
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+.comparison-card {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background-color: var(--bg-surface);
+}
+
+.comparison-card h4 {
+  font-size: var(--font-size-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.comparison-card.before h4 {
+  color: var(--error);
+}
+
+.comparison-card.after h4 {
+  color: var(--success);
+}
+
+/* OS-specific install command tabs */
+.install-tabs {
+  margin: var(--space-4) 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.install-tab-buttons {
+  display: flex;
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.install-tab-btn {
+  flex: 1;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--font-size-sm);
+  font-family: var(--font-body);
+  font-weight: 600;
+  color: var(--text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.install-tab-btn:hover {
+  color: var(--text-primary);
+}
+
+.install-tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.install-tab-content {
+  display: none;
+  padding: var(--space-3);
+  background-color: var(--code-bg);
+}
+
+.install-tab-content.active {
+  display: block;
+}
+
+.install-tab-content code {
+  display: block;
+  font-size: var(--font-size-sm);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  color: var(--text-primary);
+  background: none;
+  border: none;
+  padding: 0;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .lesson-content h2 {
@@ -208,5 +335,9 @@
 
   .learning-objectives {
     padding: var(--space-3);
+  }
+
+  .comparison-grid {
+    grid-template-columns: 1fr;
   }
 }

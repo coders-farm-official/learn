@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Lessons.init();
     Quiz.initAll();
     Editor.initAll();
+    initInstallTabs();
   }
 
   // Register service worker
@@ -97,6 +98,23 @@ function initCatalog() {
         });
     });
   }
+}
+
+function initInstallTabs() {
+  document.querySelectorAll('.install-tabs').forEach(tabGroup => {
+    const buttons = tabGroup.querySelectorAll('.install-tab-btn');
+    const contents = tabGroup.querySelectorAll('.install-tab-content');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.getAttribute('data-tab');
+        buttons.forEach(b => b.classList.remove('active'));
+        contents.forEach(c => c.classList.remove('active'));
+        btn.classList.add('active');
+        tabGroup.querySelector(`.install-tab-content[data-tab="${tab}"]`).classList.add('active');
+      });
+    });
+  });
 }
 
 function registerServiceWorker() {

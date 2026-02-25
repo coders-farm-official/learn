@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 14: Adding a Real Database with SQLite — Coders Farm</title>
+  <meta name="description" content="Add persistent data storage to your Spring Boot app with SQLite and JPA">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="java-spring-14-adding-sqlite">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Adding SQLite</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/java-spring/13-contact-form-api.html" role="menuitem">Lesson 13: Contact Form API</a>
+      <a href="/lessons/java-spring/14-adding-sqlite.html" role="menuitem">Lesson 14: Adding SQLite</a>
+      <a href="/lessons/java-spring/15-validation-and-crud.html" role="menuitem">Lesson 15: Validation &amp; CRUD</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Java &amp; Spring Boot</a> / Adding a Real Database with SQLite</p>
+      <p class="lesson-progress-indicator" data-track="java-spring" data-total="6" data-current="4">Lesson 4 of 6</p>
+      <h1>Adding a Real Database with SQLite</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2.5&ndash;3 hours</p>
+    </div>
+
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand what a <strong>database</strong> is and why your application needs one to store data permanently</li>
+          <li>Install <strong>SQLite</strong> on your computer and use it from the command line</li>
+          <li>Learn basic <strong>SQL commands</strong> like <code>SELECT</code> and <code>INSERT</code> to create and read data</li>
+          <li>Add <strong>SQLite support</strong> to your Spring Boot project using Maven dependencies</li>
+          <li>Convert your <code>ContactMessage</code> model class into a <strong>JPA entity</strong> that maps to a database table</li>
+          <li>Use a <strong>Spring Data repository</strong> to save and retrieve data without writing SQL by hand</li>
+          <li>Verify that your data <strong>survives server restarts</strong> &mdash; proving your database actually works</li>
+        </ul>
+      </div>
+
+      <p>In the previous lesson, you built a contact form API that could receive messages and send them back as a list. It worked great &mdash; until you stopped the server. Every time you restarted your Spring Boot application, all of your messages vanished into thin air. That is because we were storing everything in an <code>ArrayList</code> inside your computer's memory. Memory is temporary. When a program stops running, its memory is wiped clean.</p>
+
+      <p>In this lesson, you are going to solve that problem for good. You will add a real database to your Spring Boot application so that every contact message is saved permanently to a file on your hard drive. Stop the server, restart your computer, come back a week later &mdash; your data will still be there. This is one of the most important skills in software development, and by the end of this lesson, you will have a fully functional full-stack application.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 1: What is a Database?              -->
+      <!-- ======================================== -->
+      <h2>1. What is a Database?</h2>
+
+      <p>A <strong>database</strong> is a program that is specifically designed to store, organize, and retrieve data. You can think of it as a super-powered spreadsheet. Just like a spreadsheet has rows and columns, a database stores data in <strong>tables</strong> with rows and columns. But unlike a regular spreadsheet, a database can handle millions of rows of data without slowing down, allow multiple users to read and write data at the same time, and keep your data safe even if the power goes out.</p>
+
+      <p>Let us break down the key vocabulary. In database language, a <strong>table</strong> is like a single spreadsheet. It holds one type of data. For example, you might have a table called <code>contact_messages</code> that stores all the messages from your contact form. Each <strong>row</strong> in the table is a single record &mdash; one contact message from one person. Each <strong>column</strong> is a field &mdash; a specific piece of information like the person's name, their email address, or their message text.</p>
+
+      <p>Here is what your contact messages would look like as a database table:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+            <th>message</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Alice Johnson</td>
+            <td>alice@example.com</td>
+            <td>Love the website! Great work.</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Bob Smith</td>
+            <td>bob@example.com</td>
+            <td>How do I sign up for classes?</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Carol Lee</td>
+            <td>carol@example.com</td>
+            <td>Can I volunteer as a mentor?</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Notice that first column: <strong>id</strong>. Every row in a database table needs a unique identifier &mdash; a number that distinguishes it from every other row. This is called the <strong>primary key</strong>. It is like a student ID number or a Social Security number. No two rows can have the same id. The database assigns these numbers automatically, starting at 1 and counting up.</p>
+
+      <p>Now think back to what happened in Lesson 13. You stored your contact messages in an <code>ArrayList</code> inside your Java code. That list lived in your computer's <strong>RAM</strong> (random access memory). RAM is incredibly fast, but it is <em>volatile</em> &mdash; meaning it only lasts as long as the program is running. The moment you stop your Spring Boot server, the Java process ends, its memory is released, and your list of messages disappears completely.</p>
+
+      <p>This is not a bug. This is simply how memory works. It is temporary by design. Your web browser, your music player, your text editor &mdash; they all lose their in-memory data when they close. The reason your documents and music files survive is that those programs save data to your <strong>hard drive</strong> (or solid-state drive). Data on a drive is <strong>persistent</strong> &mdash; it stays there even when the power is off.</p>
+
+      <p>A database writes your data to files on your hard drive. When you save a contact message, the database writes it to a file on disk immediately. When your Spring Boot server restarts and asks "what messages do we have?", the database reads from that file and gives back all the messages. Nothing is lost. This is why virtually every real application in the world &mdash; from a small blog to Instagram &mdash; uses a database.</p>
+
+      <p>You might be wondering: why not just write to a plain text file yourself? You could, but databases give you much more than simple file storage. They let you search through millions of records in milliseconds, they prevent data corruption if two users write at the same time, they let you define relationships between different tables, and they provide a powerful query language called SQL to ask complex questions about your data. Writing all of that yourself would take months. A database gives it to you for free.</p>
+
+      <p>The language you use to communicate with a database is called <strong>SQL</strong>, which stands for <strong>Structured Query Language</strong>. You will learn the basics of SQL in this lesson, but here is the exciting part: Spring Boot can actually generate most of the SQL for you automatically. You will write Java code, and Spring will translate it into database operations behind the scenes.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 2: Why SQLite?                      -->
+      <!-- ======================================== -->
+      <h2>2. Why SQLite?</h2>
+
+      <p>There are many databases in the world &mdash; PostgreSQL, MySQL, Oracle, MongoDB, and dozens more. Each has its strengths. For this lesson, we are going to use <strong>SQLite</strong>, and there is a very good reason for that: it is the simplest database that exists.</p>
+
+      <p>Most databases (like PostgreSQL or MySQL) run as a separate program on your computer. You have to install a database server, start it up, configure usernames and passwords, create a database through a special admin tool, and then connect your application to it. That is a lot of setup before you can even store your first piece of data. SQLite is completely different. It stores your entire database in <strong>a single file</strong> on your computer. There is no separate server to install or manage. Your Spring Boot application talks directly to the file. That is it.</p>
+
+      <p>Despite its simplicity, SQLite is one of the most widely used databases on the planet. It is built into every Android phone, every iPhone, every Mac, every copy of Chrome, Firefox, and Safari, and hundreds of thousands of other applications. When you search your text message history on your phone, you are querying a SQLite database. When your web browser remembers your bookmarks and history, that data is in a SQLite database. It has been estimated that there are over one trillion SQLite databases in active use worldwide.</p>
+
+      <p>SQLite is perfect for learning because you can see and touch your database. It is just a file. You can copy it, email it to a friend, back it up by dragging it to another folder. There is no mystery about where your data lives. And because SQLite uses standard SQL, everything you learn here &mdash; the SQL commands, the concepts of tables and rows and primary keys, the way JPA maps Java objects to database records &mdash; transfers directly to PostgreSQL, MySQL, or any other database you might use in the future.</p>
+
+      <p>Think of SQLite as training wheels that happen to be professional grade. You are learning real database skills with the easiest possible setup. When you are ready for a bigger project with many users, you can switch to PostgreSQL by changing a few lines of configuration. Your Java code stays exactly the same.</p>
+
+      <p>Let us get it installed on your computer.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 3: Installing SQLite                -->
+      <!-- ======================================== -->
+      <h2>3. Installing SQLite</h2>
+
+      <p>Before we add SQLite to our Spring Boot project, let us install the SQLite command-line tool on your computer. This tool lets you create databases, run SQL commands, and inspect your data directly from the terminal. It is not strictly required for your Spring Boot app to work (the Java library handles that), but it is incredibly useful for debugging and for learning SQL.</p>
+
+      <p>First, check if SQLite is already installed. Open your terminal (Command Prompt on Windows, Terminal on Mac or Linux) and type:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>sqlite3 --version</code></pre>
+      </div>
+
+      <p>If you see a version number (like <code>3.43.2</code> or similar), you already have it and can skip ahead to the testing section below. If you see an error like "command not found" or "'sqlite3' is not recognized", you need to install it. Choose your operating system below:</p>
+
+      <div class="install-tabs">
+        <div class="install-tab-buttons">
+          <button class="install-tab-btn active" data-tab="windows">Windows</button>
+          <button class="install-tab-btn" data-tab="mac">Mac</button>
+          <button class="install-tab-btn" data-tab="linux">Linux</button>
+        </div>
+        <div class="install-tab-content active" data-tab="windows">
+          <code>winget install SQLite.SQLite --accept-package-agreements --accept-source-agreements</code>
+        </div>
+        <div class="install-tab-content" data-tab="mac">
+          <code>brew install sqlite</code>
+        </div>
+        <div class="install-tab-content" data-tab="linux">
+          <code>sudo apt install sqlite3</code>
+        </div>
+      </div>
+
+      <p>After the installation finishes, close your terminal completely and open a new one. This is important because your terminal needs to reload its list of available programs. Then verify the installation by running the version check again:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>sqlite3 --version</code></pre>
+      </div>
+
+      <p>You should now see a version number. If you do, SQLite is ready to go. If you are on Windows and still see an error, you may need to restart your computer so the system path updates.</p>
+
+      <h3>Quick Test: Your First Database</h3>
+
+      <p>Let us take SQLite for a spin and create a tiny test database right from your terminal. This will give you a feel for how databases work before we wire one into Spring Boot. Type the following command to create a new database file called <code>test.db</code>:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>sqlite3 test.db</code></pre>
+      </div>
+
+      <p>You should see a prompt that looks something like <code>sqlite&gt;</code>. You are now inside the SQLite shell, talking directly to your database. Let us create a table, insert some data, and read it back. Type each of the following commands one at a time, pressing Enter after each:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE greetings (id INTEGER PRIMARY KEY, message TEXT);
+
+INSERT INTO greetings (message) VALUES ('Hello from SQLite!');
+
+INSERT INTO greetings (message) VALUES ('Databases are cool!');
+
+SELECT * FROM greetings;</code></pre>
+      </div>
+
+      <p>After running the <code>SELECT</code> command, you should see output like this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>1|Hello from SQLite!
+2|Databases are cool!</code></pre>
+      </div>
+
+      <p>Look at that! You just created a database table, inserted two rows of data, and queried them back. Let us break down what each command did. <code>CREATE TABLE</code> made a new table called <code>greetings</code> with two columns: <code>id</code> (a number that auto-increments) and <code>message</code> (text). <code>INSERT INTO</code> added new rows. Notice we did not specify an <code>id</code> &mdash; SQLite assigned 1 and 2 automatically. <code>SELECT * FROM greetings</code> means "give me all columns from the greetings table" &mdash; the asterisk <code>*</code> means "everything."</p>
+
+      <p>To exit the SQLite shell, type:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>.quit</code></pre>
+      </div>
+
+      <p>If you look in your current folder, you will find a file called <code>test.db</code>. That file <em>is</em> your database. All the data you just created lives inside it. You can delete it if you like &mdash; it was just for practice. The real database we care about is the one we are about to create for our Spring Boot application.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 4: Adding SQLite to Spring Boot     -->
+      <!-- ======================================== -->
+      <h2>4. Adding SQLite to Spring Boot</h2>
+
+      <p>Now for the main event. We are going to connect our Spring Boot project to a SQLite database. This requires three things: adding the right dependencies to our project, configuring the database connection, and then updating our Java code to use JPA (Java Persistence API) instead of an in-memory list. Let us start with the dependencies.</p>
+
+      <p>Open your <code>pom.xml</code> file. This is the file that tells Maven (our build tool) which libraries our project needs. You already have some dependencies in there like <code>spring-boot-starter-web</code>. We need to add three more:</p>
+
+      <ul>
+        <li><strong>spring-boot-starter-data-jpa</strong> &mdash; This is Spring's library for talking to databases. JPA stands for Java Persistence API, and it is the standard way Java applications interact with databases. It lets you work with Java objects instead of writing raw SQL.</li>
+        <li><strong>sqlite-jdbc</strong> &mdash; This is the JDBC driver for SQLite. JDBC (Java Database Connectivity) is like a universal adapter that lets Java programs connect to databases. This specific driver knows how to speak SQLite's language.</li>
+        <li><strong>hibernate-community-dialects</strong> &mdash; Hibernate is the engine that powers JPA. A "dialect" tells Hibernate how to generate SQL for a specific database. Since SQLite has some quirks that differ from other databases, Hibernate needs this dialect to generate the right SQL commands.</li>
+      </ul>
+
+      <p>Add these three dependencies inside the <code>&lt;dependencies&gt;</code> section of your <code>pom.xml</code>, right next to your existing dependencies:</p>
+
+      <div class="code-editor" data-language="xml" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;
+    &lt;artifactId&gt;spring-boot-starter-data-jpa&lt;/artifactId&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.xerial&lt;/groupId&gt;
+    &lt;artifactId&gt;sqlite-jdbc&lt;/artifactId&gt;
+    &lt;version&gt;3.45.1.0&lt;/version&gt;
+&lt;/dependency&gt;
+
+&lt;dependency&gt;
+    &lt;groupId&gt;org.hibernate.orm&lt;/groupId&gt;
+    &lt;artifactId&gt;hibernate-community-dialects&lt;/artifactId&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>After saving <code>pom.xml</code>, your IDE (like IntelliJ or VS Code) should automatically download these libraries. If it does not, you can run <code>./mvnw dependency:resolve</code> (or <code>mvnw.cmd dependency:resolve</code> on Windows) from your terminal inside the project folder to force the download.</p>
+
+      <p>Next, we need to tell Spring Boot where our database is and how to connect to it. Open the file <code>src/main/resources/application.properties</code>. This file holds configuration settings for your application. Add the following four lines:</p>
+
+      <div class="code-editor" data-language="properties" data-editable="false" data-runnable="false">
+        <pre><code># Database configuration
+spring.datasource.url=jdbc:sqlite:contacts.db
+spring.datasource.driver-class-name=org.sqlite.JDBC
+spring.jpa.database-platform=org.hibernate.community.dialect.SQLiteDialect
+spring.jpa.hibernate.ddl-auto=update</code></pre>
+      </div>
+
+      <p>Let us go through each line so you understand exactly what it does:</p>
+
+      <ul>
+        <li><strong><code>spring.datasource.url=jdbc:sqlite:contacts.db</code></strong> &mdash; This tells Spring where to find the database. <code>jdbc:sqlite:</code> is the connection protocol, and <code>contacts.db</code> is the filename. When your application runs, it will create (or open) a file called <code>contacts.db</code> in your project's root folder. All your data lives in this file.</li>
+        <li><strong><code>spring.datasource.driver-class-name=org.sqlite.JDBC</code></strong> &mdash; This tells Spring which JDBC driver to use. It points to the SQLite driver library we added in <code>pom.xml</code>.</li>
+        <li><strong><code>spring.jpa.database-platform=org.hibernate.community.dialect.SQLiteDialect</code></strong> &mdash; This tells Hibernate (the JPA engine) to use the SQLite dialect so it generates SQLite-compatible SQL.</li>
+        <li><strong><code>spring.jpa.hibernate.ddl-auto=update</code></strong> &mdash; This is one of the most important settings. It tells Hibernate to automatically look at your Java classes and create or update the database tables to match. If you add a new field to your Java class, Hibernate will add a new column to the table. You do not need to write <code>CREATE TABLE</code> commands yourself.</li>
+      </ul>
+
+      <p>That last property &mdash; <code>ddl-auto=update</code> &mdash; is incredibly convenient for development. It means you can focus on writing Java code and let Spring handle the database structure. In a production application, you would use a more controlled approach called "database migrations," but for learning and development, <code>update</code> is perfect.</p>
+
+      <p>Save the file. Our Spring Boot project now knows about SQLite, but we have not told it what data to store yet. That is the next step: converting our Java model into something the database can understand.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 5: Converting to JPA Entities       -->
+      <!-- ======================================== -->
+      <h2>5. Converting Your Model to a JPA Entity</h2>
+
+      <p>In Lesson 13, you created a <code>ContactMessage</code> class with fields like <code>name</code>, <code>email</code>, and <code>message</code>. That class was a plain Java object &mdash; it held data in memory but had no connection to a database. Now we are going to add special annotations that tell Spring: "This class represents a table in the database. Each instance of this class is a row in that table."</p>
+
+      <p>In JPA terminology, a class that maps to a database table is called an <strong>entity</strong>. The word "entity" just means "a thing that exists" &mdash; in this case, a thing that exists in your database. You turn a regular Java class into an entity by adding a few annotations. Annotations in Java are those special keywords that start with <code>@</code>. They do not change what your code does directly &mdash; instead, they give instructions to frameworks like Spring about how to treat your class.</p>
+
+      <p>Here is the updated <code>ContactMessage.java</code> class. Pay attention to the new annotations at the top:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.demo.model;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
+@Entity
+@Table(name = "contact_messages")
+public class ContactMessage {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private String email;
+    private String message;
+
+    // JPA requires a no-argument constructor
+    public ContactMessage() {
+    }
+
+    public ContactMessage(String name, String email, String message) {
+        this.name = name;
+        this.email = email;
+        this.message = message;
+    }
+
+    // Getters
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}</code></pre>
+      </div>
+
+      <p>Let us walk through each new piece:</p>
+
+      <ul>
+        <li><strong><code>@Entity</code></strong> &mdash; This annotation tells JPA that this class should be mapped to a database table. Without it, Spring would treat <code>ContactMessage</code> as just a regular class with no database connection.</li>
+        <li><strong><code>@Table(name = "contact_messages")</code></strong> &mdash; This specifies the exact name of the database table. If you leave this out, JPA will use the class name as the table name, which would be <code>ContactMessage</code> &mdash; not ideal because database tables conventionally use lowercase names with underscores.</li>
+        <li><strong><code>@Id</code></strong> &mdash; This marks the <code>id</code> field as the primary key of the table. Every entity must have a primary key. This is the unique identifier for each row.</li>
+        <li><strong><code>@GeneratedValue(strategy = GenerationType.IDENTITY)</code></strong> &mdash; This tells the database to automatically generate the id value for each new row. You do not have to set the id yourself &mdash; the database assigns 1, 2, 3, and so on.</li>
+      </ul>
+
+      <p>Notice that we also added an empty constructor: <code>public ContactMessage() {}</code>. This is called a <strong>no-argument constructor</strong> (or "no-args constructor"), and JPA requires it. When JPA reads data from the database and creates Java objects from it, it needs to be able to create a blank <code>ContactMessage</code> first and then fill in the fields. Without this empty constructor, JPA would not know how to create the object. You can keep the other constructor too &mdash; it is still useful when you create objects in your own code.</p>
+
+      <p>We also changed the type of <code>id</code> from <code>int</code> to <code>Long</code>. <code>Long</code> is Java's way of storing large whole numbers, and it is the standard type for database primary keys. Using <code>Long</code> (with a capital L) instead of <code>long</code> (lowercase) means the value can be <code>null</code>, which is important because when you create a new <code>ContactMessage</code> that has not been saved yet, its id has not been assigned.</p>
+
+      <p>The other fields &mdash; <code>name</code>, <code>email</code>, and <code>message</code> &mdash; do not need any special annotations. JPA automatically maps them to columns in the table with the same names. A <code>String</code> field becomes a <code>TEXT</code> column, a <code>Long</code> becomes an <code>INTEGER</code>, and so on. JPA handles the translation between Java types and database types for you.</p>
+
+      <h3>Creating the Repository</h3>
+
+      <p>Now for the truly magical part of Spring Data JPA. We need a way to save entities to the database and read them back. In traditional Java programming, you would have to write a class with methods that open a database connection, construct SQL strings, execute queries, map the results back to Java objects, handle errors, and close the connection. That could easily be 50 to 100 lines of code for even basic operations.</p>
+
+      <p>With Spring Data JPA, you need <strong>one line of code</strong>. Seriously. Create a new file called <code>ContactMessageRepository.java</code> in your repository package:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.demo.repository;
+
+import com.example.demo.model.ContactMessage;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface ContactMessageRepository extends JpaRepository&lt;ContactMessage, Long&gt; {
+}</code></pre>
+      </div>
+
+      <p>That is it. That is the entire file. No methods, no SQL, no database connection code. Just an empty interface that extends <code>JpaRepository</code>.</p>
+
+      <p>So how does this work? The answer is that Spring is incredibly clever. When your application starts, Spring sees this interface and says: "This extends <code>JpaRepository</code> for the <code>ContactMessage</code> entity with a <code>Long</code> primary key. I will automatically create a class that implements this interface with all the standard database operations." Spring generates a complete implementation behind the scenes that includes methods like:</p>
+
+      <ul>
+        <li><strong><code>save(entity)</code></strong> &mdash; Saves a new entity to the database (or updates an existing one)</li>
+        <li><strong><code>findAll()</code></strong> &mdash; Returns a list of every entity in the table</li>
+        <li><strong><code>findById(id)</code></strong> &mdash; Finds one entity by its primary key</li>
+        <li><strong><code>deleteById(id)</code></strong> &mdash; Deletes an entity by its primary key</li>
+        <li><strong><code>count()</code></strong> &mdash; Returns the total number of entities in the table</li>
+      </ul>
+
+      <p>You get all of these methods for free, without writing a single line of implementation code. This is one of the reasons Spring Boot is so popular &mdash; it eliminates an enormous amount of tedious, repetitive code. The <code>&lt;ContactMessage, Long&gt;</code> part in angle brackets tells Spring which entity this repository manages and what type its primary key is. Spring uses this information to generate the correct SQL statements.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 6: Updating the Controller          -->
+      <!-- ======================================== -->
+      <h2>6. Updating the Controller</h2>
+
+      <p>Now that we have a JPA entity and a repository, we need to update our controller to use them. In Lesson 13, our <code>ContactController</code> used an <code>ArrayList</code> to store messages. We are going to replace that list with our new <code>ContactMessageRepository</code>.</p>
+
+      <p>Before we look at the code, we need to understand a very important concept called <strong>dependency injection</strong>. This sounds intimidating, but the idea is simple. Instead of our controller creating its own repository (like buying your own tools), Spring creates the repository and hands it to the controller (like the company providing tools for you). The controller says "I need a repository to do my job," and Spring says "Here you go, I made one for you."</p>
+
+      <p>In practice, this works through the constructor. When you add a <code>ContactMessageRepository</code> parameter to your controller's constructor, Spring sees that and automatically passes in the repository it created. You do not have to create the repository yourself or manage its lifecycle. Spring handles all of that.</p>
+
+      <p>Here is the updated <code>ContactController.java</code>:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.demo.controller;
+
+import com.example.demo.model.ContactMessage;
+import com.example.demo.repository.ContactMessageRepository;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/contact")
+public class ContactController {
+
+    private final ContactMessageRepository repository;
+
+    public ContactController(ContactMessageRepository repository) {
+        this.repository = repository;
+    }
+
+    @PostMapping
+    public ContactMessage submitMessage(@RequestBody ContactMessage message) {
+        return repository.save(message);
+    }
+
+    @GetMapping
+    public List&lt;ContactMessage&gt; getAllMessages() {
+        return repository.findAll();
+    }
+}</code></pre>
+      </div>
+
+      <p>Compare this to the Lesson 13 version and notice what changed:</p>
+
+      <ul>
+        <li>The <code>ArrayList&lt;ContactMessage&gt; messages</code> field is gone. We no longer need an in-memory list because the database is our storage.</li>
+        <li>In its place, we have <code>private final ContactMessageRepository repository;</code> &mdash; this is the repository that Spring will inject.</li>
+        <li>The constructor <code>public ContactController(ContactMessageRepository repository)</code> takes the repository as a parameter. When Spring creates the controller, it sees this parameter and automatically passes in the repository. This is dependency injection in action.</li>
+        <li>The <code>submitMessage</code> method now calls <code>repository.save(message)</code> instead of <code>messages.add(message)</code>. The <code>save</code> method writes the message to the SQLite database and returns the saved entity (now with an auto-generated id).</li>
+        <li>The <code>getAllMessages</code> method now calls <code>repository.findAll()</code> instead of returning the in-memory list. This reads all messages from the database.</li>
+      </ul>
+
+      <p>The keyword <code>final</code> on the repository field means the field can only be set once (in the constructor) and never changed after that. This is a good practice because you never want to accidentally replace the repository with something else during the controller's lifetime.</p>
+
+      <p>Notice how much cleaner this code is compared to the Lesson 13 version. And it does <em>more</em> &mdash; it saves data permanently instead of just keeping it in memory. This is the power of Spring Boot and JPA. The framework does the heavy lifting so you can focus on your application's logic.</p>
+
+      <p>Also notice that the <code>save</code> method returns the saved <code>ContactMessage</code>. This is useful because after saving, the entity now has its <code>id</code> field populated by the database. So when the API response goes back to the browser, it includes the id. The client can see exactly what was saved and can use the id to reference that specific message later.</p>
+
+      <p>Take a moment to let this sink in. You wrote an empty interface (the repository), added a single field and constructor parameter to your controller, and replaced two method calls. That is all it took to go from volatile in-memory storage to permanent database persistence. This is not a toy example &mdash; this is how real Spring Boot applications are built.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 7: The Moment of Truth              -->
+      <!-- ======================================== -->
+      <h2>7. The Moment of Truth</h2>
+
+      <p>Everything is in place. Let us test whether our data actually survives a server restart. This is the moment where you prove to yourself that your database is working. Start your Spring Boot application the way you normally do:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>./mvnw spring-boot:run</code></pre>
+      </div>
+
+      <p>Watch the console output carefully. You should see some new log messages from Hibernate about creating or updating the database table. Look for lines mentioning <code>contact_messages</code> or <code>ddl</code>. If you see errors, double-check your <code>pom.xml</code> dependencies and <code>application.properties</code> settings &mdash; a small typo can cause failures.</p>
+
+      <p>Once the server is running, open a new terminal window and submit a few contact messages using <code>curl</code>. Each command sends a POST request with JSON data to your API:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl -X POST http://localhost:8080/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Alice", "email": "alice@example.com", "message": "Hello from the database!"}'
+
+curl -X POST http://localhost:8080/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Bob", "email": "bob@example.com", "message": "SQLite is awesome!"}'
+
+curl -X POST http://localhost:8080/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Carol", "email": "carol@example.com", "message": "My data will survive a restart!"}'</code></pre>
+      </div>
+
+      <p>Each response should now include an <code>"id"</code> field that was not there before &mdash; this is the auto-generated primary key from the database. Verify all three messages are stored by fetching them:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl http://localhost:8080/api/contact</code></pre>
+      </div>
+
+      <p>You should see a JSON array with all three messages, each with an id. So far this looks the same as Lesson 13. Now here is the real test. <strong>Stop the server.</strong> Go to the terminal where Spring Boot is running and press <code>Ctrl + C</code> to shut it down. The server process ends. In Lesson 13, this would have erased all your data. Now, start the server again:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>./mvnw spring-boot:run</code></pre>
+      </div>
+
+      <p>Once it is running, fetch the messages again:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl http://localhost:8080/api/contact</code></pre>
+      </div>
+
+      <p><strong>Your messages are still there.</strong> Alice, Bob, and Carol survived the restart. The data was written to the <code>contacts.db</code> file and read back when the server started again. This is the entire point of using a database &mdash; your data is permanent.</p>
+
+      <p>You can also verify this directly with the SQLite command-line tool. Without even running your Spring Boot server, open a terminal, navigate to your project folder, and run:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>sqlite3 contacts.db "SELECT * FROM contact_messages;"</code></pre>
+      </div>
+
+      <p>This command opens the <code>contacts.db</code> file and runs a SQL query against it. You will see your three messages printed out directly from the database file. This proves that the data lives in that file, independent of your Spring Boot application. Even if you deleted your entire Java project, the <code>contacts.db</code> file would still contain the data.</p>
+
+      <p>Take a moment to appreciate what you have accomplished. You started with a simple contact form in Lesson 13 that lost its data every time the server restarted. Now you have a fully persistent application backed by a real database. This is a fundamental milestone in your journey as a software developer.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 8: The Big Picture                  -->
+      <!-- ======================================== -->
+      <h2>8. What Just Happened (The Big Picture)</h2>
+
+      <p>Let us step back and look at the complete architecture of what you have built. When a user fills out the contact form on your website and clicks "Submit," here is the full journey that data takes:</p>
+
+      <ol>
+        <li><strong>The browser sends an HTTP POST request</strong> containing the form data as JSON. The request travels over the network to your Spring Boot server running on <code>localhost:8080</code>.</li>
+        <li><strong>Spring Boot receives the request</strong> and routes it to your <code>ContactController</code> based on the URL path (<code>/api/contact</code>) and HTTP method (POST).</li>
+        <li><strong>The controller processes the request.</strong> Spring automatically converts the JSON body into a <code>ContactMessage</code> Java object using Jackson (the JSON library). The controller then passes this object to the repository.</li>
+        <li><strong>The repository saves the data to SQLite.</strong> Spring Data JPA generates an <code>INSERT INTO contact_messages</code> SQL statement and executes it. The SQLite JDBC driver writes the data to the <code>contacts.db</code> file on your hard drive.</li>
+        <li><strong>The response is sent back to the browser.</strong> The saved entity (now with its auto-generated id) is converted back to JSON and sent as the HTTP response. The browser receives confirmation that the message was saved.</li>
+      </ol>
+
+      <p>When someone visits the page and the browser sends a GET request to fetch all messages, the journey is similar but in reverse: the controller asks the repository for all messages, the repository runs a <code>SELECT * FROM contact_messages</code> query, SQLite reads from the file, the results are mapped to Java objects, converted to JSON, and sent to the browser.</p>
+
+      <p>Think about the layers of your application. You have a <strong>frontend</strong> (HTML, CSS, and JavaScript in the browser), a <strong>backend API</strong> (Spring Boot handling HTTP requests), and a <strong>database</strong> (SQLite storing data to disk). This three-layer architecture &mdash; often called a "three-tier architecture" &mdash; is the foundation of virtually every web application in the world. Facebook, Twitter, Amazon, your bank's website &mdash; they all follow this same basic pattern, just at a much larger scale.</p>
+
+      <p>You have built a <strong>real full-stack application</strong>. Not a toy, not a simulation &mdash; a real application that accepts data from users over HTTP, stores it permanently in a database, and serves it back on demand. The technologies you used (Spring Boot, JPA, SQLite) are used by professional developers every day. The patterns you learned (entities, repositories, dependency injection) are industry-standard practices. You should feel genuinely proud of reaching this milestone.</p>
+
+      <!-- ======================================== -->
+      <!-- QUIZ                                     -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="sqlite-q1">
+        <p class="quiz-question">1. What makes SQLite different from databases like PostgreSQL or MySQL?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sqlite-q1" value="a"> It can only store text, not numbers</label>
+          <label><input type="radio" name="sqlite-q1" value="b"> It is a file-based database that does not require a separate server process</label>
+          <label><input type="radio" name="sqlite-q1" value="c"> It uses a different query language instead of SQL</label>
+          <label><input type="radio" name="sqlite-q1" value="d"> It only works on Linux operating systems</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! SQLite stores the entire database in a single file on your computer. Unlike PostgreSQL or MySQL, which run as separate server processes that you must install and manage, SQLite requires no server at all. Your application reads and writes directly to the database file. Despite this simplicity, SQLite uses standard SQL and is one of the most widely deployed databases in the world.</div>
+      </div>
+
+      <div class="quiz" data-id="sqlite-q2">
+        <p class="quiz-question">2. What does the <code>@Entity</code> annotation tell Spring about a Java class?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sqlite-q2" value="a"> It should be used as a controller to handle web requests</label>
+          <label><input type="radio" name="sqlite-q2" value="b"> It should be stored as a table in the database</label>
+          <label><input type="radio" name="sqlite-q2" value="c"> It should be displayed on the web page as HTML</label>
+          <label><input type="radio" name="sqlite-q2" value="d"> It should be deleted when the server stops</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That's right! The <code>@Entity</code> annotation tells JPA (Java Persistence API) that this class represents a database table. Each instance of the class corresponds to a row in the table, and each field corresponds to a column. Spring and Hibernate use this annotation to know which classes should be mapped to the database and how to generate the appropriate SQL statements.</div>
+      </div>
+
+      <div class="quiz" data-id="sqlite-q3">
+        <p class="quiz-question">3. How many lines of code do you need to write inside a Spring Data JPA repository to get basic save, find, and delete operations?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sqlite-q3" value="a"> At least 50 lines for SQL queries and connection handling</label>
+          <label><input type="radio" name="sqlite-q3" value="b"> About 10 lines — one method for each database operation</label>
+          <label><input type="radio" name="sqlite-q3" value="c"> Zero — just the interface declaration that extends JpaRepository</label>
+          <label><input type="radio" name="sqlite-q3" value="d"> You cannot get those operations without writing raw SQL</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! Spring Data JPA is remarkably powerful. You only need to declare an interface that extends <code>JpaRepository</code> with your entity type and primary key type. Spring automatically generates a full implementation with methods like <code>save()</code>, <code>findAll()</code>, <code>findById()</code>, <code>deleteById()</code>, and more. You write zero lines of implementation code — Spring creates it all for you at application startup.</div>
+      </div>
+
+      <div class="quiz" data-id="sqlite-q4">
+        <p class="quiz-question">4. What does the property <code>spring.jpa.hibernate.ddl-auto=update</code> do?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sqlite-q4" value="a"> It deletes the database every time the server starts</label>
+          <label><input type="radio" name="sqlite-q4" value="b"> It prevents any changes to the database schema</label>
+          <label><input type="radio" name="sqlite-q4" value="c"> It automatically creates and updates database tables to match your entity classes</label>
+          <label><input type="radio" name="sqlite-q4" value="d"> It backs up the database to the cloud</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! When <code>ddl-auto</code> is set to <code>update</code>, Hibernate examines your <code>@Entity</code> classes each time the application starts and compares them to the actual database tables. If a table does not exist, Hibernate creates it. If you have added new fields to your entity, Hibernate adds the corresponding columns. This makes development very convenient because your database schema stays in sync with your Java code automatically.</div>
+      </div>
+
+      <p>Excellent work completing this lesson! You have crossed a major threshold in your development journey. Your application now has a real database, which means it behaves like a real production application. In the next lesson, you will learn how to add validation to protect your data and implement full CRUD (Create, Read, Update, Delete) operations to give users complete control over their data.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="java-spring" data-lesson="14-adding-sqlite">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/java-spring/13-contact-form-api.html" class="lesson-nav-btn">&larr; Previous: Building the Contact Form API</a>
+      <a href="/lessons/java-spring/15-validation-and-crud.html" class="lesson-nav-btn">Next: Validation &amp; CRUD &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

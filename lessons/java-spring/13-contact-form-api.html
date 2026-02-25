@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 13: Building the Contact Form API — Coders Farm</title>
+  <meta name="description" content="Build a REST API to handle contact form submissions with Spring Boot">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="java-spring-13-contact-form-api">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Contact Form API</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/java-spring/12-intro-to-spring-boot.html" role="menuitem">Lesson 12: Intro to Spring Boot</a>
+      <a href="/lessons/java-spring/13-contact-form-api.html" role="menuitem">Lesson 13: Contact Form API</a>
+      <a href="/lessons/java-spring/14-adding-sqlite.html" role="menuitem">Lesson 14: Adding SQLite</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Java &amp; Spring Boot</a> / Building the Contact Form API</p>
+      <p class="lesson-progress-indicator" data-track="java-spring" data-total="6" data-current="3">Lesson 3 of 6</p>
+      <h1>Building the Contact Form API</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>What a <strong>REST API</strong> is and how the HTTP methods (<code>GET</code>, <code>POST</code>, <code>PUT</code>, <code>DELETE</code>) work</li>
+          <li>How to create a <strong>data model</strong> (a <code>ContactMessage</code> class) in Java to represent a contact form submission</li>
+          <li>How to build <strong>API endpoints</strong> that can receive new messages and return a list of all messages</li>
+          <li>How to <strong>test your API</strong> using JavaScript <code>fetch()</code> from the browser</li>
+          <li>How to <strong>connect a front-end form</strong> to your Spring Boot backend</li>
+          <li>Why <strong>in-memory storage</strong> is not enough for a real application &mdash; and what to do about it</li>
+        </ul>
+      </div>
+
+      <p>In Lesson 12, you created your first Spring Boot application and saw how Java can power a web server. You made a simple endpoint that returned a "Hello, world!" message. That was a great start, but real websites need to do much more than say hello. They need to receive data from users, process it, and send responses back.</p>
+
+      <p>In this lesson, we are going to build something genuinely useful: a <strong>REST API that handles contact form submissions</strong>. If you completed the Web Basics track, you may remember building a contact form with HTML. That form had fields for a name, email address, and message &mdash; but when you clicked "Submit," nothing actually happened on the server side. There was no backend to receive the data. Today, we build that backend.</p>
+
+      <p>By the end of this lesson, you will have a working API that can accept contact form submissions from a web browser and send back a list of all the messages it has received. This is the same pattern used by every website that has a contact page, a signup form, or a comment section. Let's get started.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 1: What is a REST API?              -->
+      <!-- ======================================== -->
+      <h2>1. What is a REST API?</h2>
+
+      <p>Before we write any code, we need to understand what we are building. You have probably heard the term "API" before. <strong>API</strong> stands for <strong>Application Programming Interface</strong>. In simple terms, an API is a set of rules that allows one piece of software to talk to another piece of software. When your web browser needs data from a server, it uses an API to ask for it. When a mobile app loads your social media feed, it is calling an API behind the scenes.</p>
+
+      <p>The specific style of API we are going to build is called a <strong>REST API</strong>. REST stands for <strong>Representational State Transfer</strong>. That is a fancy name, but the idea is straightforward. A REST API uses standard web addresses (URLs) and standard HTTP methods to let clients (like web browsers or mobile apps) communicate with a server. Every time you type a URL into your browser's address bar and press Enter, you are making an HTTP request. A REST API simply formalizes how those requests and responses should be structured.</p>
+
+      <p>Think of it like a restaurant. You (the customer) sit at a table and look at the menu. When you are ready, you tell the <strong>waiter</strong> what you want. The waiter takes your order to the <strong>kitchen</strong>, the kitchen prepares your food, and the waiter brings it back to your table. In this analogy:</p>
+
+      <ul>
+        <li><strong>You</strong> are the client (the web browser or app).</li>
+        <li><strong>The waiter</strong> is the API. It is the middleman that carries requests and responses back and forth.</li>
+        <li><strong>The kitchen</strong> is the server (your Spring Boot application). It does the actual work of processing requests and preparing data.</li>
+        <li><strong>The food</strong> is the response &mdash; the data the server sends back to the client.</li>
+      </ul>
+
+      <p>Just like a restaurant has different types of orders (dine-in, takeout, delivery), HTTP has different <strong>methods</strong> that describe what you want the server to do. There are four main ones you need to know:</p>
+
+      <ul>
+        <li><strong><code>GET</code></strong> &mdash; <em>Read</em> data from the server. This is what happens when you visit a web page. You are asking the server: "Give me this information." A GET request should never change anything on the server &mdash; it only retrieves data.</li>
+        <li><strong><code>POST</code></strong> &mdash; <em>Create</em> new data on the server. This is what happens when you submit a form. You are sending new information to the server and asking it to store or process that information.</li>
+        <li><strong><code>PUT</code></strong> &mdash; <em>Update</em> existing data on the server. For example, if you edit your profile on a website, the browser sends a PUT request with your updated information.</li>
+        <li><strong><code>DELETE</code></strong> &mdash; <em>Remove</em> data from the server. If you delete a post or remove an item from your shopping cart, a DELETE request is sent.</li>
+      </ul>
+
+      <p>In this lesson, we are going to focus on <code>GET</code> and <code>POST</code> because those are the two methods our contact form needs. We will use <code>POST</code> to send a new contact message to the server, and <code>GET</code> to retrieve a list of all the messages that have been submitted.</p>
+
+      <p>When a REST API sends data back and forth, it almost always uses a format called <strong>JSON</strong>. JSON stands for <strong>JavaScript Object Notation</strong>. It is a lightweight, human-readable way to represent data. Here is what a contact message looks like in JSON format:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>{
+  "id": 1,
+  "name": "Jane Doe",
+  "email": "jane@example.com",
+  "message": "Hello from the frontend!"
+}</code></pre>
+      </div>
+
+      <p>If you have worked with JavaScript objects before (from the Web Basics track), this format should look very familiar. JSON uses key-value pairs inside curly braces. The keys are always strings in double quotes, and the values can be strings, numbers, booleans, arrays, or other objects. JSON has become the standard format for web APIs because it is easy for both humans and machines to read and write.</p>
+
+      <p>One of the most powerful things about Spring Boot is that it handles JSON conversion automatically. When someone sends JSON data to your API, Spring Boot converts it into a Java object for you. When your API needs to send data back, Spring Boot converts your Java object into JSON. You do not have to write any parsing code yourself. This is a huge time-saver and one of the reasons Spring Boot is so popular for building APIs.</p>
+
+      <p>Now that you understand the concepts, let's start building. Our contact form API will have two endpoints:</p>
+
+      <ul>
+        <li><strong><code>POST /api/contact</code></strong> &mdash; Accepts a new contact message (name, email, and message text) and saves it.</li>
+        <li><strong><code>GET /api/contact</code></strong> &mdash; Returns a list of all contact messages that have been submitted.</li>
+      </ul>
+
+      <!-- ======================================== -->
+      <!-- PART 2: The Contact Message Model        -->
+      <!-- ======================================== -->
+      <h2>2. Creating the Contact Message Model</h2>
+
+      <p>Every application needs to define the shape of its data. When someone submits a contact form, what information do we need to capture? At a minimum, we want their <strong>name</strong>, their <strong>email address</strong>, and their <strong>message</strong>. We also want to give each submission a unique <strong>ID number</strong> so we can tell them apart.</p>
+
+      <p>In Java, we represent the shape of data using a <strong>class</strong>. If you recall from Lesson 12, a class is like a blueprint. It defines what an object looks like and what data it holds. We are going to create a class called <code>ContactMessage</code> that acts as the blueprint for a single contact form submission.</p>
+
+      <p>Think of it this way: if you were designing a paper form for people to fill out at a front desk, you would decide which fields appear on the form &mdash; Name, Email, Message. The <code>ContactMessage</code> class is the digital version of that paper form. Each time someone submits the form, we create a new <em>instance</em> (a filled-out copy) of that class.</p>
+
+      <p>Here is the complete class. Create a new file called <code>ContactMessage.java</code> in your project's source folder, right next to your main application class:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.contactapi;
+
+public class ContactMessage {
+
+    private Long id;
+    private String name;
+    private String email;
+    private String message;
+
+    // Default constructor (required by Spring Boot for JSON conversion)
+    public ContactMessage() {
+    }
+
+    // Constructor with all fields
+    public ContactMessage(Long id, String name, String email, String message) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+        this.message = message;
+    }
+
+    // Getters
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    // Setters
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+}</code></pre>
+      </div>
+
+      <p>That looks like a lot of code, but it is actually very straightforward once you break it down. Let's walk through each part.</p>
+
+      <p>First, the <strong>fields</strong> (also called instance variables) at the top of the class:</p>
+
+      <ul>
+        <li><code>private Long id</code> &mdash; A unique number for each message. We use <code>Long</code> (a big number type) because IDs can get very large on popular websites. The <code>private</code> keyword means this field cannot be accessed directly from outside the class.</li>
+        <li><code>private String name</code> &mdash; The name of the person who submitted the form.</li>
+        <li><code>private String email</code> &mdash; Their email address.</li>
+        <li><code>private String message</code> &mdash; The message they typed in the form.</li>
+      </ul>
+
+      <p>Next, the <strong>constructors</strong>. A constructor is a special method that gets called when you create a new instance of the class. We have two:</p>
+
+      <ul>
+        <li>The <strong>default constructor</strong> <code>public ContactMessage() { }</code> takes no arguments. It creates an empty <code>ContactMessage</code> object. Spring Boot requires this because when it receives JSON data, it first creates an empty object and then fills in the fields one by one using the setter methods. Without this default constructor, Spring Boot cannot do its JSON-to-Java conversion.</li>
+        <li>The <strong>parameterized constructor</strong> takes all four fields as arguments. This is convenient when <em>we</em> want to create a <code>ContactMessage</code> in our own code, because we can set all the values in one line.</li>
+      </ul>
+
+      <p>Finally, the <strong>getters and setters</strong>. You might be wondering: why do we need these methods? Why can't we just access the fields directly? This is a core Java concept called <strong>encapsulation</strong>. By making the fields <code>private</code> and providing public getter and setter methods, we control <em>how</em> the data is accessed and modified. This has several benefits:</p>
+
+      <ul>
+        <li><strong>Validation:</strong> You can add checks inside a setter. For example, you could make <code>setEmail</code> verify that the string contains an "@" symbol before accepting it.</li>
+        <li><strong>Read-only fields:</strong> If you provide a getter but no setter, the field becomes read-only from outside the class.</li>
+        <li><strong>Flexibility:</strong> You can change how data is stored internally without breaking any code that uses the class. As long as the getter and setter signatures stay the same, everything else keeps working.</li>
+      </ul>
+
+      <p>A <strong>getter</strong> is a method that returns the value of a field. By convention, it starts with <code>get</code> followed by the field name with a capital first letter. So the getter for <code>name</code> is <code>getName()</code>. A <strong>setter</strong> is a method that sets the value of a field. It starts with <code>set</code> and takes one argument. The setter for <code>name</code> is <code>setName(String name)</code>.</p>
+
+      <p>If you completed the Web Basics track, think back to the contact form you built in HTML. That form had an <code>&lt;input&gt;</code> for the person's name, an <code>&lt;input&gt;</code> for their email, and a <code>&lt;textarea&gt;</code> for their message. The <code>ContactMessage</code> class is the server-side mirror of those form fields. Each field in the class corresponds to a field in the HTML form. When the browser sends the form data to our server as JSON, Spring Boot maps each JSON key to the matching setter method in our class.</p>
+
+      <p>With our data model in place, we are ready to build the part of the application that actually handles incoming requests.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 3: Building the Controller          -->
+      <!-- ======================================== -->
+      <h2>3. Building the Controller</h2>
+
+      <p>In Spring Boot, a <strong>controller</strong> is the class that handles incoming HTTP requests. It is the waiter from our restaurant analogy &mdash; the part of your application that listens for requests from clients, processes them, and sends back responses. Each method inside a controller corresponds to a specific URL and HTTP method.</p>
+
+      <p>We are going to create a controller called <code>ContactController</code>. This controller will have two endpoints:</p>
+
+      <ul>
+        <li>A <code>POST</code> endpoint at <code>/api/contact</code> that receives a new contact message and saves it.</li>
+        <li>A <code>GET</code> endpoint at <code>/api/contact</code> that returns all saved contact messages.</li>
+      </ul>
+
+      <p>For now, we are going to store messages in an <code>ArrayList</code> &mdash; a simple list that lives in the server's memory. This is the quickest way to get our API working. (We will discuss the drawback of this approach at the end of the lesson.)</p>
+
+      <p>Create a new file called <code>ContactController.java</code> in the same package as your main application class:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.contactapi;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RestController
+public class ContactController {
+
+    // In-memory storage for contact messages
+    private List&lt;ContactMessage&gt; messages = new ArrayList&lt;&gt;();
+
+    // Counter to assign unique IDs to each message
+    private long nextId = 1;
+
+    // POST /api/contact — receive a new contact message
+    @PostMapping("/api/contact")
+    public ContactMessage createMessage(@RequestBody ContactMessage incoming) {
+        incoming.setId(nextId);
+        nextId++;
+        messages.add(incoming);
+        return incoming;
+    }
+
+    // GET /api/contact — return all contact messages
+    @GetMapping("/api/contact")
+    public List&lt;ContactMessage&gt; getAllMessages() {
+        return messages;
+    }
+}</code></pre>
+      </div>
+
+      <p>This is the heart of our API, so let's go through every piece carefully.</p>
+
+      <p><strong>The <code>@RestController</code> annotation:</strong> At the very top of the class, we have <code>@RestController</code>. This is a special Spring Boot annotation that tells the framework: "This class is a controller, and every method in it should return data directly (not an HTML page)." When you see <code>@RestController</code>, it means the controller is designed for a REST API &mdash; it sends and receives JSON data.</p>
+
+      <p><strong>The in-memory storage:</strong> Inside the class, we declare two fields. The first is <code>messages</code>, which is an <code>ArrayList</code> of <code>ContactMessage</code> objects. An <code>ArrayList</code> is Java's resizable array &mdash; you can keep adding items to it and it grows as needed. This is where we store every contact message that gets submitted. The second field is <code>nextId</code>, a counter that starts at 1. Every time a new message comes in, we assign it the current value of <code>nextId</code> and then increment the counter by one, ensuring every message gets a unique ID.</p>
+
+      <p><strong>The <code>@PostMapping</code> method:</strong> The <code>createMessage</code> method is decorated with <code>@PostMapping("/api/contact")</code>. This tells Spring Boot: "When someone sends an HTTP <code>POST</code> request to the URL <code>/api/contact</code>, run this method." The method takes one parameter: <code>@RequestBody ContactMessage incoming</code>. This is where the magic happens.</p>
+
+      <p>The <strong><code>@RequestBody</code></strong> annotation tells Spring Boot: "Take the JSON data from the body of the HTTP request and convert it into a <code>ContactMessage</code> Java object." So when a browser sends JSON like <code>{"name": "Jane", "email": "jane@example.com", "message": "Hello!"}</code>, Spring Boot automatically creates a <code>ContactMessage</code> object, calls <code>setName("Jane")</code>, <code>setEmail("jane@example.com")</code>, and <code>setMessage("Hello!")</code>. You do not have to parse the JSON yourself. Spring Boot handles all of it.</p>
+
+      <p>Inside the method, we assign an ID to the message, add it to our list, and then <code>return incoming</code>. When a <code>@RestController</code> method returns a Java object, Spring Boot automatically converts it back into JSON and sends it in the HTTP response. So the client receives JSON confirmation of the message that was just saved, including the newly assigned ID.</p>
+
+      <p><strong>The <code>@GetMapping</code> method:</strong> The <code>getAllMessages</code> method is decorated with <code>@GetMapping("/api/contact")</code>. This tells Spring Boot: "When someone sends an HTTP <code>GET</code> request to <code>/api/contact</code>, run this method." The method simply returns the entire <code>messages</code> list. Spring Boot converts the list of Java objects into a JSON array and sends it back to the client.</p>
+
+      <p>Notice how we use the same URL path (<code>/api/contact</code>) for both endpoints. This is perfectly fine because the HTTP method is different &mdash; one is <code>POST</code> and the other is <code>GET</code>. Spring Boot uses the combination of the URL path and the HTTP method to determine which controller method to call. This is standard REST API design: the URL represents the <em>resource</em> (contact messages), and the HTTP method represents the <em>action</em> (create or read).</p>
+
+      <p>Let's look at the flow of a complete request. When a user fills out a contact form on a website and clicks "Submit":</p>
+
+      <ol>
+        <li>The browser collects the form data (name, email, message) and packages it as JSON.</li>
+        <li>The browser sends an HTTP <code>POST</code> request to <code>http://localhost:8080/api/contact</code> with the JSON in the request body.</li>
+        <li>Spring Boot receives the request, sees that it matches <code>@PostMapping("/api/contact")</code>, and calls the <code>createMessage</code> method.</li>
+        <li>The <code>@RequestBody</code> annotation triggers automatic JSON-to-Java conversion, creating a <code>ContactMessage</code> object.</li>
+        <li>Our code assigns an ID, stores the message in the list, and returns the object.</li>
+        <li>Spring Boot converts the returned object back to JSON and sends it as the HTTP response.</li>
+        <li>The browser receives the JSON response and can display a success message to the user.</li>
+      </ol>
+
+      <p>That entire round trip &mdash; from the user clicking "Submit" to seeing a confirmation &mdash; typically happens in a fraction of a second. And you just built the entire server side of it in about 30 lines of Java code. That is the power of Spring Boot.</p>
+
+      <div class="callout callout-info">
+        <strong>Where do the files go?</strong> Both <code>ContactMessage.java</code> and <code>ContactController.java</code> should be in the same package as your main application class (the one with <code>@SpringBootApplication</code>). If your main class is in <code>src/main/java/com/example/contactapi/</code>, put both new files there too. Spring Boot automatically scans the package of your main class (and its sub-packages) for controllers and other components.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 4: Testing Your API                 -->
+      <!-- ======================================== -->
+      <h2>4. Testing Your API</h2>
+
+      <p>You have written the model and the controller. Now it is time to see if everything works! Start your Spring Boot application the same way you did in Lesson 12: run the main class from your IDE or use <code>./mvnw spring-boot:run</code> in your terminal. You should see the Spring Boot banner and a message saying the application started on port 8080.</p>
+
+      <h3>Testing GET with Your Browser</h3>
+
+      <p>The easiest test is to open your web browser and navigate to <code>http://localhost:8080/api/contact</code>. Since your browser sends a <code>GET</code> request by default, this will call your <code>getAllMessages()</code> method. Since no one has submitted any messages yet, you should see an empty JSON array:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>[]</code></pre>
+      </div>
+
+      <p>That empty pair of square brackets is valid JSON. It means "an empty list." This is exactly what we expect &mdash; our <code>ArrayList</code> starts out empty, so there are no messages to return. The API is working!</p>
+
+      <h3>Testing POST with JavaScript fetch()</h3>
+
+      <p>Testing a <code>GET</code> request is easy &mdash; just visit the URL. But testing a <code>POST</code> request is trickier because browsers do not send <code>POST</code> requests when you type a URL. We need to use JavaScript's <code>fetch()</code> function to send a <code>POST</code> request with JSON data.</p>
+
+      <p>You can test this right from your browser's developer console (press F12 and go to the Console tab), or you can use the runnable editor below. <strong>Important:</strong> your Spring Boot server must be running on <code>localhost:8080</code> for this to work. If the server is not running, you will see an error message.</p>
+
+      <div class="try-it">
+        <h4>Try It Yourself</h4>
+        <p>Make sure your Spring Boot application is running, then click "Run" to send a contact form submission to your API. Try changing the name, email, and message to your own information!</p>
+      </div>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Try running this while your Spring Boot server is running!
+// This sends a contact form submission to your API.
+
+fetch('http://localhost:8080/api/contact', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name: 'Jane Doe',
+    email: 'jane@example.com',
+    message: 'Hello from the frontend!'
+  })
+})
+.then(response => response.json())
+.then(data => console.log('Server responded:', data))
+.catch(error => console.log('Error (is your server running?):', error.message));</code></pre>
+      </div>
+
+      <p>Let's break down every part of that <code>fetch()</code> call so you understand exactly what is happening.</p>
+
+      <p><strong><code>fetch('http://localhost:8080/api/contact', { ... })</code></strong> &mdash; The <code>fetch()</code> function is built into every modern browser. It sends an HTTP request to the URL you provide. The first argument is the URL. The second argument is an options object that lets you configure the request.</p>
+
+      <p><strong><code>method: 'POST'</code></strong> &mdash; This tells <code>fetch()</code> to send a <code>POST</code> request instead of the default <code>GET</code>. Remember, <code>POST</code> means "I want to create new data on the server."</p>
+
+      <p><strong><code>headers: { 'Content-Type': 'application/json' }</code></strong> &mdash; HTTP headers are like labels on a package. This header tells the server: "The data I am sending is in JSON format." Without this header, Spring Boot would not know how to interpret the request body.</p>
+
+      <p><strong><code>body: JSON.stringify({ name: 'Jane Doe', ... })</code></strong> &mdash; The <code>body</code> is the actual data we are sending. <code>JSON.stringify()</code> takes a JavaScript object and converts it into a JSON string. This is the data that Spring Boot will receive, convert into a <code>ContactMessage</code> object using <code>@RequestBody</code>, and store in the list.</p>
+
+      <p><strong><code>.then(response =&gt; response.json())</code></strong> &mdash; The <code>fetch()</code> function returns a Promise (an object representing a future result). The first <code>.then()</code> takes the raw HTTP response and converts it to a JavaScript object by parsing the JSON.</p>
+
+      <p><strong><code>.then(data =&gt; console.log('Server responded:', data))</code></strong> &mdash; The second <code>.then()</code> receives the parsed data and prints it to the console. If everything worked, you should see the contact message with its newly assigned ID.</p>
+
+      <p><strong><code>.catch(error =&gt; console.log('Error ...', error.message))</code></strong> &mdash; The <code>.catch()</code> handles any errors that occur. The most common error is a network error, which usually means your Spring Boot server is not running.</p>
+
+      <h3>Checking the Results</h3>
+
+      <p>After running the <code>fetch()</code> code, go back to your browser and visit <code>http://localhost:8080/api/contact</code> again. Instead of an empty array, you should now see your message in the list:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>[
+  {
+    "id": 1,
+    "name": "Jane Doe",
+    "email": "jane@example.com",
+    "message": "Hello from the frontend!"
+  }
+]</code></pre>
+      </div>
+
+      <p>It worked! Your API received the JSON data, converted it into a Java object, assigned it an ID, stored it in the list, and now it returns that list when you visit the URL. Try running the <code>fetch()</code> code a few more times with different names and messages, then refresh the GET endpoint. You should see multiple messages, each with a unique ID.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 5: Connecting to Your Resume Site   -->
+      <!-- ======================================== -->
+      <h2>5. Connecting to Your Resume Site</h2>
+
+      <p>Now that your API is working, you probably want to connect it to an actual HTML form. If you built a resume site or contact page during the Web Basics track, this is where those two worlds come together. You are going to add JavaScript to your contact form so that when a user clicks "Submit," it sends the form data to your Spring Boot API instead of just doing nothing.</p>
+
+      <p>Here is what the JavaScript on your contact page would look like. You would add this to the HTML file that contains your contact form, inside a <code>&lt;script&gt;</code> tag at the bottom of the page:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>// Get the form element
+const form = document.getElementById('contact-form');
+
+// Listen for the form's submit event
+form.addEventListener('submit', function(event) {
+    // Prevent the default form submission (which would reload the page)
+    event.preventDefault();
+
+    // Collect the data from the form fields
+    const formData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        message: document.getElementById('message').value
+    };
+
+    // Send the data to our Spring Boot API
+    fetch('http://localhost:8080/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+    })
+    .then(response =&gt; response.json())
+    .then(data =&gt; {
+        alert('Message sent! Thank you, ' + data.name + '!');
+        form.reset(); // Clear the form fields
+    })
+    .catch(error =&gt; {
+        alert('Something went wrong. Please try again.');
+        console.log('Error:', error);
+    });
+});</code></pre>
+      </div>
+
+      <p>This code uses <code>addEventListener</code> to listen for the form's <code>submit</code> event. When the user clicks the submit button, the function runs. The first thing it does is call <code>event.preventDefault()</code>, which stops the browser from performing its default form submission behavior (which would reload the page). Then it collects the values from each form field, packages them into a JavaScript object, and sends them to our API using <code>fetch()</code> &mdash; exactly like we did in the testing section.</p>
+
+      <h3>The CORS Problem (and How to Fix It)</h3>
+
+      <p>If your HTML file is not being served by Spring Boot itself (for example, if you open it directly from your file system or serve it from a different server), you will run into a problem called <strong>CORS</strong>. CORS stands for <strong>Cross-Origin Resource Sharing</strong>, and it is a security feature built into web browsers.</p>
+
+      <p>Here is the issue: browsers block web pages from making requests to a different "origin" (a different domain, port, or protocol) than the one the page came from. If your HTML form is at <code>http://localhost:3000</code> (or opened as a file) and your API is at <code>http://localhost:8080</code>, the browser sees these as different origins and blocks the request.</p>
+
+      <p>The fix is simple. Add the <code>@CrossOrigin</code> annotation to your controller. This tells Spring Boot to include special headers in its responses that tell the browser: "It is okay for other origins to make requests to this API."</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>package com.example.contactapi;
+
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@CrossOrigin(origins = "*")
+@RestController
+public class ContactController {
+
+    private List&lt;ContactMessage&gt; messages = new ArrayList&lt;&gt;();
+    private long nextId = 1;
+
+    @PostMapping("/api/contact")
+    public ContactMessage createMessage(@RequestBody ContactMessage incoming) {
+        incoming.setId(nextId);
+        nextId++;
+        messages.add(incoming);
+        return incoming;
+    }
+
+    @GetMapping("/api/contact")
+    public List&lt;ContactMessage&gt; getAllMessages() {
+        return messages;
+    }
+}</code></pre>
+      </div>
+
+      <p>The only change is the addition of <code>@CrossOrigin(origins = "*")</code> right above <code>@RestController</code>. The <code>*</code> means "allow requests from any origin." In a real production application, you would replace the <code>*</code> with the specific URL of your frontend (like <code>"https://mywebsite.com"</code>) for better security. But for development and learning, allowing all origins is perfectly fine.</p>
+
+      <p>With <code>@CrossOrigin</code> in place, your HTML contact form can now successfully communicate with your Spring Boot API, even if they are running on different ports or being served from different locations.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 6: The Catch                        -->
+      <!-- ======================================== -->
+      <h2>6. The Catch: Why In-Memory Storage Is Not Enough</h2>
+
+      <p>Everything is working beautifully. Your API receives messages, stores them, and returns them. You have connected your front-end form to your back-end server. Time to celebrate, right? Well, almost. There is one big problem hiding in our code, and you can discover it yourself with a simple experiment.</p>
+
+      <p>Go to your terminal and <strong>stop your Spring Boot server</strong> (press <code>Ctrl + C</code>). Then <strong>start it again</strong> with <code>./mvnw spring-boot:run</code>. Once it is running, open your browser and visit <code>http://localhost:8080/api/contact</code>.</p>
+
+      <p>What do you see? <strong>An empty array.</strong> Every single message you submitted is gone. All of them. Completely erased.</p>
+
+      <p>This happened because we stored our messages in an <code>ArrayList</code>, which lives in the computer's <strong>memory</strong> (also called RAM). Memory is <em>volatile</em> &mdash; it only keeps data while the program is running. The moment you stop the server, the <code>ArrayList</code> is destroyed along with everything it contained. When the server starts up again, it creates a brand new, empty <code>ArrayList</code>, and all the old data is lost forever.</p>
+
+      <p>This is like writing all your important notes on a whiteboard instead of in a notebook. The whiteboard works great while you are in the room, but the moment someone erases it (or in this case, the server restarts), everything is gone. A real application needs to write those notes in a <strong>permanent notebook</strong> &mdash; something that survives restarts, crashes, and even power outages.</p>
+
+      <p>In the world of software, that "permanent notebook" is called a <strong>database</strong>. A database stores data on your hard drive (or SSD) instead of in volatile memory. This means the data persists even when the server is not running. When your server starts back up, it reads the data from the database and picks up right where it left off.</p>
+
+      <p>Our in-memory <code>ArrayList</code> was a useful shortcut for learning. It let us focus on understanding REST APIs, controllers, and JSON without also having to learn database configuration at the same time. But now that you understand how the API works, it is time to add real persistence.</p>
+
+      <p><strong>In the next lesson, we fix this problem for good.</strong> In Lesson 14, we will add a <strong>SQLite database</strong> to our Spring Boot application. Every contact message will be saved to a file on disk, and it will still be there even if you restart the server a hundred times. Your contact form API will finally be production-ready. See you there.</p>
+
+      <!-- ======================================== -->
+      <!-- QUIZ                                     -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="contact-api-q1">
+        <p class="quiz-question">1. What HTTP method is used to send new data to a server?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="contact-api-q1" value="a"> GET</label>
+          <label><input type="radio" name="contact-api-q1" value="b"> POST</label>
+          <label><input type="radio" name="contact-api-q1" value="c"> DELETE</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! <code>POST</code> is the HTTP method used to send new data to a server and ask it to create a new resource. In our contact form API, we use <code>POST</code> to submit a new contact message. <code>GET</code> is for reading data, and <code>DELETE</code> is for removing data.</div>
+      </div>
+
+      <div class="quiz" data-id="contact-api-q2">
+        <p class="quiz-question">2. What does <code>@RequestBody</code> do in a Spring controller?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="contact-api-q2" value="a"> It sends an HTTP request to another server</label>
+          <label><input type="radio" name="contact-api-q2" value="b"> It converts JSON from the request into a Java object</label>
+          <label><input type="radio" name="contact-api-q2" value="c"> It validates that the request body is not empty</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">That's right! The <code>@RequestBody</code> annotation tells Spring Boot to take the JSON data from the body of the incoming HTTP request and automatically convert it into a Java object. In our case, it converts the JSON containing name, email, and message into a <code>ContactMessage</code> object. Spring Boot uses the setter methods on the class to populate each field.</div>
+      </div>
+
+      <div class="quiz" data-id="contact-api-q3">
+        <p class="quiz-question">3. Why does the contact data disappear when you restart the server?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="contact-api-q3" value="a"> Because the JSON format does not support permanent storage</label>
+          <label><input type="radio" name="contact-api-q3" value="b"> Because Spring Boot automatically clears data every 24 hours</label>
+          <label><input type="radio" name="contact-api-q3" value="c"> Because it is stored in memory, which is cleared on restart</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! Our contact messages are stored in an <code>ArrayList</code>, which lives in the computer's memory (RAM). Memory is volatile &mdash; when the server stops, everything in memory is erased. When the server starts again, it creates a fresh, empty <code>ArrayList</code>. To keep data permanently, we need a database that saves data to disk, which is exactly what we will add in Lesson 14.</div>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="java-spring" data-lesson="13-contact-form-api">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/java-spring/12-intro-to-spring-boot.html" class="lesson-nav-btn">&larr; Previous: Intro to Spring Boot</a>
+      <a href="/lessons/java-spring/14-adding-sqlite.html" class="lesson-nav-btn">Next: Adding a Real Database &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
