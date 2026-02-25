@@ -97,6 +97,8 @@ const Quiz = (() => {
       quizEl.querySelectorAll('input').forEach(input => {
         input.disabled = true;
       });
+
+      addTryAgainBtn(quizEl, quizId);
     });
   }
 
@@ -108,11 +110,15 @@ const Quiz = (() => {
   function showResult(quizEl, isCorrect, correctValue) {
     const answerEl = quizEl.querySelector('.quiz-answer');
     if (answerEl) {
+      // Store original HTML so we can restore it on reset
+      if (!answerEl.hasAttribute('data-original-html')) {
+        answerEl.setAttribute('data-original-html', answerEl.innerHTML);
+      }
       answerEl.classList.add('visible');
       answerEl.classList.add(isCorrect ? 'correct' : 'incorrect');
 
       if (!isCorrect) {
-        answerEl.innerHTML = 'Not quite. ' + answerEl.innerHTML;
+        answerEl.innerHTML = 'Not quite. ' + answerEl.getAttribute('data-original-html');
       }
     }
 
@@ -138,10 +144,14 @@ const Quiz = (() => {
     const correctValue = answerEl ? answerEl.getAttribute('data-correct') : null;
 
     if (answerEl) {
+      // Store original HTML so we can restore it on reset
+      if (!answerEl.hasAttribute('data-original-html')) {
+        answerEl.setAttribute('data-original-html', answerEl.innerHTML);
+      }
       answerEl.classList.add('visible');
       answerEl.classList.add(wasCorrect ? 'correct' : 'incorrect');
       if (!wasCorrect) {
-        answerEl.innerHTML = 'Not quite. ' + answerEl.innerHTML;
+        answerEl.innerHTML = 'Not quite. ' + answerEl.getAttribute('data-original-html');
       }
     }
 
@@ -175,6 +185,63 @@ const Quiz = (() => {
     }
     submitBtn.disabled = true;
     submitBtn.textContent = wasCorrect ? 'Correct!' : 'Incorrect';
+
+    addTryAgainBtn(quizEl, quizId);
+  }
+
+  function addTryAgainBtn(quizEl, quizId) {
+    // Don't add if one already exists
+    if (quizEl.querySelector('.quiz-try-again')) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'btn btn-secondary btn-sm quiz-try-again';
+    btn.textContent = 'Try Again';
+    btn.addEventListener('click', () => resetQuiz(quizEl, quizId));
+
+    const submitDiv = quizEl.querySelector('.quiz-submit');
+    if (submitDiv) {
+      submitDiv.appendChild(btn);
+    }
+  }
+
+  function resetQuiz(quizEl, quizId) {
+    // Clear stored result
+    const results = getResults();
+    delete results[quizId];
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(results));
+    } catch { /* ignore */ }
+
+    // Restore answer div to original state
+    const answerEl = quizEl.querySelector('.quiz-answer');
+    if (answerEl) {
+      const originalHtml = answerEl.getAttribute('data-original-html');
+      if (originalHtml) {
+        answerEl.innerHTML = originalHtml;
+      }
+      answerEl.classList.remove('visible', 'correct', 'incorrect');
+    }
+
+    // Re-enable and uncheck all inputs
+    quizEl.querySelectorAll('input').forEach(input => {
+      input.disabled = false;
+      input.checked = false;
+    });
+
+    // Remove styling classes from labels
+    quizEl.querySelectorAll('.quiz-options label').forEach(label => {
+      label.classList.remove('selected', 'correct', 'incorrect');
+    });
+
+    // Remove the entire submit div (including try again button)
+    // so initQuiz creates a fresh one with a single click handler
+    const submitDiv = quizEl.querySelector('.quiz-submit');
+    if (submitDiv) {
+      submitDiv.remove();
+    }
+
+    // Re-initialize quiz with fresh submit button and handler
+    initQuiz(quizEl);
   }
 
   return { initAll };
