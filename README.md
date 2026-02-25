@@ -1,8 +1,8 @@
 # Coders Farm — Learn
 
-**Free technology education for the Lansing, Michigan community.**
+**Free technology education**
 
-[Coders Farm](https://codersfarm.org) is a nonprofit dedicated to making technology education accessible to everyone in the greater Lansing area. Our curriculum is completely free, runs entirely in your browser, and works offline — no accounts, no installs, no strings attached.
+[Coders Farm](https://codersfarm.org) is a nonprofit dedicated to making technology education accessible to everyone. We are based in Lansing, MI. Our curriculum is completely free, runs entirely in your browser, and works offline — no accounts, no installs, no strings attached.
 
 **Start learning now:** [learn.codersfarm.org](https://learn.codersfarm.org)
 
