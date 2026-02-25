@@ -181,7 +181,8 @@ const Editor = (() => {
       padding: { top: 8, bottom: 8 },
       scrollbar: {
         verticalScrollbarSize: 8,
-        horizontalScrollbarSize: 8
+        horizontalScrollbarSize: 8,
+        alwaysConsumeMouseWheel: false
       },
       overviewRulerLanes: 0,
       hideCursorInOverviewRuler: true,

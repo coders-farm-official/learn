@@ -1,0 +1,39 @@
+{
+  "web-basics": {
+    "01-intro-to-html": { "completed": true, "completedAt": "2025-09-01T10:00:00.000Z" },
+    "02-html-elements": { "completed": true, "completedAt": "2025-09-02T10:00:00.000Z" },
+    "03-intro-to-css": { "completed": true, "completedAt": "2025-09-03T10:00:00.000Z" },
+    "04-css-selectors": { "completed": true, "completedAt": "2025-09-04T10:00:00.000Z" },
+    "05-intro-to-js": { "completed": true, "completedAt": "2025-09-05T10:00:00.000Z" },
+    "06-js-basics": { "completed": true, "completedAt": "2025-09-06T10:00:00.000Z" }
+  },
+  "career": {
+    "10-zero-to-employable": { "completed": true, "completedAt": "2025-09-10T10:00:00.000Z" }
+  },
+  "java-spring": {
+    "11-setting-up-java": { "completed": true, "completedAt": "2025-09-11T10:00:00.000Z" },
+    "12-intro-to-spring-boot": { "completed": true, "completedAt": "2025-09-12T10:00:00.000Z" },
+    "13-contact-form-api": { "completed": true, "completedAt": "2025-09-13T10:00:00.000Z" },
+    "14-adding-sqlite": { "completed": true, "completedAt": "2025-09-14T10:00:00.000Z" },
+    "15-validation-and-crud": { "completed": true, "completedAt": "2025-09-15T10:00:00.000Z" },
+    "16-whats-next": { "completed": true, "completedAt": "2025-09-16T10:00:00.000Z" }
+  },
+  "databases": {
+    "17-data-and-data-types": { "completed": true, "completedAt": "2025-09-17T10:00:00.000Z" },
+    "18-relational-databases": { "completed": true, "completedAt": "2025-09-18T10:00:00.000Z" },
+    "19-non-relational-databases": { "completed": true, "completedAt": "2025-09-19T10:00:00.000Z" },
+    "20-legacy-databases": { "completed": true, "completedAt": "2025-09-20T10:00:00.000Z" },
+    "21-modern-database-landscape": { "completed": true, "completedAt": "2025-09-21T10:00:00.000Z" },
+    "22-setting-up-mysql": { "completed": true, "completedAt": "2025-09-22T10:00:00.000Z" }
+  },
+  "resumator": {
+    "23-project-planning-setup": { "completed": true, "completedAt": "2025-09-23T10:00:00.000Z" },
+    "24-job-search-api": { "completed": true, "completedAt": "2025-09-24T10:00:00.000Z" },
+    "25-search-interface": { "completed": true, "completedAt": "2025-09-25T10:00:00.000Z" },
+    "26-when-things-break": { "completed": true, "completedAt": "2025-09-26T10:00:00.000Z" },
+    "27-completing-resumator": { "completed": true, "completedAt": "2025-09-27T10:00:00.000Z" },
+    "28-api-tracking-thymeleaf": { "completed": true, "completedAt": "2025-09-28T10:00:00.000Z" },
+    "29-search-security": { "completed": true, "completedAt": "2025-09-29T10:00:00.000Z" },
+    "30-review-whats-next": { "completed": true, "completedAt": "2025-09-30T10:00:00.000Z" }
+  }
+}
