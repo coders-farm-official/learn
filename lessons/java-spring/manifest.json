@@ -1,9 +1,51 @@
 {
   "id": "java-spring",
   "title": "Java & Spring Boot",
-  "description": "Learn Java programming and build web applications with Spring Boot. Coming soon!",
-  "icon": "coffee",
-  "order": 2,
-  "comingSoon": true,
-  "lessons": []
+  "description": "Build backend servers, REST APIs, and work with databases",
+  "icon": "server",
+  "order": 3,
+  "lessons": [
+    {
+      "id": "11-setting-up-java",
+      "title": "Setting Up Your Java Environment",
+      "file": "11-setting-up-java.html",
+      "description": "Install Java, write your first program",
+      "estimatedTime": "1.5-2 hours"
+    },
+    {
+      "id": "12-intro-to-spring-boot",
+      "title": "Intro to Spring Boot",
+      "file": "12-intro-to-spring-boot.html",
+      "description": "Create your first Spring Boot project and endpoint",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "13-contact-form-api",
+      "title": "Building the Contact Form API",
+      "file": "13-contact-form-api.html",
+      "description": "Build a REST API for the contact form",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "14-adding-sqlite",
+      "title": "Adding a Real Database with SQLite",
+      "file": "14-adding-sqlite.html",
+      "description": "Persist data with SQLite and JPA",
+      "estimatedTime": "2.5-3 hours"
+    },
+    {
+      "id": "15-validation-and-crud",
+      "title": "Validation, Error Handling & CRUD",
+      "file": "15-validation-and-crud.html",
+      "description": "Input validation, error handling, and full CRUD operations",
+      "estimatedTime": "2-2.5 hours"
+    },
+    {
+      "id": "16-whats-next",
+      "title": "What's Next — Your Developer Journey Continues",
+      "file": "16-whats-next.html",
+      "description": "Review your journey and plan what comes next",
+      "estimatedTime": "1-1.5 hours"
+    }
+  ]
 }

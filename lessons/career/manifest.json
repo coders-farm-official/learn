@@ -1,0 +1,16 @@
+{
+  "id": "career",
+  "title": "Career & Employability",
+  "description": "Your path from learner to employed developer",
+  "icon": "briefcase",
+  "order": 2,
+  "lessons": [
+    {
+      "id": "10-zero-to-employable",
+      "title": "Your Path from Learner to Employed Developer",
+      "file": "10-zero-to-employable.html",
+      "description": "Build your resume, find jobs, and ace interviews",
+      "estimatedTime": "2-2.5 hours"
+    }
+  ]
+}
