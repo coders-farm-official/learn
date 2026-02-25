@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 19: Non-Relational Databases — Coders Farm</title>
+  <meta name="description" content="MongoDB, Redis, and when to choose NoSQL">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="databases-19-non-relational-databases">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Non-Relational Databases</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/18-relational-databases.html" role="menuitem">Lesson 18: Relational Databases</a>
+      <a href="/lessons/databases/19-non-relational-databases.html" role="menuitem">Lesson 19: Non-Relational Databases</a>
+      <a href="/lessons/databases/20-legacy-databases.html" role="menuitem">Lesson 20: Legacy Databases</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Understanding Databases</a> / Non-Relational Databases</p>
+      <p class="lesson-progress-indicator" data-track="databases" data-total="6" data-current="3">Lesson 3 of 6</p>
+      <h1>Non-Relational Databases &mdash; Thinking in Documents</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand what <strong>NoSQL</strong> means and why it exists alongside traditional relational databases</li>
+          <li>Learn how <strong>document databases</strong> like MongoDB store data as flexible, JSON-like documents instead of rigid tables</li>
+          <li>See how a real-world data model looks different in SQL versus MongoDB &mdash; and why that matters</li>
+          <li>Discover <strong>key-value stores</strong> like Redis and why they are used for caching, sessions, and real-time data</li>
+          <li>Get a brief overview of other NoSQL types: <strong>column-family</strong>, <strong>graph</strong>, and <strong>search</strong> databases</li>
+          <li>Build a practical <strong>decision framework</strong> for choosing between SQL and NoSQL in real projects</li>
+        </ul>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- OPENING                                  -->
+      <!-- ======================================== -->
+
+      <p>In Lesson 18, you learned how relational databases organize data into neat rows and columns &mdash; like a well-structured spreadsheet. You learned about tables, primary keys, foreign keys, and how SQL lets you ask powerful questions about your data. That approach works beautifully for a lot of the data in the world. But not all of it.</p>
+
+      <p>Think about the data that describes <em>you</em> as a person. You have a name and an email address &mdash; those fit nicely into columns. But you also have a list of skills that could be any length. You have work experiences, each with its own job title, company name, start date, and description. You might have five social media profiles or none at all. You have a list of hobbies that your friend does not have, and your friend speaks three languages while you speak one.</p>
+
+      <p>Trying to squeeze all of that into a rigid table with fixed columns gets awkward fast. You end up creating extra tables, writing complex JOIN queries, and dealing with a lot of empty columns for data that some people have and others do not. It works, but it can feel like trying to organize a messy closet using only identical shoeboxes.</p>
+
+      <p>What if you could just describe each person as they are &mdash; with all their unique, nested, variable data &mdash; and store that whole description as a single unit? That is exactly the idea behind <strong>non-relational databases</strong>, and that is what this lesson is about.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 1: What is NoSQL?                   -->
+      <!-- ======================================== -->
+      <h2>1. What is NoSQL?</h2>
+
+      <p><strong>NoSQL</strong> stands for <strong>"Not Only SQL."</strong> It does not mean "no SQL at all" or "SQL is bad." It simply means there are other ways to store and organize data beyond the traditional table-and-row model. NoSQL databases come in several flavors, and each one is designed to solve a specific kind of problem particularly well.</p>
+
+      <div class="key-concept">
+        <h4>NoSQL = Different Tradeoffs, Not Better or Worse</h4>
+        <p>Relational databases and NoSQL databases are not competitors &mdash; they are different tools for different jobs. A hammer is not better than a screwdriver. It depends on whether you are working with nails or screws. Many real-world applications use <em>both</em> types of databases at the same time, each handling the kind of data it is best suited for.</p>
+      </div>
+
+      <p>Here is the core difference. In a relational database (like MySQL, PostgreSQL, or SQLite), you must define your data structure <em>before</em> you store any data. You create a table, specify exactly what columns it has and what types of data each column holds, and every row must follow that exact structure. This is called a <strong>schema</strong>, and it is strict. If you decide later that users need a "middle_name" column, you have to alter the entire table.</p>
+
+      <p>In most NoSQL databases, the structure is <strong>flexible</strong>. Each record can have its own shape. One user document might have a "middle_name" field and another might not. One product might have a "color" field while another has a "size" field. The database does not care. It stores whatever you give it.</p>
+
+      <p>This flexibility is both the greatest strength and the greatest risk of NoSQL. It makes development faster because you do not have to plan every detail of your schema in advance. But it also means your application code has to be more careful about handling data that might look different from one record to the next.</p>
+
+      <p>The major categories of NoSQL databases are:</p>
+
+      <ul>
+        <li><strong>Document databases</strong> (MongoDB, CouchDB) &mdash; store data as JSON-like documents</li>
+        <li><strong>Key-value stores</strong> (Redis, DynamoDB) &mdash; store data as simple key-value pairs, like a dictionary</li>
+        <li><strong>Column-family stores</strong> (Cassandra, HBase) &mdash; store data in columns instead of rows, optimized for massive scale</li>
+        <li><strong>Graph databases</strong> (Neo4j, Amazon Neptune) &mdash; store data as nodes and relationships, optimized for connected data</li>
+      </ul>
+
+      <p>We will spend the most time on document databases and key-value stores because they are by far the most common in everyday web development. But we will also give you a taste of the other types so you know they exist and when they shine.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 2: Document Databases (MongoDB)     -->
+      <!-- ======================================== -->
+      <h2>2. Document Databases &mdash; MongoDB</h2>
+
+      <p>The most popular type of NoSQL database is the <strong>document database</strong>, and the most popular document database is <strong>MongoDB</strong>. Instead of storing data in tables with rows and columns, MongoDB stores data as <strong>documents</strong>. Each document is a self-contained unit of data that looks a lot like JSON &mdash; the same format you have already seen in JavaScript and in API responses.</p>
+
+      <div class="callout callout-info"><strong>Note</strong> If you have worked through the earlier lessons in this track, you already know JSON from working with APIs and configuration files. MongoDB documents use a format called BSON (Binary JSON), which is essentially JSON with a few extra data types. For our purposes, you can think of MongoDB documents as JSON.</div>
+
+      <p>Let us start with a simple example. Imagine you are building a community platform for Lansing-area coders. You need to store information about each user. In a relational database, you would create a <code>users</code> table with columns for name, email, and so on. In MongoDB, each user is stored as a <strong>document</strong> in a <strong>collection</strong> (which is roughly equivalent to a table).</p>
+
+      <p>Here is what a simple user document looks like:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>{
+  "_id": "64f1a2b3c8e4d5f6a7b8c9d0",
+  "name": "Marcus Johnson",
+  "email": "marcus@example.com",
+  "joinedDate": "2024-03-15",
+  "role": "member"
+}</code></pre>
+      </div>
+
+      <p>So far, that looks a lot like a single row in a SQL table &mdash; just written in a different format. The <code>_id</code> field is like a primary key. MongoDB generates it automatically. Nothing too exciting yet.</p>
+
+      <p>But here is where documents get interesting. Unlike a SQL row, a document can contain <strong>nested objects</strong> and <strong>arrays</strong>. This means you can store complex, hierarchical data inside a single record. Let us look at a more realistic user document:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>{
+  "_id": "64f1a2b3c8e4d5f6a7b8c9d0",
+  "name": "Marcus Johnson",
+  "email": "marcus@example.com",
+  "joinedDate": "2024-03-15",
+  "role": "member",
+  "skills": ["JavaScript", "HTML", "CSS", "React", "Node.js"],
+  "address": {
+    "city": "Lansing",
+    "state": "MI",
+    "zip": "48912"
+  },
+  "experience": [
+    {
+      "title": "Junior Web Developer",
+      "company": "Lansing Web Co.",
+      "startDate": "2024-06-01",
+      "endDate": null,
+      "current": true,
+      "description": "Building responsive websites for local businesses"
+    },
+    {
+      "title": "Intern",
+      "company": "TechStart Michigan",
+      "startDate": "2024-01-15",
+      "endDate": "2024-05-30",
+      "current": false,
+      "description": "Assisted with front-end development and testing"
+    }
+  ],
+  "socialLinks": {
+    "github": "https://github.com/marcusjohnson",
+    "linkedin": "https://linkedin.com/in/marcusjohnson"
+  }
+}</code></pre>
+      </div>
+
+      <p>Look at how much information is packed into that single document. Marcus has an array of skills (which could be any length), a nested address object, an array of experience objects (each with its own fields), and a social links object. All of this lives together in one place. When your application needs to display Marcus's profile page, it makes <em>one</em> query to the database and gets everything it needs.</p>
+
+      <h3>The SQL Comparison: Three Tables and JOINs</h3>
+
+      <p>Now let us think about how you would store this same data in a relational database. Remember from Lesson 18 that each table can only have simple values in its columns &mdash; you cannot put an array or a nested object inside a single cell. So you would need to split this data across <strong>multiple tables</strong>:</p>
+
+      <p><strong>Table 1: users</strong></p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+            <th>joined_date</th>
+            <th>role</th>
+            <th>city</th>
+            <th>state</th>
+            <th>zip</th>
+            <th>github</th>
+            <th>linkedin</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Marcus Johnson</td>
+            <td>marcus@example.com</td>
+            <td>2024-03-15</td>
+            <td>member</td>
+            <td>Lansing</td>
+            <td>MI</td>
+            <td>48912</td>
+            <td>https://github.com/marcusjohnson</td>
+            <td>https://linkedin.com/in/marcusjohnson</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>Table 2: user_skills</strong></p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>user_id</th>
+            <th>skill</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>1</td><td>JavaScript</td></tr>
+          <tr><td>2</td><td>1</td><td>HTML</td></tr>
+          <tr><td>3</td><td>1</td><td>CSS</td></tr>
+          <tr><td>4</td><td>1</td><td>React</td></tr>
+          <tr><td>5</td><td>1</td><td>Node.js</td></tr>
+        </tbody>
+      </table>
+
+      <p><strong>Table 3: user_experience</strong></p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>user_id</th>
+            <th>title</th>
+            <th>company</th>
+            <th>start_date</th>
+            <th>end_date</th>
+            <th>current</th>
+            <th>description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>Junior Web Developer</td>
+            <td>Lansing Web Co.</td>
+            <td>2024-06-01</td>
+            <td>NULL</td>
+            <td>true</td>
+            <td>Building responsive websites for local businesses</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>1</td>
+            <td>Intern</td>
+            <td>TechStart Michigan</td>
+            <td>2024-01-15</td>
+            <td>2024-05-30</td>
+            <td>false</td>
+            <td>Assisted with front-end development and testing</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>To get all of Marcus's data, your SQL query would need to <strong>JOIN</strong> all three tables together:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SELECT u.*, s.skill, e.title, e.company, e.start_date, e.end_date
+FROM users u
+LEFT JOIN user_skills s ON u.id = s.user_id
+LEFT JOIN user_experience e ON u.id = e.user_id
+WHERE u.id = 1;</code></pre>
+      </div>
+
+      <p>That is three tables, two JOINs, and a query that returns multiple rows (one for each combination of skill and experience) that your application code then has to reassemble into a single user object. It works perfectly fine, but it is more complex than the MongoDB approach for this particular use case.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> Neither approach is "wrong." The SQL approach gives you strong data integrity and powerful querying across relationships. The MongoDB approach gives you simpler reads and more natural data modeling for nested, variable data. The best choice depends on your specific situation.</div>
+
+      <h3>Advantages of Document Databases</h3>
+
+      <ul>
+        <li><strong>Flexible schema:</strong> Different documents in the same collection can have different fields. You do not need to plan every column in advance. If you need to add a "phone_number" field to some users, just start including it &mdash; no table migration required.</li>
+        <li><strong>Fast reads for complex objects:</strong> Because all related data lives in one document, reading a user profile is a single lookup. No JOINs, no assembling data from multiple tables.</li>
+        <li><strong>Natural code mapping:</strong> If your application uses JavaScript (or any language that works with JSON), your data looks almost identical in the database and in your code. There is no translation layer between "database rows" and "application objects."</li>
+        <li><strong>Horizontal scaling:</strong> Document databases are designed to spread data across multiple servers easily. This is called <strong>sharding</strong>, and it is how companies handle massive amounts of data.</li>
+      </ul>
+
+      <h3>Disadvantages of Document Databases</h3>
+
+      <ul>
+        <li><strong>Data duplication:</strong> In a relational database, you store a piece of data once and reference it from other tables using foreign keys. In a document database, you often end up copying the same data into multiple documents. If a company name changes, you might need to update it in thousands of user documents instead of one row in a companies table.</li>
+        <li><strong>Consistency challenges:</strong> Because data can be duplicated, it is possible for copies to get out of sync. Relational databases use transactions and foreign keys to prevent this. Document databases leave more of that responsibility to your application code.</li>
+        <li><strong>Harder cross-document queries:</strong> Asking "which users work at the same company?" is easy with a SQL JOIN. In MongoDB, it is more complex because each user's experience data is buried inside their own document. Cross-document queries require special operations called <strong>aggregation pipelines</strong>.</li>
+        <li><strong>No strict schema enforcement:</strong> The flexibility that makes documents easy to work with can also lead to messy, inconsistent data if your team is not disciplined about data structures.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>When Documents Shine</h4>
+        <p>Document databases work best when your data is naturally hierarchical (like a user profile with nested details), when different records can have different shapes (like products in a catalog where a shirt has "size" and a laptop has "RAM"), and when your application usually reads and writes entire objects at once rather than individual fields across many records.</p>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 3: Key-Value Stores (Redis)         -->
+      <!-- ======================================== -->
+      <h2>3. Key-Value Stores &mdash; Redis</h2>
+
+      <p>If document databases are like flexible filing cabinets, then <strong>key-value stores</strong> are like a dictionary or a phonebook. You look something up by its name (the <strong>key</strong>), and you get back its definition (the <strong>value</strong>). That is it. No tables, no documents, no schema &mdash; just keys and values.</p>
+
+      <p>The most popular key-value store is <strong>Redis</strong>, and it is everywhere. If you have ever used a website that loads instantly, displays real-time data, or remembers that you are logged in, there is a good chance Redis is working behind the scenes.</p>
+
+      <p>Here is the mental model. Imagine a massive dictionary where every entry has a unique name and a value:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>"session:abc123"       &rarr;  "{ userId: 42, role: 'admin', loginTime: '2024-09-15T10:30:00' }"
+"cache:user:42"        &rarr;  "{ name: 'Marcus Johnson', email: 'marcus@example.com' }"
+"leaderboard:weekly"   &rarr;  "[{ name: 'Alice', score: 2850 }, { name: 'Bob', score: 2340 }]"
+"rate-limit:192.168.1" &rarr;  "47"</code></pre>
+      </div>
+
+      <p>You give Redis a key, and it gives you back the value. You can set a key, get a key, delete a key, and set a key to automatically expire after a certain amount of time. That simplicity is what makes Redis incredibly fast.</p>
+
+      <div class="callout callout-info"><strong>Note</strong> Redis stores all of its data in <strong>memory</strong> (RAM), not on disk. That is what makes it so fast &mdash; reading from RAM is roughly 100,000 times faster than reading from a hard drive. The tradeoff is that RAM is limited and expensive. Redis is not meant to be your primary database for all data. It is a specialized tool for data that needs to be accessed extremely quickly.</div>
+
+      <h3>Common Uses for Redis</h3>
+
+      <p><strong>Session storage:</strong> When you log into a website, the server creates a session &mdash; a small record that says "this person is logged in and here is who they are." Storing sessions in Redis means the server can verify your login status in microseconds instead of milliseconds. At scale, that difference matters enormously.</p>
+
+      <p><strong>Caching:</strong> Imagine your application needs to display a user's profile, which requires querying the database, joining three tables, and formatting the result. That might take 200 milliseconds. If you store the result in Redis after the first query, every subsequent request for that same profile takes less than 1 millisecond. This is called <strong>caching</strong> &mdash; keeping a copy of expensive-to-compute data in a fast location.</p>
+
+      <p><strong>Leaderboards and counters:</strong> Redis has built-in support for sorted sets, which makes it perfect for leaderboards, view counters, like counts, and any data that needs to be incremented or ranked in real time.</p>
+
+      <p><strong>Rate limiting:</strong> If you want to prevent a user from making more than 100 API requests per minute, you can use Redis to count their requests. Set a key with their IP address, increment it with each request, and set it to expire after 60 seconds. Simple and fast.</p>
+
+      <div class="key-concept">
+        <h4>Why Redis Is So Fast: O(1) Lookup</h4>
+        <p>In computer science, <strong>O(1)</strong> means "constant time" &mdash; the operation takes the same amount of time regardless of how much data you have. Whether Redis has 100 keys or 100 million keys, looking up a single key takes roughly the same amount of time. This is because Redis uses a data structure called a <strong>hash table</strong> (the same structure behind JavaScript objects and Python dictionaries). Combined with storing everything in RAM, this makes Redis one of the fastest data stores in existence.</p>
+      </div>
+
+      <h3>Redis in Practice</h3>
+
+      <p>Redis commands are refreshingly simple. Here are the most common ones:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>SET user:42:name "Marcus Johnson"     -- Store a value
+GET user:42:name                      -- Retrieve it: "Marcus Johnson"
+DEL user:42:name                      -- Delete it
+
+SET session:abc123 "{ userId: 42 }"   -- Store session data
+EXPIRE session:abc123 3600            -- Auto-delete after 1 hour (3600 seconds)
+
+INCR page:home:views                  -- Increment a counter by 1
+GET page:home:views                   -- "1847"</code></pre>
+      </div>
+
+      <p>Notice how there are no tables, no schemas, no JOINs. Just set a key, get a key. This simplicity is what makes Redis so powerful for the specific problems it solves. You would never try to build an entire application on Redis alone &mdash; it is not designed for complex queries or relationships. But as a companion to your primary database (whether SQL or MongoDB), it is invaluable.</p>
+
+      <div class="callout callout-tip"><strong>Tip</strong> A common architecture in the real world is to use a relational database (like PostgreSQL) as the primary data store for all your important data, and Redis as a caching and session layer that sits in front of it. Your app checks Redis first. If the data is there, it returns instantly. If not, it queries the main database, stores the result in Redis for next time, and then returns it. This pattern is called <strong>cache-aside</strong> and it dramatically improves performance.</div>
+
+      <!-- ======================================== -->
+      <!-- PART 4: Other Types of NoSQL             -->
+      <!-- ======================================== -->
+      <h2>4. Other Types of NoSQL Databases</h2>
+
+      <p>Document databases and key-value stores are the NoSQL types you will encounter most often in everyday web development. But there are other specialized types that solve problems those two cannot. Let us take a brief tour so you know they exist and can recognize when they might be the right tool.</p>
+
+      <h3>Column-Family Databases (Cassandra, HBase)</h3>
+
+      <p>Imagine you have a table with <strong>billions</strong> of rows and hundreds of columns, but any given query only needs a few of those columns. In a traditional row-based database, the system has to read entire rows even if you only want two columns out of fifty. Column-family databases flip this around &mdash; they store data by <strong>column</strong> instead of by row, so reading just the columns you need is extremely efficient.</p>
+
+      <p><strong>Apache Cassandra</strong> is the most well-known column-family database. It was originally built by Facebook to power their inbox search feature, and it is now used by companies like Netflix, Uber, and Apple to handle datasets with billions of rows spread across hundreds of servers around the world. Cassandra can handle <strong>millions of writes per second</strong> and is designed to never go down, even if entire data centers fail.</p>
+
+      <p>You probably will not need Cassandra for your early projects. It shines at a scale most applications never reach. But if you ever work for a company that deals with massive amounts of time-series data (like server logs, sensor readings, or financial transactions), you will likely encounter it.</p>
+
+      <h3>Graph Databases (Neo4j)</h3>
+
+      <p>Some data is all about <strong>relationships</strong>. Think about a social network: Alice follows Bob, Bob follows Carol, Carol and Alice are both members of the "Lansing Coders" group, and Alice recommended Carol for a job at the same company where Bob works. The interesting questions are not about individual people &mdash; they are about the connections: "Who are friends of my friends?" "What is the shortest path between two people?" "Which users have the most influence?"</p>
+
+      <p>You <em>can</em> model this in a relational database, but the SQL queries get complex and slow very quickly as the number of relationships grows. Graph databases like <strong>Neo4j</strong> are built specifically for this. They store data as <strong>nodes</strong> (people, places, things) and <strong>edges</strong> (relationships between them), and they can traverse millions of connections in milliseconds.</p>
+
+      <p>Graph databases are used for:</p>
+      <ul>
+        <li><strong>Social networks:</strong> friend suggestions, connection paths, group recommendations</li>
+        <li><strong>Fraud detection:</strong> finding suspicious patterns in financial transaction networks</li>
+        <li><strong>Recommendation engines:</strong> "customers who bought X also bought Y"</li>
+        <li><strong>Knowledge graphs:</strong> connecting concepts, people, and facts (like how Google answers questions directly in search results)</li>
+      </ul>
+
+      <h3>Search Engines (Elasticsearch)</h3>
+
+      <p><strong>Elasticsearch</strong> is technically a search engine, but it is often grouped with NoSQL databases because it stores and queries data in a non-relational way. Its superpower is <strong>full-text search</strong> &mdash; the ability to search through millions of text documents and return relevant results in milliseconds, ranked by how well they match your query.</p>
+
+      <p>When you type a search query on an e-commerce site and it finds products even when you misspell words, or when a news site lets you search through years of articles by keywords and phrases, that is usually Elasticsearch (or a similar search engine) at work. It handles fuzzy matching, relevance ranking, faceted search (filtering by category, price range, etc.), and autocomplete suggestions.</p>
+
+      <p>Like Redis, Elasticsearch is typically used <em>alongside</em> a primary database, not as a replacement. Your main data lives in PostgreSQL or MongoDB, and a copy is indexed in Elasticsearch specifically for searching.</p>
+
+      <div class="callout callout-warning"><strong>Important</strong> You do not need to memorize all these database types right now. The goal is simply to know they exist. When you encounter a problem in the real world &mdash; like needing to search through millions of text records or model complex relationships &mdash; you will remember that there are specialized databases designed for exactly that. Then you can learn the specific one you need.</div>
+
+      <!-- ======================================== -->
+      <!-- PART 5: SQL vs NoSQL Decision Framework  -->
+      <!-- ======================================== -->
+      <h2>5. SQL vs NoSQL &mdash; How to Choose</h2>
+
+      <p>One of the most common questions new developers ask is: "Should I use SQL or NoSQL?" The honest answer is: it depends. But "it depends" is not very helpful, so let us build a practical decision framework you can actually use.</p>
+
+      <h3>The Comparison at a Glance</h3>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Factor</th>
+            <th>SQL (Relational)</th>
+            <th>NoSQL (Non-Relational)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Data structure</strong></td>
+            <td>Fixed schema &mdash; all rows have the same columns</td>
+            <td>Flexible &mdash; each record can have different fields</td>
+          </tr>
+          <tr>
+            <td><strong>Relationships</strong></td>
+            <td>Excellent &mdash; JOINs connect data across tables</td>
+            <td>Limited &mdash; data is usually self-contained in documents</td>
+          </tr>
+          <tr>
+            <td><strong>Consistency</strong></td>
+            <td>Strong &mdash; ACID transactions guarantee data integrity</td>
+            <td>Varies &mdash; some sacrifice consistency for speed and scale</td>
+          </tr>
+          <tr>
+            <td><strong>Scaling</strong></td>
+            <td>Vertical (bigger server) &mdash; harder to distribute</td>
+            <td>Horizontal (more servers) &mdash; designed for distribution</td>
+          </tr>
+          <tr>
+            <td><strong>Query language</strong></td>
+            <td>SQL &mdash; standardized, powerful, well-known</td>
+            <td>Database-specific APIs and query languages</td>
+          </tr>
+          <tr>
+            <td><strong>Schema changes</strong></td>
+            <td>Requires migrations &mdash; careful planning needed</td>
+            <td>Flexible &mdash; add fields on the fly</td>
+          </tr>
+          <tr>
+            <td><strong>Best for</strong></td>
+            <td>Structured data with clear relationships</td>
+            <td>Variable data, rapid development, massive scale</td>
+          </tr>
+          <tr>
+            <td><strong>Examples</strong></td>
+            <td>MySQL, PostgreSQL, SQLite, Oracle</td>
+            <td>MongoDB, Redis, Cassandra, Neo4j, Elasticsearch</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Choose SQL When:</h3>
+
+      <ul>
+        <li><strong>Your data has clear relationships.</strong> If you are building an e-commerce system where orders belong to customers, orders contain products, and products belong to categories, the relational model handles this beautifully.</li>
+        <li><strong>Data integrity is critical.</strong> Financial applications, healthcare systems, and anything where incorrect or inconsistent data could cause real harm. SQL databases with ACID transactions make sure data is always correct.</li>
+        <li><strong>You need complex queries.</strong> If you regularly need to answer questions like "What is the total revenue by product category for customers in Michigan who signed up in the last 90 days?", SQL is built for exactly this.</li>
+        <li><strong>Your data structure is well-defined and unlikely to change frequently.</strong> If you know what your data looks like and it is consistent, a relational schema keeps everything clean and organized.</li>
+      </ul>
+
+      <h3>Choose NoSQL When:</h3>
+
+      <ul>
+        <li><strong>Your data is naturally hierarchical or nested.</strong> User profiles, product catalogs with variable attributes, content management systems where each article can have different metadata.</li>
+        <li><strong>You need extreme speed for simple lookups.</strong> Caching, session management, real-time features &mdash; this is where key-value stores like Redis excel.</li>
+        <li><strong>Your data structure is evolving rapidly.</strong> In the early stages of a startup when you are experimenting with features and changing your data model weekly, the flexibility of a document database can save you time.</li>
+        <li><strong>You need to handle massive scale.</strong> If you are dealing with millions of users generating billions of records, NoSQL databases like Cassandra are designed to distribute data across many servers seamlessly.</li>
+        <li><strong>Your application reads and writes entire objects.</strong> If your app always loads a complete user profile and saves a complete user profile, a document database avoids the overhead of multiple table JOINs.</li>
+      </ul>
+
+      <h3>The Practical Answer for Most Beginners</h3>
+
+      <div class="callout callout-tip"><strong>Tip</strong> If you are building your first real project and are unsure which to pick, <strong>start with a relational database like PostgreSQL or MySQL</strong>. Here is why: relational databases can handle the vast majority of applications perfectly well. They have been battle-tested for decades. The SQL skills you learn are universal and transferable. And if you later discover that a specific part of your application would benefit from MongoDB or Redis, you can add that alongside your relational database. Starting with NoSQL and later realizing you need relational features is a harder problem to solve.</div>
+
+      <p>Many successful applications &mdash; and many successful companies &mdash; run entirely on relational databases. Instagram was serving tens of millions of users with PostgreSQL before they ever added other database types. The key is to understand both approaches, know when each one shines, and make an informed decision rather than following hype.</p>
+
+      <!-- ======================================== -->
+      <!-- KNOWLEDGE CHECK                          -->
+      <!-- ======================================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q19-1">
+        <p class="quiz-question">1. What does NoSQL stand for, and what does it mean?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q19-1" value="a"> "No SQL" &mdash; it means these databases cannot use SQL at all and are completely incompatible with structured data</label>
+          <label><input type="radio" name="q19-1" value="b"> "Not Only SQL" &mdash; it means there are alternative approaches to storing data beyond the traditional relational table model</label>
+          <label><input type="radio" name="q19-1" value="c"> "New SQL" &mdash; it means a modern version of SQL that replaces the older standard</label>
+          <label><input type="radio" name="q19-1" value="d"> "Non-Structured Query Language" &mdash; it means a query language for unstructured data</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct!</strong> NoSQL stands for "Not Only SQL." It does not reject SQL &mdash; it simply acknowledges that relational databases are not the only way to store and organize data. Different data problems call for different solutions.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q19-2">
+        <p class="quiz-question">2. You are building a user profile system where each user can have a different number of skills, work experiences, and social media links. Which database approach would most naturally model this data?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q19-2" value="a"> A relational database with one table and many nullable columns for every possible field</label>
+          <label><input type="radio" name="q19-2" value="b"> A document database like MongoDB, where each user profile is stored as a single document with nested arrays and objects</label>
+          <label><input type="radio" name="q19-2" value="c"> A key-value store like Redis, since each user has a unique ID that can serve as the key</label>
+          <label><input type="radio" name="q19-2" value="d"> A graph database like Neo4j, since users are connected to their skills and experiences</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct!</strong> A document database handles variable, nested data naturally. Each user document can contain arrays of skills and sub-documents for experiences, all in one place, without needing multiple tables or JOINs. While a relational database can also model this (using multiple tables), the document approach is the most natural fit for this kind of hierarchical, variable data.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-id="q19-3">
+        <p class="quiz-question">3. Why is Redis so fast compared to traditional databases?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q19-3" value="a"> It uses a more advanced version of SQL that executes queries faster</label>
+          <label><input type="radio" name="q19-3" value="b"> It only works with small datasets, so there is less data to search through</label>
+          <label><input type="radio" name="q19-3" value="c"> It stores all data in memory (RAM) and uses O(1) hash table lookups, avoiding disk access and complex query processing</label>
+          <label><input type="radio" name="q19-3" value="d"> It compresses data before storing it, which makes reads faster</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct!</strong> Redis achieves its speed through two key design decisions: storing everything in RAM (which is roughly 100,000 times faster than disk) and using hash table lookups that take constant time regardless of how much data is stored. This makes it ideal for caching, sessions, and any data that needs to be accessed in microseconds.</p>
+        </div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- LESSON SUMMARY                           -->
+      <!-- ======================================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>In this lesson, you expanded your understanding of databases beyond the relational model you learned in Lesson 18. Here is what we covered:</p>
+
+      <ul>
+        <li><strong>NoSQL ("Not Only SQL")</strong> is not a replacement for relational databases &mdash; it is a family of alternative approaches, each optimized for different kinds of data and access patterns.</li>
+        <li><strong>Document databases</strong> like MongoDB store data as flexible JSON-like documents that can contain nested objects and arrays. They are ideal for hierarchical, variable data like user profiles and product catalogs.</li>
+        <li><strong>Key-value stores</strong> like Redis are the simplest and fastest type of database. They store data as key-value pairs in memory and are perfect for caching, sessions, counters, and real-time features.</li>
+        <li><strong>Column-family databases</strong> like Cassandra handle billions of rows across hundreds of servers. <strong>Graph databases</strong> like Neo4j excel at relationship-heavy data like social networks. <strong>Search engines</strong> like Elasticsearch provide lightning-fast full-text search.</li>
+        <li>Choosing between SQL and NoSQL is not about which is "better" &mdash; it is about which is the <strong>right tool for your specific problem</strong>. Many production applications use both.</li>
+        <li>When in doubt, <strong>start with a relational database</strong>. They handle the vast majority of use cases, and the skills you learn transfer everywhere.</li>
+      </ul>
+
+      <p>In the next lesson, we will take a step back in time and explore <strong>legacy databases</strong> &mdash; the older systems that many businesses still rely on today. Understanding these systems is not just a history lesson; it is practical career knowledge that can set you apart in the job market, especially here in Michigan where many companies still run on legacy technology.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="databases" data-lesson="19-non-relational-databases">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/databases/18-relational-databases.html" class="lesson-nav-btn">&larr; Previous: Relational Databases</a>
+      <a href="/lessons/databases/20-legacy-databases.html" class="lesson-nav-btn">Next: Legacy Databases &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

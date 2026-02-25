@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v2';
+const CACHE_NAME = 'cf-cache-v3';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -27,13 +27,27 @@ const APP_SHELL = [
   '/manifest.json',
   '/lessons/career/manifest.json',
   '/lessons/java-spring/manifest.json',
+  '/lessons/databases/manifest.json',
+  '/lessons/resumator/manifest.json',
   '/lessons/career/10-zero-to-employable.html',
   '/lessons/java-spring/11-setting-up-java.html',
   '/lessons/java-spring/12-intro-to-spring-boot.html',
   '/lessons/java-spring/13-contact-form-api.html',
   '/lessons/java-spring/14-adding-sqlite.html',
   '/lessons/java-spring/15-validation-and-crud.html',
-  '/lessons/java-spring/16-whats-next.html'
+  '/lessons/java-spring/16-whats-next.html',
+  '/lessons/databases/17-data-and-data-types.html',
+  '/lessons/databases/18-relational-databases.html',
+  '/lessons/databases/19-non-relational-databases.html',
+  '/lessons/databases/20-legacy-databases.html',
+  '/lessons/databases/21-modern-database-landscape.html',
+  '/lessons/databases/22-setting-up-mysql.html',
+  '/lessons/resumator/23-project-planning-setup.html',
+  '/lessons/resumator/24-job-search-api.html',
+  '/lessons/resumator/25-search-interface.html',
+  '/lessons/resumator/26-when-things-break.html',
+  '/lessons/resumator/27-completing-resumator.html',
+  '/lessons/resumator/28-review-whats-next.html'
 ];
 
 // Monaco Editor core files to pre-cache

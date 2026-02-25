@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 18: Relational Databases — Coders Farm</title>
+  <meta name="description" content="Tables, relationships, SQL queries, and schema design">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="databases-18-relational-databases">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Relational Databases</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/17-data-and-data-types.html" role="menuitem">Lesson 17: Data &amp; Data Types</a>
+      <a href="/lessons/databases/18-relational-databases.html" role="menuitem">Lesson 18: Relational Databases</a>
+      <a href="/lessons/databases/19-non-relational-databases.html" role="menuitem">Lesson 19: Non-Relational Databases</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Understanding Databases</a> / Relational Databases</p>
+      <p class="lesson-progress-indicator" data-track="databases" data-total="6" data-current="2">Lesson 2 of 6</p>
+      <h1>Relational Databases &mdash; Thinking in Spreadsheets</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand what a <strong>relational database</strong> is and how it organizes data into tables, rows, and columns</li>
+          <li>Learn what <strong>primary keys</strong> and <strong>foreign keys</strong> are and why every table needs a unique identifier</li>
+          <li>Recognize the three types of <strong>relationships</strong> between tables: one-to-one, one-to-many, and many-to-many</li>
+          <li>Write essential <strong>SQL commands</strong>: <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, and <code>JOIN</code></li>
+          <li>Design a real-world <strong>database schema</strong> for an e-commerce application from scratch</li>
+          <li>Understand <strong>ACID compliance</strong> and why it matters for data you cannot afford to lose</li>
+          <li>Know when a relational database is the right choice for your project &mdash; and when it might not be</li>
+        </ul>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- OPENING                                   -->
+      <!-- ======================================== -->
+      <h2>1. Multiple Spreadsheets That Talk to Each Other</h2>
+
+      <p>Imagine you are running a small online bookstore. You open up a spreadsheet application like Google Sheets or Excel to keep track of your business. At first, you create a single spreadsheet with everything in one place: the customer's name, their email, the book they ordered, the book's price, the order date, and the shipping address. It works fine for your first few orders.</p>
+
+      <p>But then something happens. A customer named Maria orders three different books. Now you have three rows in your spreadsheet, and each one repeats Maria's name, email, and shipping address. Another customer, James, updates his email address. You scroll through the spreadsheet looking for every row that mentions James so you can update them all. You miss one. Now you have two different email addresses for the same person, and you do not know which one is correct.</p>
+
+      <p>This is the problem that relational databases were invented to solve. Instead of putting everything into one giant spreadsheet, you split your data into <strong>multiple spreadsheets</strong> (called <strong>tables</strong>) that are connected to each other. You would have one table for customers, one for books, and one for orders. Maria's contact information lives in exactly one place &mdash; the customers table. When she orders three books, the orders table simply points back to her customer record. If James changes his email, you update it in one place, and every order he has ever made automatically reflects the change.</p>
+
+      <p>That is the core idea behind a relational database: <strong>organized data spread across connected tables, with each piece of information stored exactly once</strong>. If you have ever used a spreadsheet, you already understand the basics. A relational database is just a collection of spreadsheets that know how to talk to each other.</p>
+
+      <div class="key-concept">
+        <h4>What Makes a Database &ldquo;Relational&rdquo;?</h4>
+        <p>The word &ldquo;relational&rdquo; comes from the mathematical concept of <strong>relations</strong> &mdash; but you can think of it simply as <strong>relationships between tables</strong>. A relational database stores data in structured tables and uses special columns to create links (relationships) between those tables. This design eliminates duplicate data and keeps everything consistent.</p>
+      </div>
+
+      <p>In Lesson 14, you got your first taste of databases when you added SQLite to your Spring Boot application. You created a single table to store contact messages, and Spring handled the SQL behind the scenes. In Lesson 17, you learned about the different data types that databases use to store information. Now it is time to go deeper. In this lesson, you will learn how professional databases are designed &mdash; with multiple tables that work together &mdash; and you will write SQL by hand so you truly understand what is happening under the hood.</p>
+
+      <p>Let us start by looking at the building blocks of every relational database.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 2: Tables, Rows, Columns             -->
+      <!-- ======================================== -->
+      <h2>2. Tables, Rows, and Columns &mdash; The Building Blocks</h2>
+
+      <p>Every relational database is built from three simple components: <strong>tables</strong>, <strong>rows</strong>, and <strong>columns</strong>. If you understand spreadsheets, you already understand these concepts. Let us make sure the vocabulary is crystal clear.</p>
+
+      <p>A <strong>table</strong> is like a single sheet in a spreadsheet workbook. Each table holds one type of thing. You might have a <code>customers</code> table, a <code>products</code> table, and an <code>orders</code> table. Each table has a name, and that name should describe what kind of data it holds. By convention, table names are lowercase and plural &mdash; <code>customers</code> instead of <code>Customer</code>, <code>order_items</code> instead of <code>OrderItem</code>.</p>
+
+      <p>A <strong>column</strong> (also called a <strong>field</strong>) defines one specific piece of information that the table stores. In a <code>customers</code> table, you might have columns for <code>id</code>, <code>first_name</code>, <code>last_name</code>, <code>email</code>, and <code>created_at</code>. Every column has a <strong>data type</strong> that defines what kind of data it can hold &mdash; remember the data types from Lesson 17? An <code>INTEGER</code> column holds whole numbers, a <code>TEXT</code> or <code>VARCHAR</code> column holds strings, a <code>DATE</code> column holds dates, and so on.</p>
+
+      <p>A <strong>row</strong> (also called a <strong>record</strong>) is one entry in the table. Each row represents one specific customer, one specific product, or one specific order. Here is an example of a <code>customers</code> table with three rows:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>first_name</th>
+            <th>last_name</th>
+            <th>email</th>
+            <th>created_at</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>maria@email.com</td>
+            <td>2025-01-15</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>James</td>
+            <td>Wilson</td>
+            <td>james@email.com</td>
+            <td>2025-02-03</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Aisha</td>
+            <td>Patel</td>
+            <td>aisha@email.com</td>
+            <td>2025-02-20</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Primary Keys &mdash; Every Row Needs an ID</h3>
+
+      <p>Look at that first column: <code>id</code>. This is the <strong>primary key</strong>. A primary key is a column (or sometimes a combination of columns) that <strong>uniquely identifies every row</strong> in a table. No two rows can ever have the same primary key value. Think of it like a Social Security number or a student ID &mdash; it is a guaranteed way to refer to one specific record and only that record.</p>
+
+      <p>In most tables, the primary key is a column called <code>id</code> that contains an auto-incrementing integer. The database assigns these automatically: the first row gets <code>1</code>, the second gets <code>2</code>, the third gets <code>3</code>, and so on. You never have to worry about choosing these numbers yourself.</p>
+
+      <div class="key-concept">
+        <h4>Why Primary Keys Matter</h4>
+        <p>You might wonder why we cannot just use a customer's name or email as the identifier. The problem is that names are not unique (there could be two &ldquo;James Wilson&rdquo; customers) and emails can change. A primary key must be <strong>unique</strong> and <strong>permanent</strong>. An auto-incrementing integer is perfect: it is always unique, it never changes, and it costs almost nothing to store. When other tables need to reference a specific customer, they store the customer's <code>id</code> rather than repeating the customer's name and email. This is the foundation of how relational databases connect tables together.</p>
+      </div>
+
+      <p>Here is what the SQL to create that <code>customers</code> table looks like:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE customers (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE,
+    created_at  DATE DEFAULT CURRENT_DATE
+);</code></pre>
+      </div>
+
+      <p>Let us break down what each part means:</p>
+
+      <ul>
+        <li><code>CREATE TABLE customers</code> &mdash; creates a new table called <code>customers</code></li>
+        <li><code>id INTEGER PRIMARY KEY AUTOINCREMENT</code> &mdash; the <code>id</code> column is a whole number that serves as the primary key and automatically increases by 1 for each new row</li>
+        <li><code>first_name TEXT NOT NULL</code> &mdash; the <code>first_name</code> column holds text and cannot be left empty (<code>NOT NULL</code> means a value is required)</li>
+        <li><code>email TEXT NOT NULL UNIQUE</code> &mdash; the email must be provided and no two customers can have the same email address</li>
+        <li><code>created_at DATE DEFAULT CURRENT_DATE</code> &mdash; the date column will automatically use today's date if you do not provide one</li>
+      </ul>
+
+      <p>Do not worry about memorizing this syntax right now. The important thing is understanding the concepts: tables hold data, columns define the structure, rows are the actual records, and every table has a primary key that uniquely identifies each row. With those building blocks in place, we can start connecting tables together.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 3: Relationships                     -->
+      <!-- ======================================== -->
+      <h2>3. Relationships &mdash; Connecting Tables Together</h2>
+
+      <p>The real power of a relational database comes from <strong>relationships</strong> &mdash; the connections between tables. When you split your data across multiple tables (instead of cramming everything into one giant table), you need a way to link them back together. That is where <strong>foreign keys</strong> come in.</p>
+
+      <p>A <strong>foreign key</strong> is a column in one table that stores the primary key value from another table. It is the bridge between tables. It says, &ldquo;this row is connected to that row over there.&rdquo; Let us look at the three types of relationships you will encounter.</p>
+
+      <h3>3a. One-to-Many (The Most Common Relationship)</h3>
+
+      <p>A <strong>one-to-many</strong> relationship means that one record in Table A can be connected to many records in Table B, but each record in Table B is connected to only one record in Table A. This is by far the most common type of relationship you will see in real databases.</p>
+
+      <p>The classic example is <strong>customers and orders</strong>. One customer can place many orders, but each order belongs to exactly one customer. Here is how that looks:</p>
+
+      <p><strong>customers table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>first_name</th>
+            <th>last_name</th>
+            <th>email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>maria@email.com</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>James</td>
+            <td>Wilson</td>
+            <td>james@email.com</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>orders table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>customer_id</th>
+            <th>order_date</th>
+            <th>total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>2025-03-01</td>
+            <td>29.99</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>1</td>
+            <td>2025-03-15</td>
+            <td>54.50</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2</td>
+            <td>2025-03-10</td>
+            <td>12.99</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>See that <code>customer_id</code> column in the orders table? That is the <strong>foreign key</strong>. It stores the <code>id</code> of the customer who placed the order. Orders 1 and 2 both have <code>customer_id = 1</code>, which means they both belong to Maria. Order 3 has <code>customer_id = 2</code>, so it belongs to James. Maria has two orders. James has one. That is one-to-many in action.</p>
+
+      <p>The foreign key always goes on the &ldquo;many&rdquo; side of the relationship. Since one customer can have <em>many</em> orders, the <code>customer_id</code> foreign key goes in the <code>orders</code> table &mdash; not the other way around.</p>
+
+      <p>Here is the SQL to create the orders table with its foreign key:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE orders (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL,
+    order_date  DATE DEFAULT CURRENT_DATE,
+    total       DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);</code></pre>
+      </div>
+
+      <p>That last line is the key: <code>FOREIGN KEY (customer_id) REFERENCES customers(id)</code>. This tells the database, &ldquo;the <code>customer_id</code> column in this table must contain a value that exists in the <code>id</code> column of the <code>customers</code> table.&rdquo; If you try to create an order with <code>customer_id = 999</code> and there is no customer with <code>id = 999</code>, the database will reject it. This is called <strong>referential integrity</strong> &mdash; the database enforces the rule that every foreign key must point to a real record.</p>
+
+      <div class="key-concept">
+        <h4>One-to-Many Examples in the Real World</h4>
+        <ul>
+          <li>One <strong>author</strong> writes many <strong>blog posts</strong></li>
+          <li>One <strong>department</strong> has many <strong>employees</strong></li>
+          <li>One <strong>category</strong> contains many <strong>products</strong></li>
+          <li>One <strong>user</strong> sends many <strong>messages</strong></li>
+          <li>One <strong>teacher</strong> teaches many <strong>classes</strong></li>
+        </ul>
+        <p>In every case, the foreign key goes on the &ldquo;many&rdquo; side: the blog post has an <code>author_id</code>, the employee has a <code>department_id</code>, the product has a <code>category_id</code>.</p>
+      </div>
+
+      <h3>3b. One-to-One</h3>
+
+      <p>A <strong>one-to-one</strong> relationship means that each record in Table A is connected to exactly one record in Table B, and vice versa. This is less common, but you will see it when you want to split a table into two pieces &mdash; usually because one part of the data is accessed frequently and the other part is rarely needed.</p>
+
+      <p>The classic example is <strong>users and profiles</strong>. Every user has one profile, and every profile belongs to one user. You might split them apart because the <code>users</code> table holds login information (which you check on every page load) while the <code>profiles</code> table holds detailed biographical information (which you only display on the profile page).</p>
+
+      <p><strong>users table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>username</th>
+            <th>email</th>
+            <th>password_hash</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>maria_g</td>
+            <td>maria@email.com</td>
+            <td>$2b$12$abc...</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>james_w</td>
+            <td>james@email.com</td>
+            <td>$2b$12$xyz...</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>profiles table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>user_id</th>
+            <th>bio</th>
+            <th>avatar_url</th>
+            <th>date_of_birth</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>Coffee enthusiast and coder.</td>
+            <td>/avatars/maria.jpg</td>
+            <td>1995-06-15</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>2</td>
+            <td>Full-stack developer in Lansing.</td>
+            <td>/avatars/james.jpg</td>
+            <td>1990-11-02</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The <code>user_id</code> column in the profiles table is a foreign key pointing to the users table, and it has a <code>UNIQUE</code> constraint &mdash; meaning each user can only have one profile. That is what makes it one-to-one instead of one-to-many.</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE profiles (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id       INTEGER NOT NULL UNIQUE,
+    bio           TEXT,
+    avatar_url    TEXT,
+    date_of_birth DATE,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);</code></pre>
+      </div>
+
+      <p>Notice the <code>UNIQUE</code> keyword on <code>user_id</code>. Without it, the same user could appear multiple times in the profiles table, turning the relationship into one-to-many. The <code>UNIQUE</code> constraint is what enforces the one-to-one rule.</p>
+
+      <h3>3c. Many-to-Many</h3>
+
+      <p>A <strong>many-to-many</strong> relationship means that records in Table A can be connected to many records in Table B, <em>and</em> records in Table B can also be connected to many records in Table A. Both sides can have multiple connections.</p>
+
+      <p>The classic example is <strong>students and classes</strong>. One student can enroll in many classes. And one class can have many students enrolled. Neither side is limited to just one connection.</p>
+
+      <p>Here is the challenge: you cannot represent a many-to-many relationship with a simple foreign key. If you put a <code>class_id</code> in the students table, each student could only be in one class. If you put a <code>student_id</code> in the classes table, each class could only have one student. Neither option works.</p>
+
+      <p>The solution is a <strong>join table</strong> (also called a <strong>junction table</strong> or <strong>linking table</strong>). This is a third table that sits between the other two and contains foreign keys to both of them. Each row in the join table represents one connection between a student and a class.</p>
+
+      <p><strong>students table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>name</th>
+            <th>email</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Maria Garcia</td>
+            <td>maria@email.com</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>James Wilson</td>
+            <td>james@email.com</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Aisha Patel</td>
+            <td>aisha@email.com</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>classes table:</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>class_name</th>
+            <th>instructor</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>Intro to HTML</td>
+            <td>Prof. Chen</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Database Design</td>
+            <td>Prof. Adams</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>Java Programming</td>
+            <td>Prof. Rivera</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p><strong>student_classes table (the join table):</strong></p>
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>id</th>
+            <th>student_id</th>
+            <th>class_id</th>
+            <th>enrolled_at</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>1</td>
+            <td>2025-01-10</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>1</td>
+            <td>2</td>
+            <td>2025-01-10</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>2</td>
+            <td>2</td>
+            <td>2025-01-12</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>2</td>
+            <td>3</td>
+            <td>2025-01-12</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>3</td>
+            <td>1</td>
+            <td>2025-01-15</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>3</td>
+            <td>2</td>
+            <td>2025-01-15</td>
+          </tr>
+          <tr>
+            <td>7</td>
+            <td>3</td>
+            <td>3</td>
+            <td>2025-01-15</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Let us read this join table. Rows 1 and 2 show that Maria (student_id 1) is enrolled in Intro to HTML (class_id 1) and Database Design (class_id 2). Rows 3 and 4 show that James (student_id 2) is in Database Design and Java Programming. Rows 5, 6, and 7 show that Aisha (student_id 3) is in all three classes. Notice how Database Design (class_id 2) appears three times &mdash; because three students are enrolled in it. And Aisha appears three times because she is in three classes. That is many-to-many.</p>
+
+      <p>Here is the SQL to create the join table:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE student_classes (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    student_id  INTEGER NOT NULL,
+    class_id    INTEGER NOT NULL,
+    enrolled_at DATE DEFAULT CURRENT_DATE,
+    FOREIGN KEY (student_id) REFERENCES students(id),
+    FOREIGN KEY (class_id) REFERENCES classes(id)
+);</code></pre>
+      </div>
+
+      <p>The join table has two foreign keys: one pointing to <code>students</code> and one pointing to <code>classes</code>. Each row in the join table creates a single link between one student and one class. To add Aisha to a new class, you just add a new row to the join table. To remove a student from a class, you delete the corresponding row. The students and classes tables remain untouched.</p>
+
+      <h3>Relationship Summary</h3>
+
+      <p>Here is a quick reference table comparing all three relationship types:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Relationship</th>
+            <th>Example</th>
+            <th>How It Works</th>
+            <th>Foreign Key Location</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>One-to-Many</strong></td>
+            <td>Customer &rarr; Orders</td>
+            <td>One customer has many orders</td>
+            <td>On the &ldquo;many&rdquo; side (orders table)</td>
+          </tr>
+          <tr>
+            <td><strong>One-to-One</strong></td>
+            <td>User &rarr; Profile</td>
+            <td>One user has one profile</td>
+            <td>On either side, with UNIQUE constraint</td>
+          </tr>
+          <tr>
+            <td><strong>Many-to-Many</strong></td>
+            <td>Students &harr; Classes</td>
+            <td>Many students in many classes</td>
+            <td>In a separate join table with two foreign keys</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>If you can identify which type of relationship exists between two pieces of data, you are well on your way to designing good database schemas. This is one of the most important skills in software development, and it gets easier with practice.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 4: SQL Deep Dive                     -->
+      <!-- ======================================== -->
+      <h2>4. SQL Deep Dive &mdash; Talking to Your Database</h2>
+
+      <p><strong>SQL</strong> (Structured Query Language, often pronounced &ldquo;sequel&rdquo;) is the language you use to communicate with a relational database. Every relational database in the world &mdash; SQLite, MySQL, PostgreSQL, Oracle, SQL Server &mdash; understands SQL. The syntax varies slightly between them, but the core commands are the same everywhere. Learning SQL is one of the highest-value skills you can develop, because it is used by software developers, data analysts, business intelligence professionals, and many other roles.</p>
+
+      <p>In Lesson 14, Spring Boot generated SQL for you automatically. That was convenient, but now it is time to understand what those generated commands actually look like. You need to know SQL so you can debug problems, write custom queries, and truly understand what your application is doing with your data.</p>
+
+      <p>Let us walk through the five most important SQL commands. We will use our bookstore example with a <code>customers</code> table and an <code>orders</code> table.</p>
+
+      <h3>4a. SELECT &mdash; Reading Data</h3>
+
+      <p><code>SELECT</code> is the command you will use the most. It retrieves data from a table. Think of it as asking the database a question: &ldquo;Show me this information from that table.&rdquo;</p>
+
+      <p>The most basic SELECT retrieves all columns from a table:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SELECT * FROM customers;</code></pre>
+      </div>
+
+      <p>The <code>*</code> means &ldquo;all columns.&rdquo; This would return every column and every row in the <code>customers</code> table. While <code>SELECT *</code> is handy for quick exploration, in real applications you should name the specific columns you need:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SELECT first_name, last_name, email
+FROM customers;</code></pre>
+      </div>
+
+      <p>This returns only the three columns you asked for. It is faster (the database does not have to fetch columns you do not need) and clearer (anyone reading your code knows exactly what data you are working with).</p>
+
+      <h4>Filtering with WHERE</h4>
+
+      <p>Most of the time, you do not want <em>all</em> the rows &mdash; you want specific ones. The <code>WHERE</code> clause lets you filter results based on conditions:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Find a specific customer by email
+SELECT * FROM customers
+WHERE email = 'maria@email.com';
+
+-- Find all orders over $30
+SELECT * FROM orders
+WHERE total &gt; 30.00;
+
+-- Find orders placed in March 2025
+SELECT * FROM orders
+WHERE order_date &gt;= '2025-03-01'
+  AND order_date &lt;= '2025-03-31';</code></pre>
+      </div>
+
+      <p>You can combine conditions with <code>AND</code> (both must be true) and <code>OR</code> (either can be true). Lines starting with <code>--</code> are comments &mdash; the database ignores them, but they help humans understand what the query does.</p>
+
+      <h4>Sorting with ORDER BY</h4>
+
+      <p>By default, the database returns rows in no particular order. You can sort the results using <code>ORDER BY</code>:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Newest orders first
+SELECT * FROM orders
+ORDER BY order_date DESC;
+
+-- Customers alphabetically by last name
+SELECT * FROM customers
+ORDER BY last_name ASC;</code></pre>
+      </div>
+
+      <p><code>ASC</code> means ascending (A to Z, smallest to largest, oldest to newest). <code>DESC</code> means descending (Z to A, largest to smallest, newest to oldest). If you do not specify, the default is <code>ASC</code>.</p>
+
+      <h4>Limiting Results with LIMIT</h4>
+
+      <p>If your table has millions of rows and you only want the first few, use <code>LIMIT</code>:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Get the 5 most recent orders
+SELECT * FROM orders
+ORDER BY order_date DESC
+LIMIT 5;
+
+-- Get the top 10 highest-value orders
+SELECT * FROM orders
+ORDER BY total DESC
+LIMIT 10;</code></pre>
+      </div>
+
+      <p>Combining <code>WHERE</code>, <code>ORDER BY</code>, and <code>LIMIT</code> together gives you powerful control over exactly what data you get back. Here is a complete example that uses all three:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Get Maria's 3 most expensive orders
+SELECT id, order_date, total
+FROM orders
+WHERE customer_id = 1
+ORDER BY total DESC
+LIMIT 3;</code></pre>
+      </div>
+
+      <p>Read it like English: &ldquo;Select the id, order date, and total from orders where the customer id is 1, ordered by total from highest to lowest, and give me only the top 3.&rdquo; That is the beauty of SQL &mdash; once you know the keywords, queries almost read like sentences.</p>
+
+      <h3>4b. INSERT &mdash; Adding New Data</h3>
+
+      <p><code>INSERT</code> adds a new row to a table. You specify the table name, the columns you want to fill in, and the values for each column:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>INSERT INTO customers (first_name, last_name, email)
+VALUES ('Kenji', 'Tanaka', 'kenji@email.com');</code></pre>
+      </div>
+
+      <p>Notice that we listed the column names explicitly: <code>(first_name, last_name, email)</code>. We did not include <code>id</code> because it auto-increments, and we did not include <code>created_at</code> because it has a default value. The database handles those automatically.</p>
+
+      <p>Always list your column names explicitly in <code>INSERT</code> statements. You <em>could</em> write <code>INSERT INTO customers VALUES (...)</code> without naming the columns, but that is fragile &mdash; if someone adds a new column to the table later, your insert statement would break. Being explicit protects you.</p>
+
+      <p>You can insert multiple rows at once:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>INSERT INTO customers (first_name, last_name, email)
+VALUES
+    ('Kenji', 'Tanaka', 'kenji@email.com'),
+    ('Sofia', 'Martinez', 'sofia@email.com'),
+    ('David', 'Kim', 'david@email.com');</code></pre>
+      </div>
+
+      <h3>4c. UPDATE &mdash; Changing Existing Data</h3>
+
+      <p><code>UPDATE</code> modifies existing rows. You specify which table to update, what to change, and which rows to change:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Update James's email address
+UPDATE customers
+SET email = 'james.wilson@newemail.com'
+WHERE id = 2;</code></pre>
+      </div>
+
+      <p>You can update multiple columns at once:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Update a customer's name and email
+UPDATE customers
+SET first_name = 'Jim',
+    email = 'jim.wilson@email.com'
+WHERE id = 2;</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>DANGER: Never run UPDATE without WHERE!</strong>
+        <p>If you forget the <code>WHERE</code> clause, the database will update <strong>every single row</strong> in the table. This statement would set every customer's email to the same address:</p>
+        <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+          <pre><code>-- DO NOT DO THIS! No WHERE clause!
+UPDATE customers
+SET email = 'oops@email.com';</code></pre>
+        </div>
+        <p>This would overwrite every customer's email instantly. There is no &ldquo;undo&rdquo; button. This is one of the most common and devastating mistakes that database beginners (and sometimes even professionals) make. <strong>Always double-check that your UPDATE has a WHERE clause before you run it.</strong></p>
+      </div>
+
+      <h3>4d. DELETE &mdash; Removing Data</h3>
+
+      <p><code>DELETE</code> removes rows from a table. Like UPDATE, you use a <code>WHERE</code> clause to specify which rows to delete:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Delete a specific order
+DELETE FROM orders
+WHERE id = 3;
+
+-- Delete all orders from a specific customer
+DELETE FROM orders
+WHERE customer_id = 2;</code></pre>
+      </div>
+
+      <div class="callout callout-warning">
+        <strong>DANGER: Never run DELETE without WHERE!</strong>
+        <p>Just like UPDATE, forgetting the <code>WHERE</code> clause is catastrophic. This statement would delete <strong>every single row</strong> in the orders table:</p>
+        <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+          <pre><code>-- DO NOT DO THIS! No WHERE clause!
+DELETE FROM orders;</code></pre>
+        </div>
+        <p>All of your orders &mdash; gone in an instant. No confirmation dialog, no recycle bin, no undo. The data is simply erased. <strong>Always include a WHERE clause with DELETE.</strong> As a safety practice, many developers will first run a SELECT with the same WHERE clause to preview which rows will be affected before running the DELETE.</p>
+      </div>
+
+      <div class="key-concept">
+        <h4>The Safety Check Pattern</h4>
+        <p>Before running an UPDATE or DELETE, preview the affected rows first by running a SELECT with the same WHERE clause:</p>
+        <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+          <pre><code>-- Step 1: Preview what will be deleted
+SELECT * FROM orders WHERE customer_id = 2;
+
+-- Step 2: If the results look correct, delete them
+DELETE FROM orders WHERE customer_id = 2;</code></pre>
+        </div>
+        <p>This two-step approach takes an extra few seconds but can save you from accidentally destroying data. Professional developers do this routinely, especially on production databases.</p>
+      </div>
+
+      <h3>4e. JOIN &mdash; Combining Tables</h3>
+
+      <p>Now we arrive at one of the most powerful features of SQL: the <strong>JOIN</strong>. A JOIN lets you combine rows from two or more tables based on a related column between them. This is how you bring your connected tables back together to answer questions that span multiple tables.</p>
+
+      <p>Let us say you want to see a list of orders that includes the customer's name &mdash; not just their <code>customer_id</code> number. The order information is in the <code>orders</code> table, and the customer's name is in the <code>customers</code> table. A JOIN brings them together:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SELECT
+    customers.first_name,
+    customers.last_name,
+    orders.order_date,
+    orders.total
+FROM orders
+JOIN customers ON orders.customer_id = customers.id;</code></pre>
+      </div>
+
+      <p>Let us break this down piece by piece:</p>
+
+      <ul>
+        <li><code>SELECT customers.first_name, customers.last_name, orders.order_date, orders.total</code> &mdash; We specify which columns we want, using <code>table_name.column_name</code> format to be clear about which table each column comes from.</li>
+        <li><code>FROM orders</code> &mdash; We start from the orders table.</li>
+        <li><code>JOIN customers</code> &mdash; We join it with the customers table.</li>
+        <li><code>ON orders.customer_id = customers.id</code> &mdash; We specify the connection: the <code>customer_id</code> in orders matches the <code>id</code> in customers.</li>
+      </ul>
+
+      <p>The result would look like this:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>first_name</th>
+            <th>last_name</th>
+            <th>order_date</th>
+            <th>total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>2025-03-01</td>
+            <td>29.99</td>
+          </tr>
+          <tr>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>2025-03-15</td>
+            <td>54.50</td>
+          </tr>
+          <tr>
+            <td>James</td>
+            <td>Wilson</td>
+            <td>2025-03-10</td>
+            <td>12.99</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The database matched each order's <code>customer_id</code> with the corresponding customer's <code>id</code> and combined the information into a single result set. This is the magic of relational databases: data is stored separately for efficiency, but you can combine it on the fly whenever you need to.</p>
+
+      <p>You can add WHERE, ORDER BY, and LIMIT to a JOIN query just like any other SELECT:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Get Maria's orders, sorted by date
+SELECT
+    customers.first_name,
+    orders.order_date,
+    orders.total
+FROM orders
+JOIN customers ON orders.customer_id = customers.id
+WHERE customers.first_name = 'Maria'
+ORDER BY orders.order_date DESC;</code></pre>
+      </div>
+
+      <p>JOINs can also connect more than two tables. If you had an <code>order_items</code> table that linked orders to products, you could join all three tables together to see which customer bought which product on what date. We will do exactly that in the schema design exercise coming up.</p>
+
+      <div class="key-concept">
+        <h4>SQL Command Summary</h4>
+        <table class="lesson-table">
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Purpose</th>
+              <th>Example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>SELECT</code></td>
+              <td>Read data from a table</td>
+              <td><code>SELECT * FROM customers;</code></td>
+            </tr>
+            <tr>
+              <td><code>INSERT</code></td>
+              <td>Add new rows to a table</td>
+              <td><code>INSERT INTO customers (name) VALUES ('Maria');</code></td>
+            </tr>
+            <tr>
+              <td><code>UPDATE</code></td>
+              <td>Change existing rows</td>
+              <td><code>UPDATE customers SET email = '...' WHERE id = 1;</code></td>
+            </tr>
+            <tr>
+              <td><code>DELETE</code></td>
+              <td>Remove rows from a table</td>
+              <td><code>DELETE FROM customers WHERE id = 1;</code></td>
+            </tr>
+            <tr>
+              <td><code>JOIN</code></td>
+              <td>Combine related tables</td>
+              <td><code>SELECT * FROM orders JOIN customers ON ...;</code></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 5: Schema Design Exercise            -->
+      <!-- ======================================== -->
+      <h2>5. Schema Design Exercise &mdash; Building an E-Commerce Database</h2>
+
+      <p>Now it is time to put everything together. You are going to design a database schema for a small e-commerce store &mdash; the kind of thing you might build as a real project. A <strong>schema</strong> is the blueprint for your database: it defines which tables exist, what columns each table has, and how the tables are related to each other.</p>
+
+      <p>Our e-commerce store needs to track four things: customers, products, orders, and the specific items in each order. Let us think through each one.</p>
+
+      <h3>Step 1: Identify Your Tables</h3>
+
+      <p>Start by asking, &ldquo;What are the main <em>things</em> (nouns) in my system?&rdquo; For an e-commerce store, the answer is:</p>
+
+      <ul>
+        <li><strong>Customers</strong> &mdash; the people who buy things</li>
+        <li><strong>Products</strong> &mdash; the things being sold</li>
+        <li><strong>Orders</strong> &mdash; a record of each purchase transaction</li>
+        <li><strong>Order Items</strong> &mdash; the specific products in each order (because one order can contain multiple products)</li>
+      </ul>
+
+      <h3>Step 2: Define Columns for Each Table</h3>
+
+      <p>For each table, ask &ldquo;What information do I need to store about this thing?&rdquo; Here is what we will use:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE customers (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    first_name  TEXT NOT NULL,
+    last_name   TEXT NOT NULL,
+    email       TEXT NOT NULL UNIQUE,
+    address     TEXT,
+    city        TEXT,
+    state       TEXT,
+    zip_code    TEXT,
+    created_at  DATE DEFAULT CURRENT_DATE
+);</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE products (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    name        TEXT NOT NULL,
+    description TEXT,
+    price       DECIMAL(10, 2) NOT NULL,
+    stock       INTEGER NOT NULL DEFAULT 0,
+    category    TEXT,
+    created_at  DATE DEFAULT CURRENT_DATE
+);</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE orders (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL,
+    order_date  DATE DEFAULT CURRENT_DATE,
+    status      TEXT DEFAULT 'pending',
+    total       DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);</code></pre>
+      </div>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE order_items (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    order_id    INTEGER NOT NULL,
+    product_id  INTEGER NOT NULL,
+    quantity    INTEGER NOT NULL DEFAULT 1,
+    unit_price  DECIMAL(10, 2) NOT NULL,
+    FOREIGN KEY (order_id) REFERENCES orders(id),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);</code></pre>
+      </div>
+
+      <h3>Step 3: Identify the Relationships</h3>
+
+      <p>Now let us map out how these tables connect:</p>
+
+      <ul>
+        <li><strong>customers &rarr; orders</strong>: One-to-Many. One customer can place many orders. The <code>customer_id</code> foreign key in the <code>orders</code> table creates this link.</li>
+        <li><strong>orders &rarr; order_items</strong>: One-to-Many. One order can contain many items. The <code>order_id</code> foreign key in the <code>order_items</code> table creates this link.</li>
+        <li><strong>products &rarr; order_items</strong>: One-to-Many. One product can appear in many order items (different customers buying the same product). The <code>product_id</code> foreign key in the <code>order_items</code> table creates this link.</li>
+        <li><strong>orders &harr; products</strong>: Many-to-Many (through order_items). One order can include many products, and one product can be in many orders. The <code>order_items</code> table serves as the join table between them.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>Why Do We Need order_items?</h4>
+        <p>You might wonder why we do not just put the product information directly in the orders table. The reason is that one order can contain multiple products. If Maria buys a book, a mug, and a t-shirt in a single order, we need three rows in <code>order_items</code> &mdash; one for each product. The <code>orders</code> table stores the overall order information (who placed it, when, the total), and the <code>order_items</code> table stores the details of each item in the order. This also lets us record the quantity (Maria might buy 2 mugs) and the price at the time of purchase (because prices can change over time).</p>
+      </div>
+
+      <h3>Step 4: Fill In Some Sample Data</h3>
+
+      <p>Let us populate our schema with some test data so you can see how it all works together:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Add some customers
+INSERT INTO customers (first_name, last_name, email, city, state)
+VALUES
+    ('Maria', 'Garcia', 'maria@email.com', 'Lansing', 'MI'),
+    ('James', 'Wilson', 'james@email.com', 'East Lansing', 'MI'),
+    ('Aisha', 'Patel', 'aisha@email.com', 'Lansing', 'MI');
+
+-- Add some products
+INSERT INTO products (name, description, price, stock, category)
+VALUES
+    ('Learn SQL Book', 'A beginner-friendly guide to SQL', 24.99, 50, 'Books'),
+    ('Coders Farm Mug', 'A ceramic mug for coffee lovers', 12.99, 100, 'Accessories'),
+    ('JavaScript T-Shirt', 'A comfy tee for JS enthusiasts', 19.99, 75, 'Apparel'),
+    ('USB-C Hub', '7-port hub for your laptop', 34.99, 30, 'Electronics');
+
+-- Create an order for Maria
+INSERT INTO orders (customer_id, order_date, status, total)
+VALUES (1, '2025-03-01', 'shipped', 57.97);
+
+-- Add items to Maria's order
+INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+VALUES
+    (1, 1, 1, 24.99),
+    (1, 2, 1, 12.99),
+    (1, 3, 1, 19.99);
+
+-- Create an order for James
+INSERT INTO orders (customer_id, order_date, status, total)
+VALUES (2, '2025-03-10', 'pending', 69.98);
+
+-- Add items to James's order
+INSERT INTO order_items (order_id, product_id, quantity, unit_price)
+VALUES
+    (2, 4, 1, 34.99),
+    (2, 4, 1, 34.99);</code></pre>
+      </div>
+
+      <p>Maria's order (order 1) contains the SQL book, the mug, and the t-shirt. James's order (order 2) contains two USB-C hubs. Each order item row links back to both its order and its product.</p>
+
+      <h3>Step 5: Query Across Tables</h3>
+
+      <p>Now here is where the schema design pays off. You can write queries that pull information from multiple tables to answer real business questions:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- What did Maria order? Show product names and prices.
+SELECT
+    customers.first_name,
+    customers.last_name,
+    products.name AS product_name,
+    order_items.quantity,
+    order_items.unit_price
+FROM order_items
+JOIN orders ON order_items.order_id = orders.id
+JOIN customers ON orders.customer_id = customers.id
+JOIN products ON order_items.product_id = products.id
+WHERE customers.id = 1;</code></pre>
+      </div>
+
+      <p>This query joins <strong>four tables</strong> together in one statement. It starts with order_items, joins to orders (to find out which order), joins to customers (to find out who placed the order), and joins to products (to get the product name). The result would look like this:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>first_name</th>
+            <th>last_name</th>
+            <th>product_name</th>
+            <th>quantity</th>
+            <th>unit_price</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>Learn SQL Book</td>
+            <td>1</td>
+            <td>24.99</td>
+          </tr>
+          <tr>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>Coders Farm Mug</td>
+            <td>1</td>
+            <td>12.99</td>
+          </tr>
+          <tr>
+            <td>Maria</td>
+            <td>Garcia</td>
+            <td>JavaScript T-Shirt</td>
+            <td>1</td>
+            <td>19.99</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>From separated tables to a clear, human-readable report &mdash; that is the power of SQL joins and good schema design. Every piece of data is stored once, in the right table, and you combine them however you need.</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Which products have been ordered the most?
+SELECT
+    products.name,
+    SUM(order_items.quantity) AS total_sold
+FROM order_items
+JOIN products ON order_items.product_id = products.id
+GROUP BY products.id
+ORDER BY total_sold DESC;</code></pre>
+      </div>
+
+      <p>This query introduces <code>SUM()</code> and <code>GROUP BY</code>, which let you aggregate data. <code>SUM(order_items.quantity)</code> adds up all the quantities for each product, and <code>GROUP BY products.id</code> groups the results by product. The result tells you which products are your best sellers. We will not dive deep into aggregation in this lesson, but know that SQL can do much more than simple lookups &mdash; it can crunch numbers and generate reports too.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 6: When to Use Relational            -->
+      <!-- ======================================== -->
+      <h2>6. When to Choose a Relational Database</h2>
+
+      <p>Relational databases are not the only option. In the next lesson, you will learn about non-relational (NoSQL) databases, which take a completely different approach. So when should you choose a relational database? Here are the situations where they shine:</p>
+
+      <h3>Structured Data with Clear Relationships</h3>
+
+      <p>If your data naturally fits into tables with well-defined columns, a relational database is a great choice. E-commerce stores, banking systems, school enrollment systems, hospital records, employee directories &mdash; all of these have structured data with clear relationships between entities. When you can draw a diagram showing how your tables connect with foreign keys, you are in relational database territory.</p>
+
+      <h3>Data Integrity Is Critical</h3>
+
+      <p>Relational databases enforce rules about your data. Foreign keys ensure you cannot create an order for a customer that does not exist. <code>NOT NULL</code> constraints ensure required fields are always filled in. <code>UNIQUE</code> constraints prevent duplicate entries. If you are building a system where data accuracy matters &mdash; financial transactions, medical records, legal documents &mdash; these built-in guardrails are invaluable.</p>
+
+      <h3>Complex Queries Are Needed</h3>
+
+      <p>If you need to ask complex questions that combine data from multiple sources, SQL and relational databases are incredibly powerful. Queries like &ldquo;Show me all customers in Michigan who placed more than three orders last month, sorted by total spending&rdquo; are natural to express in SQL. Other types of databases can handle simple lookups, but they struggle with multi-table analysis.</p>
+
+      <h3>ACID Compliance Is Required</h3>
+
+      <p>This is a big one. <strong>ACID</strong> is a set of guarantees that relational databases provide about your data. If your application handles money, inventory, or any situation where partial operations would be disastrous, you need ACID compliance. We will explain ACID in detail in the next section.</p>
+
+      <div class="key-concept">
+        <h4>Relational Database Strengths</h4>
+        <ul>
+          <li><strong>Structured data</strong> &mdash; Data that fits neatly into tables with defined columns</li>
+          <li><strong>Relationships matter</strong> &mdash; Entities are connected to each other (customers have orders, orders have items)</li>
+          <li><strong>Complex queries</strong> &mdash; You need to combine, filter, aggregate, and analyze data across multiple tables</li>
+          <li><strong>Data integrity</strong> &mdash; Constraints and foreign keys keep your data consistent and valid</li>
+          <li><strong>ACID compliance</strong> &mdash; Transactions guarantee that operations either fully succeed or fully fail</li>
+        </ul>
+      </div>
+
+      <p>Popular relational databases you will encounter in the real world include <strong>MySQL</strong>, <strong>PostgreSQL</strong>, <strong>SQLite</strong>, <strong>Microsoft SQL Server</strong>, and <strong>Oracle</strong>. They all use SQL and share the same foundational concepts you learned in this lesson. The differences between them are mostly about performance, scalability, and extra features &mdash; but the core ideas of tables, relationships, and SQL are universal.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 7: ACID Explained                    -->
+      <!-- ======================================== -->
+      <h2>7. ACID &mdash; Transactions That Cannot Be Half-Done</h2>
+
+      <p>Imagine you are transferring $500 from your checking account to your savings account using your bank's website. Behind the scenes, the database needs to do two things:</p>
+
+      <ol>
+        <li>Subtract $500 from your checking account balance</li>
+        <li>Add $500 to your savings account balance</li>
+      </ol>
+
+      <p>Now imagine the power goes out after step 1 but before step 2. Your checking account lost $500, but your savings account never received it. The money has vanished. This would be catastrophic &mdash; and it is exactly the kind of problem that <strong>ACID</strong> prevents.</p>
+
+      <p><strong>ACID</strong> stands for four properties that relational databases guarantee for every transaction:</p>
+
+      <h3>A &mdash; Atomicity</h3>
+
+      <p><strong>Atomicity</strong> means &ldquo;all or nothing.&rdquo; A transaction is treated as a single, indivisible unit. Either <em>all</em> of its operations succeed, or <em>none</em> of them do. In the bank transfer example, if the second operation fails, the database <strong>automatically undoes</strong> the first operation too. Your money never disappears. The word &ldquo;atomic&rdquo; comes from the Greek word for &ldquo;indivisible&rdquo; &mdash; the idea is that you cannot split a transaction into parts.</p>
+
+      <h3>C &mdash; Consistency</h3>
+
+      <p><strong>Consistency</strong> means that a transaction can only bring the database from one valid state to another valid state. If your database has a rule that account balances cannot be negative, and a transaction would make a balance go below zero, the entire transaction is rejected. The database never ends up in a state that violates its own rules.</p>
+
+      <h3>I &mdash; Isolation</h3>
+
+      <p><strong>Isolation</strong> means that transactions running at the same time do not interfere with each other. If two people are both transferring money at the exact same moment, each transaction sees the database as if it were the only one running. One transaction cannot read partially completed data from another. This prevents bizarre situations where you see an account balance in the middle of being updated.</p>
+
+      <h3>D &mdash; Durability</h3>
+
+      <p><strong>Durability</strong> means that once a transaction is confirmed as complete (committed), the data is <strong>permanently saved</strong>. Even if the power goes out, the server crashes, or a meteorite hits the data center one second after the transaction completes, the data will still be there when the system recovers. The database writes the data to disk before telling you &ldquo;done.&rdquo;</p>
+
+      <div class="key-concept">
+        <h4>ACID in One Sentence</h4>
+        <p>ACID guarantees that database transactions either <strong>happen completely and permanently</strong> or <strong>do not happen at all</strong> &mdash; there is no in-between state where your data is half-updated, inconsistent, or lost.</p>
+      </div>
+
+      <p>Here is what a transaction looks like in SQL:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Transfer $500 from checking to savings
+BEGIN TRANSACTION;
+
+UPDATE accounts
+SET balance = balance - 500
+WHERE account_type = 'checking' AND customer_id = 1;
+
+UPDATE accounts
+SET balance = balance + 500
+WHERE account_type = 'savings' AND customer_id = 1;
+
+COMMIT;</code></pre>
+      </div>
+
+      <p><code>BEGIN TRANSACTION</code> starts the transaction. The two UPDATE statements happen inside it. <code>COMMIT</code> tells the database, &ldquo;I am done, save everything permanently.&rdquo; If anything goes wrong between BEGIN and COMMIT, the database automatically rolls back all the changes. No money disappears.</p>
+
+      <p>If you realize something is wrong during a transaction and want to cancel it, you can use <code>ROLLBACK</code> instead of <code>COMMIT</code>:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>BEGIN TRANSACTION;
+
+UPDATE accounts
+SET balance = balance - 500
+WHERE account_type = 'checking' AND customer_id = 1;
+
+-- Oops, wrong amount! Cancel everything.
+ROLLBACK;</code></pre>
+      </div>
+
+      <p>The ROLLBACK undoes all changes made since the BEGIN TRANSACTION. The checking account balance is restored to what it was before.</p>
+
+      <p>ACID compliance is one of the biggest reasons why relational databases have dominated the software industry for over 40 years. When you are dealing with money, inventory counts, user accounts, medical data, or anything where incorrect data has real consequences, ACID gives you confidence that your database will not leave things in a broken state.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 8: Putting It All Together            -->
+      <!-- ======================================== -->
+      <h2>8. Putting It All Together</h2>
+
+      <p>Let us take a moment to step back and see the complete picture. You now understand the fundamental building blocks of relational databases:</p>
+
+      <ul>
+        <li><strong>Tables</strong> organize data into structured rows and columns, with each table representing one type of entity.</li>
+        <li><strong>Primary keys</strong> give each row a unique identity so it can be referenced from other tables.</li>
+        <li><strong>Foreign keys</strong> create relationships between tables, linking data together without duplication.</li>
+        <li><strong>SQL</strong> is the universal language for reading, writing, updating, and deleting data.</li>
+        <li><strong>JOINs</strong> reunite data from connected tables into a single result set.</li>
+        <li><strong>Schema design</strong> is the art of deciding which tables to create, what columns they need, and how they relate to each other.</li>
+        <li><strong>ACID</strong> guarantees that your transactions are reliable and your data is safe.</li>
+      </ul>
+
+      <p>These concepts apply to every relational database you will ever use: MySQL, PostgreSQL, SQLite, SQL Server, Oracle &mdash; they all work this way. The SQL syntax may have small variations, but the ideas are identical. When you learn relational database concepts once, you know them for every relational database.</p>
+
+      <p>In the next lesson, we will explore the other side of the database world: <strong>non-relational databases</strong>. These databases throw away tables, rows, and SQL in favor of completely different data models. But do not worry &mdash; everything you learned in this lesson will help you understand why non-relational databases exist and when they are a better choice.</p>
+
+      <p>You are building a strong foundation. Keep going &mdash; you are doing great work.</p>
+
+      <!-- ======================================== -->
+      <!-- QUIZ                                      -->
+      <!-- ======================================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q18-1">
+        <p class="quiz-question">1. In a one-to-many relationship between <code>customers</code> and <code>orders</code>, where does the foreign key go?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q18-1" value="a"> In the customers table, as a column called <code>order_id</code></label>
+          <label><input type="radio" name="q18-1" value="b"> In the orders table, as a column called <code>customer_id</code></label>
+          <label><input type="radio" name="q18-1" value="c"> In a separate join table that links customers and orders</label>
+          <label><input type="radio" name="q18-1" value="d"> Foreign keys are not needed for one-to-many relationships</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! In a one-to-many relationship, the foreign key always goes on the &ldquo;many&rdquo; side. Since one customer can have many orders, the <code>orders</code> table gets a <code>customer_id</code> column that points back to the <code>customers</code> table. Each order stores the ID of the customer who placed it. A join table is only needed for many-to-many relationships.</div>
+      </div>
+
+      <div class="quiz" data-id="q18-2">
+        <p class="quiz-question">2. What happens if you run <code>DELETE FROM orders;</code> without a <code>WHERE</code> clause?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q18-2" value="a"> The database will ask you to confirm before deleting anything</label>
+          <label><input type="radio" name="q18-2" value="b"> It deletes only the first row in the orders table</label>
+          <label><input type="radio" name="q18-2" value="c"> It deletes every single row in the orders table immediately</label>
+          <label><input type="radio" name="q18-2" value="d"> It returns an error because a WHERE clause is required</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is right &mdash; and it is one of the most important safety lessons in SQL. Without a WHERE clause, DELETE removes <strong>all rows</strong> from the table instantly. There is no confirmation prompt, no undo button, and no recycle bin. The same danger applies to UPDATE without WHERE, which would modify every row. Always double-check your WHERE clause before running DELETE or UPDATE statements, especially on production databases.</div>
+      </div>
+
+      <div class="quiz" data-id="q18-3">
+        <p class="quiz-question">3. What does the &ldquo;A&rdquo; in ACID stand for, and what does it guarantee?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q18-3" value="a"> Authorization &mdash; only logged-in users can access the database</label>
+          <label><input type="radio" name="q18-3" value="b"> Atomicity &mdash; a transaction either fully completes or fully rolls back, with no partial state</label>
+          <label><input type="radio" name="q18-3" value="c"> Availability &mdash; the database is always online and accessible</label>
+          <label><input type="radio" name="q18-3" value="d"> Aggregation &mdash; the database can calculate sums and averages across tables</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly! Atomicity means &ldquo;all or nothing.&rdquo; When a transaction contains multiple operations (like subtracting from one account and adding to another), either all of them succeed together or none of them happen. If anything goes wrong partway through, the database automatically undoes all the changes that were already made. This prevents the nightmare scenario of data being left in a half-updated, inconsistent state.</div>
+      </div>
+
+      <!-- Lesson Summary -->
+      <h2>Lesson Summary</h2>
+
+      <p>Outstanding work &mdash; you just covered a massive amount of ground! Here is a recap of everything you learned in this lesson:</p>
+
+      <ul>
+        <li>A <strong>relational database</strong> is a collection of structured tables that are connected to each other through relationships &mdash; like multiple spreadsheets that talk to each other.</li>
+        <li>Every table has <strong>columns</strong> (the fields of data), <strong>rows</strong> (individual records), and a <strong>primary key</strong> (a unique identifier for each row).</li>
+        <li><strong>Foreign keys</strong> are columns that store the primary key from another table, creating links between tables.</li>
+        <li>There are three types of relationships: <strong>one-to-many</strong> (the most common), <strong>one-to-one</strong>, and <strong>many-to-many</strong> (which requires a join table).</li>
+        <li>The five essential SQL commands are <code>SELECT</code> (read), <code>INSERT</code> (create), <code>UPDATE</code> (modify), <code>DELETE</code> (remove), and <code>JOIN</code> (combine tables).</li>
+        <li><strong>UPDATE</strong> and <strong>DELETE</strong> without a <code>WHERE</code> clause affect every row in the table &mdash; always include WHERE.</li>
+        <li>Good <strong>schema design</strong> means identifying your entities, defining their columns, and mapping the relationships between them.</li>
+        <li><strong>ACID</strong> (Atomicity, Consistency, Isolation, Durability) guarantees that transactions are reliable &mdash; they either succeed completely or fail completely, with no half-done states.</li>
+        <li>Relational databases are the best choice when you have structured data, need data integrity, require complex queries, or cannot tolerate incomplete transactions.</li>
+      </ul>
+
+      <p>In the next lesson, we will explore <strong>non-relational databases</strong> (also called NoSQL databases) &mdash; a completely different approach to storing data. You will learn about documents, key-value stores, and when it makes sense to trade the structure of relational databases for the flexibility of NoSQL. See you there!</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="databases" data-lesson="18-relational-databases">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/databases/17-data-and-data-types.html" class="lesson-nav-btn">&larr; Previous: Data &amp; Data Types</a>
+      <a href="/lessons/databases/19-non-relational-databases.html" class="lesson-nav-btn">Next: Non-Relational Databases &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

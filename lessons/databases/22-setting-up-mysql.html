@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 22: Setting Up MySQL — Coders Farm</title>
+  <meta name="description" content="Install MySQL Server and Workbench, create your first database">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="databases-22-setting-up-mysql">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Setting Up MySQL</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/21-modern-database-landscape.html" role="menuitem">Lesson 21: Modern Databases</a>
+      <a href="/lessons/databases/22-setting-up-mysql.html" role="menuitem">Lesson 22: Setting Up MySQL</a>
+      <a href="/lessons/resumator/23-project-planning-setup.html" role="menuitem">Lesson 23: Resumator Setup</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Understanding Databases</a> / Setting Up MySQL</p>
+      <p class="lesson-progress-indicator" data-track="databases" data-total="6" data-current="6">Lesson 6 of 6</p>
+      <h1>Setting Up MySQL on Your Machine</h1>
+      <p style="color: var(--text-muted);">Estimated time: 1.5&ndash;2 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- ======================================== -->
+      <!-- Learning Objectives                      -->
+      <!-- ======================================== -->
+      <div class="key-concept">
+        <h4>What You Will Learn</h4>
+        <ul>
+          <li>Install MySQL Server on Windows, Mac, or Linux</li>
+          <li>Install and connect MySQL Workbench (a graphical database tool)</li>
+          <li>Create your first MySQL database and table</li>
+          <li>Perform basic SQL operations: INSERT, SELECT, UPDATE, DELETE</li>
+          <li>Create a dedicated application user with proper permissions</li>
+          <li>Preview how Spring Boot connects to MySQL (setting the stage for the Resumator project)</li>
+        </ul>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- Part 1: Opening                          -->
+      <!-- ======================================== -->
+      <h2>1. From SQLite to a Client-Server Database</h2>
+
+      <p>If you have been following along with this course, you already have hands-on experience with a real database. Back in Lesson 14, you added SQLite to your Spring Boot application and saw how a database stores data permanently &mdash; even when you stop and restart your server. SQLite served us perfectly for learning. It is simple, requires no installation, and stores everything in a single file.</p>
+
+      <p>Now it is time to level up. In this lesson, you are going to install and set up <strong>MySQL</strong>, one of the most widely used databases in the professional world. MySQL powers some of the biggest websites and applications you use every day &mdash; Facebook, Twitter, YouTube, Netflix, Airbnb, and thousands more. When companies here in the Lansing area post job listings for backend developers, MySQL experience is one of the most frequently requested skills.</p>
+
+      <p>So what makes MySQL different from SQLite? The big difference is architecture. SQLite is an <strong>embedded database</strong> &mdash; it runs inside your application as a library. There is no separate database program; your Spring Boot app reads and writes directly to a file. MySQL is a <strong>client-server database</strong>. It runs as its own program (a <strong>server</strong>) that is always on, waiting for connections. Your application (the <strong>client</strong>) connects to the MySQL server over a network and sends it SQL commands. The server processes those commands and sends results back.</p>
+
+      <div class="key-concept">
+        <h4>SQLite vs. MySQL Architecture</h4>
+        <p><strong>SQLite (embedded):</strong> Your app &rarr; reads/writes directly &rarr; database file</p>
+        <p><strong>MySQL (client-server):</strong> Your app (client) &rarr; sends SQL over a connection &rarr; MySQL Server (processes queries) &rarr; data files</p>
+        <p>The client-server model is what makes MySQL suitable for production applications. Multiple applications, multiple users, and multiple computers can all connect to the same MySQL server simultaneously. SQLite only supports one writer at a time, which makes it unsuitable for busy web applications.</p>
+      </div>
+
+      <p>Here is the encouraging part: the SQL you already know from Lesson 14 works in MySQL too. <code>CREATE TABLE</code>, <code>INSERT</code>, <code>SELECT</code>, <code>UPDATE</code>, <code>DELETE</code> &mdash; all of these commands are the same. You are not starting from scratch. You are taking skills you already have and applying them to a more powerful tool. Think of it like this: if SQLite was like cooking in your kitchen at home, MySQL is like working in a professional restaurant kitchen. The recipes (SQL) are the same, but the kitchen (infrastructure) is built to handle much more.</p>
+
+      <p>By the end of this lesson, you will have MySQL running on your computer, a graphical tool to manage it, and a database ready for the Resumator project that starts in Lesson 23. Let us get started.</p>
+
+      <!-- ======================================== -->
+      <!-- Part 2: Installing MySQL Server           -->
+      <!-- ======================================== -->
+      <h2>2. Installing MySQL Server</h2>
+
+      <p>The first thing we need to install is the <strong>MySQL Server</strong> itself. This is the core database engine &mdash; the program that actually stores your data, processes your SQL queries, and manages connections from clients. Once it is installed, it runs quietly in the background as a <strong>service</strong> (sometimes called a <strong>daemon</strong>), always ready to accept connections.</p>
+
+      <p>Choose your operating system below and run the command in your terminal (Command Prompt or PowerShell on Windows, Terminal on Mac or Linux):</p>
+
+      <div class="install-tabs">
+        <div class="install-tab-buttons">
+          <button class="install-tab-btn active" data-tab="windows-mysql">Windows</button>
+          <button class="install-tab-btn" data-tab="mac-mysql">Mac</button>
+          <button class="install-tab-btn" data-tab="linux-mysql">Linux</button>
+        </div>
+        <div class="install-tab-content active" data-tab="windows-mysql">
+          <code>winget install Oracle.MySQL --accept-package-agreements --accept-source-agreements</code>
+        </div>
+        <div class="install-tab-content" data-tab="mac-mysql">
+          <code>brew install mysql
+brew services start mysql</code>
+        </div>
+        <div class="install-tab-content" data-tab="linux-mysql">
+          <code>sudo apt install mysql-server
+sudo systemctl start mysql</code>
+        </div>
+      </div>
+
+      <div class="callout callout-tip"><strong>Windows users:</strong> The <code>winget</code> command comes built into Windows 10 (version 1809 and later) and Windows 11. If <code>winget</code> is not recognized, you can install "App Installer" from the Microsoft Store, or download the MySQL Installer directly from <a href="https://dev.mysql.com/downloads/installer/" target="_blank" rel="noopener">dev.mysql.com/downloads/installer</a>. During the Windows installer process, you will be asked to set a <strong>root password</strong> &mdash; choose something you will remember and write it down. You will need it shortly. <strong>Mac users:</strong> If you do not have Homebrew installed, visit <a href="https://brew.sh" target="_blank" rel="noopener">brew.sh</a> and run the one-line install command first. The second command (<code>brew services start mysql</code>) starts MySQL automatically and ensures it launches again whenever you restart your Mac. <strong>Linux users:</strong> The <code>apt</code> command works on Debian-based distributions like Ubuntu and Linux Mint. If you use Fedora, use <code>sudo dnf install mysql-server</code> instead, followed by <code>sudo systemctl start mysqld</code>.</div>
+
+      <h3>Setting the Root Password</h3>
+
+      <p>On <strong>Mac and Linux</strong>, the installation may not prompt you for a root password. You should secure your installation by running the built-in security script:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>sudo mysql_secure_installation</code></pre>
+      </div>
+
+      <p>This interactive script will walk you through several security settings. When it asks you to set a root password, choose something memorable and write it down. For the other questions (removing anonymous users, disabling remote root login, removing test databases), answering <strong>yes</strong> to all of them is the safest option for a learning environment.</p>
+
+      <p>On <strong>Windows</strong>, if you used the MySQL Installer (graphical version), you already set the root password during installation. If you used <code>winget</code>, you may need to run the MySQL Installer separately to configure the root password.</p>
+
+      <h3>Verifying the Installation</h3>
+
+      <p>Close your terminal and open a new one (this ensures your system picks up the newly installed commands). Then run:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>mysql -u root -p</code></pre>
+      </div>
+
+      <p>The <code>-u root</code> flag tells MySQL you want to connect as the <code>root</code> user (the administrator), and <code>-p</code> tells it to prompt you for a password. After you type your password and press Enter, you should see a prompt that looks like this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.36 MySQL Community Server - GPL
+
+mysql&gt;</code></pre>
+      </div>
+
+      <p>If you see that <code>mysql&gt;</code> prompt, congratulations &mdash; MySQL is installed and running! Type <code>exit;</code> to leave the MySQL shell for now. We will come back to it soon.</p>
+
+      <div class="callout callout-warning"><strong>Troubleshooting:</strong> If you see <code>"mysql" is not recognized</code> or <code>command not found</code>, the MySQL client is not on your system PATH. On Windows, you may need to add <code>C:\Program Files\MySQL\MySQL Server 8.0\bin</code> to your PATH environment variable (search "Environment Variables" in the Start menu). On Mac, try <code>export PATH="/opt/homebrew/opt/mysql/bin:$PATH"</code> or restart your terminal. If you get <code>ERROR 2002: Can't connect to local MySQL server</code>, the server is not running &mdash; try starting it with <code>brew services start mysql</code> (Mac), <code>sudo systemctl start mysql</code> (Linux), or start the MySQL service from the Services panel on Windows.</div>
+
+      <h3>Understanding the Three Pieces</h3>
+
+      <div class="key-concept">
+        <h4>MySQL Server vs. mysql Client vs. MySQL Workbench</h4>
+        <p>When people say "MySQL," they could mean one of three different things. Understanding the difference will save you a lot of confusion:</p>
+        <ul>
+          <li><strong>MySQL Server</strong> &mdash; The database engine itself. It runs as a background service on your computer, stores your data in files, and processes SQL queries. This is what you just installed. You rarely interact with it directly.</li>
+          <li><strong><code>mysql</code> (the command-line client)</strong> &mdash; A small program that lets you connect to the MySQL Server from your terminal and type SQL commands. It comes bundled with the server installation. This is what you used when you ran <code>mysql -u root -p</code>.</li>
+          <li><strong>MySQL Workbench</strong> &mdash; A graphical application (GUI) for managing MySQL. It gives you a visual interface where you can write SQL, browse tables, design database schemas, and manage users &mdash; all without memorizing commands. We will install this next.</li>
+        </ul>
+        <p>Think of it this way: the <strong>Server</strong> is the restaurant kitchen, the <strong>mysql client</strong> is calling in an order by phone, and <strong>Workbench</strong> is walking up to the counter with a menu. They all get food from the same kitchen &mdash; they are just different ways of placing your order.</p>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- Part 3: Installing MySQL Workbench        -->
+      <!-- ======================================== -->
+      <h2>3. Installing MySQL Workbench</h2>
+
+      <p>While you <em>can</em> do everything from the command-line <code>mysql</code> client, having a graphical tool makes life much easier &mdash; especially when you are learning. <strong>MySQL Workbench</strong> is the official GUI for MySQL. It lets you write and run SQL queries in a nice editor with syntax highlighting, visually browse your tables and data, create and modify tables with a point-and-click interface, and manage database users and permissions.</p>
+
+      <p>Choose your operating system below to install Workbench:</p>
+
+      <div class="install-tabs">
+        <div class="install-tab-buttons">
+          <button class="install-tab-btn active" data-tab="windows-wb">Windows</button>
+          <button class="install-tab-btn" data-tab="mac-wb">Mac</button>
+          <button class="install-tab-btn" data-tab="linux-wb">Linux</button>
+        </div>
+        <div class="install-tab-content active" data-tab="windows-wb">
+          <code>winget install Oracle.MySQLWorkbench --accept-package-agreements --accept-source-agreements</code>
+        </div>
+        <div class="install-tab-content" data-tab="mac-wb">
+          <code>brew install --cask mysqlworkbench</code>
+        </div>
+        <div class="install-tab-content" data-tab="linux-wb">
+          <code>sudo snap install mysql-workbench-community</code>
+        </div>
+      </div>
+
+      <div class="callout callout-info"><strong>Linux alternative:</strong> If you do not use Snap, you can download the <code>.deb</code> or <code>.rpm</code> package directly from <a href="https://dev.mysql.com/downloads/workbench/" target="_blank" rel="noopener">dev.mysql.com/downloads/workbench</a> and install it manually with <code>sudo dpkg -i mysql-workbench-community_*.deb</code> (Debian/Ubuntu) or <code>sudo rpm -i mysql-workbench-community-*.rpm</code> (Fedora/RHEL).</div>
+
+      <h3>Connecting Workbench to Your Local Server</h3>
+
+      <p>Once Workbench is installed, open it. You should see a home screen with a section called <strong>"MySQL Connections."</strong> There may already be a connection listed called <strong>"Local instance 3306"</strong> or similar. If so, click on it. If not, create one:</p>
+
+      <ol>
+        <li>Click the <strong>+</strong> button next to "MySQL Connections."</li>
+        <li>Give the connection a name like <strong>"Local MySQL"</strong>.</li>
+        <li>Leave <strong>Hostname</strong> as <code>127.0.0.1</code> and <strong>Port</strong> as <code>3306</code> (these are the defaults).</li>
+        <li>Set <strong>Username</strong> to <code>root</code>.</li>
+        <li>Click <strong>"Test Connection"</strong> and enter your root password when prompted.</li>
+        <li>If the test succeeds, click <strong>OK</strong> to save the connection.</li>
+      </ol>
+
+      <p>Now double-click your connection to open it. You will see a SQL editor where you can type and run queries. There is a lightning bolt icon (or you can press <strong>Ctrl+Enter</strong> / <strong>Cmd+Enter</strong>) to execute the current query. This is where we will do most of our work for the rest of the lesson.</p>
+
+      <div class="callout callout-tip"><strong>Tip:</strong> You do not <em>need</em> Workbench to complete this course. Everything we do in Workbench can also be done from the command-line <code>mysql</code> client. However, Workbench makes it much easier to see your data, spot errors in your SQL, and understand what is happening in your database. We strongly recommend having it installed alongside the command-line client.</div>
+
+      <!-- ======================================== -->
+      <!-- Part 4: Creating Your First Database      -->
+      <!-- ======================================== -->
+      <h2>4. Creating Your First Database</h2>
+
+      <p>A single MySQL server can hold many databases. Each database is a separate container for tables, like separate filing cabinets in an office. Your first step is always to create a database for your project and then tell MySQL you want to use it.</p>
+
+      <p>Open Workbench (or the <code>mysql</code> command-line client) and run these two commands:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE DATABASE codersfarm;
+USE codersfarm;</code></pre>
+      </div>
+
+      <p>The first command creates a new, empty database called <code>codersfarm</code>. The second command tells MySQL: "For all the commands I type from now on, work with the <code>codersfarm</code> database." You must run <code>USE</code> before creating tables or inserting data, otherwise MySQL will not know which database you are talking to.</p>
+
+      <div class="callout callout-info"><strong>Why separate databases?</strong> Imagine you are working on three different projects &mdash; a personal blog, a Resumator app, and a side project. Instead of dumping all the tables from all three projects into one big pile, you create three databases: <code>blog</code>, <code>resumator</code>, and <code>sideproject</code>. Each database has its own tables, its own data, and its own user permissions. This keeps things organized and secure. If you accidentally drop a table in the <code>blog</code> database, your <code>resumator</code> data is completely unaffected.</div>
+
+      <p>You can verify your database was created by running:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>SHOW DATABASES;</code></pre>
+      </div>
+
+      <p>You should see <code>codersfarm</code> in the list, along with some system databases like <code>information_schema</code>, <code>mysql</code>, <code>performance_schema</code>, and <code>sys</code>. Those system databases are used internally by MySQL &mdash; leave them alone.</p>
+
+      <!-- ======================================== -->
+      <!-- Part 5: Creating a Practice Table         -->
+      <!-- ======================================== -->
+      <h2>5. Creating a Practice Table</h2>
+
+      <p>Now that you have a database, let us create a table inside it. We will make a <code>students</code> table to practice with. This table will track students enrolled in the Coders Farm program. Run the following SQL:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE TABLE students (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);</code></pre>
+      </div>
+
+      <p>That single command packs a lot of information into a small space. Let us break down every piece so you understand exactly what each constraint does and why it matters.</p>
+
+      <h3><code>id INT AUTO_INCREMENT PRIMARY KEY</code></h3>
+
+      <p><code>INT</code> means this column stores whole numbers (integers). <code>AUTO_INCREMENT</code> tells MySQL to automatically assign the next number every time you insert a new row. The first student gets id 1, the second gets id 2, and so on. You never have to specify the id yourself &mdash; MySQL handles it for you. <code>PRIMARY KEY</code> means this column uniquely identifies each row. No two rows can have the same id, and this column can never be empty. Every table should have a primary key.</p>
+
+      <p>If you remember from Lesson 14, this is exactly what <code>@Id</code> and <code>@GeneratedValue</code> did in your Spring Boot entity class. Same concept, just expressed differently &mdash; here in raw SQL versus there in Java annotations.</p>
+
+      <h3><code>name VARCHAR(100) NOT NULL</code></h3>
+
+      <p><code>VARCHAR(100)</code> means "variable-length character string, up to 100 characters." This is how MySQL stores text. The number in parentheses is the maximum length. If someone's name is "Alice" (5 characters), MySQL only stores 5 characters, not 100 &mdash; that is the "variable" part. <code>NOT NULL</code> means this column is required. If you try to insert a row without providing a name, MySQL will reject it with an error. This prevents incomplete data from slipping into your database.</p>
+
+      <h3><code>email VARCHAR(150) NOT NULL UNIQUE</code></h3>
+
+      <p>This column also stores text (up to 150 characters) and is required (<code>NOT NULL</code>). The new constraint here is <code>UNIQUE</code>. This tells MySQL that no two rows in the table can have the same email address. If you try to insert a second student with <code>alice@example.com</code> when that email already exists, MySQL will reject the insert. This is extremely important for data integrity &mdash; you do not want duplicate accounts.</p>
+
+      <h3><code>enrolled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP</code></h3>
+
+      <p><code>TIMESTAMP</code> stores a date and time value. <code>DEFAULT CURRENT_TIMESTAMP</code> means that if you do not provide a value for this column when inserting a row, MySQL will automatically fill it in with the current date and time. This is perfect for tracking when something happened without making the user (or your code) specify it manually.</p>
+
+      <div class="key-concept">
+        <h4>Common MySQL Constraints</h4>
+        <table class="lesson-table">
+          <thead>
+            <tr>
+              <th>Constraint</th>
+              <th>What It Does</th>
+              <th>Why It Matters</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>PRIMARY KEY</code></td>
+              <td>Uniquely identifies each row</td>
+              <td>Every table needs one; prevents duplicates</td>
+            </tr>
+            <tr>
+              <td><code>AUTO_INCREMENT</code></td>
+              <td>Automatically assigns the next number</td>
+              <td>You never have to manually track IDs</td>
+            </tr>
+            <tr>
+              <td><code>NOT NULL</code></td>
+              <td>Column must have a value</td>
+              <td>Prevents incomplete or missing data</td>
+            </tr>
+            <tr>
+              <td><code>UNIQUE</code></td>
+              <td>No two rows can share the same value</td>
+              <td>Prevents duplicates (e.g., duplicate emails)</td>
+            </tr>
+            <tr>
+              <td><code>DEFAULT</code></td>
+              <td>Provides a fallback value if none is given</td>
+              <td>Reduces required input; ensures consistency</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>You can verify your table was created by running:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>DESCRIBE students;</code></pre>
+      </div>
+
+      <p>This shows you the structure of the table &mdash; all the column names, their data types, and their constraints. It is a quick way to remind yourself what a table looks like without looking at the original <code>CREATE TABLE</code> statement.</p>
+
+      <!-- ======================================== -->
+      <!-- Part 6: Basic Operations in Workbench     -->
+      <!-- ======================================== -->
+      <h2>6. Basic Operations: INSERT, SELECT, UPDATE, DELETE</h2>
+
+      <p>Now comes the fun part &mdash; putting data into your table and working with it. These four operations are called <strong>CRUD</strong> (Create, Read, Update, Delete), and they are the foundation of virtually every application in existence. Let us walk through each one.</p>
+
+      <h3>INSERT &mdash; Adding Data</h3>
+
+      <p>To add students to your table, use the <code>INSERT INTO</code> command. Notice that we do not specify <code>id</code> or <code>enrolled_at</code> &mdash; MySQL fills those in automatically:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>INSERT INTO students (name, email) VALUES ('Alice Johnson', 'alice@example.com');
+INSERT INTO students (name, email) VALUES ('Bob Smith', 'bob@example.com');
+INSERT INTO students (name, email) VALUES ('Carol Lee', 'carol@example.com');
+INSERT INTO students (name, email) VALUES ('David Park', 'david@example.com');
+INSERT INTO students (name, email) VALUES ('Eva Martinez', 'eva@example.com');</code></pre>
+      </div>
+
+      <p>In Workbench, you can highlight all five lines and run them at once (click the lightning bolt or press Ctrl+Enter / Cmd+Enter). You should see a message confirming that five rows were inserted.</p>
+
+      <h3>SELECT &mdash; Reading Data</h3>
+
+      <p>To see what is in your table, use <code>SELECT</code>. The asterisk (<code>*</code>) means "give me all columns":</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Get all students
+SELECT * FROM students;
+
+-- Get only names and emails
+SELECT name, email FROM students;
+
+-- Find a specific student
+SELECT * FROM students WHERE name = 'Alice Johnson';
+
+-- Find students enrolled after a certain date
+SELECT * FROM students WHERE enrolled_at &gt; '2025-01-01';</code></pre>
+      </div>
+
+      <p>In Workbench, the results appear in a grid below your SQL editor. You can resize columns, sort by clicking headers, and scroll through rows. This visual feedback is one of the biggest advantages of using Workbench over the command line.</p>
+
+      <h3>UPDATE &mdash; Modifying Data</h3>
+
+      <p>To change existing data, use <code>UPDATE</code>. Always include a <code>WHERE</code> clause to specify which row(s) to change. Without <code>WHERE</code>, the update applies to <em>every row</em> in the table &mdash; which is almost never what you want:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Update Bob's email address
+UPDATE students SET email = 'bob.smith@example.com' WHERE id = 2;
+
+-- Verify the change
+SELECT * FROM students WHERE id = 2;</code></pre>
+      </div>
+
+      <div class="callout callout-warning"><strong>Be careful with UPDATE and DELETE!</strong> If you forget the <code>WHERE</code> clause, the command applies to <em>every row</em> in the table. Running <code>UPDATE students SET email = 'oops@example.com'</code> without a <code>WHERE</code> would change every single student's email to the same address. Always double-check your <code>WHERE</code> clause before running an <code>UPDATE</code> or <code>DELETE</code>. In Workbench, you can use the "Explain" button (the magnifying glass icon) to preview what a query will affect before running it.</div>
+
+      <h3>DELETE &mdash; Removing Data</h3>
+
+      <p>To remove rows, use <code>DELETE</code>. Like <code>UPDATE</code>, always use a <code>WHERE</code> clause:</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>-- Delete a specific student
+DELETE FROM students WHERE id = 5;
+
+-- Verify the deletion
+SELECT * FROM students;</code></pre>
+      </div>
+
+      <p>You should now see four students instead of five. Notice that if you insert a new student after deleting one, the new student will get id 6, not 5. MySQL does not recycle auto-increment values. This is by design &mdash; it prevents confusion and ensures that IDs are always unique, even if rows are deleted.</p>
+
+      <div class="callout callout-tip"><strong>Practice tip:</strong> Try writing a few of your own queries. Can you insert a new student named after yourself? Can you select only students whose names start with "A"? (Hint: <code>WHERE name LIKE 'A%'</code>.) Can you update Carol's name to "Caroline Lee"? The best way to learn SQL is to experiment. You cannot break anything &mdash; and even if you do, you can always drop the table and recreate it.</div>
+
+      <!-- ======================================== -->
+      <!-- Part 7: Creating a Dedicated User         -->
+      <!-- ======================================== -->
+      <h2>7. Creating a Dedicated User</h2>
+
+      <p>So far, you have been connecting to MySQL as the <code>root</code> user. The root user is the administrator &mdash; it has unlimited power over every database on the server. It can create and delete databases, create and delete users, read any data, and even shut down the server. Using root for your application is like using a master key to open your bedroom door &mdash; it works, but it is far more power than you need, and if someone steals that key, they have access to everything.</p>
+
+      <p>The professional practice is to create a <strong>dedicated user</strong> for each application, and give that user access only to the specific database it needs. This way, even if your application is compromised, the attacker only has access to one database &mdash; not your entire MySQL server.</p>
+
+      <p>Run these commands (make sure you are connected as root):</p>
+
+      <div class="code-editor" data-language="sql" data-editable="false" data-runnable="false">
+        <pre><code>CREATE USER 'codersfarm_app'@'localhost' IDENTIFIED BY 'your_password_here';
+GRANT ALL PRIVILEGES ON codersfarm.* TO 'codersfarm_app'@'localhost';
+FLUSH PRIVILEGES;</code></pre>
+      </div>
+
+      <p>Let us break down each command:</p>
+
+      <ul>
+        <li><strong><code>CREATE USER 'codersfarm_app'@'localhost'</code></strong> &mdash; Creates a new MySQL user called <code>codersfarm_app</code>. The <code>@'localhost'</code> part means this user can only connect from the same machine where MySQL is running. This is a security measure &mdash; nobody can use this account to connect from a remote computer.</li>
+        <li><strong><code>IDENTIFIED BY 'your_password_here'</code></strong> &mdash; Sets the password for this user. Replace <code>your_password_here</code> with an actual password that you will remember. In a real production environment, you would use a strong, randomly generated password.</li>
+        <li><strong><code>GRANT ALL PRIVILEGES ON codersfarm.*</code></strong> &mdash; Gives this user full access to every table in the <code>codersfarm</code> database (the <code>.*</code> means "all tables"). But notice: it only grants access to the <code>codersfarm</code> database. This user cannot touch any other database on the server.</li>
+        <li><strong><code>FLUSH PRIVILEGES</code></strong> &mdash; Tells MySQL to reload the privilege tables so the changes take effect immediately.</li>
+      </ul>
+
+      <p>You can verify the new user works by opening a new connection in Workbench (or a new terminal session) and logging in as <code>codersfarm_app</code>:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>mysql -u codersfarm_app -p</code></pre>
+      </div>
+
+      <p>Enter the password you chose, and try running <code>USE codersfarm;</code> followed by <code>SELECT * FROM students;</code>. It should work. Now try <code>USE mysql;</code> &mdash; you should get an access denied error. That is exactly what we want. The <code>codersfarm_app</code> user can only work with the <code>codersfarm</code> database.</p>
+
+      <div class="callout callout-warning"><strong>Important:</strong> Replace <code>'your_password_here'</code> with a real password, and <strong>never commit passwords to version control</strong> (like Git). In a real project, you would store database credentials in environment variables or a secure configuration file that is listed in your <code>.gitignore</code>. We will cover this in more detail during the Resumator project.</div>
+
+      <!-- ======================================== -->
+      <!-- Part 8: Spring Boot Connection Preview     -->
+      <!-- ======================================== -->
+      <h2>8. Spring Boot Connection Preview</h2>
+
+      <p>In the upcoming Resumator project (Lessons 23&ndash;28), you will build a full Spring Boot application that connects to MySQL. Let us preview what that connection configuration looks like and compare it to the SQLite setup you used in Lesson 14.</p>
+
+      <p>Remember the <code>application.properties</code> file from Lesson 14? Here is what the SQLite configuration looked like:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># SQLite configuration (from Lesson 14)
+spring.datasource.url=jdbc:sqlite:contacts.db
+spring.datasource.driver-class-name=org.sqlite.JDBC
+spring.jpa.database-platform=org.hibernate.community.dialect.SQLiteDialect
+spring.jpa.hibernate.ddl-auto=update</code></pre>
+      </div>
+
+      <p>And here is what the MySQL configuration looks like:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code># MySQL configuration (for the Resumator project)
+spring.datasource.url=jdbc:mysql://localhost:3306/codersfarm
+spring.datasource.username=codersfarm_app
+spring.datasource.password=your_password_here
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+spring.jpa.hibernate.ddl-auto=update</code></pre>
+      </div>
+
+      <p>Notice the differences:</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th>SQLite (Lesson 14)</th>
+            <th>MySQL (Resumator)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>URL</td>
+            <td><code>jdbc:sqlite:contacts.db</code></td>
+            <td><code>jdbc:mysql://localhost:3306/codersfarm</code></td>
+          </tr>
+          <tr>
+            <td>Username</td>
+            <td>(none needed)</td>
+            <td><code>codersfarm_app</code></td>
+          </tr>
+          <tr>
+            <td>Password</td>
+            <td>(none needed)</td>
+            <td><code>your_password_here</code></td>
+          </tr>
+          <tr>
+            <td>Driver</td>
+            <td><code>org.sqlite.JDBC</code></td>
+            <td><code>com.mysql.cj.jdbc.Driver</code></td>
+          </tr>
+          <tr>
+            <td>Dialect</td>
+            <td><code>SQLiteDialect</code></td>
+            <td><code>MySQLDialect</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>The biggest change is the URL. SQLite's URL points to a file (<code>contacts.db</code>). MySQL's URL points to a network address (<code>localhost:3306</code>) and a database name (<code>codersfarm</code>). This is the client-server difference in action &mdash; SQLite talks to a file, MySQL talks to a server over a network connection.</p>
+
+      <p>MySQL also requires a username and password, which SQLite did not. That is because MySQL is a multi-user system &mdash; it needs to know <em>who</em> is connecting and whether they have permission to access the requested database.</p>
+
+      <div class="key-concept">
+        <h4>The Beauty of JPA</h4>
+        <p>Here is the really exciting part: <strong>your Java code does not change at all</strong>. The entity classes (<code>@Entity</code>), the repositories (<code>JpaRepository</code>), and the controllers you wrote in Lessons 14 and 15 work exactly the same with MySQL as they did with SQLite. You only change the configuration in <code>application.properties</code> and swap the dependency in <code>pom.xml</code>. JPA abstracts away the differences between databases, which means switching from SQLite to MySQL is a five-minute configuration change, not a rewrite of your application.</p>
+      </div>
+
+      <p>You will also need to add the MySQL JDBC driver to your <code>pom.xml</code>. Here is the dependency you will use in the Resumator project:</p>
+
+      <div class="code-editor" data-language="java" data-editable="false" data-runnable="false">
+        <pre><code>&lt;dependency&gt;
+    &lt;groupId&gt;com.mysql&lt;/groupId&gt;
+    &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt;
+    &lt;scope&gt;runtime&lt;/scope&gt;
+&lt;/dependency&gt;</code></pre>
+      </div>
+
+      <p>This replaces the <code>sqlite-jdbc</code> and <code>hibernate-community-dialects</code> dependencies from Lesson 14. Spring Boot already knows how to work with MySQL out of the box, so you do not need a special dialect library &mdash; the MySQL dialect is built into Hibernate.</p>
+
+      <p>Do not worry about memorizing all of this right now. When we start the Resumator project in Lesson 23, we will walk through every step of setting up the Spring Boot connection to MySQL. The point of this preview is so that nothing feels unfamiliar when we get there.</p>
+
+      <!-- ======================================== -->
+      <!-- Quiz                                     -->
+      <!-- ======================================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="q22-1">
+        <p class="quiz-question">1. What is the primary architectural difference between SQLite and MySQL?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q22-1" value="a"> SQLite uses SQL but MySQL uses a proprietary query language</label>
+          <label><input type="radio" name="q22-1" value="b"> SQLite is an embedded file-based database, while MySQL is a client-server database that runs as a separate service</label>
+          <label><input type="radio" name="q22-1" value="c"> MySQL can only run on Linux, while SQLite works on all operating systems</label>
+          <label><input type="radio" name="q22-1" value="d"> SQLite is faster than MySQL in every scenario</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! SQLite is an embedded database that stores everything in a single file and runs inside your application. MySQL is a client-server database that runs as a separate background service (server) and accepts connections from client programs. This architecture allows MySQL to handle multiple simultaneous users and connections, making it suitable for production web applications. Both use standard SQL for queries.</div>
+      </div>
+
+      <div class="quiz" data-id="q22-2">
+        <p class="quiz-question">2. Why should you create a dedicated MySQL user for your application instead of using the root account?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q22-2" value="a"> The root account is slower for query execution</label>
+          <label><input type="radio" name="q22-2" value="b"> MySQL does not allow root to access application databases</label>
+          <label><input type="radio" name="q22-2" value="c"> A dedicated user limits access to only the specific database the application needs, reducing security risk</label>
+          <label><input type="radio" name="q22-2" value="d"> You cannot connect to MySQL from Spring Boot using the root account</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! The principle of least privilege says you should give each user only the access they need and nothing more. A dedicated user like <code>codersfarm_app</code> can only access the <code>codersfarm</code> database, so even if your application is compromised, the attacker cannot access or damage other databases on the server. The root account has unlimited power over every database, which is far more access than any single application needs.</div>
+      </div>
+
+      <div class="quiz" data-id="q22-3">
+        <p class="quiz-question">3. When switching a Spring Boot application from SQLite to MySQL, what do you need to change?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q22-3" value="a"> Rewrite all entity classes and repositories from scratch</label>
+          <label><input type="radio" name="q22-3" value="b"> Only the <code>application.properties</code> configuration and the database dependency in <code>pom.xml</code></label>
+          <label><input type="radio" name="q22-3" value="c"> Convert all Java code to a different programming language</label>
+          <label><input type="radio" name="q22-3" value="d"> Uninstall Spring Boot and install a MySQL-specific framework</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly! This is the power of JPA (Java Persistence API). Because JPA provides an abstraction layer between your Java code and the database, switching databases is a configuration change &mdash; not a code rewrite. You update the connection URL, driver, dialect, and credentials in <code>application.properties</code>, and swap the JDBC driver dependency in <code>pom.xml</code>. Your entity classes, repositories, and controllers remain completely unchanged.</div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- Lesson Summary                           -->
+      <!-- ======================================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>You have accomplished a lot in this lesson. Let us recap everything you did:</p>
+
+      <ul>
+        <li><strong>Installed MySQL Server</strong> &mdash; a production-grade, client-server database that runs as a background service on your machine.</li>
+        <li><strong>Installed MySQL Workbench</strong> &mdash; a graphical tool for writing SQL, browsing data, and managing your databases visually.</li>
+        <li><strong>Created your first database</strong> (<code>codersfarm</code>) and a practice table (<code>students</code>) with proper constraints like <code>AUTO_INCREMENT</code>, <code>NOT NULL</code>, <code>UNIQUE</code>, and <code>DEFAULT</code>.</li>
+        <li><strong>Practiced CRUD operations</strong> &mdash; INSERT, SELECT, UPDATE, and DELETE &mdash; the four fundamental database operations.</li>
+        <li><strong>Created a dedicated application user</strong> (<code>codersfarm_app</code>) following the security principle of least privilege.</li>
+        <li><strong>Previewed the Spring Boot connection</strong> to MySQL and compared it side-by-side with the SQLite configuration from Lesson 14.</li>
+      </ul>
+
+      <div class="key-concept">
+        <h4>What Comes Next</h4>
+        <p>This lesson marks the end of the "Understanding Databases" track &mdash; congratulations on completing all six lessons! You now have a solid foundation in database concepts, from the theory of relational databases all the way to a running MySQL installation on your machine.</p>
+        <p>Starting in <strong>Lesson 23</strong>, you will begin the <strong>Resumator project</strong> &mdash; a full-stack resume builder application. You will use everything you have learned: Java, Spring Boot, MySQL, HTML, CSS, and JavaScript. The MySQL database you just set up will be the backbone of that project. All the SQL skills you practiced today &mdash; creating tables, inserting data, querying records &mdash; will be put to real use.</p>
+        <p>You are ready. Let us build something amazing.</p>
+      </div>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="databases" data-lesson="22-setting-up-mysql">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/databases/21-modern-database-landscape.html" class="lesson-nav-btn">&larr; Previous: Modern Databases</a>
+      <a href="/lessons/resumator/23-project-planning-setup.html" class="lesson-nav-btn">Next: Resumator Setup &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

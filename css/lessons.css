@@ -302,6 +302,148 @@
   word-break: break-all;
 }
 
+/* Architecture diagrams */
+.architecture-diagram {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.arch-component {
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--accent);
+  text-align: center;
+  white-space: nowrap;
+}
+
+.arch-arrow {
+  font-size: var(--font-size-xl);
+  color: var(--text-muted);
+  padding: 0 var(--space-1);
+}
+
+/* Timeline visualization */
+.timeline {
+  position: relative;
+  padding-left: var(--space-5);
+  margin: var(--space-4) 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: var(--accent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-4);
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(-1 * var(--space-5) + 4px);
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  background-color: var(--accent);
+  border-radius: 50%;
+  border: 2px solid var(--bg-primary);
+}
+
+.timeline-year {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: var(--font-size-base);
+  margin-bottom: var(--space-1);
+}
+
+.timeline-text {
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+/* Decision flowchart */
+.decision-flow {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.decision-node {
+  padding: var(--space-3);
+  border-radius: var(--radius-md);
+  text-align: center;
+  font-size: var(--font-size-sm);
+}
+
+.decision-question {
+  background-color: var(--bg-elevated);
+  border: 2px solid var(--accent);
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.decision-answer {
+  background-color: var(--success-bg);
+  border: 1px solid var(--success);
+  color: var(--success);
+}
+
+.decision-arrow {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--font-size-lg);
+}
+
+/* Error display (for lesson 26) */
+.error-display {
+  margin: var(--space-4) 0;
+  padding: var(--space-3);
+  background-color: #1e1e1e;
+  border: 2px solid var(--error);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  color: var(--error);
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* Alternating row colors for tables */
+.lesson-table tbody tr:nth-child(even) {
+  background-color: var(--bg-surface);
+}
+
+.lesson-table tbody tr:nth-child(odd) {
+  background-color: var(--bg-primary);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .lesson-content h2 {
@@ -339,5 +481,18 @@
 
   .comparison-grid {
     grid-template-columns: 1fr;
+  }
+
+  .architecture-diagram {
+    flex-direction: column;
+    padding: var(--space-3);
+  }
+
+  .arch-arrow {
+    transform: rotate(90deg);
+  }
+
+  .timeline {
+    padding-left: var(--space-4);
   }
 }

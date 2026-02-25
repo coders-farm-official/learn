@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 21: The Modern Database Landscape — Coders Farm</title>
+  <meta name="description" content="MySQL, PostgreSQL, MongoDB, Redis, and choosing the right tool">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="databases-21-modern-database-landscape">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Modern Databases</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/databases/20-legacy-databases.html" role="menuitem">Lesson 20: Legacy Databases</a>
+      <a href="/lessons/databases/21-modern-database-landscape.html" role="menuitem">Lesson 21: Modern Databases</a>
+      <a href="/lessons/databases/22-setting-up-mysql.html" role="menuitem">Lesson 22: Setting Up MySQL</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Understanding Databases</a> / Modern Database Landscape</p>
+      <p class="lesson-progress-indicator" data-track="databases" data-total="6" data-current="5">Lesson 5 of 6</p>
+      <h1>The Modern Database Landscape</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;2.5 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand the <strong>major modern databases</strong> &mdash; MySQL, PostgreSQL, MongoDB, Redis &mdash; and what makes each one unique</li>
+          <li>Know when to choose a <strong>relational database</strong> versus a <strong>NoSQL database</strong> versus an <strong>in-memory store</strong></li>
+          <li>See real-world examples of <strong>which companies use which databases</strong> and why</li>
+          <li>Learn what databases you will encounter in <strong>different industries and workplaces</strong> &mdash; from government agencies to startups</li>
+          <li>Use a <strong>decision flowchart</strong> to choose the right database for any project</li>
+          <li>Understand why <strong>MySQL</strong> is the database we will use for the upcoming <strong>Resumator project</strong></li>
+        </ul>
+      </div>
+
+      <p>In Lesson 18, you learned what databases are and why every application needs one. In Lesson 19, you explored how data gets organized with SQL and relational concepts. In Lesson 20, you saw the legacy databases &mdash; Oracle, DB2, SQL Server &mdash; that still power much of the world's critical infrastructure. Now it is time to look forward. Welcome to the modern database landscape.</p>
+
+      <p>Here is the single most important thing this lesson will teach you: <strong>there is no "best" database.</strong> Every database is a tool designed for a particular kind of job. A hammer is not better than a screwdriver &mdash; they solve different problems. MySQL is not better than MongoDB. PostgreSQL is not better than Redis. The skill that separates good developers from great ones is knowing <em>which tool to reach for</em> when you are staring at a new project.</p>
+
+      <p>By the end of this lesson, you will have a clear mental map of the modern database world. You will know what the major players are, what they are good at, who uses them, and &mdash; most importantly &mdash; how to choose the right one. Let us get started.</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 1: MySQL                         -->
+      <!-- ======================================== -->
+      <h2>1. MySQL &mdash; The Reliable Workhorse</h2>
+
+      <p>If databases had a popularity contest, <strong>MySQL</strong> would win it. MySQL is the most popular open-source database in the world. It has been around since 1995, and it powers an enormous portion of the internet. Every time you visit a WordPress blog, browse a Shopify store, scroll through Facebook, or book a ticket on Booking.com, there is a MySQL database working behind the scenes.</p>
+
+      <div class="key-concept">
+        <h4>The Honda Civic of Databases</h4>
+        <p>MySQL is like a Honda Civic. It is not the flashiest car on the road. It does not have the most horsepower or the most luxury features. But it starts every single morning, it gets you where you need to go, it is affordable to maintain, and millions of people rely on it every day. When you need a database that is <strong>reliable, well-documented, and easy to learn</strong>, MySQL is often the first choice.</p>
+      </div>
+
+      <p>MySQL is a <strong>relational database</strong>, which means it uses the tables, rows, columns, and SQL language you learned about in Lessons 18 and 19. You create tables with defined columns, you insert rows of data, and you query that data using SQL. If you understood the <code>SELECT</code>, <code>INSERT</code>, <code>UPDATE</code>, and <code>DELETE</code> commands from earlier lessons, you already know the basics of working with MySQL.</p>
+
+      <h3>A Brief History</h3>
+
+      <p>MySQL was created in Sweden by a company called MySQL AB. In 2008, Sun Microsystems bought MySQL AB for about one billion dollars. Then in 2010, Oracle Corporation bought Sun Microsystems. That means <strong>Oracle now owns MySQL</strong>. This made a lot of people in the open-source community nervous. Oracle is the company behind the expensive, enterprise-focused Oracle Database, and many developers worried that Oracle might limit MySQL's open-source nature or stop investing in it.</p>
+
+      <p>So far, Oracle has continued to develop MySQL and keep it open source. But as insurance, the original creator of MySQL (Michael "Monty" Widenius) created a fork called <strong>MariaDB</strong>. A "fork" in software means someone took the original source code and started developing it independently in a new direction. MariaDB is designed to be a drop-in replacement for MySQL &mdash; meaning you can swap one for the other without changing your code. Many Linux distributions and organizations have switched from MySQL to MariaDB as a precaution.</p>
+
+      <div class="callout callout-info">
+        <strong>Why does this matter to you?</strong> When you see job listings that mention "MySQL," the employer might actually be using MariaDB. The commands and concepts are nearly identical. If you learn MySQL, you effectively know MariaDB too.
+      </div>
+
+      <h3>What MySQL Is Great At</h3>
+
+      <ul>
+        <li><strong>Web applications</strong> &mdash; MySQL was essentially built for the web. The classic "LAMP stack" (Linux, Apache, MySQL, PHP) powered the first generation of dynamic websites, and MySQL remains the go-to database for content management systems like WordPress, Drupal, and Joomla.</li>
+        <li><strong>Read-heavy workloads</strong> &mdash; If your application does a lot more reading than writing (like a blog or a news site where millions of people read articles but only a few editors publish them), MySQL handles that extremely well.</li>
+        <li><strong>Ease of learning</strong> &mdash; MySQL has some of the best documentation and community support of any database. When you are stuck, there are thousands of tutorials, Stack Overflow answers, and forum posts to help you.</li>
+        <li><strong>Hosting availability</strong> &mdash; Almost every web hosting provider in the world supports MySQL. If you are deploying a small to medium-sized web application, MySQL support is practically guaranteed.</li>
+      </ul>
+
+      <div class="callout callout-tip">
+        <strong>Preview: The Resumator Project!</strong> In our upcoming Resumator project, <strong>MySQL is the database we will use</strong>. You will build a real resume management application that stores user data, work experience, education, and skills in a MySQL database. We chose MySQL for this project because it is the most widely deployed open-source database, it is straightforward to set up and learn, and the skills you build will transfer directly to real-world job environments. In the next lesson (Lesson 22), you will install MySQL on your computer and start using it hands-on.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 2: PostgreSQL                    -->
+      <!-- ======================================== -->
+      <h2>2. PostgreSQL &mdash; The Powerhouse</h2>
+
+      <p>If MySQL is the Honda Civic, then <strong>PostgreSQL</strong> (often called "Postgres") is the Swiss Army knife. PostgreSQL is the most advanced open-source relational database available today. It can do everything MySQL can do, and then quite a bit more. It has been in continuous development since 1986 (originally as a research project at UC Berkeley), making it one of the longest-running open-source projects in history.</p>
+
+      <p>PostgreSQL is known for its <strong>strict standards compliance</strong>. It follows the SQL standard more closely than any other database, which means the SQL you write for PostgreSQL is more "correct" and more portable to other systems. It is also known for being incredibly <strong>extensible</strong> &mdash; you can add custom data types, write functions in multiple programming languages, and install extensions that give it entirely new capabilities.</p>
+
+      <div class="key-concept">
+        <h4>Who Uses PostgreSQL?</h4>
+        <p>PostgreSQL is used by some of the biggest names in tech. <strong>Apple</strong> uses it across many of its services. <strong>Instagram</strong> built its entire backend on PostgreSQL and scaled it to serve over a billion users. <strong>Reddit</strong> runs on PostgreSQL. <strong>Spotify</strong> uses it for internal data management. <strong>The International Space Station</strong> has PostgreSQL running in orbit. When organizations need a database that can handle complex data and massive scale without paying license fees, PostgreSQL is often the answer.</p>
+      </div>
+
+      <h3>What Makes PostgreSQL Special</h3>
+
+      <p><strong>PostGIS &mdash; Geographic and Location Data:</strong> One of PostgreSQL's most famous extensions is called <strong>PostGIS</strong>. It adds support for geographic data &mdash; coordinates, shapes, distances, and spatial queries. If you are building an application that needs to answer questions like "find all restaurants within 5 miles of this address" or "show me all delivery drivers currently in downtown Lansing," PostGIS makes those queries simple and fast. This is why PostgreSQL is the go-to database for mapping companies, ride-sharing apps, real estate platforms, and any application that deals with location data.</p>
+
+      <p><strong>JSON Support &mdash; The Best of Both Worlds:</strong> Remember how in Lesson 20 we talked about the divide between relational databases (structured tables) and NoSQL databases (flexible documents)? PostgreSQL blurs that line. It has native support for <strong>JSON and JSONB data types</strong>, which means you can store flexible, document-style data right inside a relational table. You get the structure and reliability of SQL <em>plus</em> the flexibility of NoSQL, all in one database. Many teams that considered using MongoDB alongside PostgreSQL have realized they can just use PostgreSQL for everything.</p>
+
+      <p><strong>Advanced Data Types:</strong> PostgreSQL supports arrays, ranges, network addresses (IP addresses), geometric types, full-text search, and more. If your data is more complex than simple text and numbers, PostgreSQL probably has a built-in type for it.</p>
+
+      <h3>MySQL vs. PostgreSQL &mdash; How to Choose</h3>
+
+      <p>This is one of the most common debates in the database world, and the honest answer is: <strong>both are excellent choices</strong>. Here is a simple way to think about it:</p>
+
+      <ul>
+        <li>Choose <strong>MySQL</strong> if you want the easiest setup, the widest hosting support, and you are building a straightforward web application (especially with WordPress or PHP).</li>
+        <li>Choose <strong>PostgreSQL</strong> if you need advanced features like geographic queries, JSON storage, complex data types, or if you value strict SQL standards compliance.</li>
+        <li>If you are starting a brand new project and both would work, <strong>either is a great choice</strong>. You cannot go wrong. Many developers have a personal preference, and that is fine.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>A note on pronunciation:</strong> PostgreSQL is officially pronounced "post-GRES-cue-ell," but almost everyone in the industry just says "Postgres" (rhymes with "post-dress"). You will hear both in interviews and at work. Either is fine.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 3: MongoDB                       -->
+      <!-- ======================================== -->
+      <h2>3. MongoDB &mdash; The Flexible Document Store</h2>
+
+      <p><strong>MongoDB</strong> is the most popular <strong>NoSQL database</strong> in the world. Unlike MySQL and PostgreSQL, which store data in rigid tables with predefined columns, MongoDB stores data as flexible <strong>documents</strong>. These documents look a lot like JSON (the data format you learned about in earlier lessons), which makes MongoDB feel very natural if you are coming from a JavaScript or Node.js background.</p>
+
+      <p>Here is what a record looks like in MongoDB versus a relational database:</p>
+
+      <p><strong>In MySQL (relational):</strong> You have a <code>users</code> table with fixed columns &mdash; <code>id</code>, <code>name</code>, <code>email</code>, <code>age</code>. Every row must have these exact columns. If you want to add a new field like <code>phone_number</code>, you have to change the table structure for every row.</p>
+
+      <p><strong>In MongoDB (document):</strong> Each user is a document that can have whatever fields it needs. One user document might have a <code>phone_number</code> field while another does not. One user might have an array of <code>hobbies</code> while another skips it entirely. The database does not enforce a rigid structure.</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>// A MongoDB document (looks like JSON)
+{
+  "_id": "64a7f2e1b5c3d80012345678",
+  "name": "Maria Garcia",
+  "email": "maria@example.com",
+  "skills": ["JavaScript", "React", "Node.js"],
+  "education": {
+    "school": "Lansing Community College",
+    "degree": "Associate's in Computer Science"
+  }
+}</code></pre>
+      </div>
+
+      <p>This flexibility is MongoDB's greatest strength and its greatest risk. It is great for <strong>rapid prototyping</strong> &mdash; you can start building an application without planning your exact data structure upfront. It works well for data that is naturally nested or hierarchical, like blog posts with embedded comments, or product catalogs where different products have different attributes. But the lack of structure can also lead to messy, inconsistent data if your team is not disciplined about it.</p>
+
+      <h3>Where MongoDB Shines</h3>
+
+      <ul>
+        <li><strong>JavaScript and Node.js ecosystems</strong> &mdash; MongoDB speaks JSON natively, which makes it a natural fit for JavaScript-based applications. The "MERN stack" (MongoDB, Express, React, Node.js) and "MEAN stack" (MongoDB, Express, Angular, Node.js) are popular combinations.</li>
+        <li><strong>Content management</strong> &mdash; Blog posts, articles, product listings, and other content that varies in structure works well in MongoDB.</li>
+        <li><strong>Real-time analytics</strong> &mdash; MongoDB can ingest large volumes of data quickly, making it useful for logging, event tracking, and analytics platforms.</li>
+        <li><strong>Early-stage startups</strong> &mdash; When your data model is still evolving rapidly and you do not know your final table structure, MongoDB's flexibility is very attractive.</li>
+      </ul>
+
+      <div class="callout callout-warning">
+        <strong>A word of caution:</strong> MongoDB became extremely popular around 2013-2018, and many teams adopted it for projects that would have been better served by a relational database. If your data has clear relationships between entities (users have orders, orders have items, items belong to categories), a relational database like MySQL or PostgreSQL is usually the better choice. MongoDB is a great tool, but like any tool, it works best when used for the right job.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 4: Redis                         -->
+      <!-- ======================================== -->
+      <h2>4. Redis &mdash; The Speed Demon</h2>
+
+      <p><strong>Redis</strong> is not quite like the other databases we have discussed. Redis is an <strong>in-memory data store</strong>, which means it keeps all of its data in your computer's RAM instead of writing it to a hard drive. Remember from Lesson 18 how we talked about RAM being incredibly fast but volatile? Redis takes advantage of that speed on purpose.</p>
+
+      <p>How fast is Redis? It can handle <strong>millions of operations per second</strong>. When your application needs to read or write a piece of data in under a millisecond, Redis is the tool you reach for. It is so fast that it is often used as a <strong>cache</strong> &mdash; a temporary high-speed storage layer that sits between your application and your main database.</p>
+
+      <div class="key-concept">
+        <h4>Caching: The Speed Trick</h4>
+        <p>Imagine you run a news website. Your homepage shows the top 10 articles, and it gets visited 100,000 times per hour. Without a cache, every single visit would require a query to your MySQL database: "Give me the top 10 articles, sorted by popularity, with author names and images." That is 100,000 database queries per hour for the exact same data that only changes every few minutes.</p>
+        <p>With Redis as a cache, you query MySQL <em>once</em>, store the result in Redis, and then serve the next 99,999 visitors directly from Redis at lightning speed. When the data changes, you update the Redis cache. This pattern dramatically reduces the load on your main database and makes your website feel instant.</p>
+      </div>
+
+      <h3>What Redis Is Used For</h3>
+
+      <ul>
+        <li><strong>Caching</strong> &mdash; Storing frequently accessed data (like popular pages, user profiles, or product listings) for ultra-fast retrieval.</li>
+        <li><strong>Session storage</strong> &mdash; When you log into a website, the server creates a "session" that remembers who you are as you navigate from page to page. Redis is perfect for storing these sessions because it is fast and sessions are temporary by nature.</li>
+        <li><strong>Real-time features</strong> &mdash; Leaderboards in games, live vote counts, real-time notifications, and chat applications all benefit from Redis's speed.</li>
+        <li><strong>Rate limiting</strong> &mdash; When an API needs to limit how many requests a user can make per minute, Redis can track those counts efficiently.</li>
+        <li><strong>Message queues</strong> &mdash; Redis can act as a simple message broker, passing messages between different parts of your application.</li>
+      </ul>
+
+      <p>Redis is rarely used as your <em>only</em> database. Instead, it works alongside your primary database (like MySQL or PostgreSQL) to speed things up. Think of it as the express lane at the grocery store &mdash; it handles the quick, simple transactions so the main checkout lanes can focus on the bigger jobs.</p>
+
+      <div class="callout callout-info">
+        <strong>Redis data structures:</strong> Unlike most databases that only store simple key-value pairs, Redis supports strings, lists, sets, sorted sets, hashes, and more. This makes it incredibly versatile for a wide range of speed-critical tasks.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 5: Other Modern Databases        -->
+      <!-- ======================================== -->
+      <h2>5. Other Modern Databases Worth Knowing</h2>
+
+      <p>MySQL, PostgreSQL, MongoDB, and Redis are the "big four" that you will encounter most often. But the database world is large and growing. Here are several other important databases you should know about, even if you do not use them right away.</p>
+
+      <h3>Elasticsearch &mdash; Full-Text Search</h3>
+
+      <p>Have you ever used the search bar on a shopping website and noticed how it finds results even when you misspell a word, or suggests related products as you type? That is powered by <strong>Elasticsearch</strong>. It is a specialized database built for <strong>searching through large amounts of text</strong> extremely quickly. Companies like Wikipedia, GitHub, Stack Overflow, and Netflix use Elasticsearch to power their search functionality. It can search through millions of documents in milliseconds and rank the results by relevance.</p>
+
+      <h3>Firebase / Firestore &mdash; Real-Time, Mobile-First</h3>
+
+      <p><strong>Firebase</strong> (and its newer version, <strong>Cloud Firestore</strong>) is a database service from Google designed for <strong>mobile and web applications</strong>. What makes it special is that it is <strong>real-time</strong> &mdash; when data changes in the database, every connected app sees the update instantly, without refreshing. It is also <strong>serverless</strong>, meaning you do not have to set up or manage a database server at all. You just write your app, and Google handles the infrastructure. Firebase is extremely popular for mobile apps, chat applications, and small to medium-sized projects where you want to get up and running fast without managing servers.</p>
+
+      <h3>DynamoDB &mdash; AWS Cloud NoSQL</h3>
+
+      <p><strong>Amazon DynamoDB</strong> is a NoSQL database built by Amazon Web Services (AWS). It is designed to scale to virtually any size while maintaining consistent, fast performance. DynamoDB is "fully managed," meaning Amazon handles all the server setup, maintenance, backups, and scaling for you. If your application runs on AWS (which a huge number of companies use), DynamoDB is a common choice for workloads that need to handle massive amounts of traffic. Amazon.com itself uses DynamoDB for its shopping cart and many other features.</p>
+
+      <h3>CockroachDB, PlanetScale, and Neon &mdash; Cloud-Native SQL</h3>
+
+      <p>These are a newer generation of databases that combine the <strong>reliability and structure of SQL</strong> with the <strong>scalability of cloud computing</strong>. <strong>CockroachDB</strong> is a distributed SQL database that can spread your data across multiple servers (even in different countries) and survive server failures without losing data. <strong>PlanetScale</strong> is built on MySQL technology but adds features for scaling, branching (like Git branches for your database), and zero-downtime schema changes. <strong>Neon</strong> does the same for PostgreSQL. These represent the future of relational databases &mdash; all the benefits of SQL, but with built-in cloud scalability.</p>
+
+      <h3>SQLite &mdash; The Most Deployed Database in the World</h3>
+
+      <p>You have already met <strong>SQLite</strong> back in Lesson 14 when we used it in our Spring Boot project. Here is a surprising fact: SQLite is the <strong>single most deployed database in the world</strong>. It is not the most powerful or the most feature-rich, but it is embedded in <em>everything</em>. Every iPhone, every Android phone, every Mac, every Windows 10 and 11 computer, every copy of Chrome, Firefox, and Safari, every Skype installation, every copy of iTunes, every Dropbox client &mdash; all of them contain SQLite. It has been estimated that there are over <strong>one trillion active SQLite databases</strong> in the world right now.</p>
+
+      <p>SQLite is perfect for <strong>single-user applications</strong> and <strong>embedded systems</strong> because it stores the entire database in a single file with no server required. It is not the right choice for a web application serving thousands of users simultaneously (that is what MySQL and PostgreSQL are for), but for local storage, prototyping, testing, and embedded applications, nothing beats SQLite's simplicity.</p>
+
+      <!-- ======================================== -->
+      <!-- SECTION 6: Comparison Table              -->
+      <!-- ======================================== -->
+      <h2>6. Modern Database Comparison</h2>
+
+      <p>Let us put everything we have covered into a single reference table. This is a great resource to come back to whenever you are evaluating databases for a project.</p>
+
+      <table class="lesson-table">
+        <thead>
+          <tr>
+            <th>Database</th>
+            <th>Type</th>
+            <th>Best For</th>
+            <th>Used By</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MySQL</strong></td>
+            <td>Relational (SQL)</td>
+            <td>Web apps, CMS, read-heavy workloads, general purpose</td>
+            <td>WordPress, Shopify, Facebook, Uber, Booking.com</td>
+          </tr>
+          <tr>
+            <td><strong>PostgreSQL</strong></td>
+            <td>Relational (SQL)</td>
+            <td>Complex queries, geographic data, JSON hybrid, advanced data types</td>
+            <td>Apple, Instagram, Reddit, Spotify, Twitch</td>
+          </tr>
+          <tr>
+            <td><strong>MongoDB</strong></td>
+            <td>Document (NoSQL)</td>
+            <td>Flexible schemas, JS/Node.js apps, content management, rapid prototyping</td>
+            <td>eBay, Forbes, Toyota, Adobe, SEGA</td>
+          </tr>
+          <tr>
+            <td><strong>Redis</strong></td>
+            <td>In-Memory Key-Value</td>
+            <td>Caching, sessions, real-time features, leaderboards, rate limiting</td>
+            <td>Twitter, GitHub, Stack Overflow, Pinterest</td>
+          </tr>
+          <tr>
+            <td><strong>Elasticsearch</strong></td>
+            <td>Search Engine</td>
+            <td>Full-text search, log analysis, autocomplete</td>
+            <td>Wikipedia, GitHub, Netflix, Stack Overflow</td>
+          </tr>
+          <tr>
+            <td><strong>Firebase / Firestore</strong></td>
+            <td>Document (NoSQL, Cloud)</td>
+            <td>Mobile apps, real-time sync, serverless projects</td>
+            <td>Duolingo, Alibaba, The New York Times, Lyft</td>
+          </tr>
+          <tr>
+            <td><strong>DynamoDB</strong></td>
+            <td>Key-Value / Document (NoSQL, Cloud)</td>
+            <td>High-traffic AWS apps, serverless, IoT</td>
+            <td>Amazon, Samsung, Capital One, Snap</td>
+          </tr>
+          <tr>
+            <td><strong>SQLite</strong></td>
+            <td>Relational (SQL, Embedded)</td>
+            <td>Mobile apps, desktop apps, prototyping, testing, embedded systems</td>
+            <td>Every smartphone, Chrome, Firefox, Skype, Dropbox</td>
+          </tr>
+          <tr>
+            <td><strong>CockroachDB</strong></td>
+            <td>Distributed SQL</td>
+            <td>Global apps, multi-region, high availability</td>
+            <td>DoorDash, Bose, Netflix (some services)</td>
+          </tr>
+          <tr>
+            <td><strong>PlanetScale</strong></td>
+            <td>Cloud MySQL</td>
+            <td>Scalable MySQL, database branching, zero-downtime changes</td>
+            <td>Beam, MyFitnessPal, Lemon Squeezy</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ======================================== -->
+      <!-- SECTION 7: Decision Flowchart            -->
+      <!-- ======================================== -->
+      <h2>7. Choosing the Right Database &mdash; A Decision Flowchart</h2>
+
+      <p>When you start a new project, how do you decide which database to use? Walk through this flowchart. Start at the top and follow the arrows based on your project's needs.</p>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Does your data have clear relationships? (Users have orders, orders have items, etc.)</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-question">Do you need advanced features like geographic queries, JSON columns, or custom data types?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-answer">Use <strong>PostgreSQL</strong></div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Does your data have clear relationships?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-question">Do you need advanced features?</div>
+        <div class="decision-arrow">&darr; No &mdash; I need something simple and reliable</div>
+        <div class="decision-node decision-answer">Use <strong>MySQL</strong> (or MariaDB)</div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Does your data have clear relationships?</div>
+        <div class="decision-arrow">&darr; No &mdash; my data is flexible and varies in structure</div>
+        <div class="decision-node decision-question">Is it a mobile or real-time app where you want zero server management?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-answer">Use <strong>Firebase / Firestore</strong></div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Does your data have clear relationships?</div>
+        <div class="decision-arrow">&darr; No &mdash; my data is flexible and varies in structure</div>
+        <div class="decision-node decision-question">Is it a mobile or real-time app where you want zero server management?</div>
+        <div class="decision-arrow">&darr; No &mdash; but I still need flexible documents</div>
+        <div class="decision-node decision-answer">Use <strong>MongoDB</strong></div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Do you need blazing-fast reads/writes for caching, sessions, or real-time features?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-answer">Use <strong>Redis</strong> (alongside your main database)</div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Do you need powerful full-text search across large volumes of text?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-answer">Use <strong>Elasticsearch</strong> (alongside your main database)</div>
+      </div>
+
+      <div class="decision-flow">
+        <div class="decision-node decision-question">Is this a single-user app, a mobile app, or a prototype?</div>
+        <div class="decision-arrow">&darr; Yes</div>
+        <div class="decision-node decision-answer">Use <strong>SQLite</strong></div>
+      </div>
+
+      <div class="callout callout-tip">
+        <strong>Real-world reality:</strong> Most production applications use <strong>more than one database</strong>. A typical setup might be PostgreSQL as the main database, Redis for caching, and Elasticsearch for search. The flowchart above helps you pick your <em>primary</em> database, but do not be surprised when you end up using two or three together.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 8: Databases in the Workplace    -->
+      <!-- ======================================== -->
+      <h2>8. Databases in the Workplace &mdash; What You Will Actually Encounter</h2>
+
+      <p>Understanding database technology is one thing. Understanding what you will <em>actually encounter on the job</em> is something else entirely. Let us walk through the major sectors of the economy and talk honestly about what databases they use and why. This is the kind of knowledge that will make you sound informed in interviews and help you set realistic expectations when you land your first role.</p>
+
+      <h3>State and Local Government</h3>
+
+      <p>If you get a job with the State of Michigan, a county office, or the City of Lansing, you will almost certainly encounter <strong>Oracle Database</strong> or <strong>Microsoft SQL Server</strong>. Government agencies adopted these databases decades ago and have built entire systems around them. Some older agencies still run <strong>IBM DB2</strong> on mainframes. Newer government projects &mdash; especially those built by younger development teams or outside contractors &mdash; are increasingly using <strong>PostgreSQL</strong> because it is free, open source, and avoids expensive Oracle licensing fees. But do not expect the legacy systems to go away. Government moves slowly, and there are mainframe applications from the 1990s that are still running critical services like tax processing, driver's license systems, and welfare benefits.</p>
+
+      <h3>Federal Government and Military</h3>
+
+      <p>The federal government and military have the <strong>strictest security and compliance requirements</strong> of any sector. They primarily use <strong>IBM DB2</strong>, <strong>Oracle Database</strong>, and <strong>Microsoft SQL Server</strong> &mdash; all of which have special government-certified configurations. These systems handle classified information, defense logistics, intelligence data, and personnel records for millions of service members. Every database used in a federal environment must meet standards like <strong>FISMA</strong> (Federal Information Security Management Act) and <strong>FedRAMP</strong> (for cloud services). If you work in this sector, you will likely need a <strong>security clearance</strong>, and you will be working with databases that have been in place for decades.</p>
+
+      <h3>Banks and Financial Services</h3>
+
+      <p>Banking is one of the most database-intensive industries in the world. Every ATM withdrawal, every credit card swipe, every stock trade, every mortgage payment &mdash; all of it flows through databases. The big banks (Chase, Bank of America, Wells Fargo, Citibank) rely heavily on <strong>Oracle Database</strong>, <strong>IBM DB2</strong>, and <strong>Sybase (now SAP ASE)</strong>. These are the legacy systems from Lesson 20 &mdash; expensive, battle-tested, and deeply embedded in financial infrastructure.</p>
+
+      <p>However, financial technology ("fintech") companies and even some departments within traditional banks are increasingly adopting <strong>PostgreSQL</strong> for new projects. PostgreSQL's reliability, strong data integrity features, and zero licensing cost make it attractive for non-legacy applications. You might also encounter <strong>Redis</strong> for caching real-time market data and <strong>MongoDB</strong> for storing less structured financial documents.</p>
+
+      <h3>Healthcare</h3>
+
+      <p>Healthcare databases are dominated by <strong>Microsoft SQL Server</strong> and <strong>Oracle Database</strong>. The reason is compliance: any system that stores patient health information in the United States must comply with <strong>HIPAA</strong> (Health Insurance Portability and Accountability Act). SQL Server and Oracle have robust security features, encryption, and audit logging that make HIPAA compliance more straightforward.</p>
+
+      <p>A unique aspect of healthcare IT is that much of the database work is <strong>vendor-specific</strong>. The two dominant electronic health record (EHR) systems &mdash; <strong>Epic</strong> and <strong>Cerner (now Oracle Health)</strong> &mdash; each come with their own database configurations. Epic primarily uses a proprietary database called <strong>Cach&eacute;</strong> (now <strong>IRIS</strong> by InterSystems), while Cerner historically used Oracle. If you work in healthcare IT, you will often be working within the constraints of whatever EHR system the hospital or clinic uses, rather than choosing your own database.</p>
+
+      <h3>Large Enterprise (Fortune 500)</h3>
+
+      <p>If you work at a Fortune 500 company &mdash; think General Motors (right here in Michigan!), Ford, Dow Chemical, Whirlpool, or Kellogg's &mdash; expect to see <strong>Oracle Database</strong> or <strong>Microsoft SQL Server</strong> as the backbone. These companies have been using enterprise databases for decades, and their ERP systems (like SAP or Oracle E-Business Suite), HR systems, and financial systems all sit on top of these databases. Newer internal tools and customer-facing applications may use PostgreSQL or MySQL, but the core systems are almost always Oracle or SQL Server.</p>
+
+      <h3>Mid-Size Companies</h3>
+
+      <p>Companies with 50 to 500 employees are the sweet spot for <strong>MySQL</strong> and <strong>PostgreSQL</strong>. These companies are big enough to need real databases but not so big that they need (or can afford) Oracle's enterprise licensing. If a mid-size company in Lansing is building a web application, an internal tool, or a customer portal, odds are high they are using MySQL or PostgreSQL. You might also see <strong>SQL Server</strong> if the company is primarily a Microsoft shop (using Windows servers, .NET, and Azure).</p>
+
+      <h3>Startups (Early Stage)</h3>
+
+      <p>Early-stage startups &mdash; a small team of 2 to 15 people trying to build a product and find customers &mdash; almost always go with <strong>PostgreSQL</strong> or <strong>MySQL</strong> as their primary database. Both are free, well-documented, and supported by every cloud provider. Many startups also add <strong>MongoDB</strong> if their data is particularly flexible or if their team is focused on JavaScript/Node.js. <strong>Redis</strong> often shows up early too, handling sessions and simple caching.</p>
+
+      <p>The database stack at a typical early-stage startup might look like this: PostgreSQL for the main application data, Redis for caching and sessions, and maybe Firebase for a mobile companion app.</p>
+
+      <h3>Startups (Growth Stage)</h3>
+
+      <p>When a startup grows from thousands of users to hundreds of thousands or millions, the database setup gets more complex. This is when <strong>scaling issues</strong> appear. The single PostgreSQL database that worked fine for 10,000 users starts struggling under 500,000. At this point, teams start adding <strong>read replicas</strong> (copies of the database that handle read queries), <strong>Redis caching layers</strong> (to reduce the load on the primary database), and <strong>Elasticsearch</strong> (for search features that would be too slow on the main database). Some teams migrate to cloud-native solutions like <strong>PlanetScale</strong> or <strong>Amazon Aurora</strong> that handle scaling automatically.</p>
+
+      <h3>Tech Companies (FAANG-Level)</h3>
+
+      <p>The biggest tech companies &mdash; Meta (Facebook), Apple, Amazon, Netflix, Google, and companies of similar scale &mdash; use <strong>PostgreSQL</strong> and <strong>MySQL</strong> extensively, but they also build <strong>custom database solutions</strong> for their unique needs. Facebook created <strong>RocksDB</strong>. Google built <strong>Bigtable</strong> and <strong>Spanner</strong>. Amazon created <strong>DynamoDB</strong> and <strong>Aurora</strong>. Netflix uses <strong>Cassandra</strong> for certain workloads. At this scale, no single off-the-shelf database can handle everything, so these companies employ entire teams of database engineers who build, tune, and maintain custom systems.</p>
+
+      <p>But here is the thing: even at these companies, most day-to-day application development still uses PostgreSQL or MySQL. The custom databases handle specific extreme-scale challenges, while the "normal" databases handle everything else.</p>
+
+      <h3>Agencies and Consulting Firms</h3>
+
+      <p>If you work at a web agency, a consulting firm, or as a freelance developer, your database changes with every client. One project might be a WordPress site on MySQL. The next might be a data dashboard on PostgreSQL. The project after that might be a mobile app on Firebase. <strong>Adaptability is the skill</strong> &mdash; not deep expertise in any single database. Agencies value developers who can pick up a new database quickly, understand its core concepts, and be productive within a few days. The fundamentals you have learned in this track (SQL, relational concepts, the differences between database types) are exactly what make that adaptability possible.</p>
+
+      <h3>The Day-to-Day Reality</h3>
+
+      <div class="key-concept">
+        <h4>Expect 2&ndash;3 Databases Per Job</h4>
+        <p>In the real world, most developers work with <strong>two to three databases</strong> at any given job. A common combination might be MySQL or PostgreSQL for the main application data, Redis for caching and sessions, and maybe Elasticsearch for search or MongoDB for a specific microservice. You will rarely use just one, and you will rarely use more than four.</p>
+      </div>
+
+      <p>Here is the career advice that will serve you well throughout your entire time as a developer: <strong>do not marry a database.</strong> Some developers become "MySQL developers" or "MongoDB developers" and tie their identity to a single technology. That is a mistake. Databases are tools, and tools change. The developer who says "I can work with whatever database the project needs" is far more valuable than the one who says "I only know PostgreSQL."</p>
+
+      <p>The concepts you have learned in this track &mdash; tables, rows, columns, primary keys, foreign keys, relationships, SQL queries, indexing, the difference between relational and NoSQL &mdash; those concepts apply to <em>every</em> database. If you understand how a relational database works, you can pick up any specific one (MySQL, PostgreSQL, SQL Server, Oracle) in a matter of days. If you understand document databases conceptually, you can learn MongoDB or DynamoDB quickly. <strong>Learn concepts, not just products.</strong></p>
+
+      <div class="callout callout-tip">
+        <strong>Common interview question:</strong> "What database would you choose for X, and why?" This question is not about having a memorized answer. Interviewers want to see that you can <strong>think through the tradeoffs</strong>. They want to hear you ask clarifying questions: "How many users? What kind of data? Does it need to be real-time? What is the budget? What does the team already know?" The decision flowchart from earlier in this lesson is exactly the mental model they are looking for.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 9: Quiz                          -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="q21-1">
+        <p class="quiz-question">1. You are building a web application for a local Lansing business. It is a straightforward online store with products, orders, and customer accounts. You need something reliable, easy to set up, and well-supported by hosting providers. Which database would be the best fit?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q21-1" value="a"> MongoDB &mdash; because it is flexible and stores data as documents</label>
+          <label><input type="radio" name="q21-1" value="b"> Redis &mdash; because it is the fastest database available</label>
+          <label><input type="radio" name="q21-1" value="c"> MySQL &mdash; because it is reliable, widely supported, and great for web applications with relational data</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! An online store has clearly structured, relational data: customers place orders, orders contain products, products belong to categories. This is exactly what relational databases are designed for. MySQL is the best fit here because it is reliable, easy to set up, supported by virtually every hosting provider, and has been powering e-commerce sites for decades. MongoDB would not be ideal because you want enforced data integrity for financial transactions. Redis is fantastic for caching but is not meant to be your primary database.</div>
+      </div>
+
+      <div class="quiz" data-id="q21-2">
+        <p class="quiz-question">2. A startup is building a ride-sharing app that needs to find all available drivers within 3 miles of a passenger's location. Which database feature or extension would be most helpful for this?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q21-2" value="a"> Redis caching &mdash; for speed</label>
+          <label><input type="radio" name="q21-2" value="b"> PostGIS extension for PostgreSQL &mdash; for geographic and location queries</label>
+          <label><input type="radio" name="q21-2" value="c"> MongoDB flexible documents &mdash; for storing driver profiles</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! PostGIS is an extension for PostgreSQL that adds powerful geographic data capabilities. It can store coordinates, calculate distances, and efficiently query for all records within a given radius of a point &mdash; exactly what a ride-sharing app needs. Redis is fast but does not have built-in geographic query capabilities at this level. MongoDB can store location data but does not match PostGIS's depth of spatial query support.</div>
+      </div>
+
+      <div class="quiz" data-id="q21-3">
+        <p class="quiz-question">3. You are in a job interview and the interviewer asks: "We use Oracle Database here. You listed MySQL on your resume. Can you work with Oracle?" What is the best response?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q21-3" value="a"> "No, I only know MySQL. They are completely different."</label>
+          <label><input type="radio" name="q21-3" value="b"> "Absolutely. Both are relational databases that use SQL. The core concepts &mdash; tables, rows, queries, joins, indexes &mdash; are the same. I would need to learn Oracle's specific tools and syntax differences, but the fundamentals transfer directly."</label>
+          <label><input type="radio" name="q21-3" value="c"> "I would recommend switching to MySQL since it is free."</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! This is exactly the mindset employers want to see. All relational databases share the same core concepts: tables, rows, columns, SQL queries, joins, primary keys, foreign keys, and indexes. The differences between MySQL, PostgreSQL, Oracle, and SQL Server are mostly in their specific tools, syntax quirks, and advanced features. A developer who understands relational database fundamentals can transition between them with relatively little effort. Suggesting a company switch databases in an interview would not go over well &mdash; large organizations choose their databases for many complex reasons.</div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- SECTION 10: Lesson Summary               -->
+      <!-- ======================================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>This lesson gave you a bird's-eye view of the modern database landscape. Let us recap the key takeaways:</p>
+
+      <ul>
+        <li><strong>There is no "best" database.</strong> Every database is a tool designed for specific kinds of jobs. The skill is knowing which tool to use when.</li>
+        <li><strong>MySQL</strong> is the most popular open-source database, ideal for web applications, and the "Honda Civic of databases." It is reliable, practical, widely supported, and what we will use for the Resumator project.</li>
+        <li><strong>PostgreSQL</strong> is the most advanced open-source relational database, with features like PostGIS for geographic data and native JSON support for hybrid SQL/NoSQL workloads.</li>
+        <li><strong>MongoDB</strong> is the leading NoSQL document database, great for flexible schemas and JavaScript ecosystems, but not always the right choice for relational data.</li>
+        <li><strong>Redis</strong> is an in-memory data store used for caching, sessions, and real-time features. It works alongside your primary database, not as a replacement.</li>
+        <li><strong>Other important databases</strong> include Elasticsearch (search), Firebase (mobile/real-time), DynamoDB (AWS scale), SQLite (embedded/mobile), and cloud-native options like CockroachDB, PlanetScale, and Neon.</li>
+        <li><strong>Workplace reality:</strong> Government and enterprises tend to use Oracle and SQL Server. Startups and mid-size companies lean toward PostgreSQL and MySQL. Most jobs involve two to three databases.</li>
+        <li><strong>Career advice:</strong> Do not marry a database. Learn the underlying concepts &mdash; they transfer across all databases. Adaptability is the most valuable skill.</li>
+      </ul>
+
+      <p>In the next lesson, <strong>Lesson 22: Setting Up MySQL</strong>, you will install MySQL on your computer, create your first database, and write real SQL queries. That lesson is the bridge between understanding databases conceptually and using them hands-on. Everything you have learned across Lessons 18 through 21 has been building to this moment. Let us go make it real.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="databases" data-lesson="21-modern-database-landscape">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/databases/20-legacy-databases.html" class="lesson-nav-btn">&larr; Previous: Legacy Databases</a>
+      <a href="/lessons/databases/22-setting-up-mysql.html" class="lesson-nav-btn">Next: Setting Up MySQL &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

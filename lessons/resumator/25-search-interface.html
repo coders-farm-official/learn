@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lesson 25: Building the Search Interface — Coders Farm</title>
+  <meta name="description" content="Create the frontend search page with job cards">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="resumator-25-search-interface">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Search Interface</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/lessons/resumator/24-job-search-api.html" role="menuitem">Lesson 24: Job Search API</a>
+      <a href="/lessons/resumator/25-search-interface.html" role="menuitem">Lesson 25: Search Interface</a>
+      <a href="/lessons/resumator/26-when-things-break.html" role="menuitem">Lesson 26: When Things Break</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/">Building Resumator</a> / Search Interface</p>
+      <p class="lesson-progress-indicator" data-track="resumator" data-total="6" data-current="3">Lesson 3 of 6</p>
+      <h1>Building the Search Interface</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2.5&ndash;3 hours</p>
+    </div>
+    <div class="lesson-content">
+
+      <!-- Learning Objectives -->
+      <div class="learning-objectives">
+        <h2>What You Will Learn</h2>
+        <ul>
+          <li>Understand how <strong>Spring Boot serves static files</strong> and where to place your HTML, CSS, and JavaScript</li>
+          <li>Build a complete <strong>search page</strong> with a form, input fields, and a state dropdown for filtering jobs</li>
+          <li>Write <strong>CSS for job cards</strong> with a professional, responsive grid layout that stacks on mobile</li>
+          <li>Use the <strong>Fetch API</strong> in JavaScript to call your Spring Boot backend and receive JSON data</li>
+          <li>Dynamically <strong>create HTML elements</strong> from JavaScript to display search results as cards</li>
+          <li>Handle <strong>loading states, empty results, and errors</strong> gracefully in the user interface</li>
+          <li>Wire up a <strong>Favorite button</strong> on each card that sends a POST request to your API</li>
+          <li>Add <strong>polish features</strong> like pagination hints, session storage, and a smooth user experience</li>
+        </ul>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- OPENING                                  -->
+      <!-- ======================================== -->
+      <p>In Lesson 24, you built a powerful Job Search API. You could open your browser, type a long URL like <code>http://localhost:8080/api/jobs/search?query=java+developer&amp;location=Lansing,MI</code>, and get back a wall of JSON data. It worked. But let us be honest &mdash; nobody wants to use a tool that way. Imagine telling a friend, "Hey, check out my job search app! Just manually type this URL into your browser and read the raw JSON." They would look at you like you had lost your mind.</p>
+
+      <p>What people actually want is a <strong>search page</strong>. A text box where they type "software engineer." A dropdown where they pick their state. A button that says "Search." And then &mdash; beautiful, clickable job cards that show the title, company, salary, and a link to apply. That is what you are building today.</p>
+
+      <p>Here is the exciting part: you already know how to do most of this. Back in Lessons 1 and 2, you learned HTML &mdash; how to build forms with <code>&lt;input&gt;</code> fields, <code>&lt;select&gt;</code> dropdowns, and <code>&lt;button&gt;</code> elements. In Lessons 3 and 4, you learned CSS &mdash; how to style elements with colors, spacing, grids, and responsive layouts. In Lessons 5 and 6, you learned JavaScript &mdash; how to listen for events, manipulate the DOM, and work with data. Today you are going to bring all of those skills together and connect them to the real backend API you built in Lesson 24. This is the moment where the frontend meets the backend, and your application becomes something that actually <em>feels</em> like a real product.</p>
+
+      <div class="callout">
+        <strong>What you need before starting:</strong> Your Resumator Spring Boot project from Lesson 24 with the <code>/api/jobs/search</code> endpoint working. Make sure you can start the server with <code>./mvnw spring-boot:run</code> (or <code>mvnw.cmd spring-boot:run</code> on Windows) and see JSON results when you visit <code>http://localhost:8080/api/jobs/search?query=developer</code> in your browser.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 1: Frontend File Structure           -->
+      <!-- ======================================== -->
+      <h2>1. Where Do Frontend Files Go?</h2>
+
+      <p>Before we write a single line of HTML, we need to understand where to put our files. When you are building a separate HTML page (like a simple website), you just open an HTML file directly in your browser. But with Spring Boot, things work differently. Your Spring Boot server is already running at <code>http://localhost:8080</code>, and it is already handling API requests. The beautiful thing is that Spring Boot can <em>also</em> serve your HTML, CSS, and JavaScript files &mdash; no extra configuration needed.</p>
+
+      <p>Spring Boot automatically looks for static files (HTML, CSS, JS, images) inside a special folder in your project:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>src/main/resources/static/
+├── index.html          &lt;-- Search page (main page)
+├── favorites.html      &lt;-- Saved favorites page
+├── css/
+│   └── style.css       &lt;-- All styling
+└── js/
+    ├── search.js       &lt;-- Search page logic
+    └── favorites.js    &lt;-- Favorites page logic</code></pre>
+      </div>
+
+      <p>Anything you put inside <code>src/main/resources/static/</code> becomes available at the root of your server. So if you create a file called <code>index.html</code> inside that folder, it will be served when you visit <code>http://localhost:8080/</code>. If you create <code>css/style.css</code>, it will be available at <code>http://localhost:8080/css/style.css</code>. Spring Boot handles all of this for you automatically &mdash; you do not need to write any Java code or configuration to make it work.</p>
+
+      <div class="key-concept">
+        <h4>Why not just open the HTML file directly?</h4>
+        <p>You <em>could</em> double-click your HTML file and open it in a browser. But if you do that, your JavaScript <code>fetch()</code> calls to <code>/api/jobs/search</code> will fail. That is because when you open a file directly, the browser uses the <code>file://</code> protocol, and it has no idea where <code>/api/jobs/search</code> lives. When Spring Boot serves the file, the browser uses <code>http://localhost:8080</code>, so <code>/api/jobs/search</code> correctly resolves to <code>http://localhost:8080/api/jobs/search</code>. This is why both your frontend and backend need to be served from the same place.</p>
+      </div>
+
+      <p>Let us create the folder structure. Open your terminal, navigate to your Resumator project directory, and run these commands:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>mkdir -p src/main/resources/static/css
+mkdir -p src/main/resources/static/js</code></pre>
+      </div>
+
+      <p>Now you have the directories ready. Let us start building the search page.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 2: Search Page HTML                  -->
+      <!-- ======================================== -->
+      <h2>2. The Search Page (index.html)</h2>
+
+      <p>The search page is the heart of Resumator. It needs three things: a <strong>header</strong> with navigation, a <strong>search form</strong> where users enter their criteria, and a <strong>results area</strong> where job cards will appear. Let us build the complete page.</p>
+
+      <p>Create a file called <code>index.html</code> inside <code>src/main/resources/static/</code> and add the following HTML. This is a long file, but every part of it should look familiar from Lessons 1 and 2. Read through it carefully &mdash; we will break it down section by section after.</p>
+
+      <div class="code-editor" data-language="html" data-editable="false" data-runnable="false">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;Resumator &mdash; Job Search&lt;/title&gt;
+  &lt;link rel="stylesheet" href="/css/style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+  &lt;!-- ===== HEADER ===== --&gt;
+  &lt;header class="site-header"&gt;
+    &lt;div class="header-inner"&gt;
+      &lt;h1 class="logo"&gt;Resumator&lt;/h1&gt;
+      &lt;nav class="main-nav"&gt;
+        &lt;a href="/" class="nav-link active"&gt;Search&lt;/a&gt;
+        &lt;a href="/favorites.html" class="nav-link"&gt;Favorites&lt;/a&gt;
+      &lt;/nav&gt;
+    &lt;/div&gt;
+  &lt;/header&gt;
+
+  &lt;!-- ===== MAIN CONTENT ===== --&gt;
+  &lt;main class="container"&gt;
+
+    &lt;!-- Search Form --&gt;
+    &lt;section class="search-section"&gt;
+      &lt;h2&gt;Find Your Next Opportunity&lt;/h2&gt;
+      &lt;form id="search-form" class="search-form"&gt;
+        &lt;div class="form-row"&gt;
+
+          &lt;div class="form-group"&gt;
+            &lt;label for="job-title"&gt;Job Title&lt;/label&gt;
+            &lt;input
+              type="text"
+              id="job-title"
+              name="query"
+              placeholder="e.g. Software Engineer"
+              required
+            &gt;
+          &lt;/div&gt;
+
+          &lt;div class="form-group"&gt;
+            &lt;label for="city"&gt;City&lt;/label&gt;
+            &lt;input
+              type="text"
+              id="city"
+              name="city"
+              placeholder="e.g. Lansing"
+            &gt;
+          &lt;/div&gt;
+
+          &lt;div class="form-group"&gt;
+            &lt;label for="state"&gt;State&lt;/label&gt;
+            &lt;select id="state" name="state"&gt;
+              &lt;option value=""&gt;Any State&lt;/option&gt;
+              &lt;option value="AL"&gt;Alabama&lt;/option&gt;
+              &lt;option value="AK"&gt;Alaska&lt;/option&gt;
+              &lt;option value="AZ"&gt;Arizona&lt;/option&gt;
+              &lt;option value="AR"&gt;Arkansas&lt;/option&gt;
+              &lt;option value="CA"&gt;California&lt;/option&gt;
+              &lt;option value="CO"&gt;Colorado&lt;/option&gt;
+              &lt;option value="CT"&gt;Connecticut&lt;/option&gt;
+              &lt;option value="DE"&gt;Delaware&lt;/option&gt;
+              &lt;option value="FL"&gt;Florida&lt;/option&gt;
+              &lt;option value="GA"&gt;Georgia&lt;/option&gt;
+              &lt;option value="HI"&gt;Hawaii&lt;/option&gt;
+              &lt;option value="ID"&gt;Idaho&lt;/option&gt;
+              &lt;option value="IL"&gt;Illinois&lt;/option&gt;
+              &lt;option value="IN"&gt;Indiana&lt;/option&gt;
+              &lt;option value="IA"&gt;Iowa&lt;/option&gt;
+              &lt;option value="KS"&gt;Kansas&lt;/option&gt;
+              &lt;option value="KY"&gt;Kentucky&lt;/option&gt;
+              &lt;option value="LA"&gt;Louisiana&lt;/option&gt;
+              &lt;option value="ME"&gt;Maine&lt;/option&gt;
+              &lt;option value="MD"&gt;Maryland&lt;/option&gt;
+              &lt;option value="MA"&gt;Massachusetts&lt;/option&gt;
+              &lt;option value="MI"&gt;Michigan&lt;/option&gt;
+              &lt;option value="MN"&gt;Minnesota&lt;/option&gt;
+              &lt;option value="MS"&gt;Mississippi&lt;/option&gt;
+              &lt;option value="MO"&gt;Missouri&lt;/option&gt;
+              &lt;option value="MT"&gt;Montana&lt;/option&gt;
+              &lt;option value="NE"&gt;Nebraska&lt;/option&gt;
+              &lt;option value="NV"&gt;Nevada&lt;/option&gt;
+              &lt;option value="NH"&gt;New Hampshire&lt;/option&gt;
+              &lt;option value="NJ"&gt;New Jersey&lt;/option&gt;
+              &lt;option value="NM"&gt;New Mexico&lt;/option&gt;
+              &lt;option value="NY"&gt;New York&lt;/option&gt;
+              &lt;option value="NC"&gt;North Carolina&lt;/option&gt;
+              &lt;option value="ND"&gt;North Dakota&lt;/option&gt;
+              &lt;option value="OH"&gt;Ohio&lt;/option&gt;
+              &lt;option value="OK"&gt;Oklahoma&lt;/option&gt;
+              &lt;option value="OR"&gt;Oregon&lt;/option&gt;
+              &lt;option value="PA"&gt;Pennsylvania&lt;/option&gt;
+              &lt;option value="RI"&gt;Rhode Island&lt;/option&gt;
+              &lt;option value="SC"&gt;South Carolina&lt;/option&gt;
+              &lt;option value="SD"&gt;South Dakota&lt;/option&gt;
+              &lt;option value="TN"&gt;Tennessee&lt;/option&gt;
+              &lt;option value="TX"&gt;Texas&lt;/option&gt;
+              &lt;option value="UT"&gt;Utah&lt;/option&gt;
+              &lt;option value="VT"&gt;Vermont&lt;/option&gt;
+              &lt;option value="VA"&gt;Virginia&lt;/option&gt;
+              &lt;option value="WA"&gt;Washington&lt;/option&gt;
+              &lt;option value="WV"&gt;West Virginia&lt;/option&gt;
+              &lt;option value="WI"&gt;Wisconsin&lt;/option&gt;
+              &lt;option value="WY"&gt;Wyoming&lt;/option&gt;
+            &lt;/select&gt;
+          &lt;/div&gt;
+
+          &lt;div class="form-group form-group-btn"&gt;
+            &lt;button type="submit" class="btn-search"&gt;Search&lt;/button&gt;
+          &lt;/div&gt;
+
+        &lt;/div&gt;
+      &lt;/form&gt;
+    &lt;/section&gt;
+
+    &lt;!-- Results Header (hidden until search) --&gt;
+    &lt;div id="results-header" class="results-header" style="display:none;"&gt;
+      &lt;h3 id="results-title"&gt;&lt;/h3&gt;
+      &lt;p id="results-count"&gt;&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Loading Spinner (hidden by default) --&gt;
+    &lt;div id="loading" class="loading" style="display:none;"&gt;
+      &lt;div class="spinner"&gt;&lt;/div&gt;
+      &lt;p&gt;Searching for jobs...&lt;/p&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Results Container --&gt;
+    &lt;div id="results" class="results-grid"&gt;
+      &lt;!-- Job cards will be inserted here by JavaScript --&gt;
+    &lt;/div&gt;
+
+  &lt;/main&gt;
+
+  &lt;footer class="site-footer"&gt;
+    &lt;p&gt;&amp;copy; 2025 Resumator &mdash; Built at Coders Farm&lt;/p&gt;
+  &lt;/footer&gt;
+
+  &lt;script src="/js/search.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>Let us walk through the important pieces of this HTML.</p>
+
+      <p><strong>The header</strong> gives your app an identity. The <code>&lt;h1&gt;</code> with class <code>logo</code> shows the app name, and the <code>&lt;nav&gt;</code> provides links between the Search page and the Favorites page. Notice the <code>active</code> class on the Search link &mdash; that is how we will highlight the current page in the navigation. This is a pattern you learned in Lesson 4 with CSS selectors: apply a class to one link and style it differently.</p>
+
+      <p><strong>The search form</strong> has three inputs wrapped in a <code>form-row</code> div so we can lay them out side by side with CSS flexbox. The job title input uses <code>required</code> so the browser will prevent submission if it is empty &mdash; remember form validation from Lesson 2? The city input is optional, because some people want to search nationwide. The state dropdown uses a <code>&lt;select&gt;</code> element with all 50 U.S. states. The first <code>&lt;option&gt;</code> has an empty value and reads "Any State," which is the default. When nothing is selected, no state filter is applied to the API call.</p>
+
+      <p><strong>The results area</strong> has three parts. The <code>results-header</code> div will show text like "Showing results for: Software Engineer in Michigan" after a search is performed. The <code>loading</code> div contains a spinner animation that appears while waiting for the API response. And the <code>results</code> div is an empty container where JavaScript will insert job cards dynamically. All three start hidden &mdash; they only appear when JavaScript toggles them.</p>
+
+      <div class="key-concept">
+        <h4>The id Attribute is Your JavaScript Hook</h4>
+        <p>Notice how every important element has an <code>id</code>: <code>search-form</code>, <code>job-title</code>, <code>city</code>, <code>state</code>, <code>loading</code>, <code>results</code>, <code>results-header</code>, <code>results-title</code>, <code>results-count</code>. These are the handles that JavaScript uses to find and manipulate elements. In Lesson 5, you learned <code>document.getElementById()</code> &mdash; that is exactly how your search JavaScript will grab each of these elements. Think of <code>id</code> values as name tags on every important piece of your page.</p>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 3: CSS Styling                       -->
+      <!-- ======================================== -->
+      <h2>3. Professional Styling (style.css)</h2>
+
+      <p>HTML without CSS is like a house without paint, furniture, or landscaping &mdash; structurally sound but not somewhere anyone wants to spend time. Let us make Resumator look like a real application. Create <code>css/style.css</code> inside your static folder and add the following styles.</p>
+
+      <p>This is a substantial CSS file. We are covering the entire app: layout, header, search form, job cards, responsive breakpoints, loading animation, and the favorites page styling. Do not feel like you need to memorize every line. Read through it to understand the patterns, and refer back to it when you need to tweak something.</p>
+
+      <div class="code-editor" data-language="css" data-editable="false" data-runnable="false">
+        <pre><code>/* ===== RESET &amp; BASE ===== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+               Roboto, Oxygen, Ubuntu, sans-serif;
+  background: #f4f6f9;
+  color: #1a1a2e;
+  line-height: 1.6;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: #2563eb; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+/* ===== HEADER ===== */
+.site-header {
+  background: #1a1a2e;
+  color: #fff;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.main-nav { display: flex; gap: 1.5rem; }
+
+.nav-link {
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  padding: 0.25rem 0;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+  color: #fff;
+  border-bottom-color: #60a5fa;
+  text-decoration: none;
+}
+
+/* ===== CONTAINER ===== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  flex: 1;
+}
+
+/* ===== SEARCH SECTION ===== */
+.search-section {
+  background: #fff;
+  border-radius: 12px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.search-section h2 {
+  margin-bottom: 1.25rem;
+  font-size: 1.4rem;
+  color: #1a1a2e;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.form-group {
+  flex: 1;
+  min-width: 160px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 0.35rem;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: #f9fafb;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+}
+
+.form-group-btn {
+  flex: 0 0 auto;
+  min-width: auto;
+}
+
+.btn-search {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 0.65rem 2rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-search:hover { background: #1d4ed8; }
+
+/* ===== RESULTS HEADER ===== */
+.results-header {
+  margin-bottom: 1rem;
+}
+
+.results-header h3 {
+  font-size: 1.1rem;
+  color: #374151;
+}
+
+.results-header p {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* ===== LOADING SPINNER ===== */
+.loading {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  margin: 0 auto 1rem;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ===== JOB CARDS GRID ===== */
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.25rem;
+}
+
+/* ===== INDIVIDUAL JOB CARD ===== */
+.job-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.job-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  transform: translateY(-2px);
+}
+
+.job-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.company-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  object-fit: contain;
+  background: #f3f4f6;
+  flex-shrink: 0;
+}
+
+.job-card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1a1a2e;
+  margin-bottom: 0.15rem;
+}
+
+.job-card-company {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.job-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.meta-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: #4b5563;
+  background: #f3f4f6;
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+}
+
+.meta-tag.salary { background: #ecfdf5; color: #065f46; }
+
+.job-card-description {
+  font-size: 0.9rem;
+  color: #4b5563;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+  flex: 1;
+  /* Clamp to 3 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.job-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.btn-apply {
+  display: inline-block;
+  background: #2563eb;
+  color: #fff;
+  padding: 0.45rem 1.25rem;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-apply:hover {
+  background: #1d4ed8;
+  text-decoration: none;
+}
+
+.btn-favorite {
+  background: none;
+  border: 2px solid #d1d5db;
+  border-radius: 6px;
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: #9ca3af;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.btn-favorite:hover {
+  color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+.btn-favorite.favorited {
+  color: #f59e0b;
+  border-color: #f59e0b;
+}
+
+/* ===== EMPTY / ERROR STATES ===== */
+.no-results, .error-message {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6b7280;
+}
+
+.no-results h3, .error-message h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #374151;
+}
+
+.error-message { color: #dc2626; }
+
+/* ===== FOOTER ===== */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  margin-top: auto;
+}
+
+/* ===== RESPONSIVE: Stack on mobile ===== */
+@media (max-width: 640px) {
+  .form-row {
+    flex-direction: column;
+  }
+
+  .form-group {
+    min-width: 100%;
+  }
+
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header-inner {
+    flex-direction: column;
+    height: auto;
+    padding: 0.75rem 0;
+    gap: 0.5rem;
+  }
+}</code></pre>
+      </div>
+
+      <p>Let us highlight the most important CSS techniques at work here.</p>
+
+      <p><strong>The card grid</strong> uses <code>display: grid</code> with <code>grid-template-columns: repeat(auto-fill, minmax(340px, 1fr))</code>. This is one of the most useful CSS grid patterns in existence. It says: "Create as many columns as will fit, but make each one at least 340 pixels wide. If there is extra space, stretch them equally." On a wide screen you get three cards per row. On a tablet you get two. On a phone you get one. All from a single line of CSS &mdash; no media queries needed for the grid itself.</p>
+
+      <p><strong>The card hover effect</strong> uses <code>transform: translateY(-2px)</code> and an enhanced <code>box-shadow</code> on hover. This creates a subtle "lift" effect that makes the card feel interactive. Users instinctively understand that this element is clickable or important. Small touches like this are what separate a student project from a professional application.</p>
+
+      <p><strong>The description clamp</strong> uses <code>-webkit-line-clamp: 3</code> to limit the job description to exactly three lines of text, cutting off anything longer with an ellipsis. Job descriptions from APIs can be extremely long &mdash; sometimes multiple paragraphs. Without clamping, one verbose listing would dominate the entire page. This technique keeps every card the same height and looking neat.</p>
+
+      <p><strong>The loading spinner</strong> is pure CSS. The <code>.spinner</code> is a circle (created with <code>border-radius: 50%</code>) with a gray border on three sides and a blue border on top. The <code>@keyframes spin</code> animation rotates it 360 degrees continuously. No images, no JavaScript, no libraries &mdash; just four CSS properties and an animation.</p>
+
+      <div class="callout">
+        <strong>Responsive design recap:</strong> Remember from Lesson 4 that <code>@media (max-width: 640px)</code> means "apply these styles only when the screen is 640 pixels wide or narrower." On small screens, we switch the form to a vertical stack and force the results grid to a single column. Test this by resizing your browser window or using your browser's developer tools to simulate a phone screen.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 4: Search JavaScript                 -->
+      <!-- ======================================== -->
+      <h2>4. The Search Logic (search.js)</h2>
+
+      <p>This is where everything comes alive. The JavaScript file is the brain of your search page. It listens for form submissions, talks to your API, and builds the job cards that users see. This is real, production-style frontend code. Every line matters, so we will go through it piece by piece after showing the full file.</p>
+
+      <p>Create <code>js/search.js</code> inside your static folder:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>// ===== DOM ELEMENT REFERENCES =====
+const searchForm    = document.getElementById("search-form");
+const jobTitleInput = document.getElementById("job-title");
+const cityInput     = document.getElementById("city");
+const stateSelect   = document.getElementById("state");
+const resultsDiv    = document.getElementById("results");
+const loadingDiv    = document.getElementById("loading");
+const resultsHeader = document.getElementById("results-header");
+const resultsTitle  = document.getElementById("results-title");
+const resultsCount  = document.getElementById("results-count");
+
+// ===== FORM SUBMIT HANDLER =====
+searchForm.addEventListener("submit", function (event) {
+  event.preventDefault(); // Stop the page from reloading
+
+  const query = jobTitleInput.value.trim();
+  const city  = cityInput.value.trim();
+  const state = stateSelect.value;
+
+  if (!query) {
+    alert("Please enter a job title.");
+    return;
+  }
+
+  // Build the location string (e.g. "Lansing, MI" or just "MI")
+  let location = "";
+  if (city &amp;&amp; state) {
+    location = city + ", " + state;
+  } else if (city) {
+    location = city;
+  } else if (state) {
+    location = state;
+  }
+
+  // Build the API URL with query parameters
+  let apiUrl = "/api/jobs/search?query=" + encodeURIComponent(query);
+  if (location) {
+    apiUrl += "&amp;location=" + encodeURIComponent(location);
+  }
+
+  // Perform the search
+  performSearch(apiUrl, query, location);
+});
+
+// ===== FETCH AND DISPLAY RESULTS =====
+function performSearch(apiUrl, query, location) {
+  // Show loading, hide previous results
+  loadingDiv.style.display = "block";
+  resultsDiv.innerHTML = "";
+  resultsHeader.style.display = "none";
+
+  fetch(apiUrl)
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("Server returned " + response.status);
+      }
+      return response.json();
+    })
+    .then(function (jobs) {
+      loadingDiv.style.display = "none";
+
+      // Show results header
+      let headerText = "Showing results for: " + query;
+      if (location) {
+        headerText += " in " + location;
+      }
+      resultsTitle.textContent = headerText;
+      resultsCount.textContent = jobs.length + " job(s) found";
+      resultsHeader.style.display = "block";
+
+      if (jobs.length === 0) {
+        resultsDiv.innerHTML =
+          '&lt;div class="no-results"&gt;' +
+          "  &lt;h3&gt;No jobs found&lt;/h3&gt;" +
+          "  &lt;p&gt;Try different keywords or a broader location.&lt;/p&gt;" +
+          "&lt;/div&gt;";
+        return;
+      }
+
+      // Save last results to sessionStorage
+      sessionStorage.setItem("lastSearch", JSON.stringify({
+        query: query,
+        location: location,
+        results: jobs
+      }));
+
+      // Create a card for each job
+      jobs.forEach(function (job) {
+        const card = createJobCard(job);
+        resultsDiv.appendChild(card);
+      });
+    })
+    .catch(function (error) {
+      loadingDiv.style.display = "none";
+      resultsDiv.innerHTML =
+        '&lt;div class="error-message"&gt;' +
+        "  &lt;h3&gt;Something went wrong&lt;/h3&gt;" +
+        "  &lt;p&gt;" + error.message + "&lt;/p&gt;" +
+        "&lt;/div&gt;";
+    });
+}
+
+// ===== CREATE A SINGLE JOB CARD =====
+function createJobCard(job) {
+  const card = document.createElement("div");
+  card.className = "job-card";
+
+  // Company logo (use a placeholder if none provided)
+  const logoUrl = job.companyLogo
+    ? job.companyLogo
+    : "https://via.placeholder.com/48x48?text=" +
+      encodeURIComponent(job.company ? job.company.charAt(0) : "?");
+
+  // Salary text
+  const salaryText = job.salaryMin &amp;&amp; job.salaryMax
+    ? "$" + job.salaryMin.toLocaleString() + " - $" +
+      job.salaryMax.toLocaleString()
+    : job.salary || "Salary not listed";
+
+  // Description snippet (first 200 characters)
+  const snippet = job.description
+    ? job.description.substring(0, 200) + "..."
+    : "No description available.";
+
+  card.innerHTML =
+    '&lt;div class="job-card-header"&gt;' +
+    '  &lt;img class="company-logo" src="' + logoUrl +
+         '" alt="' + (job.company || "Company") + ' logo"&gt;' +
+    "  &lt;div&gt;" +
+    '    &lt;div class="job-card-title"&gt;' +
+           (job.title || "Untitled Position") + "&lt;/div&gt;" +
+    '    &lt;div class="job-card-company"&gt;' +
+           (job.company || "Company not listed") + "&lt;/div&gt;" +
+    "  &lt;/div&gt;" +
+    "&lt;/div&gt;" +
+    '&lt;div class="job-card-meta"&gt;' +
+    '  &lt;span class="meta-tag"&gt;&#x1f4cd; ' +
+         (job.location || "Remote") + "&lt;/span&gt;" +
+    '  &lt;span class="meta-tag salary"&gt;&#x1f4b0; ' +
+         salaryText + "&lt;/span&gt;" +
+    "&lt;/div&gt;" +
+    '&lt;p class="job-card-description"&gt;' + snippet + "&lt;/p&gt;" +
+    '&lt;div class="job-card-actions"&gt;' +
+    '  &lt;a class="btn-apply" href="' +
+         (job.url || "#") + '" target="_blank"&gt;Apply&lt;/a&gt;' +
+    '  &lt;button class="btn-favorite" title="Save to favorites"' +
+    '    data-job-id="' + (job.id || "") + '"&gt;&#9734;&lt;/button&gt;' +
+    "&lt;/div&gt;";
+
+  // Wire up the favorite button
+  const favBtn = card.querySelector(".btn-favorite");
+  favBtn.addEventListener("click", function () {
+    handleFavorite(job, favBtn);
+  });
+
+  return card;
+}
+
+// ===== HANDLE FAVORITE BUTTON CLICK =====
+function handleFavorite(job, button) {
+  console.log("Saving favorite:", job.title, "at", job.company);
+
+  fetch("/api/favorites", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      jobId:    job.id,
+      title:    job.title,
+      company:  job.company,
+      location: job.location,
+      url:      job.url
+    })
+  })
+    .then(function (response) {
+      if (response.ok) {
+        button.classList.add("favorited");
+        button.textContent = "\u2605"; // Filled star
+        button.title = "Saved to favorites!";
+      } else {
+        console.error("Failed to save favorite:", response.status);
+      }
+    })
+    .catch(function (error) {
+      console.error("Error saving favorite:", error);
+    });
+}</code></pre>
+      </div>
+
+      <p>That is a substantial file, and every line has a purpose. Let us break it down into the key sections.</p>
+
+      <h3>Section 1: DOM References</h3>
+
+      <p>The first block grabs references to every HTML element that JavaScript needs to interact with. We use <code>document.getElementById()</code> &mdash; the same method you learned in Lesson 5 &mdash; to get each element by its <code>id</code>. We store these in <code>const</code> variables at the top of the file so we do not have to look them up repeatedly. This is a common pattern in professional JavaScript: gather your references once, then use them throughout.</p>
+
+      <h3>Section 2: Form Submit Handler</h3>
+
+      <p>The <code>searchForm.addEventListener("submit", ...)</code> line listens for the form's submit event. When the user clicks the Search button <em>or</em> presses the Enter key while focused on an input, this function runs. The very first thing it does is call <code>event.preventDefault()</code>. This is critical. Without it, the browser would do what forms normally do &mdash; navigate to a new page. We do not want that. We want to stay on the same page and use JavaScript to fetch the results. This is called a <strong>single-page application</strong> pattern.</p>
+
+      <p>Next, we read the values from each input. The <code>.trim()</code> method removes any extra spaces the user might have typed at the beginning or end. Then we build a location string by combining the city and state, handling all the cases: both city and state provided, only city, only state, or neither.</p>
+
+      <div class="key-concept">
+        <h4>encodeURIComponent &mdash; Why It Matters</h4>
+        <p>Notice we use <code>encodeURIComponent(query)</code> when building the URL. This converts special characters into URL-safe versions. For example, if someone searches for "C# developer", the <code>#</code> character has a special meaning in URLs (it marks a page anchor). Without encoding, the URL would break. <code>encodeURIComponent</code> converts it to <code>C%23%20developer</code>, which is safe to send. Always encode user input before putting it in a URL. This is a security and correctness best practice.</p>
+      </div>
+
+      <h3>Section 3: Fetch and Display</h3>
+
+      <p>The <code>performSearch()</code> function is where the magic happens. It uses the <strong>Fetch API</strong> to make an HTTP GET request to your Spring Boot backend. Let us trace the flow:</p>
+
+      <ol>
+        <li><strong>Show loading state.</strong> We set <code>loadingDiv.style.display = "block"</code> to show the spinner and clear any previous results. This gives the user immediate feedback that something is happening.</li>
+        <li><strong>Call fetch().</strong> The <code>fetch(apiUrl)</code> call sends a GET request to your API endpoint (e.g., <code>/api/jobs/search?query=developer&amp;location=MI</code>). This is the same URL you typed into the browser in Lesson 24, but now JavaScript is doing it programmatically.</li>
+        <li><strong>Check the response.</strong> The first <code>.then()</code> checks if the response was successful. If the server returned a 404 or 500 error, we throw an exception so it gets caught by the <code>.catch()</code> block.</li>
+        <li><strong>Parse JSON.</strong> <code>response.json()</code> converts the raw response into a JavaScript array of job objects. This is the same JSON you saw in Lesson 24 &mdash; but now it is a real JavaScript data structure you can loop through.</li>
+        <li><strong>Build cards.</strong> For each job in the array, we call <code>createJobCard(job)</code> and append the resulting HTML element to the results container.</li>
+        <li><strong>Handle errors.</strong> If anything goes wrong &mdash; network failure, server error, JSON parse error &mdash; the <code>.catch()</code> block shows a friendly error message instead of leaving the user staring at a blank page.</li>
+      </ol>
+
+      <h3>Section 4: Creating Job Cards</h3>
+
+      <p>The <code>createJobCard()</code> function takes a single job object (from the JSON array) and returns a fully built DOM element. It creates a <code>&lt;div&gt;</code>, sets its class to <code>job-card</code>, and fills its <code>innerHTML</code> with the card markup. This is the same DOM manipulation you practiced in Lesson 6 &mdash; just on a larger scale.</p>
+
+      <p>Notice how we handle missing data gracefully. If there is no company logo, we generate a placeholder image. If salary data is missing, we display "Salary not listed." If the description is null, we show "No description available." Real-world APIs are messy. Some job listings have every field filled out, and others are missing half their data. Your code must handle both cases without crashing.</p>
+
+      <h3>Section 5: Favorite Button</h3>
+
+      <p>Each card has a star button. When clicked, it sends a POST request to <code>/api/favorites</code> with the job data as JSON. If the server responds successfully, the star changes from an outline (<code>&#9734;</code>) to a filled star (<code>&#9733;</code>) and the button gets a <code>favorited</code> class for styling. For now, the <code>/api/favorites</code> endpoint might not exist yet &mdash; that is fine. The <code>console.log</code> at the top of the handler lets you verify the button is working by checking your browser's developer console. You will build the favorites API in a later lesson.</p>
+
+      <div class="callout">
+        <strong>Check the console!</strong> Open your browser's Developer Tools (press <kbd>F12</kbd> or right-click and choose "Inspect") and click the <strong>Console</strong> tab. When you click a favorite button, you should see a message like "Saving favorite: Software Engineer at Google." If you see an error about the <code>/api/favorites</code> endpoint not existing (a 404 error), that is expected &mdash; we have not built that endpoint yet. The important thing is that the JavaScript code is executing correctly and trying to make the request.
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 5: Test the Full Flow                -->
+      <!-- ======================================== -->
+      <h2>5. Test the Full Flow</h2>
+
+      <p>You have all three files in place: <code>index.html</code>, <code>css/style.css</code>, and <code>js/search.js</code>. Let us see them work together.</p>
+
+      <p><strong>Step 1:</strong> Make sure your project structure looks like this:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>src/main/resources/static/
+├── index.html
+├── css/
+│   └── style.css
+└── js/
+    └── search.js</code></pre>
+      </div>
+
+      <p><strong>Step 2:</strong> Start your Spring Boot server from the project root:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>./mvnw spring-boot:run</code></pre>
+      </div>
+
+      <p><strong>Step 3:</strong> Open your browser and go to <code>http://localhost:8080</code>. You should see the Resumator search page with the header, form, and footer. No more raw JSON &mdash; you have a real interface.</p>
+
+      <p><strong>Step 4:</strong> Type a job title like "Java developer" in the search box. Optionally enter a city and select a state. Click <strong>Search</strong>.</p>
+
+      <p><strong>Step 5:</strong> Watch the spinner appear briefly, then see job cards fill the page. Each card should show the job title, company name and logo, location, salary, a description snippet, an Apply button, and a Favorite star.</p>
+
+      <div class="callout">
+        <strong>Troubleshooting:</strong> If you see "Something went wrong" instead of results, open the browser console (F12 &rarr; Console) and look at the error message. Common issues:
+        <ul>
+          <li><strong>"Server returned 500"</strong> &mdash; Your API key might be expired or your backend has an error. Check the Spring Boot terminal output for details.</li>
+          <li><strong>"Failed to fetch"</strong> &mdash; Your Spring Boot server is not running. Start it with <code>./mvnw spring-boot:run</code>.</li>
+          <li><strong>Page shows raw HTML code</strong> &mdash; You might have opened the file directly instead of through <code>http://localhost:8080</code>. Always use the localhost URL.</li>
+          <li><strong>Styles not loading</strong> &mdash; Check that your <code>css/</code> folder is inside <code>src/main/resources/static/</code>, not somewhere else.</li>
+        </ul>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 6: Polish                            -->
+      <!-- ======================================== -->
+      <h2>6. Polish and User Experience</h2>
+
+      <p>Your search page works, but there are several small improvements that turn a "working prototype" into an application that feels <em>good</em> to use. These are the kinds of details that real developers spend significant time on. Let us add a few.</p>
+
+      <h3>6.1 Enter Key Submits the Form</h3>
+
+      <p>You might have noticed this already works out of the box. Because we used a proper <code>&lt;form&gt;</code> element with a submit button, pressing Enter in any input field automatically triggers the form's submit event. This is one of the benefits of using semantic HTML &mdash; you get correct keyboard behavior for free. If we had used a <code>&lt;div&gt;</code> with an onclick handler instead of a <code>&lt;form&gt;</code>, we would have had to manually listen for Enter key presses on every input. Semantic HTML saves you work.</p>
+
+      <h3>6.2 "Showing Results For..." Header</h3>
+
+      <p>We already built this into the JavaScript. After a successful search, the <code>results-header</code> div shows text like "Showing results for: Software Engineer in Lansing, MI" along with a count of how many jobs were found. This gives the user context about what they are looking at, especially if they have scrolled down and the form is no longer visible.</p>
+
+      <h3>6.3 Session Storage for Last Results</h3>
+
+      <p>Notice this line in the JavaScript:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="false" data-runnable="false">
+        <pre><code>sessionStorage.setItem("lastSearch", JSON.stringify({
+  query: query,
+  location: location,
+  results: jobs
+}));</code></pre>
+      </div>
+
+      <p><code>sessionStorage</code> is a browser feature that lets you store data temporarily &mdash; it survives page refreshes but is cleared when the user closes the tab. We save the last search results so that if the user navigates to the Favorites page and comes back, we could restore their previous results instead of showing an empty page. This is a pattern used by many search applications. Right now the code saves the data. As an exercise, you could add code at the bottom of <code>search.js</code> that checks for saved results when the page loads and restores them.</p>
+
+      <h3>6.4 Pagination</h3>
+
+      <p>If your API returns many results, you might want to show them in pages of 10 or 20. To do this, your API would need to support <code>page</code> and <code>size</code> parameters (e.g., <code>/api/jobs/search?query=developer&amp;page=1&amp;size=10</code>), and your JavaScript would need "Previous" and "Next" buttons that increment the page number and re-fetch. This is a great feature to build on your own once you finish this lesson. For now, we display all results returned by the API.</p>
+
+      <!-- ======================================== -->
+      <!-- PART 7: Interactive Demo - Card Layout    -->
+      <!-- ======================================== -->
+      <h2>7. Try It: Search Form and Card Layout</h2>
+
+      <p>You do not need to wait until your full Spring Boot project is running to see what the cards will look like. The editor below contains a self-contained demo of the search form and a sample job card. Click <strong>Run</strong> to see it rendered in the output area. Try modifying the card content &mdash; change the job title, the company name, or the salary &mdash; and run it again.</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="true">
+        <pre><code>&lt;style&gt;
+  body { font-family: sans-serif; background: #f4f6f9; padding: 1rem; }
+  .search-form {
+    background: #fff; padding: 1.25rem; border-radius: 10px;
+    margin-bottom: 1.5rem; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+  }
+  .search-form h3 { margin: 0 0 0.75rem; }
+  .form-row { display: flex; gap: 0.75rem; flex-wrap: wrap; align-items: flex-end; }
+  .form-group { flex: 1; min-width: 140px; }
+  .form-group label { display: block; font-size: 0.8rem; font-weight: 600; margin-bottom: 0.2rem; }
+  .form-group input, .form-group select {
+    width: 100%; padding: 0.5rem; border: 1px solid #d1d5db;
+    border-radius: 6px; font-size: 0.9rem;
+  }
+  .btn-search {
+    background: #2563eb; color: #fff; border: none;
+    padding: 0.5rem 1.5rem; border-radius: 6px; font-weight: 600; cursor: pointer;
+  }
+  .job-card {
+    background: #fff; padding: 1.25rem; border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08); max-width: 400px;
+  }
+  .job-title { font-size: 1.1rem; font-weight: 700; color: #1a1a2e; }
+  .job-company { font-size: 0.85rem; color: #6b7280; margin-bottom: 0.5rem; }
+  .meta { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+  .tag { font-size: 0.75rem; background: #f3f4f6; padding: 0.2rem 0.5rem; border-radius: 4px; }
+  .tag.salary { background: #ecfdf5; color: #065f46; }
+  .description { font-size: 0.85rem; color: #4b5563; margin-bottom: 0.75rem; }
+  .actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f3f4f6; padding-top: 0.5rem; }
+  .btn-apply { background: #2563eb; color: #fff; padding: 0.35rem 1rem; border-radius: 5px; text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+  .btn-fav { background: none; border: 2px solid #d1d5db; border-radius: 5px; padding: 0.3rem 0.5rem; cursor: pointer; font-size: 1rem; }
+&lt;/style&gt;
+
+&lt;div class="search-form"&gt;
+  &lt;h3&gt;Find Your Next Opportunity&lt;/h3&gt;
+  &lt;div class="form-row"&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label&gt;Job Title&lt;/label&gt;
+      &lt;input type="text" placeholder="e.g. Software Engineer" value="Java Developer"&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label&gt;City&lt;/label&gt;
+      &lt;input type="text" placeholder="e.g. Lansing" value="Lansing"&gt;
+    &lt;/div&gt;
+    &lt;div class="form-group"&gt;
+      &lt;label&gt;State&lt;/label&gt;
+      &lt;select&gt;
+        &lt;option value="MI" selected&gt;Michigan&lt;/option&gt;
+      &lt;/select&gt;
+    &lt;/div&gt;
+    &lt;button class="btn-search"&gt;Search&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="job-card"&gt;
+  &lt;div class="job-title"&gt;Senior Java Developer&lt;/div&gt;
+  &lt;div class="job-company"&gt;TechCorp Inc.&lt;/div&gt;
+  &lt;div class="meta"&gt;
+    &lt;span class="tag"&gt;&#x1f4cd; Lansing, MI&lt;/span&gt;
+    &lt;span class="tag salary"&gt;&#x1f4b0; $85,000 - $120,000&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;p class="description"&gt;We are looking for an experienced Java developer to join our team. You will work on enterprise applications using Spring Boot, microservices, and cloud technologies...&lt;/p&gt;
+  &lt;div class="actions"&gt;
+    &lt;a href="#" class="btn-apply"&gt;Apply&lt;/a&gt;
+    &lt;button class="btn-fav" title="Save to favorites"&gt;&#9734;&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- PART 8: Interactive Demo - Fetch Logic    -->
+      <!-- ======================================== -->
+      <h2>8. Try It: Building the Search URL and Creating Cards</h2>
+
+      <p>The editor below demonstrates how the JavaScript builds a search URL from user input and dynamically creates job cards. This demo uses sample data instead of a live API call so you can experiment without running your Spring Boot server. Click <strong>Run</strong> to see it in action. Try modifying the <code>sampleJobs</code> array &mdash; add a new job, change a title, or remove the salary to see how the code handles missing data.</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="true">
+        <pre><code>// Demo: Building a search URL from user inputs
+const query = "Software Engineer";
+const city = "Lansing";
+const state = "MI";
+
+// Build the location string
+let location = "";
+if (city &amp;&amp; state) {
+  location = city + ", " + state;
+} else if (city) {
+  location = city;
+} else if (state) {
+  location = state;
+}
+
+// Build the full API URL
+let apiUrl = "/api/jobs/search?query=" + encodeURIComponent(query);
+if (location) {
+  apiUrl += "&amp;location=" + encodeURIComponent(location);
+}
+
+console.log("API URL that would be fetched:");
+console.log(apiUrl);
+console.log("---");
+
+// Simulated API response (same shape as your real API)
+const sampleJobs = [
+  {
+    title: "Senior Software Engineer",
+    company: "TechCorp",
+    location: "Lansing, MI",
+    salaryMin: 95000,
+    salaryMax: 130000,
+    description: "Build scalable web applications using Java and Spring Boot.",
+    url: "https://example.com/apply/123"
+  },
+  {
+    title: "Full Stack Developer",
+    company: "StartupXYZ",
+    location: "Remote",
+    salary: "$80,000 - $110,000",
+    description: "Work on exciting projects with React and Node.js.",
+    url: "https://example.com/apply/456"
+  },
+  {
+    title: "Junior Developer",
+    company: "LearnCo",
+    location: "Detroit, MI",
+    description: "Great opportunity for new developers. No salary listed.",
+    url: null
+  }
+];
+
+// Create card text for each job (simulating what the DOM would show)
+console.log("Job Cards that would be created:");
+console.log("================================");
+
+sampleJobs.forEach(function (job, index) {
+  // Handle salary display
+  let salaryText;
+  if (job.salaryMin &amp;&amp; job.salaryMax) {
+    salaryText = "$" + job.salaryMin.toLocaleString() +
+                 " - $" + job.salaryMax.toLocaleString();
+  } else if (job.salary) {
+    salaryText = job.salary;
+  } else {
+    salaryText = "Salary not listed";
+  }
+
+  // Handle missing description
+  const snippet = job.description
+    ? job.description.substring(0, 100) + "..."
+    : "No description available.";
+
+  console.log("Card " + (index + 1) + ":");
+  console.log("  Title:    " + (job.title || "Untitled"));
+  console.log("  Company:  " + (job.company || "Unknown"));
+  console.log("  Location: " + (job.location || "Remote"));
+  console.log("  Salary:   " + salaryText);
+  console.log("  Snippet:  " + snippet);
+  console.log("  Apply:    " + (job.url || "No link available"));
+  console.log("---");
+});
+
+console.log("Total cards: " + sampleJobs.length);</code></pre>
+      </div>
+
+      <p>When you run this demo, look at the Console tab in the output area. You will see the exact URL that would be fetched and a text representation of each job card. In the real application, instead of <code>console.log</code>, the <code>createJobCard()</code> function builds actual DOM elements that appear on the page. But the logic for handling missing data, building the URL, and iterating through results is identical.</p>
+
+      <!-- ======================================== -->
+      <!-- QUIZ                                     -->
+      <!-- ======================================== -->
+      <h2>Test Your Knowledge</h2>
+
+      <div class="quiz" data-id="q25-1">
+        <p class="quiz-question">1. Why do we call <code>event.preventDefault()</code> inside the form submit handler?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q25-1" value="a"> It prevents the browser from running JavaScript</label>
+          <label><input type="radio" name="q25-1" value="b"> It stops the browser from navigating to a new page, so we can handle the form submission with JavaScript instead</label>
+          <label><input type="radio" name="q25-1" value="c"> It clears the form input fields automatically</label>
+          <label><input type="radio" name="q25-1" value="d"> It prevents other users from submitting the same search</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! By default, when an HTML form is submitted, the browser navigates to the URL specified in the form's <code>action</code> attribute (or reloads the current page). Calling <code>event.preventDefault()</code> cancels this default behavior, allowing us to handle the submission with JavaScript instead. We use <code>fetch()</code> to call the API and dynamically display results without ever leaving the page.</div>
+      </div>
+
+      <div class="quiz" data-id="q25-2">
+        <p class="quiz-question">2. Where must you place static files (HTML, CSS, JS) for Spring Boot to serve them automatically?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q25-2" value="a"> In the project root directory next to <code>pom.xml</code></label>
+          <label><input type="radio" name="q25-2" value="b"> Inside <code>src/main/java/static/</code></label>
+          <label><input type="radio" name="q25-2" value="c"> Inside <code>src/main/resources/static/</code></label>
+          <label><input type="radio" name="q25-2" value="d"> In a separate web server like Apache or Nginx</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That's right! Spring Boot automatically serves any files placed in <code>src/main/resources/static/</code> at the root of your web server. For example, <code>static/index.html</code> is served at <code>http://localhost:8080/</code>, and <code>static/css/style.css</code> is served at <code>http://localhost:8080/css/style.css</code>. No additional configuration is needed.</div>
+      </div>
+
+      <div class="quiz" data-id="q25-3">
+        <p class="quiz-question">3. Why do we use <code>encodeURIComponent()</code> when building the API URL from user input?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="q25-3" value="a"> It encrypts the search query so no one can read it</label>
+          <label><input type="radio" name="q25-3" value="b"> It converts special characters (like spaces, <code>#</code>, and <code>&amp;</code>) into URL-safe format so the URL does not break</label>
+          <label><input type="radio" name="q25-3" value="c"> It compresses the text to make the request faster</label>
+          <label><input type="radio" name="q25-3" value="d"> It translates the query into a language the server understands</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct! URLs have special characters that carry specific meaning &mdash; for example, <code>&amp;</code> separates query parameters and <code>#</code> marks a page anchor. If user input contains these characters, the URL would be misinterpreted. <code>encodeURIComponent()</code> converts characters like spaces to <code>%20</code>, <code>&amp;</code> to <code>%26</code>, and <code>#</code> to <code>%23</code>, ensuring the URL is valid and the server receives the intended search text.</div>
+      </div>
+
+      <!-- ======================================== -->
+      <!-- LESSON SUMMARY                           -->
+      <!-- ======================================== -->
+      <h2>Lesson Summary</h2>
+
+      <p>In this lesson, you connected the frontend to the backend and built a real, usable search interface for Resumator. Here is everything you accomplished:</p>
+
+      <ul>
+        <li><strong>Static file serving:</strong> You learned that Spring Boot automatically serves HTML, CSS, and JavaScript files from <code>src/main/resources/static/</code>, eliminating the need for a separate web server.</li>
+        <li><strong>Search page HTML:</strong> You built a complete page with a header, navigation, search form (with a job title input, city input, and state dropdown for all 50 states), and a results container &mdash; all using the HTML skills from Lessons 1 and 2.</li>
+        <li><strong>Professional CSS:</strong> You styled job cards with a responsive grid layout that adapts from three columns on desktop to one column on mobile. You added a loading spinner, hover effects, salary tags, and a clean visual hierarchy.</li>
+        <li><strong>Fetch API integration:</strong> You wrote JavaScript that captures form submissions, builds an API URL with query parameters, fetches JSON data from your Spring Boot backend, and dynamically creates DOM elements to display the results.</li>
+        <li><strong>Error handling:</strong> You built graceful handling for empty results ("No jobs found"), network errors ("Something went wrong"), and missing data in API responses (fallback values for salary, description, and logos).</li>
+        <li><strong>Favorite button:</strong> You wired up a star button on each card that sends a POST request to <code>/api/favorites</code> and visually updates when clicked.</li>
+        <li><strong>Session storage:</strong> You saved the last search results to <code>sessionStorage</code> so they can be restored when the user returns to the page.</li>
+      </ul>
+
+      <p>Your Resumator application now has a working frontend and a working backend. A user can type in a job title, pick a location, and see real job listings displayed as beautiful, clickable cards. This is a fully functional web application.</p>
+
+      <p>In the next lesson, you will learn what happens when things go wrong &mdash; how to debug errors, handle edge cases, and build resilience into your application. Because in the real world, APIs go down, user input is unpredictable, and networks are unreliable. A good developer does not just build features &mdash; they build features that fail gracefully.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this lesson?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="resumator" data-lesson="25-search-interface">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/lessons/resumator/24-job-search-api.html" class="lesson-nav-btn">&larr; Previous: Job Search API</a>
+      <a href="/lessons/resumator/26-when-things-break.html" class="lesson-nav-btn">Next: When Things Break &rarr;</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
