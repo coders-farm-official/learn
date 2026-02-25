@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v5';
+const CACHE_NAME = 'cf-cache-v6';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -22,6 +22,7 @@ const APP_SHELL = [
   '/js/runner.js',
   '/js/progress.js',
   '/js/quiz.js',
+  '/js/narrator.js',
   '/js/lessons.js',
   '/assets/images/codersfarm-logo.svg',
   '/manifest.json',

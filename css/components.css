@@ -716,6 +716,133 @@
   margin-bottom: var(--space-2);
 }
 
+/* ========================================
+   Narrator — Listen to lesson
+   ======================================== */
+
+/* Play button in lesson header */
+.narrator-play-wrapper {
+  margin-top: var(--space-3);
+}
+
+.narrator-play-btn {
+  gap: var(--space-2);
+}
+
+.narrator-play-btn .narrator-icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+/* Per-word highlight while speaking */
+.narrator-word-active {
+  background-color: rgba(79, 193, 255, 0.3);
+  border-radius: 2px;
+  box-shadow: 0 0 0 2px rgba(79, 193, 255, 0.15);
+  transition: background-color 100ms ease;
+}
+
+[data-theme="light"] .narrator-word-active {
+  background-color: rgba(0, 102, 204, 0.2);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.1);
+}
+
+/* Active block indicator (visible even without word-level events) */
+.narrator-block-active {
+  border-left: 3px solid var(--accent);
+  padding-left: var(--space-2);
+  transition: border-color var(--transition-fast), padding-left var(--transition-fast);
+}
+
+/* Floating controls — only visible after play is pressed */
+.narrator-float {
+  position: fixed;
+  bottom: var(--space-4);
+  right: var(--space-4);
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  background-color: rgba(37, 37, 38, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  transition: opacity 250ms ease, transform 250ms ease;
+}
+
+.narrator-float.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+[data-theme="light"] .narrator-float {
+  background-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.narrator-float-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.narrator-float-btn:hover {
+  background-color: var(--bg-surface-hover);
+}
+
+.narrator-float-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.narrator-float-pause {
+  background-color: var(--accent);
+  color: #ffffff;
+}
+
+.narrator-float-pause:hover {
+  background-color: var(--accent-hover);
+}
+
+.narrator-float-pause svg {
+  stroke: #ffffff;
+}
+
+.narrator-float-rate {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  min-width: 40px;
+}
+
+.narrator-rate-label {
+  font-family: var(--font-mono);
+  font-size: var(--font-size-sm);
+}
+
+.narrator-float-progress {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+  padding: 0 var(--space-1);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .card-grid {
@@ -740,5 +867,12 @@
 
   .sq-grid {
     grid-template-columns: 1fr;
+  }
+
+  .narrator-float {
+    bottom: var(--space-3);
+    right: var(--space-3);
+    left: var(--space-3);
+    justify-content: center;
   }
 }

@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Lessons.init();
     Quiz.initAll();
     Editor.initAll();
+    Narrator.init();
     initInstallTabs();
   }
 
