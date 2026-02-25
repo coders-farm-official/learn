@@ -1,0 +1,197 @@
+/* ========================================
+   Coders Farm — Lesson Content Styles
+   Lesson-specific typography and content
+   ======================================== */
+
+/* Lesson content area */
+.lesson-content {
+  line-height: 1.8;
+}
+
+.lesson-content h2 {
+  margin-top: var(--space-7);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 1px solid var(--border);
+  font-size: var(--font-size-2xl);
+}
+
+.lesson-content h2:first-child {
+  margin-top: 0;
+}
+
+.lesson-content h3 {
+  margin-top: var(--space-5);
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-xl);
+  color: var(--accent);
+}
+
+.lesson-content p {
+  margin-bottom: var(--space-3);
+  font-size: var(--font-size-base);
+  line-height: 1.8;
+}
+
+.lesson-content ul,
+.lesson-content ol {
+  margin-bottom: var(--space-4);
+  padding-left: var(--space-5);
+}
+
+.lesson-content li {
+  margin-bottom: var(--space-2);
+  line-height: 1.7;
+}
+
+.lesson-content strong {
+  color: var(--text-primary);
+}
+
+/* Inline code in lessons */
+.lesson-content code {
+  font-size: 0.9em;
+  padding: 2px 6px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+}
+
+/* Code blocks in lessons */
+.lesson-content pre {
+  margin: var(--space-3) 0;
+  padding: var(--space-3);
+  background-color: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow-x: auto;
+}
+
+.lesson-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-primary);
+  font-size: var(--font-size-sm);
+  line-height: 1.6;
+}
+
+/* Key concept highlight */
+.key-concept {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  margin: var(--space-4) 0;
+}
+
+.key-concept h4 {
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+  font-size: var(--font-size-base);
+}
+
+/* Try it yourself section */
+.try-it {
+  margin: var(--space-5) 0;
+  padding: var(--space-4);
+  background-color: var(--bg-surface);
+  border: 2px dashed var(--accent);
+  border-radius: var(--radius-lg);
+}
+
+.try-it h4 {
+  color: var(--accent);
+  margin-bottom: var(--space-2);
+}
+
+.try-it p {
+  margin-bottom: var(--space-3);
+}
+
+/* Learning objectives */
+.learning-objectives {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
+  border: 1px solid var(--border);
+}
+
+.learning-objectives h4 {
+  margin-bottom: var(--space-2);
+  color: var(--success);
+}
+
+.learning-objectives ul {
+  list-style: none;
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.learning-objectives li {
+  padding-left: var(--space-4);
+  position: relative;
+}
+
+.learning-objectives li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 8px;
+  height: 8px;
+  background-color: var(--success);
+  border-radius: 50%;
+}
+
+/* Table for reference material */
+.lesson-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--space-4) 0;
+  font-size: var(--font-size-sm);
+}
+
+.lesson-table th,
+.lesson-table td {
+  padding: var(--space-2) var(--space-3);
+  text-align: left;
+  border: 1px solid var(--border);
+}
+
+.lesson-table th {
+  background-color: var(--bg-surface);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.lesson-table td {
+  color: var(--text-secondary);
+}
+
+.lesson-table code {
+  font-size: 0.85em;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lesson-content h2 {
+    font-size: var(--font-size-xl);
+    margin-top: var(--space-5);
+  }
+
+  .lesson-content h3 {
+    font-size: var(--font-size-lg);
+  }
+
+  .lesson-table {
+    font-size: 0.8rem;
+  }
+
+  .lesson-table th,
+  .lesson-table td {
+    padding: var(--space-1) var(--space-2);
+  }
+}
