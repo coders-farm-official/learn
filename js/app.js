@@ -3,6 +3,8 @@
    Initialization and page routing
    ======================================== */
 
+const SITE_VERSION = '1.6';
+
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme first (prevents flash)
   Theme.init();
@@ -27,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Available on every page
   initCheckForUpdates();
+  showSiteVersion();
 
   // Register service worker
   registerServiceWorker();
@@ -104,6 +107,15 @@ function initCatalog() {
     });
   }
 
+}
+
+function showSiteVersion() {
+  const footerLeft = document.querySelector('.footer-left');
+  if (!footerLeft) return;
+  const versionEl = document.createElement('span');
+  versionEl.className = 'site-version';
+  versionEl.textContent = ' v' + SITE_VERSION;
+  footerLeft.appendChild(versionEl);
 }
 
 function initCheckForUpdates() {

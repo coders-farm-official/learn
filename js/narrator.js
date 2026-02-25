@@ -201,6 +201,31 @@ const Narrator = (() => {
     }
   }
 
+  // --- Text chunking (mobile Chrome kills utterances after ~15s) ---
+
+  function splitTextIntoChunks(text) {
+    // Split on sentence-ending punctuation. The trailing |[^.!?]+$ catches
+    // text that doesn't end with punctuation (e.g. headings).
+    var parts = text.match(/[^.!?]+[.!?]+[\s]*|[^.!?]+$/g);
+    if (!parts || parts.length <= 1) return [text];
+
+    // Merge short consecutive sentences so we don't create too many
+    // utterances, but keep each chunk under ~200 chars for mobile safety.
+    var chunks = [];
+    var current = '';
+    for (var i = 0; i < parts.length; i++) {
+      if (current.length + parts[i].length > 200 && current.length > 0) {
+        chunks.push(current);
+        current = parts[i];
+      } else {
+        current += parts[i];
+      }
+    }
+    if (current) chunks.push(current);
+
+    return chunks.length > 0 ? chunks : [text];
+  }
+
   // --- Playback engine ---
 
   function speakBlock(index) {
@@ -224,56 +249,64 @@ const Narrator = (() => {
     currentBlockElement = element;
     element.classList.add('narrator-block-active');
 
-    // Build the utterance from the element's full text
-    const text = element.textContent;
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Split into short chunks so mobile browsers don't silently stop
+    const fullText = element.textContent;
+    const chunks = splitTextIntoChunks(fullText);
 
-    const voice = getPreferredVoice();
-    if (voice) {
-      utterance.voice = voice;
-      saveVoice(voice.name);
+    function speakChunk(chunkIndex, charOffset) {
+      if (chunkIndex >= chunks.length) {
+        unwrapCurrentBlock();
+        if (playing && !paused) {
+          speakBlock(index + 1);
+        }
+        return;
+      }
+
+      const chunkText = chunks[chunkIndex];
+      const utterance = new SpeechSynthesisUtterance(chunkText);
+
+      const voice = getPreferredVoice();
+      if (voice) {
+        utterance.voice = voice;
+        saveVoice(voice.name);
+      }
+      utterance.rate = getSavedRate();
+      utterance.pitch = 1;
+
+      // Per-word highlighting via boundary events.
+      // charOffset tracks where this chunk starts within the full block text
+      // so we can map back to the correct word span.
+      var currentCharOffset = charOffset;
+      utterance.onboundary = function (event) {
+        if (event.name !== 'word') return;
+        if (!currentWordMap) return;
+
+        currentWordMap.forEach(function (w) { w.span.classList.remove('narrator-word-active'); });
+
+        var ci = currentCharOffset + event.charIndex;
+        var match = currentWordMap.find(function (w) { return ci >= w.start && ci < w.end; });
+        if (match) {
+          match.span.classList.add('narrator-word-active');
+          match.span.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      };
+
+      utterance.onend = function () {
+        if (restarting) return;
+        speakChunk(chunkIndex + 1, charOffset + chunkText.length);
+      };
+
+      utterance.onerror = function (event) {
+        if (restarting) return;
+        if (event.error === 'canceled' || event.error === 'interrupted') return;
+        console.log('[Narrator] Speech error:', event.error);
+        speakChunk(chunkIndex + 1, charOffset + chunkText.length);
+      };
+
+      speechSynthesis.speak(utterance);
     }
-    utterance.rate = getSavedRate();
-    utterance.pitch = 1;
 
-    // Per-word highlighting via boundary events
-    utterance.onboundary = (event) => {
-      if (event.name !== 'word') return;
-      if (!currentWordMap) return;
-
-      // Clear previous highlight
-      currentWordMap.forEach(w => w.span.classList.remove('narrator-word-active'));
-
-      // Find the word span that matches this character index
-      const ci = event.charIndex;
-      const match = currentWordMap.find(w => ci >= w.start && ci < w.end);
-      if (match) {
-        match.span.classList.add('narrator-word-active');
-        match.span.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    };
-
-    // Advance to the next block when this one finishes
-    utterance.onend = () => {
-      if (restarting) return;
-      unwrapCurrentBlock();
-      if (playing && !paused) {
-        speakBlock(index + 1);
-      }
-    };
-
-    utterance.onerror = (event) => {
-      if (restarting) return;
-      // 'canceled' and 'interrupted' are expected when user stops/skips
-      if (event.error === 'canceled' || event.error === 'interrupted') return;
-      console.log('[Narrator] Speech error:', event.error);
-      unwrapCurrentBlock();
-      if (playing && !paused) {
-        speakBlock(index + 1);
-      }
-    };
-
-    speechSynthesis.speak(utterance);
+    speakChunk(0, 0);
     updateFloatingUI();
   }
 

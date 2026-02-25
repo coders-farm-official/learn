@@ -251,6 +251,10 @@
   font-size: var(--font-size-sm);
 }
 
+.site-version {
+  color: var(--text-muted);
+}
+
 .footer-links {
   display: flex;
   gap: var(--space-3);
