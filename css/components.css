@@ -509,6 +509,12 @@
 .sq-completed-count {
   font-size: var(--font-size-sm);
   color: var(--text-muted);
+  margin-bottom: 0;
+}
+
+.sq-completed-count-sup {
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
   margin-bottom: var(--space-4);
 }
 
