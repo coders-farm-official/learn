@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Report Abuse</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="auth-container">
+        <h2>Report Abuse</h2>
+        <p>If a codersfarm.com subdomain is being used for illegal content, impersonation, or
+           other violations of our <a th:href="@{/terms}">Terms of Service</a>, please let us know.</p>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <form th:action="@{/abuse/report}" method="post" th:object="${form}" class="auth-form">
+            <div class="form-group">
+                <label for="subdomainHandle">Subdomain</label>
+                <div class="domain-input-group">
+                    <input type="text" id="subdomainHandle" th:field="*{subdomainHandle}" required
+                           placeholder="handle"
+                           th:classappend="${#fields.hasErrors('subdomainHandle')} ? 'input-error'">
+                    <span class="domain-suffix">.codersfarm.com</span>
+                </div>
+                <span th:if="${#fields.hasErrors('subdomainHandle')}" class="field-error"
+                      th:errors="*{subdomainHandle}"></span>
+            </div>
+            <div class="form-group">
+                <label for="reporterContact">Your Contact (optional)</label>
+                <input type="text" id="reporterContact" th:field="*{reporterContact}"
+                       placeholder="Email or other contact method">
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" th:field="*{description}" required rows="5"
+                          placeholder="Describe the issue..."
+                          th:classappend="${#fields.hasErrors('description')} ? 'input-error'"></textarea>
+                <span th:if="${#fields.hasErrors('description')}" class="field-error"
+                      th:errors="*{description}"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Submit Report</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>

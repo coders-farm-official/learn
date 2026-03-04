@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head>
+    <title>Free Subdomain &amp; DNS Learning</title>
+</head>
+<body>
+<main layout:fragment="content">
+    <section class="hero">
+        <h1>Your Free Subdomain.<br>Your First Step into DNS.</h1>
+        <p class="hero-subtitle">
+            Get a free <strong>yourname.codersfarm.com</strong> subdomain and learn
+            how DNS &mdash; the phonebook of the internet &mdash; actually works.
+        </p>
+        <div class="hero-actions">
+            <a th:href="@{/auth/register}" class="btn btn-primary btn-lg">Claim Your Subdomain</a>
+            <a th:href="@{/learn}" class="btn btn-secondary btn-lg">Learn DNS First</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="feature-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#127760;</div>
+                <h3>Real Infrastructure</h3>
+                <p>Your subdomain is a real, working DNS entry. Point it at your server,
+                   your Cloudflare tunnel, your portfolio &mdash; anything.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128218;</div>
+                <h3>Learn by Doing</h3>
+                <p>Every action in the dashboard teaches you something.
+                   A, CNAME, TXT, MX &mdash; you'll understand them all.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#128274;</div>
+                <h3>Privacy First</h3>
+                <p>No tracking, no analytics, no IP logging.
+                   We collect only what's needed to run the service.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">&#127793;</div>
+                <h3>Nonprofit &amp; Free</h3>
+                <p>Coders Farm is a 501(c)(3). This service costs you nothing
+                   and always will.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <span class="step-number">1</span>
+                <h4>Create an account</h4>
+                <p>Sign up with your email. That's all we need.</p>
+            </div>
+            <div class="step">
+                <span class="step-number">2</span>
+                <h4>Pick your handle</h4>
+                <p>Choose <strong>yourname</strong>.codersfarm.com</p>
+            </div>
+            <div class="step">
+                <span class="step-number">3</span>
+                <h4>Manage your DNS</h4>
+                <p>Add A, CNAME, TXT, MX, and AAAA records from your dashboard.</p>
+            </div>
+        </div>
+    </section>
+</main>
+</body>
+</html>

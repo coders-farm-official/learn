@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Raw Zone File</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="dashboard">
+        <h2>Raw DNS Zone</h2>
+        <p>This is the raw zone file representation of your DNS records for
+           <strong th:text="${subdomain.fullDomain}"></strong>.</p>
+
+        <div class="learn-card">
+            <h4>&#128218; What is a zone file?</h4>
+            <p>A zone file is the actual text file that DNS servers read to know how to answer
+               queries for your domain. Each line maps a name to a value with a record type and TTL.
+               This is what's happening "under the hood" when you add records in the dashboard.</p>
+        </div>
+
+        <pre class="zone-file" id="zoneContent"><code th:text="${zoneFile}"></code></pre>
+        <button class="btn btn-secondary" onclick="copyZone()">Copy Zone File</button>
+        <a th:href="@{/dashboard}" class="btn btn-secondary">Back to Dashboard</a>
+    </div>
+</main>
+</body>
+</html>

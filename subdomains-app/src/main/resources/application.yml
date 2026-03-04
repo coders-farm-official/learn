@@ -1,0 +1,77 @@
+spring:
+  application:
+    name: codersfarm-dns-manager
+
+  # Default profile uses H2 for local development
+  datasource:
+    url: jdbc:h2:file:./data/subdomains-db
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
+  thymeleaf:
+    cache: false
+
+server:
+  port: 8080
+
+# Application-specific config
+app:
+  base-domain: codersfarm.com
+  max-records-per-subdomain: 20
+  subdomain-min-length: 3
+  subdomain-max-length: 32
+  stale-days: 90
+  magic-link-expiry-minutes: 15
+  email-from: noreply@codersfarm.com
+
+# Cloudflare API (stubbed by default)
+cloudflare:
+  api-token: ${CLOUDFLARE_API_TOKEN:stub}
+  zone-id: ${CLOUDFLARE_ZONE_ID:stub}
+  base-url: https://api.cloudflare.com/client/v4
+
+---
+spring:
+  config:
+    activate:
+      on-profile: postgres
+
+  datasource:
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:subdomains}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USER:codersfarm}
+    password: ${DB_PASSWORD:}
+
+  h2:
+    console:
+      enabled: false
+
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

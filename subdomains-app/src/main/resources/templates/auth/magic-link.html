@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Magic Link Login</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="auth-container">
+        <h2>Passwordless Login</h2>
+        <p class="auth-subtitle">We'll email you a one-time login link.</p>
+
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <form th:action="@{/auth/magic-link}" method="post" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required autofocus
+                       placeholder="you@example.com">
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Send Login Link</button>
+        </form>
+
+        <div class="auth-alt-links">
+            <a th:href="@{/auth/login}">Back to regular login</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

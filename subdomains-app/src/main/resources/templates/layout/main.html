@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title layout:title-pattern="$CONTENT_TITLE — Coders Farm DNS">Coders Farm DNS Manager</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-content">
+            <a th:href="@{/}" class="nav-brand">
+                <span class="brand-icon">&#9781;</span> Coders Farm DNS
+            </a>
+            <div class="nav-links">
+                <a th:href="@{/learn}" class="nav-link">Learn DNS</a>
+                <span sec:authorize="isAuthenticated()">
+                    <a th:href="@{/dashboard}" class="nav-link">Dashboard</a>
+                    <form th:action="@{/auth/logout}" method="post" class="inline-form">
+                        <button type="submit" class="nav-link btn-link">Log out</button>
+                    </form>
+                </span>
+                <span sec:authorize="isAnonymous()">
+                    <a th:href="@{/auth/login}" class="nav-link">Log in</a>
+                    <a th:href="@{/auth/register}" class="nav-link btn-primary-sm">Get a subdomain</a>
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container main-content" layout:fragment="content">
+    </main>
+
+    <footer class="footer">
+        <div class="container footer-content">
+            <p>&copy; Coders Farm &mdash; Nonprofit Civic Technology</p>
+            <div class="footer-links">
+                <a th:href="@{/terms}">Terms</a>
+                <a th:href="@{/privacy}">Privacy</a>
+                <a th:href="@{/abuse/report}">Report Abuse</a>
+            </div>
+        </div>
+    </footer>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>

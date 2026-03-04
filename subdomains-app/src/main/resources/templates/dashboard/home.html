@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Dashboard</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="dashboard">
+        <!-- Success/Error messages -->
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+
+        <!-- Subdomain header -->
+        <div class="subdomain-header">
+            <h2>Your Subdomain</h2>
+            <div class="domain-display">
+                <span class="domain-name" th:text="${subdomain.fullDomain}" id="domainName"></span>
+                <button class="btn btn-sm btn-secondary" onclick="copyDomain()" title="Copy to clipboard">Copy</button>
+            </div>
+            <p class="subdomain-meta">
+                Created <span th:text="${#temporals.format(subdomain.createdAt, 'MMM d, yyyy')}"></span>
+                &middot;
+                <a th:href="@{/dashboard/raw-zone}">View raw zone file</a>
+            </p>
+        </div>
+
+        <!-- DNS Records Table -->
+        <div class="records-section">
+            <h3>DNS Records</h3>
+
+            <div th:if="${#lists.isEmpty(records)}" class="empty-state">
+                <p>No DNS records yet. Add your first record below.</p>
+                <div class="learn-card">
+                    <h4>&#128161; What just happened?</h4>
+                    <p>You've claimed <strong th:text="${subdomain.fullDomain}"></strong> as your subdomain.
+                       Right now, it exists in DNS but doesn't point anywhere yet. Add an <strong>A record</strong>
+                       to point it at a server, or a <strong>CNAME</strong> to alias it to another hostname.</p>
+                    <a th:href="@{/learn}" class="learn-link">Learn more about DNS &rarr;</a>
+                </div>
+            </div>
+
+            <table th:if="${!#lists.isEmpty(records)}" class="records-table">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>TTL</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="record : ${records}">
+                        <td>
+                            <span class="record-type-badge" th:text="${record.recordType.code}"
+                                  th:classappend="'type-' + ${record.recordType.code.toLowerCase()}"></span>
+                        </td>
+                        <td class="mono" th:text="${record.name}"></td>
+                        <td class="mono value-cell" th:text="${record.value}"></td>
+                        <td th:text="${record.ttl + 's'}"></td>
+                        <td>
+                            <span class="status-badge"
+                                  th:classappend="'status-' + ${record.propagationStatus}"
+                                  th:text="${record.propagationStatus}"></span>
+                        </td>
+                        <td class="actions-cell">
+                            <a th:href="@{'/dashboard/records/' + ${record.id} + '/edit'}"
+                               class="btn btn-sm btn-secondary">Edit</a>
+                            <form th:action="@{'/dashboard/records/' + ${record.id} + '/delete'}"
+                                  method="post" class="inline-form"
+                                  onsubmit="return confirm('Delete this record? This will take effect immediately.')">
+                                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add Record Form -->
+        <div class="add-record-section">
+            <h3>Add a DNS Record</h3>
+            <form th:action="@{/dashboard/records/add}" method="post" th:object="${recordForm}" class="record-form">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="recordType">Type
+                            <a href="#" class="what-is-this" data-learn="record-types">What is this?</a>
+                        </label>
+                        <select id="recordType" th:field="*{recordType}" required
+                                onchange="updateTypeHelp(this.value)">
+                            <option value="">Select type...</option>
+                            <option th:each="type : ${recordTypes}"
+                                    th:value="${type}"
+                                    th:text="${type.code + ' — ' + type.displayName}"></option>
+                        </select>
+                        <div id="typeHelp" class="field-help"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">Name
+                            <a href="#" class="what-is-this" data-learn="name-field">What is this?</a>
+                        </label>
+                        <input type="text" id="name" th:field="*{name}" required
+                               placeholder="@ or subdomain prefix">
+                        <span class="field-hint">Use <code>@</code> for the root, or a prefix like <code>www</code></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group form-group-lg">
+                        <label for="value">Value
+                            <a href="#" class="what-is-this" data-learn="value-field">What is this?</a>
+                        </label>
+                        <input type="text" id="value" th:field="*{value}" required
+                               placeholder="IP address, hostname, or text value">
+                    </div>
+                    <div class="form-group form-group-sm">
+                        <label for="ttl">TTL
+                            <a href="#" class="what-is-this" data-learn="ttl">What is this?</a>
+                        </label>
+                        <select id="ttl" th:field="*{ttl}">
+                            <option value="60">1 min</option>
+                            <option value="300">5 min</option>
+                            <option value="3600" selected>1 hour</option>
+                            <option value="14400">4 hours</option>
+                            <option value="86400">24 hours</option>
+                        </select>
+                    </div>
+                    <div class="form-group form-group-sm" id="priorityGroup" style="display:none">
+                        <label for="priority">Priority</label>
+                        <input type="number" id="priority" th:field="*{priority}"
+                               placeholder="10" min="0" max="65535">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add Record</button>
+            </form>
+        </div>
+
+        <!-- Account section -->
+        <div class="account-section">
+            <h3>Account</h3>
+            <details class="danger-zone">
+                <summary>Danger Zone</summary>
+                <p>Deleting your account will permanently remove your subdomain and all DNS records.</p>
+                <form th:action="@{/dashboard/delete-account}" method="post"
+                      onsubmit="return confirm('Are you sure? This will permanently delete your account, subdomain, and all DNS records. This cannot be undone.')">
+                    <button type="submit" class="btn btn-danger">Delete My Account</button>
+                </form>
+            </details>
+        </div>
+    </div>
+</main>
+</body>
+</html>

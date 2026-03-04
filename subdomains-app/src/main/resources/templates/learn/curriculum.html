@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      layout:decorate="~{layout/main}">
+<head><title>Learn DNS</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="learn-page">
+        <div class="learn-header">
+            <h2>Learn DNS &mdash; The Phonebook of the Internet</h2>
+            <p>DNS translates human-readable domain names (like <code>codersfarm.com</code>)
+               into IP addresses that computers use to find each other. Every time you visit a
+               website, DNS makes it happen.</p>
+        </div>
+
+        <div sec:authorize="isAuthenticated()" th:if="${completedCount != null}" class="progress-bar-container">
+            <div class="progress-info">
+                <span th:text="${completedCount + ' of ' + totalLessons + ' lessons completed'}"></span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill"
+                     th:style="'width: ' + ${(completedCount * 100) / totalLessons} + '%'"></div>
+            </div>
+        </div>
+
+        <div class="lessons-list">
+            <div th:each="lesson : ${lessons}" class="lesson-card"
+                 th:classappend="${completedLessons != null and completedLessons.contains(lesson.get('id'))} ? 'lesson-completed'">
+                <div class="lesson-status">
+                    <span th:if="${completedLessons != null and completedLessons.contains(lesson.get('id'))}"
+                          class="check-mark">&#10003;</span>
+                    <span th:unless="${completedLessons != null and completedLessons.contains(lesson.get('id'))}"
+                          class="lesson-bullet"></span>
+                </div>
+                <div class="lesson-content">
+                    <h4 th:text="${lesson.get('title')}"></h4>
+                    <p th:text="${lesson.get('summary')}"></p>
+                    <form sec:authorize="isAuthenticated()"
+                          th:unless="${completedLessons != null and completedLessons.contains(lesson.get('id'))}"
+                          th:action="@{'/learn/complete/' + ${lesson.get('id')}}"
+                          method="post" class="inline-form">
+                        <button type="submit" class="btn btn-sm btn-secondary">Mark as completed</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div sec:authorize="isAnonymous()" class="learn-cta">
+            <p>Ready to put this knowledge into practice?</p>
+            <a th:href="@{/auth/register}" class="btn btn-primary">Get Your Free Subdomain</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

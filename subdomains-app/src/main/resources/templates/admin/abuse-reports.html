@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Abuse Reports</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="dashboard">
+        <h2>Abuse Reports</h2>
+
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+        <div class="filter-bar">
+            <a th:href="@{/admin/abuse-reports(filter='all')}"
+               th:classappend="${currentFilter == 'all'} ? 'active'" class="filter-link">All</a>
+            <a th:href="@{/admin/abuse-reports(filter='open')}"
+               th:classappend="${currentFilter == 'open'} ? 'active'" class="filter-link">Open</a>
+            <a th:href="@{/admin/abuse-reports(filter='reviewed')}"
+               th:classappend="${currentFilter == 'reviewed'} ? 'active'" class="filter-link">Reviewed</a>
+            <a th:href="@{/admin/abuse-reports(filter='actioned')}"
+               th:classappend="${currentFilter == 'actioned'} ? 'active'" class="filter-link">Actioned</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(reports)}" class="empty-state">
+            <p>No abuse reports found.</p>
+        </div>
+
+        <div th:each="report : ${reports}" class="abuse-report-card">
+            <div class="report-header">
+                <strong th:text="${report.subdomainHandle + '.codersfarm.com'}"></strong>
+                <span class="status-badge"
+                      th:classappend="'status-' + ${report.status}"
+                      th:text="${report.status}"></span>
+                <span class="report-date"
+                      th:text="${#temporals.format(report.submittedAt, 'MMM d, yyyy HH:mm')}"></span>
+            </div>
+            <p th:text="${report.description}"></p>
+            <p th:if="${report.reporterContact}" class="reporter-contact">
+                Reporter: <span th:text="${report.reporterContact}"></span>
+            </p>
+            <p th:if="${report.adminNotes}" class="admin-notes">
+                Admin notes: <span th:text="${report.adminNotes}"></span>
+            </p>
+            <form th:action="@{'/admin/abuse-reports/' + ${report.id} + '/update'}" method="post"
+                  class="report-actions">
+                <select name="status">
+                    <option value="open" th:selected="${report.status == 'open'}">Open</option>
+                    <option value="reviewed" th:selected="${report.status == 'reviewed'}">Reviewed</option>
+                    <option value="actioned" th:selected="${report.status == 'actioned'}">Actioned</option>
+                </select>
+                <input type="text" name="adminNotes" placeholder="Admin notes..."
+                       th:value="${report.adminNotes}">
+                <button type="submit" class="btn btn-sm btn-primary">Update</button>
+            </form>
+        </div>
+    </div>
+</main>
+</body>
+</html>

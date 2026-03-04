@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Create Account</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="auth-container">
+        <h2>Create Your Account</h2>
+        <p class="auth-subtitle">Get your free subdomain in under a minute.</p>
+
+        <form th:action="@{/auth/register}" method="post" th:object="${form}" class="auth-form">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" th:field="*{email}" required autofocus
+                       placeholder="you@example.com"
+                       th:classappend="${#fields.hasErrors('email')} ? 'input-error'">
+                <span th:if="${#fields.hasErrors('email')}" class="field-error" th:errors="*{email}"></span>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" th:field="*{password}" required
+                       placeholder="At least 8 characters"
+                       th:classappend="${#fields.hasErrors('password')} ? 'input-error'">
+                <span th:if="${#fields.hasErrors('password')}" class="field-error" th:errors="*{password}"></span>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" id="confirmPassword" th:field="*{confirmPassword}" required
+                       placeholder="Same password again"
+                       th:classappend="${#fields.hasErrors('confirmPassword')} ? 'input-error'">
+                <span th:if="${#fields.hasErrors('confirmPassword')}" class="field-error" th:errors="*{confirmPassword}"></span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Create Account</button>
+        </form>
+
+        <div class="auth-alt-links">
+            <a th:href="@{/auth/login}">Already have an account? Log in</a>
+        </div>
+    </div>
+</main>
+</body>
+</html>

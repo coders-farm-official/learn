@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/main}">
+<head><title>Claim Your Subdomain</title></head>
+<body>
+<main layout:fragment="content">
+    <div class="claim-container">
+        <h2>Pick Your Subdomain</h2>
+        <p>Choose a handle for your free subdomain. This is yours to point at anything you build.</p>
+
+        <form th:action="@{/claim}" method="post" th:object="${form}" class="claim-form">
+            <div class="form-group">
+                <label for="handle">Handle</label>
+                <div class="domain-input-group">
+                    <input type="text" id="handle" th:field="*{handle}"
+                           required autofocus
+                           placeholder="yourname"
+                           pattern="[a-z0-9]([a-z0-9-]*[a-z0-9])?"
+                           minlength="3" maxlength="32"
+                           oninput="checkAvailability(this.value)"
+                           th:classappend="${#fields.hasErrors('handle')} ? 'input-error'">
+                    <span class="domain-suffix" th:text="'.' + ${baseDomain}"></span>
+                </div>
+                <span th:if="${#fields.hasErrors('handle')}" class="field-error" th:errors="*{handle}"></span>
+                <div id="availability" class="availability-status"></div>
+                <span class="field-hint">Lowercase letters, numbers, and hyphens. 3&ndash;32 characters.</span>
+            </div>
+
+            <div id="domainPreview" class="domain-preview" style="display:none">
+                <strong>Your domain will be:</strong>
+                <span class="mono" id="previewDomain"></span>
+            </div>
+
+            <div class="form-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" th:field="*{acceptTos}">
+                    I accept the <a th:href="@{/terms}" target="_blank">Terms of Service</a>
+                    and <a th:href="@{/privacy}" target="_blank">Privacy Policy</a>
+                </label>
+                <span th:if="${#fields.hasErrors('acceptTos')}" class="field-error" th:errors="*{acceptTos}"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg btn-full">Claim This Subdomain</button>
+        </form>
+    </div>
+</main>
+</body>
+</html>
