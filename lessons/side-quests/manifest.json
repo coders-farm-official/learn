@@ -47,6 +47,15 @@
           "file": "build-something-new/linux-basics.html",
           "estimatedTime": "3-4 hours",
           "difficulty": "Beginner"
+        },
+        {
+          "id": "local-coding-assistant",
+          "title": "Your Own Coding Assistant",
+          "icon": "\ud83e\udde0",
+          "teaser": "Run an AI model on your own hardware, understand how LLMs work, and build a chat interface that never phones home.",
+          "file": "build-something-new/local-coding-assistant.html",
+          "estimatedTime": "5-6 hours",
+          "difficulty": "Intermediate"
         }
       ]
     },

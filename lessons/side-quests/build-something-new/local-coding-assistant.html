@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Your Own Coding Assistant — Coders Farm</title>
+  <meta name="description" content="Set up a local AI coding assistant using Ollama, understand how LLMs work, and build a chat interface with HTML, CSS, and JavaScript">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-local-coding-assistant">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Your Own Coding Assistant</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Your Own Coding Assistant</p>
+      <h1>Your Own Coding Assistant</h1>
+      <p style="color: var(--text-muted);">Estimated time: 5&ndash;6 hours | Difficulty: Intermediate</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>Understand how large language models (LLMs) work at a high level &mdash; tokens, parameters, and context windows</li>
+          <li>Explain why model size, quantization, and hardware matter for running AI locally</li>
+          <li>Install and run Ollama to host an LLM on your own machine</li>
+          <li>Interact with a local model through the terminal and through its REST API</li>
+          <li>Build a working chat interface using HTML, CSS, and JavaScript that talks to your local model</li>
+          <li>Craft system prompts that turn a general model into a focused coding assistant</li>
+          <li>Understand the trade-offs between local and cloud-hosted AI</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHY RUN YOUR OWN AI? ==================== -->
+      <h2>1. Why Run Your Own AI?</h2>
+
+      <p>You have almost certainly used an AI assistant by now. Maybe you have asked ChatGPT to explain a concept, or used GitHub Copilot to autocomplete a function. These tools are powerful, but they all have something in common: <strong>your code leaves your computer.</strong> Every prompt you send travels over the internet to someone else's server, gets processed there, and the response comes back. The company running that server can see your code, your questions, and your mistakes.</p>
+
+      <p>For learning, that is usually fine. But for professional work? Many companies ban cloud AI tools outright because they do not want proprietary code sitting on someone else's infrastructure. Hospitals cannot send patient data to external APIs. Government agencies have strict rules about where data can go. Even as an individual, you might not want a corporation reading every question you ask while debugging at 2 AM.</p>
+
+      <p>Running an AI model locally changes the equation entirely. <strong>Your data never leaves your machine.</strong> There is no API key to pay for. There is no rate limit. There is no terms-of-service update that changes what happens to your conversations. The model runs on your hardware, responds to your prompts, and that is the end of the story.</p>
+
+      <p>But privacy is only part of the reason. Running a model locally teaches you <strong>how AI actually works</strong> in a way that using a cloud API never can. You will see exactly how much memory a model needs. You will feel the difference between a 1-billion-parameter model and a 7-billion-parameter model. You will understand why your Raspberry Pi struggles with tasks that a cloud GPU handles instantly. This hands-on understanding is becoming essential knowledge for developers, and you are about to build it from the ground up.</p>
+
+      <!-- ==================== PART 2 — HOW LLMs ACTUALLY WORK ==================== -->
+      <h2>2. How LLMs Actually Work</h2>
+
+      <p>Before you install anything, you need a mental model of what you are actually running. An LLM is not magic. It is a very large mathematical function &mdash; a neural network &mdash; that predicts the next word (or more precisely, the next <strong>token</strong>) in a sequence.</p>
+
+      <h3>Tokens</h3>
+
+      <p>LLMs do not read words the way you do. They break text into <strong>tokens</strong> &mdash; chunks that are usually parts of words. The sentence "The developer debugged the application" might become six tokens: <code>["The", " developer", " debug", "ged", " the", " application"]</code>. Common words often get their own token. Rare or long words get split into pieces.</p>
+
+      <p>This matters for two reasons. First, the model has a <strong>context window</strong> &mdash; a maximum number of tokens it can process at once. A model with a 4,096-token context window can handle roughly 3,000 words of combined input and output. If you paste a 500-line Java file and ask the model to review it, you are using a big chunk of that window. Second, the model generates output one token at a time. That is why AI responses appear to stream in word by word &mdash; the model is literally predicting one token, then the next, then the next.</p>
+
+      <h3>Parameters</h3>
+
+      <p>When people say a model has "7 billion parameters," they are describing the number of numerical values (weights) inside the neural network. Think of parameters as the model's accumulated knowledge &mdash; everything it learned during training. More parameters generally means the model can handle more complex reasoning, understand subtler context, and generate more coherent responses.</p>
+
+      <p>But more parameters also means more memory. Each parameter is a number, and numbers take up space. Here is the rough math:</p>
+
+      <ul>
+        <li><strong>1B parameter model</strong> &mdash; ~2 GB of RAM at full precision, ~0.5&ndash;1 GB quantized</li>
+        <li><strong>3B parameter model</strong> &mdash; ~6 GB at full precision, ~2 GB quantized</li>
+        <li><strong>7B parameter model</strong> &mdash; ~14 GB at full precision, ~4 GB quantized</li>
+        <li><strong>13B parameter model</strong> &mdash; ~26 GB at full precision, ~7&ndash;8 GB quantized</li>
+        <li><strong>70B parameter model</strong> &mdash; ~140 GB at full precision, ~35&ndash;40 GB quantized</li>
+      </ul>
+
+      <p>That last number should jump out at you. A 70-billion-parameter model needs <em>more RAM than most computers have</em>, even after optimization. This is why hardware matters so much for local AI.</p>
+
+      <h3>Quantization</h3>
+
+      <p>You noticed the word "quantized" in that list. <strong>Quantization</strong> is the process of reducing the precision of each parameter to make the model smaller and faster. Instead of storing each weight as a 16-bit or 32-bit floating-point number, you store it as a 4-bit or 8-bit integer. You lose some accuracy, but you gain enormous savings in memory and speed.</p>
+
+      <p>Think of it like image compression. A raw photograph might be 25 megabytes. A JPEG version might be 2 megabytes. You lose some detail, but for most purposes the JPEG looks fine. Quantization does the same thing to model weights.</p>
+
+      <p>When you see model names like <code>llama3.2:3b-q4_K_M</code>, that suffix tells you the quantization level. <strong>Q4</strong> means 4-bit quantization (aggressive compression, smallest size). <strong>Q8</strong> means 8-bit (less compression, better quality). For most coding tasks, Q4 models perform surprisingly well &mdash; the difference in code quality between Q4 and Q8 is usually small enough that the memory savings are worth it.</p>
+
+      <div class="callout callout-info">
+        <p><strong>Key insight:</strong> The quality of an AI model is not just about parameter count. A well-quantized 7B model often outperforms a poorly quantized 13B model, because the 7B model fits comfortably in RAM while the 13B model constantly swaps to disk. <strong>A model that fits in your RAM will always feel faster and more responsive than a bigger model that does not.</strong></p>
+      </div>
+
+      <!-- ==================== PART 3 — CHOOSING YOUR HARDWARE ==================== -->
+      <h2>3. Choosing Your Hardware</h2>
+
+      <p>This lesson works on any computer that can run Linux, macOS, or Windows. But your experience will vary dramatically depending on what hardware you have. Here is what to expect at each tier:</p>
+
+      <h3>Raspberry Pi 5 (8 GB RAM)</h3>
+
+      <p>The Raspberry Pi is the most constrained option, and that is exactly what makes it interesting. With 8 GB of RAM, you can run models up to about <strong>3 billion parameters</strong> at 4-bit quantization. That means models like <code>llama3.2:1b</code> or <code>llama3.2:3b</code>.</p>
+
+      <p>The responses will be slow &mdash; expect a few tokens per second rather than the near-instant responses you get from cloud services. The model's coding ability will be limited compared to larger models. It will handle simple questions well ("What does <code>git rebase</code> do?") but struggle with complex multi-step reasoning ("Refactor this 200-line class to use the strategy pattern").</p>
+
+      <p>But here is why the Pi is still a great choice: <strong>it makes the constraints visible.</strong> You will feel the model loading into RAM. You will notice how response speed drops as the conversation gets longer and the context window fills up. You will understand, viscerally, why companies spend millions on GPU clusters. And when you are done learning, you have a tiny, silent, always-on AI assistant sitting on your desk that costs pennies in electricity to run.</p>
+
+      <div class="callout callout-tip">
+        <p><strong>Pi setup:</strong> Make sure you have a Raspberry Pi 5 with <strong>8 GB RAM</strong> (the 4 GB version will not work well). Use a good-quality microSD card (or better, an NVMe SSD via the Pi's M.2 HAT) and make sure you have adequate cooling &mdash; the Pi 5 will thermal throttle under sustained AI workloads without a heatsink or fan.</p>
+      </div>
+
+      <h3>Older Laptop or Desktop (8&ndash;16 GB RAM)</h3>
+
+      <p>If you have a laptop or desktop from the last five or six years with at least 8 GB of RAM, you are in a much better position. With 16 GB, you can comfortably run <strong>7-billion-parameter models</strong> at 4-bit quantization, which are genuinely useful for coding assistance. Models like <code>llama3.2:latest</code>, <code>codellama:7b</code>, or <code>deepseek-coder:6.7b</code> will run well and produce helpful results.</p>
+
+      <p>If you have a dedicated GPU (even an older one with 6+ GB of VRAM), Ollama can offload computation to it, which dramatically speeds up generation. A $200 used GPU can make a local model feel nearly as responsive as a cloud API for small to medium queries.</p>
+
+      <h3>Modern Desktop (32+ GB RAM or Dedicated GPU)</h3>
+
+      <p>If you have a modern desktop with 32 GB of RAM or a GPU with 12+ GB of VRAM, you can run <strong>13-billion-parameter models</strong> or even larger. At this tier, the local experience starts to rival cloud-hosted models for many coding tasks. Models like <code>codellama:13b</code> or <code>deepseek-coder:33b</code> produce excellent code and can handle complex refactoring, debugging, and architecture discussions.</p>
+
+      <div class="callout callout-info">
+        <p><strong>No matter what hardware you have, start small.</strong> Begin with a 1B or 3B model, get everything working, then try larger models if your hardware can handle them. You can always pull a bigger model later &mdash; Ollama makes switching models trivial.</p>
+      </div>
+
+      <!-- ==================== PART 4 — INSTALLING OLLAMA ==================== -->
+      <h2>4. Installing Ollama</h2>
+
+      <p><strong>Ollama</strong> is an open-source tool that makes running LLMs locally as simple as running a Docker container. It handles downloading models, managing memory, quantization, and exposing a clean API &mdash; all in a single binary. It is the easiest path from "I have never run an AI model" to "I have a working local AI" in under five minutes.</p>
+
+      <h3>Linux (including Raspberry Pi and WSL)</h3>
+
+      <p>Open your terminal and run:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl -fsSL https://ollama.com/install.sh | sh</code></pre>
+      </div>
+
+      <p>This downloads and runs the official Ollama install script. It detects your system architecture (x86, ARM for Pi), installs the binary, and sets up Ollama as a system service that starts automatically.</p>
+
+      <p>After installation, verify it is running:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ollama --version</code></pre>
+      </div>
+
+      <h3>macOS</h3>
+
+      <p>Download Ollama from the official website. It installs as a standard macOS application. After installing, open it once from your Applications folder &mdash; it will set up the command-line tool automatically. Then verify in your terminal:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ollama --version</code></pre>
+      </div>
+
+      <h3>Windows</h3>
+
+      <p>Download the installer from the Ollama website and run it. After installation, open a new PowerShell or Command Prompt window and verify:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ollama --version</code></pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <p><strong>WSL users:</strong> You have two options. You can install Ollama inside WSL (using the Linux instructions) or install it on Windows directly. If you install on Windows, the Ollama API will be accessible from both Windows and WSL. If you install inside WSL, it stays within your Linux environment. Either works &mdash; pick whichever feels more natural.</p>
+      </div>
+
+      <h3>Pulling Your First Model</h3>
+
+      <p>Ollama works like a package manager for AI models. You <strong>pull</strong> a model to download it, then <strong>run</strong> it to start chatting. Let us start with a small, fast model so you can see results quickly regardless of your hardware:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Pull a small, fast model (about 1.3 GB download)
+ollama pull llama3.2:3b</code></pre>
+      </div>
+
+      <p>This downloads a 3-billion-parameter version of Meta's Llama 3.2, quantized to about 2 GB. It will run on virtually any hardware, including a Raspberry Pi 5. The download might take a few minutes depending on your internet connection.</p>
+
+      <p>Once the download finishes, you can see what models you have installed:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ollama list</code></pre>
+      </div>
+
+      <p>You should see <code>llama3.2:3b</code> in the list with its size. This model is now stored locally on your machine &mdash; you will never need to download it again, and it works completely offline.</p>
+
+      <!-- ==================== PART 5 — YOUR FIRST CONVERSATION ==================== -->
+      <h2>5. Your First Conversation</h2>
+
+      <p>Time to talk to your model. Run:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>ollama run llama3.2:3b</code></pre>
+      </div>
+
+      <p>You will see a prompt that looks like <code>&gt;&gt;&gt;</code>. Type a question and press Enter:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>>>> What is a REST API? Explain it like I'm a beginner.</code></pre>
+      </div>
+
+      <p>Watch what happens. The response streams in token by token. On a fast machine, it might feel instant. On a Raspberry Pi, you will see words appear one at a time, maybe a few per second. <strong>This is the model running entirely on your hardware.</strong> No internet connection is needed. No API key. No cloud server. The neural network is loaded into your RAM and performing billions of mathematical operations to generate each token.</p>
+
+      <p>Try a few more prompts to get a feel for the model:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>>>> Write a Java method that reverses a string without using StringBuilder.
+
+>>> What is the difference between == and .equals() in Java?
+
+>>> Explain CSS flexbox in three sentences.</code></pre>
+      </div>
+
+      <p>Notice the quality of the responses. A 3B model can handle straightforward knowledge questions and simple code generation well. It will start to struggle with very complex or nuanced requests. That is expected &mdash; you are running a model that is orders of magnitude smaller than what powers cloud services like ChatGPT.</p>
+
+      <p>To exit the chat, type <code>/bye</code> and press Enter.</p>
+
+      <h3>Trying a Larger Model (If Your Hardware Allows)</h3>
+
+      <p>If you have 16 GB or more of RAM, try pulling a larger model:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># 7B model — needs ~4-5 GB RAM (about 4 GB download)
+ollama pull llama3.2
+
+# Or a model specifically trained for code
+ollama pull deepseek-coder:6.7b</code></pre>
+      </div>
+
+      <p>Run it the same way and ask the same questions you asked the 3B model. Compare the responses. The larger model will give more detailed, more accurate answers, especially for code. This is the trade-off in action: <strong>more parameters equals better quality, but more memory and slower speed.</strong></p>
+
+      <div class="callout callout-warning">
+        <p><strong>If your machine freezes or becomes very slow</strong> after pulling a model, the model is too large for your available RAM. Press <code>Ctrl + C</code> to stop, then try a smaller model. You can remove a model with <code>ollama rm model-name</code>.</p>
+      </div>
+
+      <!-- ==================== PART 6 — THE OLLAMA API ==================== -->
+      <h2>6. The Ollama API</h2>
+
+      <p>Chatting in the terminal is useful, but the real power comes from the <strong>API</strong>. When Ollama is running, it exposes a REST API on <code>http://localhost:11434</code>. This should sound familiar &mdash; it is the same concept you learned when building your Spring Boot API in the Resumator lessons. Ollama is a server. It accepts HTTP requests. It returns JSON responses. You already know how this works.</p>
+
+      <p>Open a new terminal window (keep Ollama running in the background) and try this:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Check that Ollama is running
+curl http://localhost:11434
+
+# You should see: "Ollama is running"</code></pre>
+      </div>
+
+      <p>Now send a prompt to the model using the <code>/api/generate</code> endpoint:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl http://localhost:11434/api/generate -d '{
+  "model": "llama3.2:3b",
+  "prompt": "Write a JavaScript function that checks if a string is a palindrome.",
+  "stream": false
+}'</code></pre>
+      </div>
+
+      <p>The <code>stream: false</code> option tells Ollama to wait until the full response is generated and return it as a single JSON object. Without it, Ollama streams the response as a series of JSON objects, one per token &mdash; useful for real-time display, which you will use later.</p>
+
+      <p>The response comes back as JSON:</p>
+
+      <div class="code-editor" data-language="json" data-editable="false" data-runnable="false">
+        <pre><code>{
+  "model": "llama3.2:3b",
+  "response": "Here's a JavaScript function...",
+  "done": true,
+  "total_duration": 4521887000,
+  "eval_count": 156
+}</code></pre>
+      </div>
+
+      <p>Look at those fields. <code>response</code> contains the generated text. <code>eval_count</code> tells you how many tokens the model generated. <code>total_duration</code> is in nanoseconds &mdash; divide by 1,000,000,000 to get seconds. You can calculate tokens per second: <code>eval_count / (total_duration / 1e9)</code>. This is a concrete, measurable metric for how fast your hardware runs AI inference.</p>
+
+      <h3>The Chat API</h3>
+
+      <p>For multi-turn conversations (where the model remembers what you said before), use the <code>/api/chat</code> endpoint:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>curl http://localhost:11434/api/chat -d '{
+  "model": "llama3.2:3b",
+  "messages": [
+    {"role": "system", "content": "You are a helpful coding tutor."},
+    {"role": "user", "content": "What is a for loop?"},
+    {"role": "assistant", "content": "A for loop repeats a block of code a specific number of times..."},
+    {"role": "user", "content": "Can you show me one in Java?"}
+  ],
+  "stream": false
+}'</code></pre>
+      </div>
+
+      <p>The <code>messages</code> array contains the entire conversation history. Each message has a <strong>role</strong>: <code>system</code> (sets the model's behavior), <code>user</code> (your messages), or <code>assistant</code> (the model's previous replies). By including the full history, the model has context about what was discussed before and can give a coherent follow-up response.</p>
+
+      <p>This is the exact same pattern used by the OpenAI API, the Anthropic API, and virtually every other AI chat API. The skill you are building right now &mdash; sending structured messages to an AI endpoint &mdash; transfers directly to any cloud AI service.</p>
+
+      <!-- ==================== PART 7 — BUILDING A CHAT INTERFACE ==================== -->
+      <h2>7. Building a Chat Interface</h2>
+
+      <p>Now you are going to combine everything you have learned in this course &mdash; HTML, CSS, and JavaScript &mdash; to build a real chat interface that talks to your local Ollama model. This is not a toy. It is a working application that you can use every day while you code.</p>
+
+      <p>Create a new directory for this project and open it in VS Code:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>mkdir ~/coding-assistant
+cd ~/coding-assistant
+code .</code></pre>
+      </div>
+
+      <p>Create a file called <code>index.html</code>:</p>
+
+      <div class="code-editor" data-language="html" data-editable="true" data-runnable="false">
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8"&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+  &lt;title&gt;My Coding Assistant&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;div class="chat-container"&gt;
+    &lt;header class="chat-header"&gt;
+      &lt;h1&gt;Coding Assistant&lt;/h1&gt;
+      &lt;p class="model-name"&gt;llama3.2:3b&lt;/p&gt;
+    &lt;/header&gt;
+
+    &lt;div class="chat-messages" id="chat-messages"&gt;
+      &lt;div class="message assistant"&gt;
+        &lt;p&gt;Hi! I'm your local coding assistant. Ask me anything about programming. I'm running entirely on your machine — nothing leaves your computer.&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;form class="chat-input" id="chat-form"&gt;
+      &lt;textarea id="user-input" placeholder="Ask a coding question..." rows="2"&gt;&lt;/textarea&gt;
+      &lt;button type="submit" id="send-btn"&gt;Send&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/div&gt;
+
+  &lt;script src="chat.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+      </div>
+
+      <p>This is straightforward HTML. A container with a header, a scrollable message area, and an input form at the bottom. Nothing you have not seen before.</p>
+
+      <p>Now create <code>style.css</code>:</p>
+
+      <div class="code-editor" data-language="css" data-editable="true" data-runnable="false">
+        <pre><code>* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chat-container {
+  width: 100%;
+  max-width: 800px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #16213e;
+}
+
+.chat-header {
+  padding: 16px 24px;
+  background: #0f3460;
+  border-bottom: 1px solid #1a1a4e;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chat-header h1 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.model-name {
+  font-size: 13px;
+  color: #7a7adb;
+  font-family: monospace;
+}
+
+.chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.message {
+  padding: 12px 16px;
+  border-radius: 12px;
+  max-width: 85%;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.message p {
+  margin: 0;
+}
+
+.message.user {
+  background: #0f3460;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.message.assistant {
+  background: #1a1a4e;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.message.assistant code {
+  background: #0d1117;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.message.assistant pre {
+  background: #0d1117;
+  padding: 12px;
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: 8px 0;
+}
+
+.message.assistant pre code {
+  background: none;
+  padding: 0;
+}
+
+.chat-input {
+  padding: 16px 24px;
+  background: #0f3460;
+  border-top: 1px solid #1a1a4e;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+#user-input {
+  flex: 1;
+  padding: 12px 16px;
+  background: #16213e;
+  border: 1px solid #1a1a4e;
+  border-radius: 8px;
+  color: #e0e0e0;
+  font-size: 15px;
+  font-family: inherit;
+  resize: none;
+  outline: none;
+}
+
+#user-input:focus {
+  border-color: #7a7adb;
+}
+
+#send-btn {
+  padding: 12px 24px;
+  background: #7a7adb;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+#send-btn:hover {
+  background: #6a6acb;
+}
+
+#send-btn:disabled {
+  background: #3a3a5e;
+  cursor: not-allowed;
+}
+
+.typing-indicator {
+  color: #7a7adb;
+  font-style: italic;
+}</code></pre>
+      </div>
+
+      <p>This gives you a dark-themed chat interface that looks and feels like a real application. The layout uses flexbox &mdash; the same CSS concept you learned in the web basics track. Messages from the user align right, messages from the assistant align left.</p>
+
+      <p>Now the important part &mdash; create <code>chat.js</code>:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>const OLLAMA_URL = 'http://localhost:11434/api/chat';
+const MODEL = 'llama3.2:3b';
+
+const SYSTEM_PROMPT = `You are a helpful coding assistant. You give clear,
+concise answers with code examples when appropriate. When showing code,
+always specify the language. Keep explanations beginner-friendly.`;
+
+// Conversation history — sent with every request so the model has context
+const messages = [
+  { role: 'system', content: SYSTEM_PROMPT }
+];
+
+const chatMessages = document.getElementById('chat-messages');
+const chatForm = document.getElementById('chat-form');
+const userInput = document.getElementById('user-input');
+const sendBtn = document.getElementById('send-btn');
+
+// Send message on form submit
+chatForm.addEventListener('submit', (e) =&gt; {
+  e.preventDefault();
+  const text = userInput.value.trim();
+  if (!text) return;
+
+  // Add user message to the conversation
+  addMessage('user', text);
+  messages.push({ role: 'user', content: text });
+  userInput.value = '';
+  sendBtn.disabled = true;
+
+  // Send to Ollama and stream the response
+  getResponse();
+});
+
+// Allow Enter to submit, Shift+Enter for new line
+userInput.addEventListener('keydown', (e) =&gt; {
+  if (e.key === 'Enter' &amp;&amp; !e.shiftKey) {
+    e.preventDefault();
+    chatForm.dispatchEvent(new Event('submit'));
+  }
+});
+
+function addMessage(role, content) {
+  const div = document.createElement('div');
+  div.className = `message ${role}`;
+  const p = document.createElement('p');
+  p.textContent = content;
+  div.appendChild(p);
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return div;
+}
+
+async function getResponse() {
+  // Create a placeholder message for the assistant's response
+  const responseDiv = addMessage('assistant', '');
+  const responseP = responseDiv.querySelector('p');
+  responseP.textContent = 'Thinking...';
+  responseP.classList.add('typing-indicator');
+
+  try {
+    const response = await fetch(OLLAMA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: MODEL,
+        messages: messages,
+        stream: true
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Ollama returned ${response.status}. Is the model running?`);
+    }
+
+    // Read the streaming response
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullResponse = '';
+    responseP.classList.remove('typing-indicator');
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      // Ollama streams newline-delimited JSON objects
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n').filter(line =&gt; line.trim());
+
+      for (const line of lines) {
+        try {
+          const data = JSON.parse(line);
+          if (data.message &amp;&amp; data.message.content) {
+            fullResponse += data.message.content;
+            responseP.textContent = fullResponse;
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }
+        } catch (parseErr) {
+          // Skip malformed JSON chunks
+        }
+      }
+    }
+
+    // Save the assistant's full response to conversation history
+    messages.push({ role: 'assistant', content: fullResponse });
+
+  } catch (err) {
+    responseP.textContent = `Error: ${err.message}`;
+    responseP.style.color = '#ff6b6b';
+  }
+
+  sendBtn.disabled = false;
+  userInput.focus();
+}</code></pre>
+      </div>
+
+      <p>Let us walk through what this code does, because every line connects to something you have already learned:</p>
+
+      <ul>
+        <li><strong>Lines 1&ndash;6:</strong> Configuration. The Ollama URL and model name are constants at the top, just like you learned in the module pattern. The system prompt defines how the assistant behaves.</li>
+        <li><strong>Lines 8&ndash;10:</strong> The <code>messages</code> array holds the full conversation history. Every time you or the model speaks, the message gets pushed onto this array. The entire array is sent with each request, which is how the model "remembers" the conversation.</li>
+        <li><strong>Lines 20&ndash;30:</strong> Event listener on the form, just like the event handling you learned in JavaScript basics. Prevents the default form submission, grabs the input text, and calls the API.</li>
+        <li><strong>Lines 56&ndash;95:</strong> The <code>getResponse</code> function uses the <strong>Fetch API</strong> with streaming. Instead of waiting for the entire response, it reads chunks as they arrive using a <code>ReadableStream</code> reader. Each chunk is a JSON object containing one or more tokens. This is why the response appears to type itself out in real time.</li>
+      </ul>
+
+      <p>Open the <code>index.html</code> file in your browser. You can do this by double-clicking it in your file manager, or if you have a local server set up:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code>cd ~/coding-assistant
+python3 -m http.server 8080</code></pre>
+      </div>
+
+      <p>Then open <code>http://localhost:8080</code> in your browser. Make sure Ollama is running in the background (<code>ollama serve</code> if it is not running as a system service). Type a question and watch the response stream in.</p>
+
+      <div class="callout callout-warning">
+        <p><strong>CORS note:</strong> If you open the HTML file directly (via <code>file://</code>), some browsers may block the request to <code>localhost:11434</code>. If you get a CORS error, use the Python HTTP server method above. Ollama allows cross-origin requests from localhost by default.</p>
+      </div>
+
+      <p><strong>Congratulations.</strong> You just built a working AI chat application. The HTML structures the page. The CSS makes it look professional. The JavaScript handles user interaction, API communication, and real-time streaming. Every skill from the web basics track came together here.</p>
+
+      <!-- ==================== PART 8 — CRAFTING A CODING ASSISTANT ==================== -->
+      <h2>8. Crafting a Coding Assistant</h2>
+
+      <p>Right now, your chat interface uses a generic system prompt. It works, but you can make it much more useful by crafting a prompt that turns the model into a specialized coding assistant. This is called <strong>prompt engineering</strong>, and it is one of the most valuable skills you can develop as a developer working with AI.</p>
+
+      <h3>The System Prompt</h3>
+
+      <p>The system prompt is the first message in the conversation. It sets the model's persona, defines its boundaries, and shapes every response that follows. A good system prompt is specific, includes examples of the behavior you want, and sets clear expectations.</p>
+
+      <p>Try replacing the <code>SYSTEM_PROMPT</code> in your <code>chat.js</code> with something more detailed:</p>
+
+      <div class="code-editor" data-language="javascript" data-editable="true" data-runnable="false">
+        <pre><code>const SYSTEM_PROMPT = `You are a coding tutor helping a student who is learning
+web development (HTML, CSS, JavaScript) and backend development (Java, Spring Boot).
+
+Rules:
+- When the student asks a question, explain the concept FIRST, then show code.
+- Always specify the programming language in code blocks.
+- If the student shares code with a bug, do not just give the fix — explain
+  what is wrong and why, so they learn from it.
+- Keep explanations concise. Use analogies when they help.
+- If you are not sure about something, say so. Do not make up information.
+- When showing Java code, use the conventions from the course: meaningful variable
+  names, proper indentation, and comments only where the logic is not obvious.`;</code></pre>
+      </div>
+
+      <p>The difference in output quality can be dramatic, especially with smaller models. Without a system prompt, a 3B model might give you a generic textbook answer. With a well-crafted prompt, the same model tailors its responses to your specific learning context.</p>
+
+      <h3>Sending Code Context</h3>
+
+      <p>The most useful thing a coding assistant can do is help you with <em>your</em> code. When you are stuck on a bug or want feedback on your implementation, you can paste your code directly into the chat. The model sees it as part of the conversation and responds in context.</p>
+
+      <p>Try pasting something like this into your chat interface:</p>
+
+      <div class="code-editor" data-language="text" data-editable="false" data-runnable="false">
+        <pre><code>Here is my Java method. It is supposed to find the average of an array
+of integers, but it returns 0 for the input [1, 2, 3, 4, 5]. What is wrong?
+
+public static int average(int[] numbers) {
+    int sum = 0;
+    for (int i = 0; i < numbers.length; i++) {
+        sum += numbers[i];
+    }
+    return sum / numbers.length;
+}</code></pre>
+      </div>
+
+      <p>Even a 3B model should be able to spot the integer division bug here (dividing two <code>int</code> values discards the decimal). The system prompt you wrote tells the model to explain the bug, not just fix it, which makes the interaction educational rather than just transactional.</p>
+
+      <h3>Understanding the Limits</h3>
+
+      <p>Local models are incredibly useful, but they are not magic. Here is an honest assessment of what to expect:</p>
+
+      <ul>
+        <li><strong>1&ndash;3B models</strong> &mdash; Good for: explaining concepts, simple code generation, answering factual programming questions. Struggle with: multi-file refactoring, complex debugging, architectural decisions, anything requiring deep context.</li>
+        <li><strong>7B models</strong> &mdash; Good for: code review, bug identification, writing functions, explaining error messages. Struggle with: very large codebases, subtle logic errors, performance optimization advice.</li>
+        <li><strong>13B+ models</strong> &mdash; Genuinely useful for most day-to-day coding tasks. Can handle code review, refactoring suggestions, test writing, and architectural discussions. Still not as capable as the largest cloud models for truly complex reasoning.</li>
+      </ul>
+
+      <p>The right mental model is this: <strong>a local AI is like a junior developer who has read a lot of documentation.</strong> It is fast at recalling syntax, good at spotting common patterns, and helpful for rubber-duck debugging. But it will not architect your system for you, and you should always verify its suggestions by actually running the code.</p>
+
+      <div class="callout callout-info">
+        <p><strong>When to use cloud vs. local:</strong> Use your local model for quick questions, code snippets, concept explanations, and anything involving proprietary code. Use cloud-hosted models (when appropriate and allowed) for complex multi-step reasoning, large-scale refactoring, or when you need the highest quality output. Many professional developers use both &mdash; local for speed and privacy, cloud for heavy lifting.</p>
+      </div>
+
+      <!-- ==================== PART 9 — GOING FURTHER ==================== -->
+      <h2>9. Going Further</h2>
+
+      <p>You now have a working local AI assistant and the knowledge to understand what is happening under the hood. Here are some directions you can take this:</p>
+
+      <h3>Always-On Assistant</h3>
+
+      <p>If you set up Ollama on a Raspberry Pi or a dedicated machine, it can run 24/7 on your network. Other devices on your local network can connect to it by using the machine's local IP address instead of <code>localhost</code>. To enable this, set the <code>OLLAMA_HOST</code> environment variable:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># Allow connections from other devices on your network
+OLLAMA_HOST=0.0.0.0 ollama serve</code></pre>
+      </div>
+
+      <p>Then update the <code>OLLAMA_URL</code> in your <code>chat.js</code> to point to the machine's IP address (e.g., <code>http://192.168.1.50:11434/api/chat</code>). Now you have a private AI server running on your network that you can access from your laptop, your phone, or any device with a browser.</p>
+
+      <h3>Try Different Models</h3>
+
+      <p>Ollama has a library of models you can experiment with. Some are general-purpose, others are specialized for code:</p>
+
+      <div class="code-editor" data-language="bash" data-editable="false" data-runnable="false">
+        <pre><code># A model specifically trained for code
+ollama pull deepseek-coder:6.7b
+
+# A model good at following instructions
+ollama pull mistral
+
+# See all available models
+ollama list
+
+# Remove a model you no longer need
+ollama rm model-name</code></pre>
+      </div>
+
+      <p>Each model has different strengths. Try asking the same coding question to different models and compare the responses. You will quickly develop an intuition for which models work best for which tasks.</p>
+
+      <h3>Enhance Your Chat Interface</h3>
+
+      <p>The chat interface you built is functional, but there is plenty of room to make it better. Consider adding:</p>
+
+      <ul>
+        <li><strong>Markdown rendering</strong> &mdash; Model responses often include markdown formatting. A library like <code>marked.js</code> can render headings, bold text, and code blocks properly.</li>
+        <li><strong>Syntax highlighting</strong> &mdash; Use a library like <code>highlight.js</code> to color-code the code blocks in responses.</li>
+        <li><strong>Model selector</strong> &mdash; A dropdown that lets you switch between models without changing the code.</li>
+        <li><strong>Conversation history</strong> &mdash; Save conversations to localStorage so they persist between sessions (you already know how to do this from the progress tracking module).</li>
+        <li><strong>Copy button</strong> &mdash; A button on code blocks that copies the code to your clipboard.</li>
+      </ul>
+
+      <p>Each of these improvements is a small project in itself, and each one uses skills you have already learned. This is what real software development looks like &mdash; you build a working version first, then iterate.</p>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-quiz-id="sq-local-assistant-q1">
+        <p><strong>1.</strong> A model has 7 billion parameters and is quantized to 4-bit precision. Approximately how much RAM will it need?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-local-assistant-q1" value="a"> About 1 GB</label>
+          <label><input type="radio" name="sq-local-assistant-q1" value="b"> About 4 GB</label>
+          <label><input type="radio" name="sq-local-assistant-q1" value="c"> About 14 GB</label>
+          <label><input type="radio" name="sq-local-assistant-q1" value="d"> About 28 GB</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: About 4 GB.</strong> At full 16-bit precision, each parameter takes 2 bytes, so 7B parameters = ~14 GB. Quantizing to 4-bit reduces this by roughly 4x, bringing it down to about 3.5&ndash;4 GB. This is why quantization is essential for running models on consumer hardware.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-quiz-id="sq-local-assistant-q2">
+        <p><strong>2.</strong> What protocol does Ollama use to expose its local API?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-local-assistant-q2" value="a"> WebSocket</label>
+          <label><input type="radio" name="sq-local-assistant-q2" value="b"> gRPC</label>
+          <label><input type="radio" name="sq-local-assistant-q2" value="c"> HTTP REST (JSON over HTTP)</label>
+          <label><input type="radio" name="sq-local-assistant-q2" value="d"> GraphQL</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">
+          <p><strong>Correct answer: HTTP REST.</strong> Ollama exposes a REST API at <code>http://localhost:11434</code> that accepts JSON requests and returns JSON responses. This is the same request/response pattern you used when building the Resumator API with Spring Boot.</p>
+        </div>
+      </div>
+
+      <div class="quiz" data-quiz-id="sq-local-assistant-q3">
+        <p><strong>3.</strong> In the chat API, what is the purpose of the <code>system</code> role message?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="sq-local-assistant-q3" value="a"> It contains the model's previous responses</label>
+          <label><input type="radio" name="sq-local-assistant-q3" value="b"> It sets the model's behavior, persona, and instructions for the entire conversation</label>
+          <label><input type="radio" name="sq-local-assistant-q3" value="c"> It provides system-level hardware information to the model</label>
+          <label><input type="radio" name="sq-local-assistant-q3" value="d"> It logs error messages for debugging</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">
+          <p><strong>Correct answer: It sets the model's behavior, persona, and instructions.</strong> The system prompt is the first message in the conversation and shapes how the model responds to everything that follows. A well-crafted system prompt can dramatically improve the usefulness of even small models.</p>
+        </div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>Your deliverable for this side quest is the <strong>working chat interface</strong> you built in section 7, customized with your own system prompt from section 8.</p>
+
+      <p>Your project should include:</p>
+
+      <ul>
+        <li><code>index.html</code> &mdash; the chat interface structure</li>
+        <li><code>style.css</code> &mdash; the styling (customize the colors and layout to make it yours)</li>
+        <li><code>chat.js</code> &mdash; the JavaScript that communicates with Ollama</li>
+      </ul>
+
+      <p>Beyond the working interface, you should be able to:</p>
+
+      <ul>
+        <li>Explain what tokens, parameters, and quantization mean in the context of LLMs</li>
+        <li>Describe why a model that fits in RAM outperforms a larger model that does not</li>
+        <li>Use the Ollama CLI to pull, run, list, and remove models</li>
+        <li>Send requests to the Ollama REST API using <code>curl</code></li>
+        <li>Explain the difference between the <code>system</code>, <code>user</code>, and <code>assistant</code> roles in the chat API</li>
+        <li>Articulate when to use a local model vs. a cloud-hosted model</li>
+      </ul>
+
+      <p>AI is not replacing developers. But developers who understand how AI works &mdash; who can run it, configure it, build interfaces for it, and reason about its strengths and limitations &mdash; will have a significant advantage. You just built that understanding from the ground up, on your own hardware, with your own code. That is something no cloud API tutorial can give you.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="local-coding-assistant">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+        <li><a href="#" id="check-updates">Update Site</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/narrator.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
