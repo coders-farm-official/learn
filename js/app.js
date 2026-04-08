@@ -3,7 +3,7 @@
    Initialization and page routing
    ======================================== */
 
-const SITE_VERSION = '1.19';
+const SITE_VERSION = '1.20';
 
 document.addEventListener('DOMContentLoaded', () => {
   // Initialize theme first (prevents flash)
@@ -226,7 +226,7 @@ function initSideQuests() {
   const countEl = document.getElementById('sq-completed-count');
   if (countEl) {
     if (sqCompleted > 0 || unlocked) {
-      countEl.textContent = sqCompleted + '/10 Side Quests Completed';
+      countEl.textContent = sqCompleted + '/11 Side Quests Completed';
     } else {
       countEl.textContent = 'Complete all 30 core lessons to unlock';
     }
