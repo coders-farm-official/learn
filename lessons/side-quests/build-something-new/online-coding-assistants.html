@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Online Coding Assistants &mdash; Coders Farm</title>
+  <meta name="description" content="Tour the four major online coding assistants — Codex, Cursor, Gemini, and Claude — with both VS Code and CLI installation paths, and learn how to get the most out of each.">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-online-coding-assistants">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Online Coding Assistants</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Online Coding Assistants</p>
+      <h1>Online Coding Assistants</h1>
+      <p style="color: var(--text-muted);">Estimated time: 2&ndash;3 hours | Difficulty: Beginner</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Learn</h3>
+        <ul>
+          <li>What an online coding assistant is, and what makes one different from a local one</li>
+          <li>Tour the four most popular options: Codex, Cursor, Gemini, and Claude</li>
+          <li>Install at least one option in VS Code <em>or</em> as a command-line tool &mdash; your choice</li>
+          <li>Understand the trade-offs between cloud assistants and the local assistant you built in the last side quest</li>
+          <li>Learn advanced patterns that make these tools dramatically more useful: project rules, chat vs. agent mode, inline vs. ambient, and cost control</li>
+          <li>Avoid the common mistakes that turn a capable assistant into a confidently wrong one</li>
+        </ul>
+      </div>
+
+      <!-- ==================== PART 1 — WHAT IS AN ONLINE CODING ASSISTANT? ==================== -->
+      <h2>1. What Is an Online Coding Assistant?</h2>
+
+      <p>An online coding assistant is an AI tool that helps you write, read, refactor, and debug code &mdash; with the actual model running on someone else's servers. You type a question or a request; your editor (or a terminal) packages up the relevant files and your prompt, sends them to a cloud model, and streams the reply back to you. The model never runs on your machine, but the work you do with it feels like it does.</p>
+
+      <p>If you finished the previous side quest, <a href="local-coding-assistant.html">Your Own Coding Assistant</a>, you have already built something like this &mdash; except the model lived entirely on your hardware via Ollama. Online assistants flip that trade-off. They give you access to models that are far too large to run locally (hundreds of billions of parameters) in exchange for sending your code to a third party. For most professional developers in 2026, the online option is the default. For learning, and for any project with strict privacy requirements, the local option still has an edge.</p>
+
+      <p>The four options we will walk through are the ones you are most likely to encounter in interviews, documentation, and on a new job:</p>
+
+      <ul>
+        <li><strong>Codex</strong> &mdash; OpenAI's coding assistant, built on the GPT family of models. Available as a VS Code extension and as a standalone CLI.</li>
+        <li><strong>Cursor</strong> &mdash; A full editor (a fork of VS Code) with AI deeply integrated. Cursor is the editor <em>and</em> the assistant &mdash; you cannot really separate the two.</li>
+        <li><strong>Gemini</strong> &mdash; Google's assistant, built on the Gemini family of models. Available as a VS Code extension ("Gemini Code Assist") and as a CLI.</li>
+        <li><strong>Claude</strong> &mdash; Anthropic's assistant, built on the Claude family of models. Available as a VS Code extension and as a CLI called Claude Code.</li>
+      </ul>
+
+      <div class="callout callout-info">
+        <strong>Pick one or try them all.</strong> You do not need to install every option to benefit from this lesson. Read through the whole walkthrough, skip to the option that appeals to you, and get it working end-to-end. Once you have used one, the others feel familiar &mdash; the mental model carries over. If you want to try more than one, the sections are ordered so you can install each in isolation.
+      </div>
+
+      <!-- ==================== PART 2 — PREREQUISITES ==================== -->
+      <h2>2. Prerequisites</h2>
+
+      <p>Every option in this lesson expects the same short list of things already on your machine. Install these once and you are ready for any of the four walkthroughs below.</p>
+
+      <ul>
+        <li><strong>VS Code</strong> &mdash; free download at <code>code.visualstudio.com</code>. Needed for the VS Code path of every option except Cursor (which replaces VS Code). If you only plan to use the CLI path, you can skip VS Code entirely.</li>
+        <li><strong>Node.js 18 or newer</strong> &mdash; download from <code>nodejs.org</code>. Every CLI in this lesson is distributed through <code>npm</code>, so you need Node to install and run them.</li>
+        <li><strong>A working terminal</strong> &mdash; PowerShell on Windows, Terminal on macOS, or any Linux shell. If you finished the <a href="linux-basics.html">Linux Basics</a> side quest, you already have everything you need.</li>
+        <li><strong>Git configured with your name and email</strong> &mdash; several of these tools behave differently when they detect a Git repository. Initialize one with <code>git init</code> inside a practice folder before you start.</li>
+        <li><strong>An account with the provider you choose</strong> &mdash; each option requires a free signup. You will create API keys or log in with a browser during the walkthrough.</li>
+      </ul>
+
+      <p>Create a new folder called <code>assistant-playground</code> and open it in your terminal. You will use this folder as the test bed for whichever tool(s) you install.</p>
+
+      <pre><code>mkdir assistant-playground
+cd assistant-playground
+git init
+echo "# Coding assistant playground" &gt; README.md</code></pre>
+
+      <!-- ==================== PART 3 — THE FOUR OPTIONS AT A GLANCE ==================== -->
+      <h2>3. The Four Options at a Glance</h2>
+
+      <p>Before you install anything, here is the one-screen summary. Skim it first, then skip to whichever option you want to try.</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Option</th>
+            <th>VS Code path</th>
+            <th>CLI path</th>
+            <th>Known for</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Codex</strong></td>
+            <td>OpenAI extension in VS Code Marketplace</td>
+            <td><code>npm install -g @openai/codex</code></td>
+            <td>Strong on general problem-solving, enormous ecosystem, familiar if you already use ChatGPT</td>
+          </tr>
+          <tr>
+            <td><strong>Cursor</strong></td>
+            <td>Cursor <em>is</em> the editor (download from <code>cursor.com</code>)</td>
+            <td>Separate <code>cursor-agent</code> CLI</td>
+            <td>Tightest editor integration, multi-file edits, inline "Composer" feel</td>
+          </tr>
+          <tr>
+            <td><strong>Gemini</strong></td>
+            <td>"Gemini Code Assist" in VS Code Marketplace</td>
+            <td><code>npm install -g @google/gemini-cli</code></td>
+            <td>Massive context windows, strong Google Cloud integration, generous free tier</td>
+          </tr>
+          <tr>
+            <td><strong>Claude</strong></td>
+            <td>"Claude Code" extension in VS Code Marketplace</td>
+            <td><code>npm install -g @anthropic-ai/claude-code</code></td>
+            <td>Long-running agentic tasks, careful reasoning, strong at following detailed instructions</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>Every option offers both a chat-style interaction and an <em>agent mode</em> that can read files, run commands, and make edits on its own. The differences show up in how they feel to use. You will get much more out of any of them by spending an hour with it than you will by reading comparison tables.</p>
+
+      <!-- ==================== PART 4 — OPTION A: CODEX ==================== -->
+      <h2>4. Option A &mdash; Codex (OpenAI)</h2>
+
+      <p>Codex is OpenAI's coding assistant. It is built on the same GPT family that powers ChatGPT, but with tool use, file editing, and command execution layered on top. If you are already comfortable with ChatGPT's conversational style, Codex will feel instantly familiar.</p>
+
+      <h3>VS Code installation (Codex)</h3>
+
+      <ol>
+        <li>Open VS Code and go to the Extensions panel (<code>Ctrl+Shift+X</code> on Windows/Linux, <code>Cmd+Shift+X</code> on macOS).</li>
+        <li>Search for <strong>OpenAI Codex</strong> and install the official extension (publisher: OpenAI).</li>
+        <li>Click the Codex icon in the activity bar on the left side of VS Code.</li>
+        <li>Sign in with your OpenAI account when prompted. You will be redirected to a browser, confirm the login, and the extension will pick up the session automatically.</li>
+        <li>Open your <code>assistant-playground</code> folder in VS Code (<strong>File &rarr; Open Folder</strong>). The Codex panel now knows the contents of that folder and can reference files in its replies.</li>
+      </ol>
+
+      <h3>CLI installation (Codex)</h3>
+
+      <ol>
+        <li>Install the Codex CLI globally with npm:
+          <pre><code>npm install -g @openai/codex</code></pre>
+        </li>
+        <li>Run <code>codex</code> inside your <code>assistant-playground</code> folder. On first run it will ask you to sign in &mdash; either through a browser redirect or by pasting an API key from <code>platform.openai.com/api-keys</code>.</li>
+        <li>You will land in an interactive prompt. Try asking it to create a file:
+          <pre><code>&gt; Write a Python script called hello.py that greets the user by name.</code></pre>
+        </li>
+        <li>Codex will propose a diff, ask you to confirm, and then write the file. Review the change before you approve it &mdash; this is a habit you will want from day one.</li>
+      </ol>
+
+      <h3>Codex strengths and drawbacks</h3>
+
+      <ul>
+        <li><strong>Strengths:</strong> familiar conversational style, strong general knowledge, excellent at explaining concepts, huge community around prompt patterns, works well for "explain this code" kind of questions.</li>
+        <li><strong>Drawbacks:</strong> agent mode is powerful but can be aggressive &mdash; it will happily rewrite half your codebase if you let it. Always run inside a Git repo so you can <code>git diff</code> and revert.</li>
+      </ul>
+
+      <!-- ==================== PART 5 — OPTION B: CURSOR ==================== -->
+      <h2>5. Option B &mdash; Cursor</h2>
+
+      <p>Cursor is not a VS Code extension &mdash; it is a whole separate application, a fork of VS Code with AI built into the core of the editor. When you install Cursor you are installing an editor that looks and feels almost identical to VS Code, but the AI is woven into every part of the interface: tab completion, inline edits, a side panel, and a multi-file "Composer" mode.</p>
+
+      <h3>Editor installation (Cursor)</h3>
+
+      <ol>
+        <li>Download Cursor for your platform from <code>cursor.com</code>. Windows, macOS, and Linux are all supported.</li>
+        <li>Run the installer and launch Cursor.</li>
+        <li>On first launch, Cursor will ask if you want to import your VS Code settings and extensions. Say yes &mdash; it will pick up your themes, keybindings, and installed extensions automatically.</li>
+        <li>Sign in with a Cursor account (free tier available) when prompted. This links your editor to the cloud model.</li>
+        <li>Open your <code>assistant-playground</code> folder. Press <code>Ctrl+L</code> (or <code>Cmd+L</code> on macOS) to open the chat panel, or <code>Ctrl+K</code> for an inline edit prompt on the current file.</li>
+      </ol>
+
+      <h3>CLI installation (Cursor)</h3>
+
+      <p>Cursor also ships a separate command-line tool called <code>cursor-agent</code> that gives you headless access to the same model from a terminal. Installation depends on your platform &mdash; check the official documentation at <code>cursor.com/cli</code> for the current install command, as the recommended method changes occasionally. At the time of writing, the most reliable path on macOS and Linux is a one-line installer script; on Windows, the installer is a standalone executable.</p>
+
+      <p>Once installed, run <code>cursor-agent</code> inside your playground folder to start an interactive session backed by the same model the editor uses. The CLI is useful for scripted workflows &mdash; for example, running a prompt across every file in a directory as part of a build step.</p>
+
+      <h3>Cursor strengths and drawbacks</h3>
+
+      <ul>
+        <li><strong>Strengths:</strong> by far the tightest editor integration of any option. Multi-file edits via Composer feel magical the first few times. Tab-completion is aggressive and usually right. No separate "chat and then apply" dance &mdash; the AI lives inside the editor surface.</li>
+        <li><strong>Drawbacks:</strong> you have to use a different editor. If your team is committed to plain VS Code, Cursor creates friction. The free tier has a monthly usage cap that serious users will hit quickly; a paid plan is effectively required for daily use.</li>
+      </ul>
+
+      <!-- ==================== PART 6 — OPTION C: GEMINI ==================== -->
+      <h2>6. Option C &mdash; Gemini (Google)</h2>
+
+      <p>Gemini is Google's coding assistant, built on the Gemini family of models. Its headline feature is an enormous context window &mdash; Gemini can keep an entire medium-sized codebase in view at once, which changes how you prompt it. If you have ever wanted to ask "which files in this project handle authentication?" and get a good answer, Gemini's context window makes that realistic.</p>
+
+      <h3>VS Code installation (Gemini)</h3>
+
+      <ol>
+        <li>Open VS Code and go to the Extensions panel.</li>
+        <li>Search for <strong>Gemini Code Assist</strong> and install the extension published by Google.</li>
+        <li>Click the Gemini icon in the activity bar. The extension will prompt you to sign in with a Google account.</li>
+        <li>During sign-in, Gemini Code Assist will also ask you to enable a Google Cloud project. You can use a free personal project &mdash; no billing card required for the free tier.</li>
+        <li>Open your playground folder. Use the Gemini panel to ask questions, or press the keyboard shortcut shown in the extension description for inline edits.</li>
+      </ol>
+
+      <h3>CLI installation (Gemini)</h3>
+
+      <ol>
+        <li>Install the Gemini CLI with npm:
+          <pre><code>npm install -g @google/gemini-cli</code></pre>
+        </li>
+        <li>Run <code>gemini</code> inside your playground folder. It will walk you through authentication &mdash; either a browser-based Google sign-in or pasting an API key from <code>aistudio.google.com/apikey</code>.</li>
+        <li>Try a prompt that takes advantage of the large context window:
+          <pre><code>&gt; Read every file in this folder and tell me what the project does.</code></pre>
+        </li>
+        <li>Gemini will read everything, summarize, and then wait for your next instruction. This is the pattern that feels most different from Codex or Claude &mdash; Gemini expects to see a lot of your code at once.</li>
+      </ol>
+
+      <h3>Gemini strengths and drawbacks</h3>
+
+      <ul>
+        <li><strong>Strengths:</strong> the context window is the headline feature and it genuinely matters &mdash; you can paste a whole file without worrying about truncation. Generous free tier. Tight integration with Google Cloud if you work in that ecosystem.</li>
+        <li><strong>Drawbacks:</strong> the UX has more rough edges than Codex or Cursor &mdash; sign-in and project setup can be confusing the first time. When a model has the whole codebase in view, it is also more likely to make sweeping changes you did not ask for. Review diffs carefully.</li>
+      </ul>
+
+      <!-- ==================== PART 7 — OPTION D: CLAUDE ==================== -->
+      <h2>7. Option D &mdash; Claude (Anthropic)</h2>
+
+      <p>Claude is Anthropic's coding assistant, and its public product for developers is called <strong>Claude Code</strong>. Claude is known for careful, deliberate responses &mdash; it tends to ask clarifying questions, point out trade-offs, and follow detailed instructions closely. In exchange, it can feel slower than Codex on simple questions. For longer, multi-step tasks ("refactor this service to use constructor injection instead of field injection") Claude tends to shine.</p>
+
+      <h3>VS Code installation (Claude)</h3>
+
+      <ol>
+        <li>Open the Extensions panel in VS Code.</li>
+        <li>Search for <strong>Claude Code</strong> and install the extension published by Anthropic.</li>
+        <li>Click the Claude icon in the activity bar and sign in with your Anthropic account. A browser window will open, you confirm, and the extension picks up the session.</li>
+        <li>Open your playground folder. You can now chat with Claude, ask it to edit files, or hand it a longer task and watch it work through the steps.</li>
+      </ol>
+
+      <h3>CLI installation (Claude)</h3>
+
+      <ol>
+        <li>Install Claude Code globally:
+          <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+        </li>
+        <li>Run <code>claude</code> inside your playground folder. The CLI will open a browser tab for sign-in on first run, or you can paste an API key from <code>console.anthropic.com</code>.</li>
+        <li>Try an agentic task:
+          <pre><code>&gt; Create a small Express server in server.js that returns "Hello, Coders Farm!" on GET /. Then run it and tell me the port.</code></pre>
+        </li>
+        <li>Claude will propose the file, ask to run <code>npm init -y</code> and install <code>express</code>, wait for you to approve, and then start the server. You confirm each step &mdash; that permission-on-every-command rhythm is the defining feel of the Claude Code CLI.</li>
+      </ol>
+
+      <h3>Claude strengths and drawbacks</h3>
+
+      <ul>
+        <li><strong>Strengths:</strong> the strongest option for longer multi-step tasks where you want the assistant to think carefully and ask permission before acting. Strong at reading unfamiliar codebases. Excellent at following a detailed system prompt exactly. The permission-per-command style in the CLI is reassuring for beginners.</li>
+        <li><strong>Drawbacks:</strong> can feel slow on trivial questions where you just want a quick answer. Free usage is more limited than Gemini's. If you want a "just autocomplete my code" experience, Cursor is a better fit.</li>
+      </ul>
+
+      <!-- ==================== PART 8 — HOW THIS DIFFERS FROM YOUR OWN CODING ASSISTANT ==================== -->
+      <h2>8. How This Differs from Your Own Coding Assistant</h2>
+
+      <p>If you completed the previous side quest, you already built a local coding assistant using Ollama. That assistant runs entirely on your hardware &mdash; no network calls, no accounts, no cost per token. So why would you ever use an online one?</p>
+
+      <p>The honest answer is that the two tools serve different purposes, and most professional developers end up using both. Here is how they compare on the things that matter:</p>
+
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Dimension</th>
+            <th>Local (Ollama)</th>
+            <th>Online (Codex/Cursor/Gemini/Claude)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Privacy</td>
+            <td>Your code never leaves your machine</td>
+            <td>Every prompt and every file you reference is sent to a third party</td>
+          </tr>
+          <tr>
+            <td>Cost</td>
+            <td>Free after hardware purchase</td>
+            <td>Free tier + paid plan (usually $10&ndash;$30/month for serious use)</td>
+          </tr>
+          <tr>
+            <td>Model size</td>
+            <td>3B&ndash;13B parameters on consumer hardware</td>
+            <td>Hundreds of billions to trillions of parameters</td>
+          </tr>
+          <tr>
+            <td>Quality</td>
+            <td>Good for familiar patterns, struggles with novel problems</td>
+            <td>Strong across the board, handles unfamiliar codebases well</td>
+          </tr>
+          <tr>
+            <td>Speed</td>
+            <td>Limited by your hardware &mdash; can be very slow on large prompts</td>
+            <td>Fast, even on massive prompts</td>
+          </tr>
+          <tr>
+            <td>Works offline</td>
+            <td>Yes &mdash; no internet required</td>
+            <td>No &mdash; cloud connection is mandatory</td>
+          </tr>
+          <tr>
+            <td>Works inside a locked-down corporate network</td>
+            <td>Yes</td>
+            <td>Usually blocked unless IT approves the provider</td>
+          </tr>
+          <tr>
+            <td>Teaching value</td>
+            <td>Huge &mdash; you see exactly how the model fits together</td>
+            <td>Black box &mdash; you see the output but not the machinery</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>A reasonable real-world pattern is: <strong>use the online assistant for day-to-day work, and keep a local model around for privacy-sensitive tasks and for learning.</strong> Running your own model taught you how LLMs actually work. Using an online model teaches you how professional development teams use AI in 2026. Both skills matter.</p>
+
+      <p>There is one more category worth mentioning. Some organizations run a <strong>self-hosted enterprise model</strong> &mdash; a large model running on their own GPUs, accessed through an API that looks like the online options but with all traffic staying inside the company network. If you ever work at a bank, a hospital, or a government agency, this is what you will probably use. It has the privacy of local with the scale of online. From your perspective as a developer, it behaves almost exactly like one of the online assistants &mdash; the same prompt patterns, the same mental model, different endpoint.</p>
+
+      <!-- ==================== PART 9 — ADVANCED USAGE ==================== -->
+      <h2>9. Advanced Usage</h2>
+
+      <p>You can get value from any of these tools in the first five minutes by typing questions into the chat panel. But the difference between an average user and a power user is huge &mdash; and it comes down to a handful of patterns that work across every option. Learn these and your output quality will jump noticeably.</p>
+
+      <h3>Give it a project rules file</h3>
+
+      <p>Every option supports some form of <strong>project rules</strong> &mdash; a plain-text file at the top of your repository that the assistant reads automatically on every interaction. This file is where you put the things you would otherwise have to repeat in every prompt: coding conventions, tech stack, testing rules, things to avoid. The file has different names for different tools:</p>
+
+      <ul>
+        <li><strong>Codex</strong> looks for <code>AGENTS.md</code> at the project root.</li>
+        <li><strong>Cursor</strong> looks for <code>.cursorrules</code> or the newer <code>.cursor/rules/</code> directory.</li>
+        <li><strong>Gemini</strong> looks for <code>GEMINI.md</code>.</li>
+        <li><strong>Claude</strong> looks for <code>CLAUDE.md</code>.</li>
+      </ul>
+
+      <p>The content of the file is similar in every case. Here is a starter you can adapt to any of them:</p>
+
+      <pre><code># Project rules
+
+## Stack
+- Java 21, Spring Boot 3, Maven
+- PostgreSQL, accessed through Spring Data JPA
+- Thymeleaf for server-rendered HTML
+
+## Conventions
+- Every new endpoint must have an integration test in the same package
+- Prefer constructor injection over field injection
+- Never commit API keys; use environment variables loaded via application.yml
+- All user input must go through a validation layer
+
+## Things to avoid
+- Do not introduce new dependencies without asking first
+- Do not rewrite code that already passes tests just to make it "cleaner"
+- Do not run destructive database migrations without confirmation</code></pre>
+
+      <p>Drop this file at the root of your project and every future prompt gets it for free. The payoff is enormous &mdash; you stop fighting the assistant's defaults and it starts fitting into <em>your</em> codebase.</p>
+
+      <h3>Know the difference between chat, inline, and agent mode</h3>
+
+      <p>Every online assistant offers three different interaction styles, even if they call them different names. Understanding when to use which one is half the battle:</p>
+
+      <ul>
+        <li><strong>Chat mode</strong> &mdash; you type a question in a side panel and get a reply. Best for exploring unfamiliar code, understanding concepts, and deciding what to do. Nothing changes in your files until you copy-paste.</li>
+        <li><strong>Inline edit mode</strong> &mdash; you select a chunk of code, press a shortcut (<code>Ctrl+K</code> in Cursor, similar in each tool), and describe a change. The assistant rewrites just that selection. Best for targeted edits you already know you want.</li>
+        <li><strong>Agent mode</strong> &mdash; you give the assistant a larger task and it runs multiple steps on its own: reading files, writing files, running commands. Best for longer tasks where the steps are too tedious to do one at a time, but review every action it takes.</li>
+      </ul>
+
+      <p>The biggest beginner mistake is putting agent-mode-sized tasks into chat mode and vice versa. If you catch yourself pasting the same file into a chat panel six times, you wanted inline or agent mode. If you are reviewing a 500-line diff from agent mode and only wanted to fix one typo, you wanted inline.</p>
+
+      <h3>Prompt patterns that work everywhere</h3>
+
+      <p>Treat prompts like small specifications. The more structure you give the assistant, the better the output. The pattern below works across every option:</p>
+
+      <pre><code>Context: [what you're working on and why]
+Task: [the specific thing you want done]
+Constraints: [what NOT to change or assume]
+Output format: [what the reply should look like]</code></pre>
+
+      <p>Here is a concrete example. Instead of writing "add pagination to the jobs page," write:</p>
+
+      <pre><code>Context: This is the Resumator project from the Coders Farm
+curriculum. Jobs are served by JobController.java and rendered
+by jobs.html with Thymeleaf. Right now all jobs load at once.
+
+Task: Add server-side pagination with a page size of 20. Use
+Spring Data's Pageable.
+
+Constraints: Do not change the Job entity. Do not touch
+JobSearchService — only the controller and the template.
+Keep the existing search bar working.
+
+Output format: Show the updated JobController.java in full,
+then the diff for jobs.html, then a one-sentence summary of
+what changed.</code></pre>
+
+      <p>The assistant will produce <em>dramatically</em> better output from the second prompt than the first. This is the single biggest lever you have for getting value out of an online assistant. It costs you thirty seconds and it saves you ten minutes of back-and-forth.</p>
+
+      <h3>Treat the assistant like a junior teammate, not an oracle</h3>
+
+      <p>Online assistants confabulate &mdash; they occasionally produce code that looks plausible but refers to APIs that do not exist, functions with the wrong signature, or configuration keys the framework has never heard of. The models are better than they were a year ago, but the failure mode has not gone away.</p>
+
+      <p>The mental model that works is this: <strong>treat the assistant like a bright, fast, slightly overconfident junior teammate.</strong> You would not merge a junior's PR without reading it. You would not paste their suggestion into production without running the tests. Apply the same discipline here. Read every diff before you accept it. Run the tests. Click around the UI. If you do not understand what the assistant changed, you are not ready to keep it.</p>
+
+      <h3>Control the cost</h3>
+
+      <p>Online assistants bill by <strong>token usage</strong> &mdash; roughly, the number of characters in your prompt plus the characters in the reply. Every option has a free tier, but serious use will push you into a paid plan quickly. Three habits keep the cost under control:</p>
+
+      <ul>
+        <li><strong>Be specific about what files the assistant should read.</strong> Agent mode will happily slurp up your entire repo into the context window if you let it. Point it at the two or three files that actually matter.</li>
+        <li><strong>Use the smaller, cheaper model for small tasks.</strong> Every provider offers a "mini" or "flash" model that costs a fraction of the flagship. For tab-completion and quick questions, the small model is almost always fine.</li>
+        <li><strong>Check the usage dashboard weekly.</strong> Every provider has one. Look at it. Understand where your tokens go. If one kind of task is eating half your budget, that is the task to rethink.</li>
+      </ul>
+
+      <h3>MCP and tool use</h3>
+
+      <p>The newest capability across every option is <strong>Model Context Protocol (MCP)</strong> support &mdash; a way for you to extend an assistant with custom tools. You can give your assistant access to your database, your build system, your issue tracker, or any other system you care about, and it will use those tools to answer your questions. MCP is a rabbit hole worth exploring once you are comfortable with the basics. For now, just know it exists and that it is the feature that separates "AI assistant" from "AI coworker."</p>
+
+      <!-- ==================== PART 10 — COMMON MISTAKES ==================== -->
+      <h2>10. Common Mistakes</h2>
+
+      <p>Most people get mediocre results from these tools for the same small set of reasons. Watch for these in your own workflow:</p>
+
+      <ul>
+        <li><strong>Vague prompts.</strong> "Fix the bug" is not a prompt. "The login form returns 500 when the email contains a plus sign &mdash; I think it is URL encoding, see AuthController.java line 42" is a prompt. Specificity is free; use it.</li>
+        <li><strong>Accepting diffs without reading them.</strong> The moment you stop reviewing, you start introducing bugs you did not write. You will not notice at first. You will notice in production.</li>
+        <li><strong>Asking the assistant to make stylistic changes that span hundreds of files.</strong> It can do this. It will sometimes do it slightly wrong on a handful of files in ways you will not catch until weeks later. Use your IDE's refactor tools for mechanical changes; save the assistant for the judgment calls.</li>
+        <li><strong>Ignoring the rules file.</strong> If you find yourself typing the same preamble into every prompt (<em>"remember, we use Spring Boot 3 and Thymeleaf..."</em>), stop. Put it in the rules file. The rules file is a gift to your future self.</li>
+        <li><strong>Treating one assistant as "the best."</strong> They have different personalities and different strengths. Most professional developers keep two installed and switch between them depending on the task.</li>
+      </ul>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="qsq-oca-1">
+        <p class="quiz-question">1. What is the most important single pattern for getting dramatically better output from any online coding assistant?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-oca-1" value="a"> Always use the most expensive model available</label>
+          <label><input type="radio" name="qsq-oca-1" value="b"> Install every option and ask the same question in each one, then pick the best answer</label>
+          <label><input type="radio" name="qsq-oca-1" value="c"> Write structured prompts that include context, task, constraints, and desired output format, and put repeated instructions in a project rules file</label>
+          <label><input type="radio" name="qsq-oca-1" value="d"> Enable agent mode on every request so the assistant can read your whole codebase</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Correct! Structured prompts with context, task, constraints, and output format &mdash; combined with a project rules file for the repetitive stuff &mdash; are the single biggest lever you have. Bigger models help a little. Better prompts help a lot. Every option in this lesson (Codex, Cursor, Gemini, Claude) supports a rules file at the project root, and every option benefits equally from structured prompts.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-oca-2">
+        <p class="quiz-question">2. When is a local coding assistant (the one you built with Ollama) still the right choice over an online option?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-oca-2" value="a"> When you need the highest possible response quality on novel problems</label>
+          <label><input type="radio" name="qsq-oca-2" value="b"> When you are working with code that cannot leave your machine for privacy or compliance reasons, or when you need to work offline</label>
+          <label><input type="radio" name="qsq-oca-2" value="c"> When you want the largest possible context window</label>
+          <label><input type="radio" name="qsq-oca-2" value="d"> When you want the fastest response time on large prompts</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Exactly. The online options win on raw quality, context window size, and speed on large prompts. The local option wins on privacy (your code never leaves the machine), cost (free after the hardware), and offline capability. Hospitals, banks, and government agencies often cannot use cloud assistants at all &mdash; so the local option is not just a learning exercise, it is a real-world requirement for a lot of professional work.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-oca-3">
+        <p class="quiz-question">3. You are using Cursor's Composer to make a large multi-file change. The assistant produces a 400-line diff. What should you do next?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-oca-3" value="a"> Accept the diff &mdash; Cursor's multi-file mode is very reliable, so reviewing is unnecessary</label>
+          <label><input type="radio" name="qsq-oca-3" value="b"> Delete the changes and do it manually &mdash; a 400-line AI diff is always wrong</label>
+          <label><input type="radio" name="qsq-oca-3" value="c"> Read the diff, file by file, run the tests, click around the UI, and only then accept the parts you understand &mdash; reject or iterate on anything that is unclear or surprising</label>
+          <label><input type="radio" name="qsq-oca-3" value="d"> Ask a different assistant to review the diff, then accept whichever one you trust more</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is the right habit. Treat the assistant like a bright, overconfident junior teammate: you would never merge a junior's 400-line PR without reading it, running the tests, and making sure you understood it. The same discipline applies here. The moment you stop reviewing is the moment you start introducing bugs you did not write. This habit is more important than which assistant you pick.</div>
+      </div>
+
+      <!-- ==================== DELIVERABLE ==================== -->
+      <h2>Deliverable</h2>
+
+      <p>Pick one of the four options and get it working end-to-end in your <code>assistant-playground</code> folder. Your deliverable is:</p>
+
+      <ul>
+        <li>The option is installed (either the VS Code path or the CLI path &mdash; your choice)</li>
+        <li>You have a project rules file (<code>AGENTS.md</code>, <code>.cursorrules</code>, <code>GEMINI.md</code>, or <code>CLAUDE.md</code>) committed to your playground repo</li>
+        <li>You used the assistant to build a <strong>small project of your choice</strong> &mdash; a single-file HTML tic-tac-toe, a Python script that fetches weather data, a short Java program, anything you like &mdash; using a structured prompt and reviewing every diff before accepting it</li>
+        <li>You can answer: which option did you pick, why, and what would you change about your prompt on the next iteration?</li>
+      </ul>
+
+      <p>Bonus: install a second option and build the same small project with it. Compare how the two assistants approached the problem, what they got right, and where they differed. There is no "best" assistant &mdash; only a best fit for a particular task and personal style. The fastest way to develop taste is to see the same problem solved by two different tools.</p>
+
+      <p>You have now used a real professional-grade coding assistant. That skill carries into every job you will have from here forward. Combine it with the local assistant you built in the last side quest and you understand the full spectrum of how developers use AI in 2026 &mdash; from a 3-billion-parameter model running on a Raspberry Pi to a trillion-parameter model running in a data center. Both are tools. Both have a place. You now know when to reach for each one.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="online-coding-assistants">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+        <li><a href="#" id="check-updates">Update Site</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/narrator.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -56,6 +56,15 @@
           "file": "build-something-new/local-coding-assistant.html",
           "estimatedTime": "5-6 hours",
           "difficulty": "Intermediate"
+        },
+        {
+          "id": "online-coding-assistants",
+          "title": "Online Coding Assistants",
+          "icon": "\ud83d\udef0\ufe0f",
+          "teaser": "Tour Codex, Cursor, Gemini, and Claude. Install one (or all four) with VS Code or CLI paths, then learn the patterns that make any of them dramatically more useful.",
+          "file": "build-something-new/online-coding-assistants.html",
+          "estimatedTime": "2-3 hours",
+          "difficulty": "Beginner"
         }
       ]
     },
@@ -106,6 +115,15 @@
           "file": "supercharge-resumator/interview-prep.html",
           "estimatedTime": "3-4 hours",
           "difficulty": "Intermediate"
+        },
+        {
+          "id": "local-model-resume-crafter",
+          "title": "Local Model Resume Crafter",
+          "icon": "\ud83e\udde9",
+          "teaser": "Wire your local Ollama model into the Resumator as both your dev-time pair programmer and the runtime engine for a private, keyword-density-aware resume and cover letter crafter.",
+          "file": "supercharge-resumator/local-model-resume-crafter.html",
+          "estimatedTime": "5-6 hours",
+          "difficulty": "Advanced"
         }
       ]
     }

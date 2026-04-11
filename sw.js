@@ -3,7 +3,7 @@
    Cache-first strategy for offline access
    ======================================== */
 
-const CACHE_NAME = 'cf-cache-v17';
+const CACHE_NAME = 'cf-cache-v19';
 const MONACO_VERSION = '0.45.0';
 const MONACO_BASE = `https://cdn.jsdelivr.net/npm/monaco-editor@${MONACO_VERSION}`;
 
@@ -58,11 +58,13 @@ const APP_SHELL = [
   '/lessons/side-quests/build-something-new/android-app.html',
   '/lessons/side-quests/build-something-new/linux-basics.html',
   '/lessons/side-quests/build-something-new/local-coding-assistant.html',
+  '/lessons/side-quests/build-something-new/online-coding-assistants.html',
   '/lessons/side-quests/supercharge-resumator/apply-tracker.html',
   '/lessons/side-quests/supercharge-resumator/resume-tailor.html',
   '/lessons/side-quests/supercharge-resumator/salary-heatmap.html',
   '/lessons/side-quests/supercharge-resumator/email-alerts.html',
-  '/lessons/side-quests/supercharge-resumator/interview-prep.html'
+  '/lessons/side-quests/supercharge-resumator/interview-prep.html',
+  '/lessons/side-quests/supercharge-resumator/local-model-resume-crafter.html'
 ];
 
 // Monaco Editor core files to pre-cache
