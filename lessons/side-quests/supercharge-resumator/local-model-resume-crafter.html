@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Side Quest: Local Model Resume Crafter &mdash; Coders Farm</title>
+  <meta name="description" content="Connect the local coding assistant you built with Ollama to your Resumator. Use it both as your dev-time pair programmer and as the runtime engine for a keyword-density-aware resume and cover letter crafter.">
+  <meta name="theme-color" content="#1e1e1e">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/assets/favicon.ico">
+  <link rel="apple-touch-icon" href="/assets/icons/icon-192.png">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/lessons.css">
+</head>
+<body data-page="lesson" data-lesson-id="sq-local-model-resume-crafter">
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="top-nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <div class="nav-left">
+        <a href="/" class="nav-logo" aria-label="Coders Farm home">
+          <img src="../../image2vector.svg" alt="Coders Farm" aria-hidden="true" width="40" height="40">
+          Coders Farm
+        </a>
+        <span class="nav-separator"></span>
+        <span class="nav-title">Local Model Resume Crafter</span>
+      </div>
+      <div class="nav-right">
+        <button class="theme-toggle" aria-label="Toggle dark/light mode">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+        <button class="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-nav" role="menu">
+      <a href="/" role="menuitem">Home</a>
+      <a href="/#side-quests-header" role="menuitem">Back to Side Quests</a>
+    </div>
+  </nav>
+
+  <main id="main" class="main-content">
+    <div class="lesson-header">
+      <p class="lesson-breadcrumb"><a href="/">Home</a> / <a href="/#side-quests-header">Side Quests</a> / Local Model Resume Crafter</p>
+      <h1>Local Model Resume Crafter</h1>
+      <p style="color: var(--text-muted);">Estimated time: 5&ndash;6 hours | Difficulty: Advanced</p>
+    </div>
+    <div class="lesson-content">
+
+      <div class="sq-accent-bar"></div>
+      <span class="sq-label">Side Quest</span>
+
+      <!-- ==================== LEARNING OBJECTIVES ==================== -->
+      <div class="learning-objectives">
+        <h3>What You Will Build</h3>
+        <ul>
+          <li>Use the local coding assistant from the <a href="../build-something-new/local-coding-assistant.html">Your Own Coding Assistant</a> side quest as your dev-time pair programmer</li>
+          <li>Wire your Spring Boot Resumator to the same local Ollama model as a runtime inference engine</li>
+          <li>Build a <strong>Resume &amp; Cover Letter Crafter</strong> that takes a base resume and a job description and produces a tailored, keyword-density-aware output</li>
+          <li>Gather a handful of resume templates as style references and let users bring their own</li>
+          <li>Learn prompt engineering patterns specific to keyword-density optimization and ATS-friendly output</li>
+          <li>Practice iterative feature development with an AI pair programmer &mdash; writing code, reviewing diffs, and keeping the human in the loop</li>
+        </ul>
+      </div>
+
+      <h3>Deliverable</h3>
+      <p>A working <strong>"Craft from Scratch"</strong> button on your Resumator that, given a base resume and a job description, produces (a) a tailored resume and (b) a matching cover letter, both keyword-density-optimized for the target role, with reference-template previews and a download button. The feature runs entirely on your own hardware &mdash; no cloud API, no API key, no cost.</p>
+
+      <!-- ==================== PART 1 — WHY THIS IS DIFFERENT ==================== -->
+      <h2>1. Why This Is Different from the Resume Tailor Lesson</h2>
+
+      <p>If you completed the <a href="resume-tailor.html">Resume Tailor</a> side quest, you already built a feature that uses an AI model to <em>tailor</em> an existing resume. You might reasonably ask what this lesson adds. Three things:</p>
+
+      <ul>
+        <li><strong>Resume Tailor</strong> used a <em>cloud</em> LLM (OpenAI, Anthropic, Google). This lesson uses your <em>local</em> model &mdash; the same one you built in the Your Own Coding Assistant side quest. Your resume never leaves your machine.</li>
+        <li><strong>Resume Tailor</strong> produced tailoring <em>suggestions</em> for an existing resume. This lesson produces a full tailored resume <em>and</em> a matching cover letter, both crafted from scratch against a base profile and a target job description, with explicit keyword-density targeting.</li>
+        <li><strong>Resume Tailor</strong> was about building a feature. This lesson is about building a feature <em>with</em> your local coding assistant as your pair programmer. Every code sample in this lesson is something you will prompt your assistant to help you write, review, and refine. The meta-loop is the point.</li>
+      </ul>
+
+      <p>You can do this side quest without having done Resume Tailor first, but you should have completed Your Own Coding Assistant, because the entire lesson assumes you have Ollama running locally and can talk to a model at <code>http://localhost:11434</code>.</p>
+
+      <div class="callout callout-info">
+        <strong>Before you start:</strong> confirm your local model is running. Open a terminal and run <code>ollama list</code> &mdash; you should see at least one model in the list. If you pulled <code>llama3.2:3b</code> or <code>qwen2.5-coder:7b</code> during the previous side quest, you are ready. If not, run <code>ollama pull qwen2.5-coder:7b</code> now and come back when it finishes downloading. A coder-tuned model will produce noticeably better resume output than a general chat model.
+      </div>
+
+      <!-- ==================== PART 2 — THE FEATURE, END TO END ==================== -->
+      <h2>2. The Feature, End to End</h2>
+
+      <p>Here is what the user will see when you are done. On every job card in the Resumator, there will be a new button labeled <strong>Craft from Scratch</strong>. Clicking it opens a modal with three panels:</p>
+
+      <ol>
+        <li><strong>Left panel &mdash; Inputs.</strong> A text area pre-filled with the job description from the job card, a second text area with the user's base resume loaded from their saved profile, and a dropdown to pick a reference template style.</li>
+        <li><strong>Middle panel &mdash; Generation.</strong> A "Craft" button that kicks off the pipeline. Below it, a live keyword-density meter that updates as the output is generated. Below that, a streaming preview of the resume and cover letter as they are produced.</li>
+        <li><strong>Right panel &mdash; Output.</strong> Two tabs: <em>Resume</em> and <em>Cover Letter</em>. Each has an editable preview and a download button for the final document.</li>
+      </ol>
+
+      <p>Under the hood, the pipeline has four stages:</p>
+
+      <ol>
+        <li><strong>Keyword extraction</strong> &mdash; parse the job description and produce a weighted list of the terms that should appear in the resume.</li>
+        <li><strong>Density targeting</strong> &mdash; decide how often each keyword should appear, based on the job title and the weight from stage 1.</li>
+        <li><strong>Resume crafting</strong> &mdash; generate a tailored resume from the base profile, hitting the keyword targets without sounding robotic.</li>
+        <li><strong>Cover letter</strong> &mdash; generate a cover letter that matches the resume's tone and reinforces the same keywords.</li>
+      </ol>
+
+      <p>Each stage is a separate call to the local model. That matters: you want small, focused prompts rather than one giant prompt that tries to do everything at once. Smaller prompts give you better output, easier debugging, and faster iteration.</p>
+
+      <!-- ==================== PART 3 — YOUR DEV-TIME PAIR PROGRAMMER ==================== -->
+      <h2>3. Setting Up Your Dev-Time Pair Programmer</h2>
+
+      <p>Before you write a single line of the crafter feature, set up your local coding assistant to help you build it. This is the meta-loop: you will use the same Ollama instance for both roles, but with a different system prompt for each.</p>
+
+      <p>Open a new terminal. In it, start your coding assistant with a system prompt targeted at Spring Boot pair programming:</p>
+
+      <pre><code>cat &gt; ~/.coders-farm-pair-prompt &lt;&lt; 'EOF'
+You are a pair programmer for a Java 21 / Spring Boot 3 project
+called Resumator. The project uses:
+
+- Spring Boot 3 with spring-boot-starter-web and spring-boot-starter-data-jpa
+- Thymeleaf for server-rendered templates
+- PostgreSQL via Spring Data JPA
+- Plain HTML, CSS, and vanilla JavaScript on the frontend
+- Ollama at http://localhost:11434 as a local LLM backend
+
+Rules:
+- When I ask for code, produce a complete, compilable file or a
+  precise, minimal diff. Never half-finish an implementation.
+- Explain your reasoning in one or two sentences before the code.
+- If I ask for a change that would break something else, tell me.
+- If I ask something ambiguous, ask one clarifying question
+  before producing code. Not five questions. One.
+- Do not invent Spring Boot APIs. If you are not sure a method
+  or annotation exists, say so.
+EOF</code></pre>
+
+      <p>Now start an interactive session with your model using that system prompt. The exact command depends on how you interact with Ollama &mdash; if you built the chat interface from the previous lesson, point it at this prompt. If you prefer raw <code>curl</code>, the pattern looks like this:</p>
+
+      <pre><code>curl -s http://localhost:11434/api/chat -d '{
+  "model": "qwen2.5-coder:7b",
+  "messages": [
+    {"role": "system", "content": "'"$(cat ~/.coders-farm-pair-prompt | sed "s/\"/\\\\\"/g" | tr -d "\n")"'"},
+    {"role": "user", "content": "We are starting a new Resumator feature called Craft from Scratch. Before we write any code, ask me one question about the design."}
+  ],
+  "stream": false
+}'</code></pre>
+
+      <p>That is rough around the edges, and it is supposed to be &mdash; the real point is to get comfortable sending structured prompts to your local model programmatically. In practice, most students build a tiny helper script (<code>pair.sh</code> or <code>pair.py</code>) that wraps this call and keeps a conversation history. Your first task with your pair programmer is to help you write that helper. Ask it:</p>
+
+      <pre><code>&gt; Write a small Python script called pair.py that maintains a
+&gt; conversation with a local Ollama model. It should:
+&gt; - Read a system prompt from a file given on the command line
+&gt; - Loop reading user input from stdin
+&gt; - Send each user message to /api/chat with the full history
+&gt; - Stream the response back to the terminal
+&gt; - Save the full conversation to a .json file on exit</code></pre>
+
+      <p>Review the output. Read every line. Run it. Fix the first thing that is wrong &mdash; there will be something, and diagnosing small bugs in AI-generated code is exactly the skill this lesson is designed to build. You now have your pair programmer. Keep it open in a second terminal for the rest of the lesson. Whenever a code sample below says "ask your assistant to help you," this is the terminal you use.</p>
+
+      <!-- ==================== PART 4 — REFERENCE TEMPLATES ==================== -->
+      <h2>4. Gather Your Reference Templates</h2>
+
+      <p>A good resume is not just about words &mdash; structure, layout, and tone matter enormously, and they vary by industry. Before you build the crafter, gather three to five resume templates that represent different styles. These are for the model to reference, not to copy verbatim.</p>
+
+      <p>Find templates that cover different looks:</p>
+
+      <ul>
+        <li><strong>Classic single-column</strong> &mdash; conservative, text-heavy, used in finance and academia</li>
+        <li><strong>Two-column modern</strong> &mdash; skills sidebar on the left, experience on the right, common in design and product roles</li>
+        <li><strong>Minimal engineering</strong> &mdash; tight, bullet-heavy, dense, used for technical roles at every level</li>
+        <li><strong>Results-driven executive</strong> &mdash; numbers and impact statements front and center, common for senior positions</li>
+      </ul>
+
+      <p>You can find free templates at sites like <code>overleaf.com</code> (LaTeX templates for engineering roles), <code>canva.com</code> (design-oriented templates), and the built-in template gallery in Google Docs. <strong>Do not grab ten templates &mdash; grab three or four.</strong> The model works better when the choices are clear.</p>
+
+      <p>For each template, save two files in a new folder <code>src/main/resources/resume-templates/</code>:</p>
+
+      <ul>
+        <li><code>&lt;slug&gt;.json</code> &mdash; metadata: name, description, style notes, target industries</li>
+        <li><code>&lt;slug&gt;.md</code> &mdash; the template content as markdown, with clearly marked sections (header, summary, experience, skills, education) that the model can fill in</li>
+      </ul>
+
+      <p>Here is a sample metadata file:</p>
+
+      <pre><code>{
+  "slug": "minimal-engineering",
+  "name": "Minimal Engineering",
+  "description": "Single-column, bullet-heavy, tight spacing. Optimized for technical roles at any level.",
+  "styleNotes": [
+    "Use strong action verbs to start every bullet",
+    "Keep bullets to one line where possible",
+    "Lead with technologies, follow with impact",
+    "Summary is 2-3 sentences, not a paragraph"
+  ],
+  "targetIndustries": ["software", "devops", "data", "embedded"]
+}</code></pre>
+
+      <p>And here is a sample template markdown file, with placeholder markers the model can replace:</p>
+
+      <pre><code># {{name}}
+{{email}} | {{phone}} | {{location}} | {{links}}
+
+## Summary
+{{summary}}
+
+## Experience
+{{experience}}
+
+## Skills
+{{skills}}
+
+## Education
+{{education}}</code></pre>
+
+      <div class="callout callout-success">
+        <strong>Encourage your users to bring their own.</strong> The folder structure above is deliberately simple so that users of your Resumator can drop their own templates in and have them show up in the picker. Part of the polish of this feature is making it extensible without requiring a code change. When you write the template-loading logic, make it scan the folder at startup and pick up anything that follows the naming convention. Ask your pair programmer for help with the <code>@PostConstruct</code> method that does the discovery.
+      </div>
+
+      <!-- ==================== PART 5 — BUILD THE BASE RESUME ==================== -->
+      <h2>5. Build the Base Resume Input</h2>
+
+      <p>The base resume is the raw material the crafter works from. It should include <em>everything</em> &mdash; every job, every project, every skill, every certification &mdash; because the crafter's job is to pick the relevant parts and leave the rest out. If the base resume is pruned, the crafter has nothing to work with.</p>
+
+      <p>Create a new entity called <code>BaseResume</code>. Ask your pair programmer to help you scaffold it:</p>
+
+      <pre><code>&gt; Create a Spring Data JPA entity for a BaseResume with fields for:
+&gt; user_id (foreign key to the existing users table),
+&gt; full_name, email, phone, location, links (JSON array of strings),
+&gt; summary (text), and three JSON columns:
+&gt; experience_items, skills_items, education_items.
+&gt;
+&gt; Each experience item should include company, title, start_date,
+&gt; end_date, location, and an array of bullet strings. Skills should
+&gt; have category and a list of skill strings. Education should have
+&gt; institution, degree, graduation_date, and notes.
+&gt;
+&gt; Produce: the entity class, a Spring Data repository interface,
+&gt; and a Flyway migration SQL file.</code></pre>
+
+      <p>Your assistant will give you something close to what you need. Review every line. Check the column types. Confirm the JSON mapping annotations match what your existing Resumator uses for other JSON columns. If something is off, fix it in the prompt and regenerate &mdash; do not silently patch broken AI output, teach the assistant what was wrong so the next response is better.</p>
+
+      <p>Why JSON columns for experience, skills, and education? Because the local model consumes JSON much more reliably than free-form text. When you pass the base resume to the crafter, you are going to serialize this entity as JSON and paste it into the prompt &mdash; and the LLM is going to extract exactly the fields it needs. A relational schema with five more tables would be more "correct" but would make the serialization and deserialization noticeably harder for no real benefit.</p>
+
+      <p>After the entity is in place, build a small form in the Resumator UI that lets the user edit their base resume section by section. This is not glamorous work &mdash; it is just form fields, bullet-list editors, and a save button &mdash; but the quality of the final crafted output depends entirely on how complete the base resume is. Spend the time here.</p>
+
+      <!-- ==================== PART 6 — THE CRAFTER SERVICE ==================== -->
+      <h2>6. Build the Crafter Service</h2>
+
+      <p>Now the interesting part. You are going to build a Spring Boot service called <code>ResumeCrafterService</code> that orchestrates the four-stage pipeline: keyword extraction, density targeting, resume crafting, and cover letter generation. Each stage is a separate call to your local Ollama model.</p>
+
+      <h3>The Ollama client</h3>
+
+      <p>First, you need a small client class that wraps the Ollama REST API. Ask your pair programmer:</p>
+
+      <pre><code>&gt; Create a Spring @Component called OllamaClient with a single
+&gt; method: String chat(String systemPrompt, String userPrompt).
+&gt; It should POST to http://localhost:11434/api/chat with model
+&gt; "qwen2.5-coder:7b", stream=false, and a two-message conversation.
+&gt; It should return the assistant's message content as a String.
+&gt;
+&gt; Use Spring's RestClient (not the deprecated RestTemplate).
+&gt; Model name and base URL should come from application.yml with
+&gt; sensible defaults.</code></pre>
+
+      <p>Once your assistant produces the client, test it with a smoke-test endpoint:</p>
+
+      <pre><code>@RestController
+public class SmokeTestController {
+  private final OllamaClient ollama;
+  public SmokeTestController(OllamaClient ollama) { this.ollama = ollama; }
+
+  @GetMapping("/smoke/ollama")
+  public String smoke() {
+    return ollama.chat(
+      "You are a terse assistant.",
+      "Say hello and confirm you are running."
+    );
+  }
+}</code></pre>
+
+      <p>Run the Resumator, hit <code>http://localhost:8080/smoke/ollama</code>, and confirm you get a response from your local model. If this does not work, nothing downstream will &mdash; debug here before moving on.</p>
+
+      <h3>Stage 1: keyword extraction</h3>
+
+      <p>Now build the first stage of the pipeline. The goal is to take a job description (free text) and produce a weighted list of keywords that should appear in the tailored resume. Here is the method signature:</p>
+
+      <pre><code>public List&lt;WeightedKeyword&gt; extractKeywords(String jobDescription) { ... }
+
+public record WeightedKeyword(String term, double weight, String category) {}</code></pre>
+
+      <p>And here is a prompt that works well for this stage. Add it as a method in <code>ResumeCrafterService</code>:</p>
+
+      <pre><code>private static final String KEYWORD_SYSTEM_PROMPT = """
+    You are an ATS keyword extraction tool. Given a job description,
+    you identify the terms that an Applicant Tracking System will
+    scan for, and you assign each term a weight from 1.0 (critical)
+    to 0.3 (nice to have) and a category (skill, tool, concept, soft).
+
+    Output format: strict JSON with a "keywords" array. Each item
+    has "term", "weight", and "category". Do not include anything
+    except the JSON object. No commentary, no markdown fences.
+    """;
+
+private static final String KEYWORD_USER_TEMPLATE = """
+    Job description:
+    ---
+    %s
+    ---
+
+    Extract 10 to 20 keywords. Focus on terms that appear multiple
+    times or are marked as requirements. Output only the JSON object.
+    """;</code></pre>
+
+      <p>Notice three things about this prompt. First, it is <strong>extremely specific</strong> about the output format &mdash; strict JSON, a known structure, no markdown. Second, it gives the model a <strong>role</strong> ("you are an ATS keyword extraction tool") which narrows its behavior. Third, it <strong>caps the output</strong> (10 to 20 keywords) so the model does not run away. These three patterns will come up in every prompt in this lesson.</p>
+
+      <p>The method itself is short:</p>
+
+      <pre><code>public List&lt;WeightedKeyword&gt; extractKeywords(String jobDescription) {
+  String userPrompt = KEYWORD_USER_TEMPLATE.formatted(jobDescription);
+  String json = ollama.chat(KEYWORD_SYSTEM_PROMPT, userPrompt);
+  return objectMapper.readValue(json, KeywordResponse.class).keywords();
+}
+
+private record KeywordResponse(List&lt;WeightedKeyword&gt; keywords) {}</code></pre>
+
+      <p>Write a small test that passes in a real job description and asserts the response is parseable and has the expected shape. Run it. If the model occasionally wraps its output in markdown code fences (it will), add a preprocessing step that strips them before parsing. Your pair programmer can help you write that cleanup logic if you ask.</p>
+
+      <h3>Stage 2: density targeting</h3>
+
+      <p>The next stage takes the weighted keyword list and produces a <em>target density</em> for each term &mdash; roughly, how many times the term should appear in the tailored resume. A keyword with weight 1.0 might have a target of 3 or 4 mentions; a weight-0.3 keyword might have a target of 1. This is largely arithmetic, not AI work &mdash; the model does not need to be involved.</p>
+
+      <pre><code>public Map&lt;String, Integer&gt; computeTargetDensities(
+    List&lt;WeightedKeyword&gt; keywords, int targetWordCount) {
+  Map&lt;String, Integer&gt; targets = new LinkedHashMap&lt;&gt;();
+  for (WeightedKeyword k : keywords) {
+    int target = (int) Math.round(k.weight() * targetWordCount * 0.012);
+    targets.put(k.term(), Math.max(1, target));
+  }
+  return targets;
+}</code></pre>
+
+      <p>The <code>0.012</code> magic number means "each weight-1.0 keyword should appear roughly 1.2% of the time in a 500-word resume" &mdash; about 6 mentions. Tune this number once you see real output. Keeping this stage deterministic (no LLM call) is deliberate: when something goes wrong later you will be grateful that at least one step in the pipeline is not a black box.</p>
+
+      <h3>Stage 3: craft the resume</h3>
+
+      <p>This is the stage where the LLM actually does the creative work. The prompt is longer than stages 1 and 2 combined, because it has to pack in everything the model needs: the base resume, the target density map, the reference template notes, and strict constraints on tone and format.</p>
+
+      <pre><code>private static final String CRAFT_SYSTEM_PROMPT = """
+    You are a professional resume writer. You produce tailored
+    resumes that honestly represent a candidate's real experience
+    while emphasizing the parts most relevant to a target role.
+
+    Rules you MUST follow:
+    - Never fabricate experience, skills, certifications, or dates.
+      If something is not in the base resume, it does not appear.
+    - Use the reference template's style notes for tone and layout.
+    - Hit the target keyword densities as closely as possible without
+      making the text sound repetitive or robotic.
+    - Strong action verbs. One line per bullet where possible.
+    - Do not use generic buzzwords like "synergy" or "leveraged
+      cutting-edge technologies". Prefer specific, concrete language.
+    - Output format: markdown matching the template's section layout.
+      No commentary before or after the markdown.
+    """;
+
+private static final String CRAFT_USER_TEMPLATE = """
+    Base resume (JSON):
+    %s
+
+    Target job description:
+    %s
+
+    Keyword density targets (keyword -&gt; target mentions):
+    %s
+
+    Reference template style notes:
+    %s
+
+    Craft a tailored resume. Output only the markdown.
+    """;</code></pre>
+
+      <p>And the method that ties it together:</p>
+
+      <pre><code>public String craftResume(
+    BaseResume base,
+    String jobDescription,
+    Map&lt;String, Integer&gt; densityTargets,
+    TemplateStyle template) {
+  String baseJson = objectMapper.writeValueAsString(base);
+  String densityText = formatDensityTargets(densityTargets);
+  String styleNotes = String.join("\n- ", template.styleNotes());
+
+  String userPrompt = CRAFT_USER_TEMPLATE.formatted(
+    baseJson, jobDescription, densityText, styleNotes
+  );
+
+  return ollama.chat(CRAFT_SYSTEM_PROMPT, userPrompt);
+}</code></pre>
+
+      <p>This is where your local model will earn its keep. Expect the first outputs to be imperfect &mdash; maybe the density targets are not quite hit, maybe the model slips in a buzzword, maybe the formatting drifts from the template. That is fine. The next stage (keyword density verification) is how you catch and correct those issues without another human-in-the-loop round.</p>
+
+      <h3>Stage 4: verify and iterate</h3>
+
+      <p>After the resume is crafted, count how often each target keyword actually appears. If any are more than 30% off target, feed the actual counts back to the model and ask it to revise. Here is the pattern:</p>
+
+      <pre><code>public String craftResumeWithIteration(/* ... */) {
+  String draft = craftResume(base, jobDescription, targets, template);
+
+  for (int i = 0; i &lt; MAX_ITERATIONS; i++) {
+    Map&lt;String, Integer&gt; actual = countKeywords(draft, targets.keySet());
+    List&lt;String&gt; offByMore = findOffTarget(actual, targets, 0.30);
+
+    if (offByMore.isEmpty()) return draft;
+
+    draft = reviseDraft(draft, targets, actual, offByMore);
+  }
+  return draft;
+}</code></pre>
+
+      <p>This is a classic AI pipeline pattern: generate, measure, feed measurements back as ground truth, regenerate. The deterministic measurement step is what makes the whole pipeline trustworthy &mdash; you are not hoping the model hits the targets, you are <em>measuring</em> whether it did and correcting when it did not. Your pair programmer can help you write <code>countKeywords</code>, <code>findOffTarget</code>, and <code>reviseDraft</code>. Ask for each one individually, review, test, move on.</p>
+
+      <h3>Stage 5: the cover letter</h3>
+
+      <p>The cover letter is easier than the resume because it only needs to reinforce the same keywords in prose form. Feed the model the crafted resume and the job description, and ask it to produce a three-paragraph cover letter in the candidate's voice. The system prompt is shorter:</p>
+
+      <pre><code>private static final String COVER_LETTER_SYSTEM_PROMPT = """
+    You write professional cover letters. Three paragraphs:
+    paragraph one names the role and a genuine reason for applying,
+    paragraph two connects the candidate's most relevant experience
+    to the job's requirements, paragraph three is a brief, confident
+    closing that invites the next step.
+
+    Rules:
+    - Use the candidate's voice from the resume. Do not invent.
+    - Reinforce 5 to 8 of the highest-weight keywords naturally.
+    - No clich&eacute;s. No "I am writing to express my interest."
+    - 250 to 350 words.
+    """;</code></pre>
+
+      <p>The user prompt passes the crafted resume, the job description, and the top keywords. The output is plain text. Simple.</p>
+
+      <!-- ==================== PART 7 — THE UI ==================== -->
+      <h2>7. Build the UI</h2>
+
+      <p>The backend is doing all the work. The UI just needs to let the user trigger the pipeline and review the output. Ask your pair programmer to help you scaffold the Thymeleaf fragment for the modal:</p>
+
+      <pre><code>&gt; I need a Thymeleaf fragment for a "Craft from Scratch" modal.
+&gt; It has three columns:
+&gt; left: textarea for job description (pre-filled from th:value),
+&gt;       textarea for base resume loaded from the user profile,
+&gt;       select for reference template (loop over ${templates}).
+&gt; middle: a "Craft" button, a div with id "density-meter" for
+&gt;         a live keyword density display, and a div with id
+&gt;         "streaming-preview" for the streaming output.
+&gt; right: two tabs (Resume, Cover Letter), each with an editable
+&gt;        contenteditable div and a Download button.
+&gt;
+&gt; Match the existing Resumator modal patterns &mdash; Bootstrap 5
+&gt; modal with our custom overrides.</code></pre>
+
+      <p>Review what you get. You will almost certainly need to tweak the class names to match your existing Resumator stylesheet, and Thymeleaf's expression syntax is easy to get slightly wrong. Fix the issues, run the app, and confirm the modal opens with the job description pre-populated.</p>
+
+      <p>Next, write a small vanilla-JS controller for the modal. It hits your crafter endpoint with the inputs, receives the streamed output, updates the preview, and renders the density meter as each keyword appears. This is a perfect job for the Server-Sent Events (SSE) pattern you might already have in Resumator &mdash; Spring Boot makes SSE trivial with <code>SseEmitter</code>. Ask your pair programmer for a minimal SSE controller that streams chunks from the Ollama client to the browser as they arrive.</p>
+
+      <p>The keyword density meter is a nice polish moment. As the resume streams in, update a small table showing each target keyword, its target count, and its current count. Color the rows green when they hit target, yellow when they are within 30%, red when they are off. This gives the user a live sense of how the tailoring is going and doubles as a debugging aid for you.</p>
+
+      <p>Finally, add a download button that produces a <code>.docx</code> or <code>.pdf</code> using whichever library is easiest &mdash; Apache POI for <code>.docx</code> is well documented, and your pair programmer will know the boilerplate. Do not overthink the document generation; the real value of the feature is in the crafted content, not in the file format.</p>
+
+      <!-- ==================== PART 8 — RESPONSIBLE USE ==================== -->
+      <h2>8. Responsible Use</h2>
+
+      <p>Everything the <a href="resume-tailor.html">Resume Tailor</a> lesson said about responsible AI use in job applications applies here, and more so, because this feature produces entire documents from scratch rather than just suggestions. The four rules:</p>
+
+      <ol>
+        <li><strong>Read every word before you send it.</strong> Your model is a 7-billion-parameter local model. It is good, but it will occasionally say something off. You are the final filter. Every sentence is something you will be expected to explain in an interview &mdash; make sure you can.</li>
+        <li><strong>Do not let it fabricate.</strong> The prompt explicitly forbids fabrication, but prompts are not contracts. The model might slip a skill you do not have into the output. If you see something in the draft that is not in your base resume, delete it.</li>
+        <li><strong>Keep the base resume honest.</strong> The crafter is only as truthful as the input. Do not inflate your base resume and expect the crafter to produce honest output. Keep the base broad but accurate.</li>
+        <li><strong>Do not mass-apply.</strong> This tool makes it easy to generate a tailored application in under a minute. Do not use that speed to fire off fifty sloppy applications. Use it to produce ten thoughtful, well-targeted ones. Quality beats quantity in every job search, and recruiters can smell mass-applied resumes from a mile away.</li>
+      </ol>
+
+      <div class="callout callout-warning">
+        <strong>Why local matters here:</strong> your resume and your base profile contain personal information &mdash; your address, your phone, your salary history, your career narrative. Running the crafter on a cloud API means sending all of that to a third party with every call. Running it locally means none of it ever leaves your machine. For a feature that touches the most personal data in the Resumator, the local model is not just a cost saving &mdash; it is the right architectural choice.
+      </div>
+
+      <!-- ==================== QUIZ ==================== -->
+      <h2>Knowledge Check</h2>
+
+      <div class="quiz" data-id="qsq-lmrc-1">
+        <p class="quiz-question">1. Why does the crafter pipeline split the work into four separate model calls (keyword extraction, density targeting, resume crafting, cover letter) instead of one large prompt that does everything?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-lmrc-1" value="a"> One large prompt would exceed the model's context window</label>
+          <label><input type="radio" name="qsq-lmrc-1" value="b"> Smaller, focused prompts produce better output, are easier to debug, and let deterministic steps (like density math) live outside the LLM where you can trust them</label>
+          <label><input type="radio" name="qsq-lmrc-1" value="c"> Ollama does not support long prompts</label>
+          <label><input type="radio" name="qsq-lmrc-1" value="d"> One large prompt is slower than four small ones</label>
+        </div>
+        <div class="quiz-answer" data-correct="b">Correct. Smaller prompts give the model a single clear job at a time, which produces noticeably better output. They are also much easier to debug: if the keyword extraction is wrong you can fix that stage in isolation without touching anything else. And some steps (the density math in stage 2) do not need an LLM at all &mdash; keeping those deterministic makes the pipeline far more trustworthy, because the LLM's output can be measured and verified against ground truth.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-lmrc-2">
+        <p class="quiz-question">2. What is the main architectural reason to run this feature on your local model instead of a cloud LLM API?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-lmrc-2" value="a"> Local models produce higher-quality resume content than cloud models</label>
+          <label><input type="radio" name="qsq-lmrc-2" value="b"> Local models are always faster than cloud models</label>
+          <label><input type="radio" name="qsq-lmrc-2" value="c"> Resume and base profile data is deeply personal &mdash; running locally means none of it is sent to a third party, which is the right architectural choice for a feature touching the most sensitive data in the Resumator</label>
+          <label><input type="radio" name="qsq-lmrc-2" value="d"> Cloud LLM APIs refuse to process resume data</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">Exactly. Cloud models are usually faster and often higher quality, so "the local model is objectively better" is the wrong answer. The local model wins here on privacy. The base resume contains address, phone, salary history, employment gaps, and a narrative about the user's career. For a feature that handles all of that, keeping the data on the user's machine is the right architectural call even if the cloud would be slightly faster or slightly better at prose.</div>
+      </div>
+
+      <div class="quiz" data-id="qsq-lmrc-3">
+        <p class="quiz-question">3. After the crafter generates a draft resume, you count each target keyword's actual occurrences and some are 40% below target. What should the pipeline do?</p>
+        <div class="quiz-options">
+          <label><input type="radio" name="qsq-lmrc-3" value="a"> Accept the draft as-is &mdash; keyword density is just a heuristic</label>
+          <label><input type="radio" name="qsq-lmrc-3" value="b"> Throw an error and ask the user to retry manually</label>
+          <label><input type="radio" name="qsq-lmrc-3" value="c"> Feed the measured actual counts back to the model as ground truth and ask it to revise, repeating up to a maximum number of iterations &mdash; generate, measure, correct</label>
+          <label><input type="radio" name="qsq-lmrc-3" value="d"> Regenerate from scratch with a higher temperature</label>
+        </div>
+        <div class="quiz-answer" data-correct="c">That is the pattern. Generate, measure, feed the measurements back as ground truth, regenerate. This is one of the most important patterns in production LLM pipelines: you never rely on the model to self-verify. You verify deterministically &mdash; counting keywords is a simple loop, not an AI task &mdash; and hand the measurements back to the model so it can correct. Capping the number of iterations prevents an infinite loop if the model cannot hit the target.</div>
+      </div>
+
+      <!-- ==================== SUMMARY ==================== -->
+      <h2>Side Quest Complete</h2>
+
+      <p>You just built something most developers have never tried: a full AI feature that runs end to end on local infrastructure, with no cloud API, no API key, no per-token billing, and no user data leaving the machine. Along the way you:</p>
+
+      <ul>
+        <li><strong>Used your local coding assistant as a pair programmer</strong> &mdash; the same Ollama instance you built in the previous side quest, wrapped in a focused system prompt for Spring Boot work. You did not just consume AI output, you collaborated with it iteratively, reviewed every diff, and built your own helper script for the loop.</li>
+        <li><strong>Designed a four-stage LLM pipeline</strong> &mdash; keyword extraction, density targeting, resume crafting, cover letter generation &mdash; with deterministic steps mixed in to keep the pipeline trustworthy.</li>
+        <li><strong>Learned the generate-measure-correct pattern</strong>, which is how real production LLM systems keep their output reliable. You never trust the model to grade itself; you measure and feed the measurements back.</li>
+        <li><strong>Built a polished UI</strong> with a streaming preview, a live keyword density meter, editable output, and a download button.</li>
+        <li><strong>Made extensibility easy</strong> &mdash; the reference template folder can be extended without a code change, so your users can drop in their own resume styles.</li>
+      </ul>
+
+      <p>The skills in this lesson &mdash; designing multi-stage AI pipelines, mixing deterministic and LLM steps, using prompt engineering to hit specific measurable targets, and pair-programming with a local model &mdash; are the skills that separate "someone who uses AI tools" from "someone who builds AI features." The second is much rarer and much more valuable.</p>
+
+      <p>And the Resumator is now a genuinely differentiated product. A resume tailor that runs entirely on your own machine, respects your data, and has no recurring cost is something no big-name job site offers. You built it yourself with open-source tools, a local model, and a few hundred lines of Spring Boot. That is the Coders Farm ethos in one feature.</p>
+
+    </div>
+
+    <div class="mark-complete-section">
+      <p>Finished this side quest?</p>
+      <button id="mark-complete-btn" class="btn btn-success btn-lg" data-track="side-quests" data-lesson="local-model-resume-crafter">Mark Complete</button>
+    </div>
+
+    <div class="lesson-nav">
+      <a href="/#side-quests-header" class="lesson-nav-btn">&larr; Back to Side Quests</a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-left">&copy; 2025 Coders Farm</div>
+      <ul class="footer-links">
+        <li><a href="https://github.com/coders-farm-official">GitHub</a></li>
+        <li><a href="https://codersfarm.org">codersfarm.org</a></li>
+        <li><a href="#" id="check-updates">Update Site</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <script src="/js/theme.js"></script>
+  <script src="/js/progress.js"></script>
+  <script src="/js/quiz.js"></script>
+  <script src="/js/editor.js"></script>
+  <script src="/js/runner.js"></script>
+  <script src="/js/lessons.js"></script>
+  <script src="/js/narrator.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

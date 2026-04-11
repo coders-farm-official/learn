@@ -44,13 +44,25 @@ Pure vanilla HTML/CSS/JS. No frameworks, no bundlers. 8 JS modules loaded via `<
 
 ### Lesson Content (lessons/)
 
-37 HTML files across 6 tracks (web-basics, java-spring, databases, resumator, career, side-quests). Each track has a `manifest.json` with lesson metadata and ordering.
+47 lesson HTML files across 6 tracks: `web-basics`, `java-spring`, `databases`, `resumator`, `career`, `side-quests` (37 core lessons + 10 side quests). Each leaf track has a `manifest.json` with lesson metadata and ordering.
+
+**`side-quests/` is structured differently** from the other tracks: it has no lessons of its own, just two sub-tracks (`build-something-new/` and `supercharge-resumator/`), each with its own `manifest.json`. The top-level `side-quests/manifest.json` indexes the sub-tracks. Any code that walks the track tree (`Progress`, catalog rendering) has to handle this nested shape.
 
 **Lesson HTML conventions:**
 - `<body data-page="lesson" data-lesson-id="...">`
 - Code editors: `<div data-editable="true" data-language="html" data-id="editor-1">`
 - Run buttons: `<button data-runnable="editor-1">`
 - Quizzes: `<div class="quiz" data-id="quiz-1">`
+
+### Other files worth knowing
+
+- `sw.js` `APP_SHELL` enumerates **every lesson HTML file by path** — new lessons must be added here or they won't work offline.
+- `offline.html` — the service worker serves this when a request misses the cache and the network is down.
+- `manifest.json` (root) — PWA install manifest. Track-level `manifest.json` files under `lessons/<track>/` are a different thing (lesson metadata).
+- `CNAME` — GitHub Pages custom-domain pointer for `learn.codersfarm.org`. Do not delete.
+- `test-progress-all-complete.json` — a seed file representing the "everything finished" localStorage state. Useful for screenshots and for testing completion UI without clicking through every lesson. Paste its contents into the `cf-progress` localStorage key in DevTools.
+- `changelog/` — dated markdown files (`YYYY-MM-DD_slug.md`) documenting notable changes. User-visible changes to lessons or the platform should land a new file here following the existing naming pattern.
+- `convert_side_quests.py` — one-off migration script from when side-quests gained its nested sub-track structure. Not part of the normal workflow; don't re-run without understanding what it does.
 
 ### LocalStorage Keys
 
